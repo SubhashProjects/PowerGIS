@@ -81,6 +81,10 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
     { label: 'System Configuration', granted: permissions.canConfigureSystem, desc: 'RLS & admin policies' },
   ];
 
+  // Filter granted permissions strictly for this role
+  const grantedPermissions = permissionCards.filter(p => p.granted);
+  const lockedCount = permissionCards.length - grantedPermissions.length;
+
   // Colorful card accent themes for KPI metrics
   const metricAccents = [
     { topBorder: 'border-t-4 border-t-blue-500', trendBg: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -102,7 +106,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
   });
 
   return (
-    <div className="flex-1 bg-[#f8fafc] text-slate-900 p-3.5 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 selection:bg-blue-600 selection:text-white">
+    <div className="w-full max-w-7xl mx-auto p-3.5 sm:p-6 space-y-4 sm:space-y-6 selection:bg-blue-600 selection:text-white">
       {/* 1. Identity & Statutory Entitlement Header Card */}
       <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -142,38 +146,30 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
           </div>
         </div>
 
-        {/* Statutory Role Permissions Grid */}
+        {/* Role-Specific Statutory Entitlements Grid (Display only granted privileges) */}
         <div className="mt-5 pt-4 border-t border-slate-100">
           <div className="flex items-center justify-between mb-2.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 font-mono flex items-center space-x-1.5">
-              <Shield className="w-3.5 h-3.5 text-blue-600" />
-              <span>Statutory Role Permissions & Enforcements</span>
+              <Shield className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Active Statutory Entitlements ({grantedPermissions.length})</span>
             </span>
-            <span className="text-[10px] text-slate-400 font-mono">
-              Enforced by Zero-Trust RLS Engine
+            <span className="text-[10px] text-slate-500 font-mono">
+              +{lockedCount} restricted administrative scopes protected by RLS
             </span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-            {permissionCards.map((p, idx) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+            {grantedPermissions.map((p, idx) => (
               <div
                 key={idx}
-                className={`p-2 rounded-xl border text-center transition-all ${
-                  p.granted
-                    ? 'bg-gradient-to-b from-emerald-50/90 to-teal-50/40 border-emerald-300 text-emerald-950 shadow-2xs'
-                    : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
-                }`}
+                className="p-2.5 rounded-xl border bg-gradient-to-b from-emerald-50/90 to-teal-50/40 border-emerald-300 text-emerald-950 shadow-2xs flex items-center space-x-2.5"
                 title={p.desc}
               >
-                <div className="flex items-center justify-center mb-1">
-                  {p.granted ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  ) : (
-                    <Lock className="w-3.5 h-3.5 text-slate-400" />
-                  )}
+                <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-2xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                 </div>
-                <div className="text-[10px] font-bold leading-tight truncate">{p.label}</div>
-                <div className={`text-[9px] font-mono mt-0.5 font-bold ${p.granted ? 'text-emerald-700' : 'text-slate-400'}`}>
-                  {p.granted ? 'GRANTED' : 'LOCKED'}
+                <div className="truncate">
+                  <div className="text-[11px] font-bold leading-tight truncate text-slate-900">{p.label}</div>
+                  <div className="text-[9px] font-mono text-emerald-700 font-semibold truncate">{p.desc}</div>
                 </div>
               </div>
             ))}
@@ -185,12 +181,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {dashboardData.metrics.map((metric, idx) => {
           const accent = metricAccents[idx % metricAccents.length];
-          const permittedQuickActions = dashboardData.quickActions.filter(action => {
-    const nav = NAVIGATION_ITEMS.find(item => item.id === action.targetTab);
-    return !nav?.roles || nav.roles.includes(user.role);
-  });
-
-  return (
+          return (
             <div
               key={idx}
               className={`bg-white border border-slate-200 rounded-2xl p-5 hover:border-slate-300 hover:shadow-lg transition-all shadow-xs flex flex-col justify-between ${accent.topBorder}`}
@@ -216,8 +207,8 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
         })}
       </div>
 
-      {/* 3. Visual Analytics & Real-Time Telemetry Charts (Graphs, Pies, Bars & Gauges) */}
-      <DashboardAnalyticsCharts />
+      {/* 3. Visual Analytics & Real-Time Telemetry Charts (Strictly Scoped Per Role) */}
+      <DashboardAnalyticsCharts role={user.role} />
 
       {/* 4. Main Operational Split: Pending Assignments & Role Notifications */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

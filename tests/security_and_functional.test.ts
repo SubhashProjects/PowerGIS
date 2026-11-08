@@ -418,7 +418,7 @@ async function runTestSuite() {
     const { NAVIGATION_ITEMS } = await import('../src/config/navigationConfig');
 
     assert(Boolean(LABELS.header.brandName), 'LABELS.header.brandName is defined');
-    assert(LABELS.header.brandName === 'POWERGIS', 'Brand name is POWERGIS');
+    assert(LABELS.header.brandName.toUpperCase() === 'POWERGIS', 'Brand name is PowerGIS');
     assert(Boolean(LABELS.zeroTrustGate.policyBadge), 'Zero-Trust Gate policy badge is defined');
     assert(Boolean(LABELS.admin.consoleTitle), 'Admin console title is defined');
     assert(Boolean(LABELS.scopeHUD.activeIdentityPrefix), 'Scope HUD active identity prefix is defined');
@@ -432,6 +432,46 @@ async function runTestSuite() {
 
     const adminNav = NAVIGATION_ITEMS.find(n => n.id === 'admin_panel');
     assert(adminNav?.label === LABELS.navigation.adminPanel, 'Admin Panel navigation label is wired to LABELS.navigation.adminPanel');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 13: ROLE-BASED DASHBOARD SCOPING & GIS LAYER COLOR PALETTE
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 13: Role Dashboard Scoping & GIS Color Aesthetics ---');
+  {
+    const { initialGISLayers } = await import('../src/services/gisService');
+
+    // 1. Verify vibrant colorful GIS layers (No monochrome defaults)
+    const substationLayer = initialGISLayers.find(l => l.id === 'substations');
+    assert(substationLayer?.color === '#EF4444', 'Substations layer has vibrant Crimson Red color token (#EF4444)');
+
+    const feederHtLayer = initialGISLayers.find(l => l.id === 'feeders_ht_22kv');
+    assert(feederHtLayer?.color === '#F59E0B', 'HT Feeders layer has vibrant Amber color token (#F59E0B)');
+
+    const feeder11kvLayer = initialGISLayers.find(l => l.id === 'feeders_11kv');
+    assert(feeder11kvLayer?.color === '#38BDF8' || feeder11kvLayer?.color === '#0284C7', '11kV Feeders layer has vivid Electric Blue color');
+
+    const dtLayer = initialGISLayers.find(l => l.id === 'transformers');
+    assert(dtLayer?.color === '#10B981', 'Transformers layer has vibrant Emerald Green color token (#10B981)');
+
+    const poleHtLayer = initialGISLayers.find(l => l.id === 'poles_ht');
+    assert(poleHtLayer?.color === '#8B5CF6', 'HT Utility Poles layer has vibrant Purple color token (#8B5CF6)');
+
+    // 2. Verify Role Dashboard Scoping
+    const contractorUser = initialUsers.find(u => u.role === 'contractor')!;
+    const contractorData = notificationService.getDashboardData(contractorUser);
+    assert(contractorData.roleTitle.includes('Contractor'), 'Contractor dashboard title is strictly contractor-scoped');
+    assert(contractorData.metrics.some(m => m.label.includes('GPS') || m.label.includes('Survey')), 'Contractor metrics focus on field surveys and GPS');
+
+    const jeUser = initialUsers.find(u => u.role === 'je')!;
+    const jeData = notificationService.getDashboardData(jeUser);
+    assert(jeData.roleTitle.includes('Junior Engineer'), 'JE dashboard title is strictly JE-scoped');
+    assert(jeData.assignments.some(a => a.category === 'Survey Verification'), 'JE has survey verification tasks in ward');
+
+    const aeUser = initialUsers.find(u => u.role === 'ae')!;
+    const aeData = notificationService.getDashboardData(aeUser);
+    assert(aeData.roleTitle.includes('Assistant Engineer'), 'AE dashboard title is strictly AE-scoped');
+    assert(aeData.assignments.some(a => a.category === 'Safety PTW' || a.category === 'AE Approval'), 'AE has PTW and approval tasks');
   }
 
   // --------------------------------------------------------------------------

@@ -9,10 +9,10 @@ export const LABELS = {
   // 1. COMMON & GLOBAL LABELS
   // --------------------------------------------------------------------------
   common: {
-    appName: 'POWERGIS',
+    appName: 'PowerGIS',
     appEdition: 'DISTRIBUTION',
-    appTagline: 'PowerGIS • Utility Asset Management & Operations Portal',
-    version: 'v2.0.0 Enterprise',
+    appTagline: 'PowerGIS',
+    version: 'v1.0.0 Enterprise',
     jurisdiction: 'Jurisdiction',
     active: 'Active',
     inactive: 'Inactive',
@@ -41,7 +41,7 @@ export const LABELS = {
   // 2. APPLICATION HEADER LABELS
   // --------------------------------------------------------------------------
   header: {
-    brandName: 'POWERGIS',
+    brandName: 'PowerGIS',
     brandBadge: 'DISTRIBUTION',
     brandSubtitle: 'PowerGIS • Utility Asset Management & Operations Portal',
     jurisdictionPrefix: 'Jurisdiction:',

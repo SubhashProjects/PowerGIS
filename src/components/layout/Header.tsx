@@ -12,7 +12,7 @@ import { initialRegions } from '../../services/mockData';
 import { NavTabId } from '../../config/navigationConfig';
 import { LABELS } from '../../config/labelsConfig';
 import {
-  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Clock, Settings
+  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Settings
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -28,31 +28,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState<string>('');
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // Live Operational Clock (Ticking every 1 second - IST & UTC)
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      // IST is UTC+5:30
-      const options: Intl.DateTimeFormatOptions = {
-        day: '2-digit',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZone: 'Asia/Kolkata',
-      };
-      const formatted = new Intl.DateTimeFormat('en-IN', options).format(now);
-      setCurrentTime(`${formatted} IST · UTC+05:30`);
-    };
-
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Global Ctrl + K Keyboard Shortcut listener
   useEffect(() => {
@@ -189,18 +165,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           >
             <Search className="w-4 h-4" />
           </button>
-
-          {/* Live Operational Clock (IST / UTC) */}
-          <div className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-800 shadow-2xs flex-shrink-0">
-            <Clock className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
-            <span className="font-semibold">{currentTime}</span>
-          </div>
-
-          {/* White Theme Badge Indicator */}
-          <div className="hidden 2xl:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-600">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>{LABELS.header.whiteThemeBadge}</span>
-          </div>
 
           {/* Notifications Bell Dropdown */}
           <div className="relative">
