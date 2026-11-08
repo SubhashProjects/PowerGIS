@@ -9,6 +9,7 @@ import { faultService } from '../src/services/faultService';
 import { surveyService } from '../src/services/surveyService';
 import { reliabilityService } from '../src/services/reliabilityService';
 import { riskService } from '../src/services/riskService';
+import { notificationService } from '../src/services/notificationService';
 import { initialUsers, initialTransformers, initialFeeders } from '../src/services/mockData';
 
 let passed = 0;
@@ -215,6 +216,95 @@ async function runTestSuite() {
     // 6. Sign out session clearance
     authService.logout();
     assert(authService.isAuthenticated() === false, 'Logout terminates active session');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 8: ROLE-BASED DASHBOARD & NOTIFICATION SCOPING
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 8: Role-Based Dashboard & Notification Scoping ---');
+  {
+    // 1. JE Anand - Ward Level
+    const jeUser = initialUsers.find(u => u.role === 'je')!;
+    const jeData = notificationService.getDashboardData(jeUser);
+    assert(jeData.jurisdictionScope.includes('Marapalam Commercial Ward'), 'JE Dashboard is scoped to Marapalam Commercial Ward');
+    assert(jeData.assignments.some(a => a.category === 'Survey Verification'), 'JE assignments include field survey verifications');
+    assert(jeData.notifications.length > 0, 'JE receives role notifications');
+
+    // 2. AE Senthil - Section Level
+    const aeUser = initialUsers.find(u => u.role === 'ae')!;
+    const aeData = notificationService.getDashboardData(aeUser);
+    assert(aeData.jurisdictionScope.includes('Marapalam O&M Section'), 'AE Dashboard is scoped to Marapalam O&M Section');
+    assert(aeData.assignments.some(a => a.category.includes('Approval') || a.category.includes('Safety')), 'AE assignments include final approval & PTW clearance');
+
+    // 3. EE Sivakumar - Division Level
+    const eeUser = initialUsers.find(u => u.role === 'ee')!;
+    const eeData = notificationService.getDashboardData(eeUser);
+    assert(eeData.jurisdictionScope.includes('Urban Operations Division'), 'EE Dashboard is scoped to Urban Operations Division');
+    assert(eeData.metrics.some(m => m.label.includes('SAIFI') || m.label.includes('SAIDI')), 'EE metrics track IEEE 1366 SAIFI/SAIDI');
+
+    // 4. Auditor
+    const auditorUser = initialUsers.find(u => u.role === 'auditor')!;
+    const auditorData = notificationService.getDashboardData(auditorUser);
+    assert(auditorData.jurisdictionScope.includes('Regulatory Compliance'), 'Auditor Dashboard is scoped to regulatory compliance');
+
+    // 5. Notification Read State
+    const firstNotif = jeData.notifications[0];
+    notificationService.markAsRead(firstNotif.id);
+    assert(notificationService.isRead(firstNotif.id) === true, 'markAsRead successfully records read state');
+    const refreshedJEData = notificationService.getDashboardData(jeUser);
+    assert(refreshedJEData.notifications.find(n => n.id === firstNotif.id)?.read === true, 'Refreshed dashboard reflects notification read state as true');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 9: MAP ROTATION, BEARING CALCULATIONS & INVERSE COORDINATES
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 9: Map Rotation, Bearing & Inverse Angle Geometry ---');
+  {
+    const normalizeBearing = (deg: number): number => {
+      const mod = deg % 360;
+      return mod < 0 ? mod + 360 : Math.round(mod);
+    };
+
+    const getCardinal = (deg: number): string => {
+      const d = (deg % 360 + 360) % 360;
+      if (d >= 337.5 || d < 22.5) return 'N';
+      if (d >= 22.5 && d < 67.5) return 'NE';
+      if (d >= 67.5 && d < 112.5) return 'E';
+      if (d >= 112.5 && d < 157.5) return 'SE';
+      if (d >= 157.5 && d < 202.5) return 'S';
+      if (d >= 202.5 && d < 247.5) return 'SW';
+      if (d >= 247.5 && d < 292.5) return 'W';
+      return 'NW';
+    };
+
+    assert(normalizeBearing(0) === 0, 'Bearing 0° normalizes to 0°');
+    assert(normalizeBearing(360) === 0, 'Bearing 360° normalizes to 0°');
+    assert(normalizeBearing(45) === 45, 'Bearing 45° normalizes to 45°');
+    assert(normalizeBearing(-15) === 345, 'Bearing -15° wraps to 345°');
+    assert(normalizeBearing(720) === 0, 'Bearing 720° wraps to 0°');
+
+    assert(getCardinal(0) === 'N', '0° is North');
+    assert(getCardinal(90) === 'E', '90° is East');
+    assert(getCardinal(180) === 'S', '180° is South');
+    assert(getCardinal(270) === 'W', '270° is West');
+    assert(getCardinal(45) === 'NE', '45° is North-East');
+
+    // Test Inverse Angular Coordinate Mapping for Rotated Map
+    // Screen center C=(500, 500). Point P at (600, 500) (100px to the right)
+    // When bearing = 90 deg clockwise, True North is rotated 90 deg counter-clockwise.
+    // Clicking at (600, 500) corresponds to original point at (500, 400) (100px above center).
+    const cx = 500, cy = 500;
+    const clickX = 600, clickY = 500;
+    const bearing = 90;
+    const dx = clickX - cx;
+    const dy = clickY - cy;
+    const rad = (-bearing * Math.PI) / 180;
+    const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
+    const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
+    const mappedX = Math.round(cx + rx);
+    const mappedY = Math.round(cy + ry);
+
+    assert(mappedX === 500 && mappedY === 400, 'Inverse rotation translates rotated screen click (600, 500) -> layer point (500, 400)');
   }
 
   // --------------------------------------------------------------------------

@@ -4,6 +4,8 @@
 // ============================================================================
 
 export type BasemapProviderId =
+  | 'carto_dark'
+  | 'carto_light'
   | 'google_roadmap'
   | 'google_satellite'
   | 'google_hybrid'
@@ -16,7 +18,7 @@ export type BasemapProviderId =
 export interface BasemapConfig {
   id: BasemapProviderId;
   name: string;
-  category: 'Google' | 'OpenStreetMap' | 'Esri';
+  category: 'Monochrome' | 'Google' | 'OpenStreetMap' | 'Esri';
   url: string;
   subdomains?: string[];
   maxZoom: number;

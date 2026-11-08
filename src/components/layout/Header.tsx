@@ -1,24 +1,35 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// ENTERPRISE HEADER COMPONENT WITH TELEMETRY, SEARCH & ROLE EMULATOR
+// ENTERPRISE HEADER COMPONENT - MONOCHROME B&W & MOBILE ADAPTIVE
 // ============================================================================
 
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useGIS } from '../../context/GISContext';
 import { assetService } from '../../services/assetService';
+import { notificationService } from '../../services/notificationService';
 import { initialRegions } from '../../services/mockData';
 import {
-  Search, Shield, Bell, Activity, MapPin, ChevronDown, User, Globe, LogOut
+  Search, Bell, Globe, ChevronDown, LogOut, Menu, X
 } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onToggleMobileMenu?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   const { user, switchUser, availableUsers, logout } = useAuth();
   const { activeRegion, flyToRegion, setSelectedAsset } = useGIS();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  const roleData = notificationService.getDashboardData(user);
+  const notifications = roleData.notifications;
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -35,164 +46,277 @@ export const Header: React.FC = () => {
     setSelectedAsset(item);
     setSearchResults([]);
     setSearchQuery('');
+    setMobileSearchOpen(false);
   };
 
   return (
-    <header className="h-14 bg-[#0a101d] border-b border-slate-800 px-4 flex items-center justify-between z-30 select-none">
-      {/* Brand & Emblem */}
-      <div className="flex items-center space-x-3">
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-sky-500/20">
-          ⚡
-        </div>
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-sm text-slate-100 tracking-wide">POWERGIS</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 font-semibold border border-sky-500/20">
-              GIS PORTAL
-            </span>
-          </div>
-          <p className="text-[10px] text-slate-400 font-medium">PowerGIS • Distribution Asset Management & O&M</p>
-        </div>
-      </div>
-
-      {/* Global Asset Search */}
-      <div className="relative w-96 hidden md:block">
-        <div className="relative flex items-center">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearch}
-            placeholder="Search substations, feeders, DTs, poles, meters..."
-            className="w-full bg-[#131c2e] border border-slate-700/60 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
-          />
-        </div>
-
-        {/* Dropdown Results */}
-        {searchResults.length > 0 && (
-          <div className="absolute top-10 left-0 right-0 bg-[#0f172a] border border-slate-700 rounded-lg shadow-xl overflow-hidden z-50">
-            {searchResults.map(res => (
-              <button
-                key={res.id}
-                onClick={() => handleSelectResult(res)}
-                className="w-full text-left px-3 py-2 text-xs border-b border-slate-800/80 hover:bg-slate-800/60 flex items-center justify-between text-slate-200 transition-colors"
-              >
-                <div>
-                  <div className="font-medium">{res.code}</div>
-                  <div className="text-[10px] text-slate-400">{res.name}</div>
-                </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono">
-                  {res.type}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Right Controls: Telemetry, Region Selector, Role Switcher */}
-      <div className="flex items-center space-x-3">
-        {/* Live Grid Frequency Telemetry Pill */}
-        <div className="hidden lg:flex items-center space-x-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>GRID: 50.02 Hz</span>
-        </div>
-
-        {/* Region Switcher */}
-        <div className="relative">
+    <header className="relative bg-black border-b border-neutral-800 z-30 select-none">
+      <div className="h-14 px-3 sm:px-4 flex items-center justify-between">
+        {/* Left: Mobile Menu Button & Brand */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Mobile Hamburger Drawer Trigger */}
           <button
-            onClick={() => setShowRegionDropdown(!showRegionDropdown)}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-[#131c2e] hover:bg-slate-800 border border-slate-700/80 text-xs text-slate-200 transition-colors"
+            onClick={onToggleMobileMenu}
+            className="p-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 md:hidden transition-colors"
+            aria-label="Toggle Navigation Drawer"
           >
-            <Globe className="w-3.5 h-3.5 text-sky-400" />
-            <span className="font-medium">
-              {initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry'}
-            </span>
-            <ChevronDown className="w-3 h-3 text-slate-400" />
+            <Menu className="w-5 h-5" />
           </button>
 
-          {showRegionDropdown && (
-            <div className="absolute right-0 top-10 w-44 bg-[#0f172a] border border-slate-700 rounded-lg shadow-2xl py-1 z-50">
-              <div className="px-3 py-1 text-[10px] uppercase font-bold text-slate-500">
-                Union Territory Regions
-              </div>
-              {initialRegions.map(reg => (
+          {/* Logo Emblem */}
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white text-black flex items-center justify-center font-bold text-sm sm:text-base shadow-lg shadow-white/10 flex-shrink-0">
+            ⚡
+          </div>
+
+          {/* Title */}
+          <div>
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <span className="font-extrabold text-xs sm:text-sm text-white tracking-wider">POWERGIS</span>
+              <span className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded bg-white/10 text-neutral-200 font-semibold border border-white/20 uppercase tracking-wider">
+                DISTRIBUTION
+              </span>
+            </div>
+            <p className="text-[9px] sm:text-[10px] text-neutral-400 font-medium hidden sm:block">
+              PowerGIS • Asset Management & O&M Platform
+            </p>
+          </div>
+        </div>
+
+        {/* Global Asset Search (Desktop) */}
+        <div className="relative w-72 lg:w-96 hidden md:block">
+          <div className="relative flex items-center">
+            <Search className="w-4 h-4 text-neutral-400 absolute left-3 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearch}
+              placeholder="Search assets, feeders, poles..."
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-mono"
+            />
+          </div>
+
+          {/* Dropdown Results */}
+          {searchResults.length > 0 && (
+            <div className="absolute top-10 left-0 right-0 bg-[#0d0d0d] border border-neutral-800 rounded-lg shadow-2xl overflow-hidden z-50">
+              {searchResults.map(res => (
                 <button
-                  key={reg.id}
-                  onClick={() => {
-                    flyToRegion(reg.id);
-                    setShowRegionDropdown(false);
-                  }}
-                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-800 ${
-                    activeRegion === reg.id ? 'text-sky-400 font-semibold bg-sky-500/10' : 'text-slate-300'
-                  }`}
+                  key={res.id || res.code || res.poleNumber}
+                  onClick={() => handleSelectResult(res)}
+                  className="w-full text-left px-3 py-2 text-xs hover:bg-neutral-800 flex items-center justify-between border-b border-neutral-800/60 last:border-0"
                 >
-                  <span>{reg.name}</span>
-                  <span className="text-[10px] text-slate-500 font-mono">{reg.code}</span>
+                  <div>
+                    <div className="font-semibold text-white">{res.name || res.code || res.poleNumber}</div>
+                    <div className="text-[10px] text-neutral-400 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 font-mono">
+                    {res.voltageClass || res.capacityKVA ? `${res.capacityKVA}kVA` : 'Asset'}
+                  </span>
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Persona Role Switcher (Crucial for Multi-Tier Hierarchy Testing) */}
-        <div className="relative">
+        {/* Right Toolbar */}
+        <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+          {/* Mobile Search Button Toggle */}
           <button
-            onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-            className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg bg-sky-950/40 hover:bg-sky-900/40 border border-sky-500/30 text-xs transition-colors"
+            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+            className="p-1.5 sm:p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 md:hidden transition-colors"
+            title="Search Assets"
           >
-            <div className="w-6 h-6 rounded bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-[10px] uppercase">
-              {user.role.substring(0, 2)}
-            </div>
-            <div className="text-left hidden sm:block">
-              <div className="font-semibold text-sky-200 leading-tight">{user.fullName.split(',')[0]}</div>
-              <div className="text-[10px] text-sky-400 font-medium leading-none">{user.designation}</div>
-            </div>
-            <ChevronDown className="w-3 h-3 text-sky-400 ml-1" />
+            <Search className="w-4 h-4" />
           </button>
 
-          {showRoleDropdown && (
-            <div className="absolute right-0 top-11 w-80 bg-[#0c1424] border border-slate-700 rounded-xl shadow-2xl py-2 z-50">
-              <div className="px-3 pb-2 mb-1 border-b border-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                <span>Switch Engineering Persona</span>
-                <span className="text-sky-400">11 Official Roles</span>
+          {/* Notifications Bell Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-1.5 sm:p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
+              title="Role Notifications & Assignments"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black font-bold text-[9px] flex items-center justify-center font-mono shadow-sm">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            {showNotifications && (
+              <div className="absolute right-0 top-11 w-72 sm:w-96 bg-[#0a0a0a] border border-neutral-800 rounded-2xl shadow-2xl p-3 z-50">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800 text-[10px] uppercase font-bold text-neutral-400">
+                  <span className="text-white">Role Notifications ({notifications.length})</span>
+                  <span className="font-mono text-neutral-400">{user.role.toUpperCase()}</span>
+                </div>
+
+                <div className="space-y-2 max-h-80 overflow-y-auto">
+                  {notifications.map(n => (
+                    <div
+                      key={n.id}
+                      onClick={() => {
+                        notificationService.markAsRead(n.id);
+                      }}
+                      className="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transition-all text-left"
+                    >
+                      <div className="flex items-center justify-between text-[10px] mb-1">
+                        <span className="font-mono uppercase font-bold text-white bg-neutral-800 px-1 rounded">
+                          {n.priority}
+                        </span>
+                        <span className="text-neutral-500 font-mono">{n.timestamp}</span>
+                      </div>
+                      <div className="font-semibold text-xs text-white leading-tight">{n.title}</div>
+                      <div className="text-[11px] text-neutral-400 mt-0.5 leading-snug">{n.message}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="max-h-80 overflow-y-auto">
-                {availableUsers.map(u => (
+            )}
+          </div>
+
+          {/* Region Switcher */}
+          <div className="relative">
+            <button
+              onClick={() => setShowRegionDropdown(!showRegionDropdown)}
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs text-neutral-200 transition-colors"
+            >
+              <Globe className="w-3.5 h-3.5 text-neutral-300" />
+              <span className="font-medium truncate max-w-[70px] sm:max-w-none">
+                {initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry'}
+              </span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
+            </button>
+
+            {showRegionDropdown && (
+              <div className="absolute right-0 top-10 w-44 bg-[#0d0d0d] border border-neutral-800 rounded-lg shadow-2xl py-1 z-50">
+                <div className="px-3 py-1 text-[10px] uppercase font-bold text-neutral-500">
+                  Union Territory Regions
+                </div>
+                {initialRegions.map(reg => (
                   <button
-                    key={u.id}
+                    key={reg.id}
                     onClick={() => {
-                      switchUser(u.id);
-                      setShowRoleDropdown(false);
+                      flyToRegion(reg.id);
+                      setShowRegionDropdown(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center space-x-3 hover:bg-slate-800/80 transition-colors ${
-                      user.id === u.id ? 'bg-sky-500/15 border-l-2 border-sky-400' : ''
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-neutral-800 ${
+                      activeRegion === reg.id ? 'text-white font-semibold bg-white/10' : 'text-neutral-300'
                     }`}
                   >
-                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 font-mono text-[10px] uppercase font-bold">
-                      {u.role}
-                    </span>
-                    <div className="flex-1 truncate">
-                      <div className="font-semibold text-slate-200 truncate">{u.fullName}</div>
-                      <div className="text-[10px] text-slate-400 truncate">{u.designation}</div>
-                    </div>
+                    <span>{reg.name}</span>
+                    <span className="text-[10px] text-neutral-500 font-mono">{reg.code}</span>
                   </button>
                 ))}
               </div>
+            )}
+          </div>
+
+          {/* Persona Role Switcher */}
+          <div className="relative">
+            <button
+              onClick={() => setShowRoleDropdown(!showRoleDropdown)}
+              className="flex items-center space-x-1.5 sm:space-x-2 px-1.5 sm:px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs transition-colors"
+            >
+              <div className="w-6 h-6 rounded bg-white text-black font-bold flex items-center justify-center text-[10px] uppercase flex-shrink-0">
+                {user.role.substring(0, 2)}
+              </div>
+              <div className="text-left hidden sm:block">
+                <div className="font-semibold text-white leading-tight">{user.fullName.split(',')[0]}</div>
+                <div className="text-[10px] text-neutral-400 font-medium leading-none">{user.designation}</div>
+              </div>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
+            </button>
+
+            {showRoleDropdown && (
+              <div className="absolute right-0 top-11 w-72 sm:w-80 bg-[#0d0d0d] border border-neutral-800 rounded-xl shadow-2xl py-2 z-50">
+                <div className="px-3 pb-2 mb-1 border-b border-neutral-800 text-[10px] font-bold text-neutral-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Switch Engineering Persona</span>
+                  <span className="text-white font-mono">11 Roles</span>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {availableUsers.map(u => (
+                    <button
+                      key={u.id}
+                      onClick={() => {
+                        switchUser(u.id);
+                        setShowRoleDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs flex items-center space-x-3 hover:bg-neutral-800/80 transition-colors ${
+                        user.id === u.id ? 'bg-white/10 border-l-2 border-white' : ''
+                      }`}
+                    >
+                      <span className="px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-200 font-mono text-[10px] uppercase font-bold">
+                        {u.role}
+                      </span>
+                      <div className="flex-1 truncate">
+                        <div className="font-semibold text-neutral-100 truncate">{u.fullName}</div>
+                        <div className="text-[10px] text-neutral-400 truncate">{u.designation}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sign Out Button */}
+          <button
+            onClick={logout}
+            title="Sign Out of PowerGIS"
+            className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-neutral-900 hover:bg-white hover:text-black text-neutral-300 border border-neutral-800 text-xs transition-all font-semibold"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden md:inline">Sign Out</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Slide-down Search Bar */}
+      {mobileSearchOpen && (
+        <div className="px-3 py-2 border-t border-neutral-800 bg-[#0a0a0a] md:hidden">
+          <div className="relative flex items-center">
+            <Search className="w-4 h-4 text-neutral-400 absolute left-3 pointer-events-none" />
+            <input
+              type="text"
+              autoFocus
+              value={searchQuery}
+              onChange={handleSearch}
+              placeholder="Search assets, feeders, poles..."
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-lg pl-9 pr-9 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white font-mono"
+            />
+            <button
+              onClick={() => {
+                setMobileSearchOpen(false);
+                setSearchQuery('');
+                setSearchResults([]);
+              }}
+              className="absolute right-2 p-1 text-neutral-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {searchResults.length > 0 && (
+            <div className="mt-2 bg-[#0d0d0d] border border-neutral-800 rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+              {searchResults.map(res => (
+                <button
+                  key={res.id || res.code || res.poleNumber}
+                  onClick={() => handleSelectResult(res)}
+                  className="w-full text-left px-3 py-2.5 text-xs hover:bg-neutral-800 flex items-center justify-between border-b border-neutral-800/60 last:border-0"
+                >
+                  <div>
+                    <div className="font-semibold text-white">{res.name || res.code || res.poleNumber}</div>
+                    <div className="text-[10px] text-neutral-400 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 font-mono">
+                    {res.voltageClass || res.capacityKVA ? `${res.capacityKVA}kVA` : 'Asset'}
+                  </span>
+                </button>
+              ))}
             </div>
           )}
         </div>
-
-        {/* Sign Out Button */}
-        <button
-          onClick={logout}
-          title="Sign Out of PowerGIS"
-          className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs transition-colors"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span className="hidden md:inline font-semibold">Sign Out</span>
-        </button>
-      </div>
+      )}
     </header>
   );
 };

@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// GIS CONTEXT PROVIDER: BASEMAPS, OVERLAYS, MEASUREMENT & SELECTED ASSET
+// GIS CONTEXT PROVIDER: BASEMAPS, OVERLAYS, MEASUREMENT, ROTATION & SELECTED ASSET
 // ============================================================================
 
 import React, { createContext, useContext, useState } from 'react';
@@ -21,15 +21,40 @@ interface GISContextType {
   flyToRegion: (regionId: string) => void;
   selectedAsset: any | null;
   setSelectedAsset: (asset: any | null) => void;
+  bearing: number;
+  setBearing: (bearing: number | ((prev: number) => number)) => void;
+  rotateBy: (degrees: number) => void;
+  resetBearing: () => void;
 }
 
 const GISContext = createContext<GISContextType | undefined>(undefined);
 
 export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('google_roadmap');
+  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('carto_dark');
   const [layers, setLayers] = useState<GISLayerState[]>(initialGISLayers);
   const [activeRegion, setActiveRegion] = useState<string>('reg-pdy');
   const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
+  const [bearing, setBearingState] = useState<number>(0);
+
+  const normalizeBearing = (deg: number): number => {
+    const mod = deg % 360;
+    return mod < 0 ? mod + 360 : Math.round(mod);
+  };
+
+  const setBearing = (val: number | ((prev: number) => number)) => {
+    setBearingState(prev => {
+      const next = typeof val === 'function' ? val(prev) : val;
+      return normalizeBearing(next);
+    });
+  };
+
+  const rotateBy = (degrees: number) => {
+    setBearing(prev => prev + degrees);
+  };
+
+  const resetBearing = () => {
+    setBearingState(0);
+  };
 
   const [measurement, setMeasurement] = useState<MapMeasurement>({
     mode: 'none',
@@ -98,6 +123,10 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         flyToRegion,
         selectedAsset,
         setSelectedAsset,
+        bearing,
+        setBearing,
+        rotateBy,
+        resetBearing,
       }}
     >
       {children}

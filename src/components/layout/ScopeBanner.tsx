@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// SCOPE & JURISDICTION ENTITLEMENT BANNER
+// SCOPE & JURISDICTION ENTITLEMENT BANNER - MONOCHROME B&W THEME
 // ============================================================================
 
 import React from 'react';
@@ -39,29 +39,31 @@ export const ScopeBanner: React.FC = () => {
     <div
       className={`px-4 py-1.5 border-b text-xs flex items-center justify-between select-none ${
         isRestricted
-          ? 'bg-amber-500/10 border-amber-500/20 text-amber-200'
-          : 'bg-slate-900/80 border-slate-800 text-slate-300'
+          ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
+          : 'bg-[#080808] border-neutral-800 text-neutral-300'
       }`}
     >
       <div className="flex items-center space-x-2 truncate">
         {isRestricted ? (
-          <ShieldAlert className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+          <ShieldAlert className="w-3.5 h-3.5 text-white flex-shrink-0" />
         ) : (
-          <ShieldCheck className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+          <ShieldCheck className="w-3.5 h-3.5 text-white flex-shrink-0" />
         )}
-        <span className="font-semibold text-slate-200 uppercase tracking-wider text-[10px] px-1 rounded bg-slate-800">
+        <span className="font-semibold text-white uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 border border-neutral-700">
           Entitlement
         </span>
-        <span className="truncate">{getJurisdictionLabel()}</span>
+        <span className="truncate text-neutral-300 font-mono text-[11px]">{getJurisdictionLabel()}</span>
       </div>
 
       <div className="hidden sm:flex items-center space-x-3 text-[11px] font-mono">
-        <span className="flex items-center space-x-1 text-slate-400">
-          <Lock className="w-3 h-3 text-emerald-400" />
-          <span>RLS Enforced</span>
+        <span className="flex items-center space-x-1 text-neutral-400">
+          <Lock className="w-3 h-3 text-white" />
+          <span>Zero-Trust RLS</span>
         </span>
-        <span className="text-slate-500">•</span>
-        <span className="text-sky-400 font-semibold">{user.role.toUpperCase()}</span>
+        <span className="text-neutral-600">•</span>
+        <span className="text-white font-bold bg-neutral-800 px-1.5 py-0.5 rounded border border-neutral-700 text-[10px]">
+          {user.role.toUpperCase()}
+        </span>
       </div>
     </div>
   );

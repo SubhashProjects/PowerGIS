@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// MASTER GIS MAP ENGINE: LEAFLET + MULTI-BASEMAP + POSTGIS OVERLAYS
+// MASTER GIS MAP ENGINE: LEAFLET + MULTI-BASEMAP + ROTATION + POSTGIS OVERLAYS
 // ============================================================================
 
 import React, { useEffect, useRef } from 'react';
@@ -14,6 +14,7 @@ import { availableBasemaps, regionCoordinates } from '../../services/gisService'
 import { BasemapSwitcher } from './BasemapSwitcher';
 import { LayerTree } from './LayerTree';
 import { MeasureTool } from './MeasureTool';
+import { MapRotationControl } from './MapRotationControl';
 import { calculateHaversineDistance, calculatePolygonArea } from '../../lib/geoUtils';
 
 export const MasterMap: React.FC = () => {
@@ -31,9 +32,15 @@ export const MasterMap: React.FC = () => {
     setSelectedAsset,
     measurement,
     addMeasurementPoint,
+    bearing,
   } = useGIS();
 
   const { user } = useAuth();
+  const bearingRef = useRef<number>(bearing);
+
+  useEffect(() => {
+    bearingRef.current = bearing;
+  }, [bearing]);
 
   // Initialize Map
   useEffect(() => {
@@ -48,7 +55,26 @@ export const MasterMap: React.FC = () => {
       zoomControl: false,
     });
 
+    // Custom zoom control in bottom-right (shifted up slightly for mobile bottom nav)
     L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    // Inverse Angular Transformation for Mouse & Touch Coordinates when Map is Rotated
+    const originalMouseEventToContainerPoint = map.mouseEventToContainerPoint.bind(map);
+    map.mouseEventToContainerPoint = function (e: MouseEvent) {
+      const pt = originalMouseEventToContainerPoint(e);
+      const currentBearing = bearingRef.current;
+      if (!currentBearing || currentBearing === 0) return pt;
+
+      const size = map.getSize();
+      const cx = size.x / 2;
+      const cy = size.y / 2;
+      const dx = pt.x - cx;
+      const dy = pt.y - cy;
+      const rad = (-currentBearing * Math.PI) / 180;
+      const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
+      const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
+      return L.point(cx + rx, cy + ry);
+    };
 
     const featureGroup = L.featureGroup().addTo(map);
     const measureGroup = L.featureGroup().addTo(map);
@@ -75,6 +101,19 @@ export const MasterMap: React.FC = () => {
     };
   }, []);
 
+  // Update Map Rotation via CSS Transform on the Leaflet mapPane
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    const mapPane = map.getPane('mapPane');
+    if (mapPane) {
+      mapPane.style.transformOrigin = 'center center';
+      mapPane.style.transition = 'transform 0.25s cubic-bezier(0.2, 0, 0, 1)';
+      mapPane.style.transform = bearing === 0 ? '' : `rotate(${bearing}deg)`;
+    }
+  }, [bearing]);
+
   // Update Basemap Tiles
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -90,6 +129,7 @@ export const MasterMap: React.FC = () => {
       subdomains: config.subdomains || ['a', 'b', 'c'],
       maxZoom: config.maxZoom || 19,
       attribution: config.attribution,
+      keepBuffer: 6,
     });
 
     tile.addTo(map);
@@ -126,21 +166,24 @@ export const MasterMap: React.FC = () => {
       substations.forEach(s => {
         const marker = L.circleMarker(s.coordinates, {
           radius: 9,
-          fillColor: '#EF4444',
-          color: '#FFFFFF',
+          fillColor: '#FFFFFF',
+          color: '#000000',
           weight: 2,
           opacity: 1,
-          fillOpacity: 0.9,
+          fillOpacity: 1,
         });
 
         marker.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
-            <div class="font-bold text-sm text-red-600">${s.name}</div>
-            <div class="text-xs text-slate-600 font-mono">${s.code} • ${s.voltageClass}</div>
-            <div class="mt-2 text-xs border-t pt-1">
+          <div class="p-2 text-neutral-900 font-sans">
+            <div class="font-bold text-sm text-black flex items-center justify-between">
+              <span>${s.name}</span>
+              <span class="text-[10px] bg-black text-white px-1.5 py-0.5 rounded font-mono">SUBSTATION</span>
+            </div>
+            <div class="text-xs text-neutral-600 font-mono">${s.code} • ${s.voltageClass}</div>
+            <div class="mt-2 text-xs border-t border-neutral-300 pt-1 space-y-0.5">
               <div>Capacity: <b>${s.capacityMVA} MVA</b></div>
               <div>Active Feeders: <b>${s.numFeeders}</b></div>
-              <div>Status: <span class="text-emerald-600 font-semibold uppercase">${s.status}</span></div>
+              <div>Status: <span class="text-black font-bold uppercase">${s.status}</span></div>
             </div>
           </div>
         `);
@@ -159,21 +202,21 @@ export const MasterMap: React.FC = () => {
         if (!isHT && !isLayerVisible('feeders_11kv')) return;
 
         const polyline = L.polyline(f.coordinates, {
-          color: isHT ? '#F59E0B' : '#0EA5E9',
+          color: isHT ? '#FFFFFF' : '#A3A3A3',
           weight: isHT ? 4 : 3,
-          opacity: f.isEnergized ? 0.9 : 0.4,
-          dashArray: f.isEnergized ? undefined : '5, 8',
+          opacity: f.isEnergized ? 0.95 : 0.4,
+          dashArray: f.isEnergized ? undefined : '6, 6',
         });
 
         polyline.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
-            <div class="font-bold text-sm text-sky-600">${f.name}</div>
-            <div class="text-xs text-slate-600 font-mono">${f.code} • ${f.voltageClass}</div>
-            <div class="mt-1 text-xs">
+          <div class="p-2 text-neutral-900 font-sans">
+            <div class="font-bold text-sm text-black">${f.name}</div>
+            <div class="text-xs text-neutral-600 font-mono">${f.code} • ${f.voltageClass}</div>
+            <div class="mt-1 text-xs space-y-0.5">
               <div>Conductor: <b>${f.conductorType}</b></div>
               <div>Length: <b>${f.lengthKm} km</b></div>
               <div>Peak Load: <b>${f.peakLoadAmps} A</b> (Rated: ${f.ratedCapacityAmps} A)</div>
-              <div>Grid Status: <b class="${f.isEnergized ? 'text-emerald-600' : 'text-rose-600'}">${f.isEnergized ? 'ENERGIZED' : 'DE-ENERGIZED'}</b></div>
+              <div>Grid Status: <b class="${f.isEnergized ? 'text-black font-extrabold' : 'text-neutral-500'}">${f.isEnergized ? 'ENERGIZED' : 'DE-ENERGIZED'}</b></div>
             </div>
           </div>
         `);
@@ -189,20 +232,23 @@ export const MasterMap: React.FC = () => {
       transformers.forEach(t => {
         const marker = L.circleMarker(t.coordinates, {
           radius: 7,
-          fillColor: '#10B981',
-          color: '#FFFFFF',
+          fillColor: '#FFFFFF',
+          color: '#171717',
           weight: 2,
           opacity: 1,
-          fillOpacity: 0.9,
+          fillOpacity: 0.95,
         });
 
         marker.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
-            <div class="font-bold text-sm text-emerald-700">${t.name}</div>
-            <div class="text-xs text-slate-600 font-mono">${t.code} • ${t.capacityKVA} kVA</div>
-            <div class="mt-1 text-xs">
+          <div class="p-2 text-neutral-900 font-sans">
+            <div class="font-bold text-sm text-black flex items-center justify-between">
+              <span>${t.name}</span>
+              <span class="text-[10px] bg-neutral-900 text-white px-1.5 py-0.5 rounded font-mono">${t.capacityKVA} kVA</span>
+            </div>
+            <div class="text-xs text-neutral-600 font-mono">${t.code}</div>
+            <div class="mt-1 text-xs space-y-0.5">
               <div>Loading: <b>${t.loadPercentage}%</b></div>
-              <div>Oil Level: <b>${t.oilLevelPct}%</b> ${t.hasOilLeakage ? '<span class="text-red-500 font-bold">(LEAK)</span>' : ''}</div>
+              <div>Oil Level: <b>${t.oilLevelPct}%</b> ${t.hasOilLeakage ? '<span class="text-black font-bold underline">(LEAK)</span>' : ''}</div>
               <div>Make: <b>${t.make}</b></div>
               <div>Phase Imbalance: <b>${t.phaseImbalancePct}%</b></div>
             </div>
@@ -224,20 +270,20 @@ export const MasterMap: React.FC = () => {
 
         const marker = L.circleMarker(p.coordinates, {
           radius: 5,
-          fillColor: isHT ? '#8B5CF6' : '#6366F1',
-          color: '#FFFFFF',
+          fillColor: isHT ? '#FFFFFF' : '#737373',
+          color: '#000000',
           weight: 1.5,
           opacity: 1,
-          fillOpacity: 0.85,
+          fillOpacity: 0.9,
         });
 
         marker.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
+          <div class="p-2 text-neutral-900 font-sans">
             <div class="font-bold text-sm">${p.poleNumber}</div>
-            <div class="text-xs text-slate-600 font-mono">${p.code} • ${p.poleType}</div>
-            <div class="mt-1 text-xs">
+            <div class="text-xs text-neutral-600 font-mono">${p.code} • ${p.poleType}</div>
+            <div class="mt-1 text-xs space-y-0.5">
               <div>Material: <b>${p.material} (${p.heightMeters}m)</b></div>
-              <div>Condition: <b class="text-emerald-600">${p.condition}</b></div>
+              <div>Condition: <b class="text-black">${p.condition}</b></div>
               <div>Insulators: <b>${p.numInsulators}</b></div>
               <div>Streetlight: <b>${p.hasStreetlight ? 'Mounted (LED)' : 'None'}</b></div>
             </div>
@@ -254,9 +300,9 @@ export const MasterMap: React.FC = () => {
       const conductors = assetService.getConductors();
       conductors.forEach(c => {
         const polyline = L.polyline(c.coordinates, {
-          color: '#06B6D4',
+          color: '#D4D4D4',
           weight: 2.5,
-          opacity: 0.8,
+          opacity: 0.85,
         });
         fg.addLayer(polyline);
       });
@@ -271,18 +317,18 @@ export const MasterMap: React.FC = () => {
 
         const marker = L.circleMarker(c.coordinates, {
           radius: 4,
-          fillColor: c.isSmartMeter ? '#10B981' : '#64748B',
-          color: '#FFFFFF',
+          fillColor: c.isSmartMeter ? '#FFFFFF' : '#525252',
+          color: '#000000',
           weight: 1,
-          opacity: 0.9,
-          fillOpacity: 0.8,
+          opacity: 1,
+          fillOpacity: 0.85,
         });
 
         marker.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
+          <div class="p-2 text-neutral-900 font-sans">
             <div class="font-bold text-xs">${c.name}</div>
-            <div class="text-[11px] text-slate-600 font-mono">${c.consumerNumber}</div>
-            <div class="mt-1 text-[11px]">
+            <div class="text-[11px] text-neutral-600 font-mono">${c.consumerNumber}</div>
+            <div class="mt-1 text-[11px] space-y-0.5">
               <div>Meter: <b>${c.meterNumber}</b> (${c.isSmartMeter ? 'Smart Meter' : 'Conventional'})</div>
               <div>Sanctioned Load: <b>${c.sanctionedLoadKW} kW</b> (${c.category})</div>
               <div>Address: <i>${c.address}</i></div>
@@ -301,25 +347,25 @@ export const MasterMap: React.FC = () => {
       faults.forEach(f => {
         const marker = L.circleMarker(f.coordinates, {
           radius: 8,
-          fillColor: '#DC2626',
-          color: '#FEE2E2',
+          fillColor: '#FFFFFF',
+          color: '#000000',
           weight: 3,
           opacity: 1,
-          fillOpacity: 0.9,
+          fillOpacity: 1,
         });
 
         marker.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
-            <div class="font-bold text-sm text-red-600 flex items-center gap-1">
-              <span>⚠️ ${f.faultCode}</span>
+          <div class="p-2 text-neutral-900 font-sans">
+            <div class="font-bold text-sm text-black flex items-center gap-1">
+              <span>⚡ ${f.faultCode}</span>
             </div>
-            <div class="text-xs font-semibold text-slate-700">${f.category}</div>
-            <p class="text-xs text-slate-600 mt-1">${f.description}</p>
-            <div class="mt-2 text-xs border-t pt-1 font-mono">
+            <div class="text-xs font-semibold text-neutral-800">${f.category}</div>
+            <p class="text-xs text-neutral-600 mt-1">${f.description}</p>
+            <div class="mt-2 text-xs border-t border-neutral-300 pt-1 font-mono space-y-0.5">
               <div>Nearest Pole: <b>${f.distanceFromPoleM || '--'}m</b></div>
               <div>Nearest DT: <b>${f.distanceFromDtM || '--'}m</b></div>
               <div>Along Feeder: <b>${f.distanceAlongFeederM || '--'}m</b></div>
-              <div>Status: <b class="uppercase text-amber-600">${f.status}</b></div>
+              <div>Status: <b class="uppercase text-black font-bold">${f.status}</b></div>
             </div>
           </div>
         `);
@@ -329,26 +375,26 @@ export const MasterMap: React.FC = () => {
       });
     }
 
-    // 8. Contractor Survey Staging (Pink Diamonds)
+    // 8. Contractor Survey Staging (Draft markers)
     if (isLayerVisible('survey_staging')) {
       const staging = surveyService.getStagingAssets();
       staging.forEach(s => {
         const marker = L.circleMarker(s.coordinates, {
           radius: 7,
-          fillColor: '#EC4899',
-          color: '#FFFFFF',
+          fillColor: '#A3A3A3',
+          color: '#000000',
           weight: 2,
           opacity: 1,
           fillOpacity: 0.9,
         });
 
         marker.bindPopup(`
-          <div class="p-2 text-slate-900 font-sans">
-            <div class="font-bold text-xs text-pink-600">STAGING DRAFT (UNPUBLISHED)</div>
+          <div class="p-2 text-neutral-900 font-sans">
+            <div class="font-bold text-xs uppercase tracking-wider text-neutral-700">STAGING DRAFT (UNPUBLISHED)</div>
             <div class="font-bold text-sm">${s.temporaryCode}</div>
-            <div class="text-xs text-slate-600">Asset Type: <b>${s.assetType}</b></div>
+            <div class="text-xs text-neutral-600">Asset Type: <b>${s.assetType}</b></div>
             <div class="text-xs mt-1">GPS Accuracy: <b>±${s.gpsAccuracyM}m</b></div>
-            <div class="text-[11px] text-amber-600 font-semibold mt-1">Pending JE/AE Multi-Tier Verification</div>
+            <div class="text-[11px] text-black font-semibold mt-1">Pending JE/AE Multi-Tier Verification</div>
           </div>
         `);
 
@@ -366,11 +412,11 @@ export const MasterMap: React.FC = () => {
     if (measurement.points.length === 0) return;
 
     // Draw points
-    measurement.points.forEach((pt, idx) => {
+    measurement.points.forEach(pt => {
       const marker = L.circleMarker(pt, {
         radius: 5,
-        fillColor: '#0EA5E9',
-        color: '#FFFFFF',
+        fillColor: '#FFFFFF',
+        color: '#000000',
         weight: 2,
         fillOpacity: 1,
       });
@@ -379,7 +425,7 @@ export const MasterMap: React.FC = () => {
 
     if (measurement.mode === 'distance' && measurement.points.length > 1) {
       const line = L.polyline(measurement.points, {
-        color: '#0EA5E9',
+        color: '#FFFFFF',
         weight: 3,
         dashArray: '6, 6',
       });
@@ -393,8 +439,8 @@ export const MasterMap: React.FC = () => {
       measurement.totalDistanceM = Math.round((measurement.totalDistanceM + dist) * 10) / 10;
     } else if (measurement.mode === 'area' && measurement.points.length >= 3) {
       const polygon = L.polygon(measurement.points, {
-        color: '#10B981',
-        fillColor: '#10B981',
+        color: '#FFFFFF',
+        fillColor: '#FFFFFF',
         fillOpacity: 0.25,
         weight: 2,
       });
@@ -404,9 +450,12 @@ export const MasterMap: React.FC = () => {
   }, [measurement.points]);
 
   return (
-    <div className="relative w-full h-full flex-1 bg-[#0b1320] overflow-hidden">
+    <div className="relative w-full h-full flex-1 bg-black overflow-hidden select-none">
       {/* Basemap Switcher Floating Widget */}
       <BasemapSwitcher />
+
+      {/* Map Rotation & Compass Floating Widget */}
+      <MapRotationControl />
 
       {/* Layer Tree Floating Widget */}
       <LayerTree />

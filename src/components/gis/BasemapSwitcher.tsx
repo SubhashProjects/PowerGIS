@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// MULTI-BASEMAP SWITCHER CONTROL (GOOGLE MAPS, OSM & ESRI)
+// MULTI-BASEMAP SWITCHER CONTROL - MONOCHROME B&W THEME
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -19,18 +19,18 @@ export const BasemapSwitcher: React.FC = () => {
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-[#0f172a]/90 backdrop-blur-md border border-slate-700/80 text-white shadow-xl hover:bg-slate-800 transition-all text-xs font-semibold"
+          className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-black/90 backdrop-blur-md border border-neutral-800 text-white shadow-2xl hover:bg-neutral-900 transition-all text-xs font-semibold"
         >
-          <Layers className="w-4 h-4 text-sky-400" />
+          <Layers className="w-4 h-4 text-white" />
           <span>Basemap: {selected.name}</span>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+          <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-11 w-64 bg-[#0d1527]/95 backdrop-blur-md border border-slate-700 rounded-xl shadow-2xl p-2 z-50">
-            <div className="text-[10px] uppercase font-bold text-slate-400 px-2 py-1 mb-1 border-b border-slate-800 flex justify-between">
+          <div className="absolute right-0 top-11 w-72 bg-[#0a0a0a]/95 backdrop-blur-md border border-neutral-800 rounded-2xl shadow-2xl p-2 z-50">
+            <div className="text-[10px] uppercase font-bold text-neutral-400 px-2 py-1 mb-1 border-b border-neutral-800 flex justify-between">
               <span>Select Map Engine</span>
-              <span className="text-sky-400">8 Providers</span>
+              <span className="text-white font-mono">10 Providers</span>
             </div>
 
             <div className="space-y-1 max-h-72 overflow-y-auto">
@@ -41,19 +41,21 @@ export const BasemapSwitcher: React.FC = () => {
                     setBasemap(b.id);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                  className={`w-full text-left px-2.5 py-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
                     currentBasemap === b.id
-                      ? 'bg-sky-500/20 text-sky-300 font-semibold border border-sky-500/30'
-                      : 'text-slate-300 hover:bg-slate-800/80'
+                      ? 'bg-white text-black font-bold shadow-md'
+                      : 'text-neutral-300 hover:bg-neutral-900'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[10px] px-1 rounded bg-slate-800 text-slate-400 font-mono">
+                  <div className="flex items-center space-x-2 truncate">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold ${
+                      currentBasemap === b.id ? 'bg-neutral-200 text-black' : 'bg-neutral-900 text-neutral-400 border border-neutral-800'
+                    }`}>
                       {b.category}
                     </span>
-                    <span>{b.name}</span>
+                    <span className="truncate">{b.name}</span>
                   </div>
-                  {currentBasemap === b.id && <Check className="w-3.5 h-3.5 text-sky-400" />}
+                  {currentBasemap === b.id && <Check className="w-3.5 h-3.5 text-black flex-shrink-0" />}
                 </button>
               ))}
             </div>

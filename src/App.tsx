@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// ROOT APPLICATION CONTAINER & VIEW ROUTER
+// ROOT APPLICATION CONTAINER & VIEW ROUTER - MOBILE ADAPTIVE & B&W THEME
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -9,6 +9,7 @@ import { GISProvider, useGIS } from './context/GISContext';
 import { Header } from './components/layout/Header';
 import { ScopeBanner } from './components/layout/ScopeBanner';
 import { Sidebar, NavTabId } from './components/layout/Sidebar';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { MasterMap } from './components/gis/MasterMap';
 import { AssetTable } from './components/assets/AssetTable';
 import { SmartMeterDashboard } from './components/smartMeters/SmartMeterDashboard';
@@ -28,38 +29,52 @@ import { PermitToWorkManager } from './components/safety/PermitToWorkManager';
 import { AssetRiskMatrix } from './components/risk/AssetRiskMatrix';
 import { AdminControlPanel } from './components/admin/AdminControlPanel';
 import { LoginPage } from './components/auth/LoginPage';
-import { X, ExternalLink, Zap, MapPin } from 'lucide-react';
+import { RoleBasedDashboard } from './components/dashboard/RoleBasedDashboard';
+import { notificationService } from './services/notificationService';
+import { X, Zap } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const { user } = useAuth();
   const { selectedAsset, setSelectedAsset } = useGIS();
-  const [activeTab, setActiveTab] = useState<NavTabId>('gis_map');
+  const [activeTab, setActiveTab] = useState<NavTabId>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const roleData = notificationService.getDashboardData(user);
+  const unreadCount = roleData.notifications.filter(n => !n.read).length;
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0a0f1d] text-slate-100 font-sans">
-      {/* 1. Global Header */}
-      <Header />
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-black text-neutral-100 font-sans">
+      {/* 1. Global Header with Mobile Drawer Trigger */}
+      <Header onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)} />
 
       {/* 2. Statutory Scope & Entitlement Banner */}
       <ScopeBanner />
 
       {/* 3. Main Workspace Layout */}
       <div className="flex flex-1 overflow-hidden relative">
-        {/* Navigation Sidebar */}
+        {/* Navigation Sidebar (Desktop + Mobile Drawer) */}
         <Sidebar
           activeTab={activeTab}
-          onSelectTab={tab => setActiveTab(tab)}
+          onSelectTab={tab => {
+            setActiveTab(tab);
+            setMobileMenuOpen(false);
+          }}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          mobileOpen={mobileMenuOpen}
+          onCloseMobile={() => setMobileMenuOpen(false)}
         />
 
-        {/* Primary Viewport Area */}
+        {/* Primary Viewport Area (includes bottom padding on mobile when bottom nav is present) */}
         <main
-          className={`flex-1 relative flex flex-col bg-[#0b1220] min-h-0 ${
-            activeTab === 'gis_map' ? 'overflow-hidden' : 'overflow-y-auto'
+          className={`flex-1 relative flex flex-col bg-black min-h-0 ${
+            activeTab === 'gis_map'
+              ? 'overflow-hidden'
+              : 'overflow-y-auto pb-16 md:pb-0'
           }`}
         >
+          {activeTab === 'dashboard' && <RoleBasedDashboard onNavigateTab={tab => setActiveTab(tab)} />}
           {activeTab === 'gis_map' && <MasterMap />}
           {activeTab === 'assets' && <AssetTable />}
           {activeTab === 'smart_meters' && <SmartMeterDashboard />}
@@ -83,17 +98,17 @@ const MainLayout: React.FC = () => {
 
           {/* Asset Detail Flyout Drawer (When selected on map or via search) */}
           {selectedAsset && (
-            <div className="absolute bottom-4 right-4 max-w-sm w-full bg-[#11192b]/95 backdrop-blur-md border border-slate-700/80 rounded-2xl p-4 shadow-2xl z-40 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <div className="flex items-center space-x-2">
-                  <div className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400">
+            <div className="absolute bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-sm w-auto sm:w-full bg-[#0d0d0d]/95 backdrop-blur-md border border-neutral-800 rounded-2xl p-4 shadow-2xl z-40 space-y-3">
+              <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+                <div className="flex items-center space-x-2 truncate">
+                  <div className="p-1.5 rounded-lg bg-white/10 text-white flex-shrink-0">
                     <Zap className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-white">
+                  <div className="truncate">
+                    <h4 className="font-bold text-xs text-white truncate">
                       {selectedAsset.name || selectedAsset.code || selectedAsset.poleNumber}
                     </h4>
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="text-[10px] text-neutral-400 font-mono truncate block">
                       {selectedAsset.code || selectedAsset.consumerNumber || 'Asset Detail'}
                     </span>
                   </div>
@@ -101,41 +116,41 @@ const MainLayout: React.FC = () => {
 
                 <button
                   onClick={() => setSelectedAsset(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="space-y-1.5 text-xs text-slate-300 font-mono">
+              <div className="space-y-1.5 text-xs text-neutral-300 font-mono">
                 {selectedAsset.voltageClass && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400 font-sans">Voltage:</span>
-                    <span className="text-amber-400 font-bold">{selectedAsset.voltageClass}</span>
+                    <span className="text-neutral-400 font-sans">Voltage:</span>
+                    <span className="text-white font-bold">{selectedAsset.voltageClass}</span>
                   </div>
                 )}
                 {selectedAsset.capacityMVA && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400 font-sans">Capacity:</span>
-                    <span className="text-sky-400 font-bold">{selectedAsset.capacityMVA} MVA</span>
+                    <span className="text-neutral-400 font-sans">Capacity:</span>
+                    <span className="text-white font-bold">{selectedAsset.capacityMVA} MVA</span>
                   </div>
                 )}
                 {selectedAsset.capacityKVA && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400 font-sans">Rating:</span>
-                    <span className="text-emerald-400 font-bold">{selectedAsset.capacityKVA} kVA</span>
+                    <span className="text-neutral-400 font-sans">Rating:</span>
+                    <span className="text-white font-bold">{selectedAsset.capacityKVA} kVA</span>
                   </div>
                 )}
                 {selectedAsset.loadPercentage !== undefined && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400 font-sans">Current Load:</span>
-                    <span className="text-amber-300 font-bold">{selectedAsset.loadPercentage}%</span>
+                    <span className="text-neutral-400 font-sans">Current Load:</span>
+                    <span className="text-white font-bold">{selectedAsset.loadPercentage}%</span>
                   </div>
                 )}
                 {selectedAsset.coordinates && (
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-400 font-sans">GPS Coords:</span>
-                    <span className="text-slate-300">
+                    <span className="text-neutral-400 font-sans">GPS Coords:</span>
+                    <span className="text-neutral-300">
                       {Array.isArray(selectedAsset.coordinates[0])
                         ? `${selectedAsset.coordinates[0][0].toFixed(4)}, ${selectedAsset.coordinates[0][1].toFixed(4)}`
                         : `${selectedAsset.coordinates[0].toFixed(4)}, ${selectedAsset.coordinates[1].toFixed(4)}`}
@@ -147,6 +162,17 @@ const MainLayout: React.FC = () => {
           )}
         </main>
       </div>
+
+      {/* 4. Mobile Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        onSelectTab={tab => {
+          setActiveTab(tab);
+          setMobileMenuOpen(false);
+        }}
+        onOpenMobileMenu={() => setMobileMenuOpen(true)}
+        unreadCount={unreadCount}
+      />
     </div>
   );
 };
