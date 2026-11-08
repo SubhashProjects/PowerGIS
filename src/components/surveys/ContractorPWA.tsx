@@ -1,18 +1,17 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// CONTRACTOR GPS FIELD SURVEY WEBPAGE (MOBILE-FIRST PWA)
+// CONTRACTOR GPS FIELD SURVEY WEBPAGE (MOBILE-FIRST PWA) - MONOCHROME B&W
 // Features: Live GPS Accuracy, Offline Queue, Meter-to-Pole Mapping, Photo Capture
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { surveyService } from '../../services/surveyService';
-import { assetService } from '../../services/assetService';
 import { offlineQueue } from '../../lib/offlineQueue';
 import { SurveyAssetType } from '../../types/surveys';
 import {
   Smartphone, MapPin, Camera, Wifi, WifiOff, UploadCloud,
-  CheckCircle2, Plus, AlertCircle, RefreshCw
+  CheckCircle2, Plus, RefreshCw, X
 } from 'lucide-react';
 
 export const ContractorPWA: React.FC = () => {
@@ -68,7 +67,6 @@ export const ContractorPWA: React.FC = () => {
           setIsLocating(false);
         },
         () => {
-          // Fallback simulation near Puducherry
           const jitterLat = 11.9295 + (Math.random() - 0.5) * 0.003;
           const jitterLng = 79.8242 + (Math.random() - 0.5) * 0.003;
           setGpsCoords([jitterLat, jitterLng]);
@@ -98,7 +96,6 @@ export const ContractorPWA: React.FC = () => {
 
     setStagedQueue(prev => [...prev, newItem]);
 
-    // Also queue into offline queue
     offlineQueue.enqueueRecord({
       contractorId: user.id,
       workOrderNumber: workOrderNo,
@@ -136,28 +133,28 @@ export const ContractorPWA: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-4">
+    <div className="max-w-2xl mx-auto p-3.5 sm:p-6 space-y-4 text-neutral-100 select-none">
       {/* PWA Mobile Header Card */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl">
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 shadow-2xl space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
-              <Smartphone className="w-5 h-5" />
+          <div className="flex items-center space-x-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-lg shadow-md shadow-white/10 flex-shrink-0">
+              ⚡
             </div>
             <div>
               <h2 className="font-bold text-sm text-white">Contractor GPS Field Survey</h2>
-              <p className="text-xs text-slate-400">Offline PWA • {user.fullName} ({user.contractorCompany || 'Larsen Power'})</p>
+              <p className="text-xs text-neutral-400 font-mono">Offline PWA • {user.fullName} ({user.contractorCompany || 'Larsen Power'})</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
             {isOnline ? (
-              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono border border-emerald-500/20">
+              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-xs font-mono border border-neutral-700 font-bold">
                 <Wifi className="w-3 h-3" />
                 <span>ONLINE</span>
               </span>
             ) : (
-              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 text-xs font-mono border border-rose-500/20">
+              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-neutral-900 text-neutral-400 text-xs font-mono border border-neutral-800">
                 <WifiOff className="w-3 h-3" />
                 <span>OFFLINE</span>
               </span>
@@ -166,14 +163,14 @@ export const ContractorPWA: React.FC = () => {
         </div>
 
         {/* Live GPS Telemetry Box */}
-        <div className="mt-4 p-3 rounded-xl bg-[#090f1a] border border-slate-800 flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-850 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400">Live GPS Coordinates</div>
-            <div className="font-mono text-sm text-sky-300 font-semibold">
+            <div className="text-[10px] uppercase font-bold text-neutral-400 font-mono">Live GPS Telemetry</div>
+            <div className="font-mono text-sm text-white font-extrabold mt-0.5">
               {gpsCoords[0].toFixed(6)}° N, {gpsCoords[1].toFixed(6)}° E
             </div>
-            <div className="text-[11px] text-slate-400 flex items-center space-x-2 mt-0.5">
-              <span>Accuracy: <b className="text-emerald-400">±{gpsAccuracy}m</b></span>
+            <div className="text-[11px] text-neutral-400 font-mono flex items-center space-x-2 mt-0.5">
+              <span>Accuracy: <b className="text-white">±{gpsAccuracy}m</b></span>
               <span>•</span>
               <span>Altitude: <b>{altitude}m MSL</b></span>
             </div>
@@ -182,7 +179,7 @@ export const ContractorPWA: React.FC = () => {
           <button
             onClick={handleAcquireGPS}
             disabled={isLocating}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md shadow-sky-600/20 transition-all disabled:opacity-50"
+            className="flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold shadow-md shadow-white/10 transition-all disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`} />
             <span>{isLocating ? 'Acquiring...' : 'Refresh GPS'}</span>
@@ -191,17 +188,17 @@ export const ContractorPWA: React.FC = () => {
       </div>
 
       {/* Asset Capture Form */}
-      <form onSubmit={handleAddAssetToDraft} className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h3 className="font-semibold text-xs text-white uppercase tracking-wider flex items-center space-x-1.5">
-            <Plus className="w-4 h-4 text-sky-400" />
+      <form onSubmit={handleAddAssetToDraft} className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+          <h3 className="font-bold text-xs text-white uppercase tracking-wider flex items-center space-x-2">
+            <Plus className="w-4 h-4 text-white" />
             <span>Map New Electrical Asset</span>
           </h3>
-          <span className="text-[11px] text-slate-400 font-mono">Work Order: {workOrderNo}</span>
+          <span className="text-[11px] text-neutral-400 font-mono">WO: {workOrderNo}</span>
         </div>
 
         {submitMessage && (
-          <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center space-x-2">
+          <div className="p-3 rounded-2xl bg-neutral-900 border border-neutral-700 text-white text-xs flex items-center space-x-2 animate-in fade-in duration-150">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
             <span>{submitMessage}</span>
           </div>
@@ -209,11 +206,11 @@ export const ContractorPWA: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[11px] text-slate-400 font-medium mb-1">Asset Category</label>
+            <label className="block text-[11px] text-neutral-400 font-medium mb-1 font-mono">Asset Category</label>
             <select
               value={assetType}
               onChange={e => setAssetType(e.target.value as SurveyAssetType)}
-              className="w-full bg-[#0b1220] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
+              className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
             >
               <option value="pole">Utility Pole (HT / LT)</option>
               <option value="transformer">Distribution Transformer (DT)</option>
@@ -224,26 +221,26 @@ export const ContractorPWA: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[11px] text-slate-400 font-medium mb-1">Asset ID / Code</label>
+            <label className="block text-[11px] text-neutral-400 font-medium mb-1 font-mono">Asset ID / Code</label>
             <input
               type="text"
               value={assetCode}
               onChange={e => setAssetCode(e.target.value)}
               placeholder="e.g. POL-MARA-003"
-              className="w-full bg-[#0b1220] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
+              className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-white"
             />
           </div>
         </div>
 
         {/* Dynamic Attributes based on Asset Type */}
         {assetType === 'pole' && (
-          <div className="grid grid-cols-2 gap-3 p-3 bg-[#0a101b] rounded-xl border border-slate-800">
+          <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-950 rounded-2xl border border-neutral-850">
             <div>
-              <label className="block text-[10px] text-slate-400 font-medium mb-1">Pole Type & Material</label>
+              <label className="block text-[10px] text-neutral-400 font-medium mb-1 font-mono">Pole Type & Material</label>
               <select
                 value={attributes.pole_type}
                 onChange={e => setAttributes({ ...attributes, pole_type: e.target.value })}
-                className="w-full bg-[#121c2d] border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none"
               >
                 <option value="PSCC 9m">PSCC 9m (Concrete)</option>
                 <option value="Steel Tubular 11m">Steel Tubular 11m (Galvanized)</option>
@@ -251,88 +248,88 @@ export const ContractorPWA: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] text-slate-400 font-medium mb-1">Number of Insulators</label>
+              <label className="block text-[10px] text-neutral-400 font-medium mb-1 font-mono">Number of Insulators</label>
               <input
                 type="number"
                 value={attributes.num_insulators || 3}
                 onChange={e => setAttributes({ ...attributes, num_insulators: parseInt(e.target.value) })}
-                className="w-full bg-[#121c2d] border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none"
               />
             </div>
           </div>
         )}
 
         {assetType === 'consumer' && (
-          <div className="grid grid-cols-2 gap-3 p-3 bg-[#0a101b] rounded-xl border border-slate-800">
+          <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-950 rounded-2xl border border-neutral-850">
             <div>
-              <label className="block text-[10px] text-slate-400 font-medium mb-1">Meter Classification</label>
+              <label className="block text-[10px] text-neutral-400 font-medium mb-1 font-mono">Meter Classification</label>
               <select
                 value={attributes.is_smart_meter ? 'smart' : 'conv'}
                 onChange={e => setAttributes({ ...attributes, is_smart_meter: e.target.value === 'smart' })}
-                className="w-full bg-[#121c2d] border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none"
               >
                 <option value="smart">Smart Energy Meter (AMI)</option>
                 <option value="conv">Conventional Electronic Meter</option>
               </select>
             </div>
             <div>
-              <label className="block text-[10px] text-slate-400 font-medium mb-1">Connected Supply Pole</label>
+              <label className="block text-[10px] text-neutral-400 font-medium mb-1 font-mono">Connected Supply Pole</label>
               <input
                 type="text"
                 placeholder="e.g. POL-MARA-001"
                 onChange={e => setAttributes({ ...attributes, connected_pole: e.target.value })}
-                className="w-full bg-[#121c2d] border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none"
               />
             </div>
           </div>
         )}
 
         <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center space-x-2 text-xs text-slate-400">
-            <Camera className="w-4 h-4 text-sky-400" />
+          <div className="flex items-center space-x-2 text-xs text-neutral-400 font-mono">
+            <Camera className="w-4 h-4 text-white" />
             <span>Geotagged Photo: Attached (Simulated)</span>
           </div>
 
           <button
             type="submit"
-            className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-lg shadow-sky-600/30 transition-all flex items-center space-x-1.5"
+            className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold shadow-md shadow-white/10 transition-all flex items-center space-x-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add to Local Survey Batch</span>
+            <span>Add to Local Batch</span>
           </button>
         </div>
       </form>
 
       {/* Staged Draft Items */}
       {stagedQueue.length > 0 && (
-        <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-xs text-white uppercase tracking-wider">
+        <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+            <h4 className="font-bold text-xs text-white uppercase tracking-wider">
               Pending Survey Batch ({stagedQueue.length} Assets Captured)
             </h4>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-mono">
-              Draft (Unsubmitted)
+            <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-900 text-white font-mono border border-neutral-700 font-bold">
+              Draft Staging
             </span>
           </div>
 
-          <div className="space-y-1.5 max-h-48 overflow-y-auto">
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
             {stagedQueue.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between p-2 rounded-lg bg-[#0a101b] border border-slate-800 text-xs"
+                className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-850 text-xs"
               >
                 <div>
-                  <span className="font-semibold text-slate-200">{item.temporaryCode}</span>
-                  <span className="text-slate-400 text-[11px] ml-2">({item.assetType})</span>
+                  <span className="font-bold text-white">{item.temporaryCode}</span>
+                  <span className="text-neutral-400 text-[11px] ml-2 font-mono">({item.assetType})</span>
                 </div>
-                <div className="text-[11px] font-mono text-emerald-400">±{item.gpsAccuracyM}m</div>
+                <div className="text-[11px] font-mono text-white font-semibold">±{item.gpsAccuracyM}m</div>
               </div>
             ))}
           </div>
 
           <button
             onClick={handleSubmitBatchForApproval}
-            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2"
+            className="w-full py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-extrabold shadow-md shadow-white/10 transition-all flex items-center justify-center space-x-2"
           >
             <UploadCloud className="w-4 h-4" />
             <span>Submit Survey to Junior Engineer (JE) for Official Review</span>

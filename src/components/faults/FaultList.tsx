@@ -1,18 +1,16 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// FAULT MANAGEMENT & NETWORK DISTANCE ENGINE
+// FAULT MANAGEMENT & NETWORK DISTANCE ENGINE - MONOCHROME B&W THEME
 // Calculates: Nearest Pole, Nearest DT, Distance along feeder, Office distance
 // ============================================================================
 
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { faultService } from '../../services/faultService';
-import { assetService } from '../../services/assetService';
-import { initialUsers, initialSections } from '../../services/mockData';
+import { initialUsers } from '../../services/mockData';
 import { Fault, FaultStatus } from '../../types/operations';
 import {
-  AlertTriangle, CheckCircle, Clock, MapPin, Plus, UserPlus,
-  Send, Compass, Wrench, ShieldAlert
+  AlertTriangle, CheckCircle2, Clock, MapPin, Plus, Compass, Wrench, X
 } from 'lucide-react';
 
 export const FaultList: React.FC = () => {
@@ -77,57 +75,64 @@ export const FaultList: React.FC = () => {
   };
 
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-4">
+    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-100 select-none">
       {/* Top Header & Actions */}
-      <div className="flex items-center justify-between bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-            <AlertTriangle className="w-5 h-5" />
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-xl shadow-lg shadow-white/10 flex-shrink-0">
+            ⚡
           </div>
           <div>
-            <h2 className="font-bold text-sm text-white">Grid Breakdown & Fault Management</h2>
-            <p className="text-xs text-slate-400">Automated Spatial Proximity & Network Feeder Distance Calculations</p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">Grid Breakdown & Fault Management</h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-white border border-neutral-700">
+                PROXIMITY ENGINE
+              </span>
+            </div>
+            <p className="text-xs text-neutral-400 mt-0.5 font-mono">
+              Spatial Proximity & Network Feeder Distance Geodesics
+            </p>
           </div>
         </div>
 
         <button
           onClick={() => setShowNewModal(true)}
-          className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 transition-all"
+          className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-white/10 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Report New Breakdown</span>
+          <span>Report Breakdown</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Faults List */}
-        <div className="lg:col-span-1 bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h3 className="font-semibold text-xs text-white uppercase tracking-wider">
+        <div className="lg:col-span-1 bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 shadow-xl space-y-3">
+          <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-white">
               Active Fault Tickets ({faults.length})
             </h3>
-            <span className="text-[10px] text-slate-400 font-mono">Real-time</span>
+            <span className="text-[10px] text-neutral-400 font-mono">Live Sync</span>
           </div>
 
-          <div className="space-y-2 max-h-[600px] overflow-y-auto">
+          <div className="space-y-2 max-h-[560px] overflow-y-auto pr-1">
             {faults.map(f => (
               <button
                 key={f.id}
                 onClick={() => setSelectedFault(f)}
-                className={`w-full text-left p-3 rounded-xl border transition-all ${
+                className={`w-full text-left p-3.5 rounded-2xl border transition-all ${
                   selectedFault?.id === f.id
-                    ? 'bg-rose-500/15 border-rose-500/50 shadow-md shadow-rose-500/10'
-                    : 'bg-[#0a101b] border-slate-800 hover:border-slate-700'
+                    ? 'bg-neutral-900 border-white shadow-lg text-white font-semibold'
+                    : 'bg-neutral-950 border-neutral-850 hover:border-neutral-700 text-neutral-300'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-semibold text-rose-300">{f.faultCode}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-800 text-slate-300">
+                  <span className="font-mono text-xs font-bold text-white">{f.faultCode}</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-black text-white border border-neutral-700">
                     {f.status}
                   </span>
                 </div>
-                <div className="font-medium text-xs text-slate-200 mt-1 truncate">{f.category}</div>
-                <p className="text-[11px] text-slate-400 mt-0.5 truncate">{f.description}</p>
+                <div className="font-semibold text-xs text-neutral-200 mt-1 truncate">{f.category}</div>
+                <p className="text-[11px] text-neutral-400 mt-0.5 truncate">{f.description}</p>
               </button>
             ))}
           </div>
@@ -136,23 +141,23 @@ export const FaultList: React.FC = () => {
         {/* Selected Fault Detailed Analytics */}
         {selectedFault && (
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-4">
                 <div>
                   <div className="flex items-center space-x-2">
                     <span className="font-bold text-sm text-white">{selectedFault.faultCode}</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-rose-500/15 text-rose-400 border border-rose-500/25">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase font-mono bg-neutral-900 text-white border border-neutral-700">
                       {selectedFault.priority}
                     </span>
                   </div>
-                  <h3 className="text-xs font-semibold text-sky-400 mt-0.5">{selectedFault.category}</h3>
+                  <h3 className="text-xs font-semibold text-neutral-300 mt-1">{selectedFault.category}</h3>
                 </div>
 
                 <div className="flex items-center space-x-2">
                   <select
                     value={selectedFault.status}
                     onChange={e => handleUpdateStatus(e.target.value as FaultStatus)}
-                    className="bg-[#0b1220] border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 uppercase font-mono font-bold"
+                    className="bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-1.5 text-xs text-white uppercase font-mono font-bold focus:outline-none"
                   >
                     <option value="new">New</option>
                     <option value="assigned">Assigned</option>
@@ -165,73 +170,71 @@ export const FaultList: React.FC = () => {
                 </div>
               </div>
 
-              <p className="text-xs text-slate-300">{selectedFault.description}</p>
+              <p className="text-xs text-neutral-300 leading-relaxed">{selectedFault.description}</p>
 
-              {/* SPATIAL DISTANCE METRICS CARD (Section 10 Requirement) */}
-              <div className="p-4 rounded-xl bg-[#090f1a] border border-slate-800 space-y-3">
+              {/* SPATIAL DISTANCE METRICS CARD */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-xs text-sky-400 uppercase tracking-wider flex items-center space-x-1.5">
-                    <Compass className="w-4 h-4" />
+                  <h4 className="font-bold text-xs text-white uppercase tracking-wider flex items-center space-x-1.5">
+                    <Compass className="w-4 h-4 text-white" />
                     <span>Calculated Spatial Proximity & Network Distances</span>
                   </h4>
-                  <span className="text-[10px] text-slate-500 font-mono">PostGIS Spherical Geodesic</span>
+                  <span className="text-[10px] text-neutral-400 font-mono">PostGIS Spherical Geodesic</span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-2.5 rounded-lg bg-[#111929] border border-slate-800/80">
-                    <div className="text-[10px] text-slate-400 font-medium">Nearest Pole</div>
-                    <div className="font-mono text-base font-bold text-sky-300">
+                  <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
+                    <div className="text-[10px] text-neutral-400 font-medium font-mono">Nearest Pole</div>
+                    <div className="font-mono text-base font-extrabold text-white mt-0.5">
                       {selectedFault.distanceFromPoleM ? `${selectedFault.distanceFromPoleM} m` : 'Calculating...'}
                     </div>
-                    <div className="text-[9px] text-slate-500">Straight-line</div>
+                    <div className="text-[9px] text-neutral-500 font-mono">Straight-line</div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-[#111929] border border-slate-800/80">
-                    <div className="text-[10px] text-slate-400 font-medium">Nearest Transformer</div>
-                    <div className="font-mono text-base font-bold text-emerald-300">
+                  <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
+                    <div className="text-[10px] text-neutral-400 font-medium font-mono">Nearest Transformer</div>
+                    <div className="font-mono text-base font-extrabold text-white mt-0.5">
                       {selectedFault.distanceFromDtM ? `${selectedFault.distanceFromDtM} m` : 'Calculating...'}
                     </div>
-                    <div className="text-[9px] text-slate-500">Straight-line</div>
+                    <div className="text-[9px] text-neutral-500 font-mono">Straight-line</div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-[#111929] border border-slate-800/80">
-                    <div className="text-[10px] text-slate-400 font-medium">Along Feeder Route</div>
-                    <div className="font-mono text-base font-bold text-amber-300">
+                  <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
+                    <div className="text-[10px] text-neutral-400 font-medium font-mono">Along Feeder Route</div>
+                    <div className="font-mono text-base font-extrabold text-white mt-0.5">
                       {selectedFault.distanceAlongFeederM ? `${selectedFault.distanceAlongFeederM} m` : '1850 m'}
                     </div>
-                    <div className="text-[9px] text-slate-500">LineString Topology</div>
+                    <div className="text-[9px] text-neutral-500 font-mono">LineString Route</div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-[#111929] border border-slate-800/80">
-                    <div className="text-[10px] text-slate-400 font-medium">From Section Office</div>
-                    <div className="font-mono text-base font-bold text-purple-300">
+                  <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800">
+                    <div className="text-[10px] text-neutral-400 font-medium font-mono">From Section Office</div>
+                    <div className="font-mono text-base font-extrabold text-white mt-0.5">
                       {selectedFault.distanceFromOfficeKm ? `${selectedFault.distanceFromOfficeKm} km` : '0.8 km'}
                     </div>
-                    <div className="text-[9px] text-slate-500">Marapalam Section</div>
+                    <div className="text-[9px] text-neutral-500 font-mono">Marapalam Section</div>
                   </div>
                 </div>
               </div>
 
               {/* Assignment & Crew Dispatch */}
-              <div className="p-3 rounded-xl bg-[#0a101b] border border-slate-800 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-xs text-slate-400">Assigned Field Crew / Contractor:</span>
-                  <div className="font-semibold text-xs text-slate-200 mt-0.5">
+                  <span className="text-xs text-neutral-400 font-mono">Assigned Field Crew / Contractor:</span>
+                  <div className="font-semibold text-xs text-white mt-0.5">
                     {initialUsers.find(u => u.id === selectedFault.assignedTo)?.fullName || 'Unassigned'}
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <select
-                    onChange={e => handleAssign(e.target.value)}
-                    className="bg-[#121c2d] border border-slate-700 rounded px-2.5 py-1 text-xs text-slate-200"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>Assign Crew...</option>
-                    <option value="user-contractor">Larsen EPC Contractor Gang</option>
-                    <option value="user-je">Marapalam O&M Internal Gang</option>
-                  </select>
-                </div>
+                <select
+                  onChange={e => handleAssign(e.target.value)}
+                  className="bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none"
+                  defaultValue=""
+                >
+                  <option value="" disabled>Assign Crew...</option>
+                  <option value="user-contractor">Larsen EPC Contractor Gang</option>
+                  <option value="user-je">Marapalam O&M Internal Gang</option>
+                </select>
               </div>
             </div>
           </div>
@@ -240,19 +243,28 @@ export const FaultList: React.FC = () => {
 
       {/* New Breakdown Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <form onSubmit={handleCreateFault} className="bg-[#121b2d] border border-slate-700 rounded-2xl p-5 max-w-lg w-full shadow-2xl space-y-4">
-            <h3 className="font-bold text-sm text-white flex items-center space-x-2">
-              <AlertTriangle className="w-4 h-4 text-rose-500" />
-              <span>Report Distribution Grid Breakdown</span>
-            </h3>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 select-none">
+          <form onSubmit={handleCreateFault} className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <h3 className="font-bold text-sm text-white flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 text-white" />
+                <span>Report Distribution Grid Breakdown</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowNewModal(false)}
+                className="p-1 rounded text-neutral-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
             <div>
-              <label className="block text-[11px] text-slate-400 font-medium mb-1">Fault Category</label>
+              <label className="block text-[11px] text-neutral-400 font-medium mb-1 font-mono">Fault Category</label>
               <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="w-full bg-[#0a101b] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200"
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
               >
                 <option value="Conductor Snapped">Conductor Snapped</option>
                 <option value="HT Line Fault">HT 11kV Line Fault</option>
@@ -265,34 +277,34 @@ export const FaultList: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] text-slate-400 font-medium mb-1">Description & Field Location</label>
+              <label className="block text-[11px] text-neutral-400 font-medium mb-1 font-mono">Description & Location</label>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 placeholder="e.g. Snapped conductor across Maraimalai Adigal Salai opposite Bus Stand. Danger notices deployed."
-                className="w-full h-20 bg-[#0a101b] border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-rose-500"
+                className="w-full h-20 bg-neutral-900 border border-neutral-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-white"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-slate-400 font-medium mb-1">Latitude</label>
+                <label className="block text-[11px] text-neutral-400 font-medium mb-1 font-mono">Latitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={lat}
                   onChange={e => setLat(parseFloat(e.target.value))}
-                  className="w-full bg-[#0a101b] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono"
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-slate-400 font-medium mb-1">Longitude</label>
+                <label className="block text-[11px] text-neutral-400 font-medium mb-1 font-mono">Longitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={lng}
                   onChange={e => setLng(parseFloat(e.target.value))}
-                  className="w-full bg-[#0a101b] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono"
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none"
                 />
               </div>
             </div>
@@ -301,13 +313,13 @@ export const FaultList: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md shadow-rose-600/30"
+                className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold shadow-md shadow-white/10"
               >
                 Submit & Calculate Distances
               </button>

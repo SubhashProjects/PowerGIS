@@ -1,9 +1,9 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// GIS CONTEXT PROVIDER: BASEMAPS, OVERLAYS, MEASUREMENT, ROTATION & SELECTED ASSET
+// GIS CONTEXT PROVIDER: BASEMAPS, OVERLAYS, MEASUREMENT, ROTATION, THEME & SELECTED ASSET
 // ============================================================================
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { BasemapProviderId, GISLayerState, GISOverlayLayerId, MapMeasurement } from '../types/gis';
 import { initialGISLayers, regionCoordinates } from '../services/gisService';
 
@@ -25,6 +25,9 @@ interface GISContextType {
   setBearing: (bearing: number | ((prev: number) => number)) => void;
   rotateBy: (degrees: number) => void;
   resetBearing: () => void;
+  themeMode: 'black' | 'white';
+  setThemeMode: (theme: 'black' | 'white') => void;
+  toggleThemeMode: () => void;
 }
 
 const GISContext = createContext<GISContextType | undefined>(undefined);
@@ -35,6 +38,7 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeRegion, setActiveRegion] = useState<string>('reg-pdy');
   const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
   const [bearing, setBearingState] = useState<number>(0);
+  const [themeMode, setThemeModeState] = useState<'black' | 'white'>('black');
 
   const normalizeBearing = (deg: number): number => {
     const mod = deg % 360;
@@ -54,6 +58,21 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const resetBearing = () => {
     setBearingState(0);
+  };
+
+  const setThemeMode = (mode: 'black' | 'white') => {
+    setThemeModeState(mode);
+    if (mode === 'white') {
+      setBasemap('carto_light');
+      document.documentElement.classList.add('theme-white');
+    } else {
+      setBasemap('carto_dark');
+      document.documentElement.classList.remove('theme-white');
+    }
+  };
+
+  const toggleThemeMode = () => {
+    setThemeMode(themeMode === 'black' ? 'white' : 'black');
   };
 
   const [measurement, setMeasurement] = useState<MapMeasurement>({
@@ -127,6 +146,9 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setBearing,
         rotateBy,
         resetBearing,
+        themeMode,
+        setThemeMode,
+        toggleThemeMode,
       }}
     >
       {children}

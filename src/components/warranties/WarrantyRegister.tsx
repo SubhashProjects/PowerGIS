@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// WARRANTY & EQUIPMENT LIFECYCLE REGISTER
+// WARRANTY & EQUIPMENT LIFECYCLE REGISTER - MONOCHROME B&W THEME
 // 30/60/90-Day Expiry Alerts • Batch Warranties • Useful Life Depreciation
 // ============================================================================
 
@@ -17,40 +17,47 @@ export const WarrantyRegister: React.FC = () => {
   const expiringSoon = warranties.filter(w => w.daysToExpiry <= 60);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-4">
+    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-100 select-none">
       {/* Top Banner */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
-            <ShieldCheck className="w-5 h-5" />
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-xl shadow-lg shadow-white/10 flex-shrink-0">
+            ⚡
           </div>
           <div>
-            <h2 className="font-bold text-sm text-white">Warranty & Equipment Lifecycle Register</h2>
-            <p className="text-xs text-slate-400">Advance Expiry Alerts (30/60/90 Days) • OEM Manufacturer Guarantees</p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">Warranty & Equipment Lifecycle Register</h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-white border border-neutral-700">
+                OEM GUARANTEES
+              </span>
+            </div>
+            <p className="text-xs text-neutral-400 mt-0.5 font-mono">
+              Advance Expiry Alerts (30/60/90 Days) • Manufacturer Guarantees & Depreciation
+            </p>
           </div>
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap items-center gap-1.5 self-start md:self-auto text-xs font-semibold">
           <button
             onClick={() => setFilterMode('expiring')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              filterMode === 'expiring' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'
+            className={`px-3.5 py-2 rounded-xl transition-all ${
+              filterMode === 'expiring' ? 'bg-white text-black font-bold shadow-md' : 'bg-neutral-900 text-neutral-400 hover:text-white'
             }`}
           >
             Expiring Soon ({expiringSoon.length})
           </button>
           <button
             onClick={() => setFilterMode('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              filterMode === 'all' ? 'bg-sky-600 text-white' : 'bg-slate-800 text-slate-400'
+            className={`px-3.5 py-2 rounded-xl transition-all ${
+              filterMode === 'all' ? 'bg-white text-black font-bold shadow-md' : 'bg-neutral-900 text-neutral-400 hover:text-white'
             }`}
           >
             All Warranties ({warranties.length})
           </button>
           <button
             onClick={() => setFilterMode('lifecycle')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              filterMode === 'lifecycle' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400'
+            className={`px-3.5 py-2 rounded-xl transition-all ${
+              filterMode === 'lifecycle' ? 'bg-white text-black font-bold shadow-md' : 'bg-neutral-900 text-neutral-400 hover:text-white'
             }`}
           >
             Asset Lifecycle ({lifecycles.length})
@@ -59,100 +66,98 @@ export const WarrantyRegister: React.FC = () => {
       </div>
 
       {/* Main Table */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-3">
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
         {filterMode !== 'lifecycle' ? (
           <div>
-            <h3 className="font-semibold text-xs text-white uppercase tracking-wider mb-2">
+            <h3 className="font-bold text-xs text-white uppercase tracking-wider mb-3">
               Equipment Warranty Records
             </h3>
 
-            <div className="border border-slate-800 rounded-xl overflow-hidden">
-              <table className="w-full text-xs text-left">
-                <thead className="bg-[#090f1a] text-slate-400 font-mono text-[10px] border-b border-slate-800">
-                  <tr>
-                    <th className="p-2.5">Asset Code</th>
-                    <th className="p-2.5">Category</th>
-                    <th className="p-2.5">Manufacturer</th>
-                    <th className="p-2.5">Commencement</th>
-                    <th className="p-2.5">Expiry Date</th>
-                    <th className="p-2.5">Days Left</th>
-                    <th className="p-2.5">Warranty Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
-                  {(filterMode === 'expiring' ? expiringSoon : warranties).map(w => {
-                    const isUrgent = w.daysToExpiry <= 30;
-                    return (
-                      <tr key={w.id} className="hover:bg-slate-800/40">
-                        <td className="p-2.5 font-bold text-sky-400">{w.equipmentCode}</td>
-                        <td className="p-2.5 text-slate-300 font-sans">{w.equipmentType}</td>
-                        <td className="p-2.5 font-sans text-slate-400">{w.manufacturer}</td>
-                        <td className="p-2.5 text-slate-400">{w.commencementDate}</td>
-                        <td className="p-2.5 text-slate-200">{w.expiryDate}</td>
-                        <td className="p-2.5 font-bold">
-                          <span className={isUrgent ? 'text-rose-400' : 'text-amber-400'}>
-                            {w.daysToExpiry} days
-                          </span>
-                        </td>
-                        <td className="p-2.5">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                            w.daysToExpiry <= 30
-                              ? 'bg-rose-500/15 text-rose-400'
-                              : w.daysToExpiry <= 60
-                              ? 'bg-amber-500/15 text-amber-400'
-                              : 'bg-emerald-500/15 text-emerald-400'
-                          }`}>
-                            {w.claimStatus}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div className="border border-neutral-800 rounded-2xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-[#111111] text-neutral-400 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-800">
+                    <tr>
+                      <th className="p-3">Asset Code</th>
+                      <th className="p-3">Category</th>
+                      <th className="p-3">Manufacturer</th>
+                      <th className="p-3">Commencement</th>
+                      <th className="p-3">Expiry Date</th>
+                      <th className="p-3">Days Left</th>
+                      <th className="p-3">Warranty Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-850 font-mono text-neutral-300">
+                    {(filterMode === 'expiring' ? expiringSoon : warranties).map(w => {
+                      const isUrgent = w.daysToExpiry <= 30;
+                      return (
+                        <tr key={w.id} className="hover:bg-neutral-900/60 transition-colors">
+                          <td className="p-3 font-bold text-white">{w.equipmentCode}</td>
+                          <td className="p-3 text-neutral-200 font-sans">{w.equipmentType}</td>
+                          <td className="p-3 font-sans text-neutral-400">{w.manufacturer}</td>
+                          <td className="p-3 text-neutral-400">{w.commencementDate}</td>
+                          <td className="p-3 text-neutral-200">{w.expiryDate}</td>
+                          <td className="p-3 font-bold">
+                            <span className={isUrgent ? 'text-white underline' : 'text-neutral-300'}>
+                              {w.daysToExpiry} days
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-neutral-900 text-white border border-neutral-700">
+                              {w.claimStatus}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         ) : (
           <div>
-            <h3 className="font-semibold text-xs text-white uppercase tracking-wider mb-2">
+            <h3 className="font-bold text-xs text-white uppercase tracking-wider mb-3">
               Equipment Lifecycle & Aging Register
             </h3>
 
-            <div className="border border-slate-800 rounded-xl overflow-hidden">
-              <table className="w-full text-xs text-left">
-                <thead className="bg-[#090f1a] text-slate-400 font-mono text-[10px] border-b border-slate-800">
-                  <tr>
-                    <th className="p-2.5">Asset Code</th>
-                    <th className="p-2.5">Category</th>
-                    <th className="p-2.5">Install Date</th>
-                    <th className="p-2.5">Design Life</th>
-                    <th className="p-2.5">Current Age</th>
-                    <th className="p-2.5">Condition Index</th>
-                    <th className="p-2.5">Replacement Priority</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 font-mono">
-                  {lifecycles.map(l => (
-                    <tr key={l.id} className="hover:bg-slate-800/40">
-                      <td className="p-2.5 font-bold text-sky-400">{l.assetCode}</td>
-                      <td className="p-2.5 text-slate-300 font-sans">{l.assetType}</td>
-                      <td className="p-2.5 text-slate-400">{l.installationDate}</td>
-                      <td className="p-2.5 text-slate-400">{l.expectedLifeYears} Years</td>
-                      <td className="p-2.5 text-slate-200 font-bold">{l.currentAgeYears} Yrs</td>
-                      <td className="p-2.5 text-amber-400">{l.conditionScore} / 100</td>
-                      <td className="p-2.5">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          l.replacementPriority === 'High' || l.replacementPriority === 'Critical'
-                            ? 'bg-rose-500/15 text-rose-400'
-                            : 'bg-emerald-500/15 text-emerald-400'
-                        }`}>
-                          {l.replacementPriority}
-                        </span>
-                      </td>
+            <div className="border border-neutral-800 rounded-2xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-[#111111] text-neutral-400 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-800">
+                    <tr>
+                      <th className="p-3">Asset Code</th>
+                      <th className="p-3">Category</th>
+                      <th className="p-3">Install Date</th>
+                      <th className="p-3">Design Life</th>
+                      <th className="p-3">Current Age</th>
+                      <th className="p-3">Condition Index</th>
+                      <th className="p-3">Replacement Priority</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-850 font-mono text-neutral-300">
+                    {lifecycles.map(l => (
+                      <tr key={l.id} className="hover:bg-neutral-900/60 transition-colors">
+                        <td className="p-3 font-bold text-white">{l.assetCode}</td>
+                        <td className="p-3 text-neutral-200 font-sans">{l.assetType}</td>
+                        <td className="p-3 text-neutral-400">{l.installationDate}</td>
+                        <td className="p-3 text-neutral-400">{l.expectedLifeYears} Years</td>
+                        <td className="p-3 text-neutral-100 font-bold">{l.currentAgeYears} Yrs</td>
+                        <td className="p-3 text-white font-mono">{l.conditionScore} / 100</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                            l.replacementPriority === 'High' || l.replacementPriority === 'Critical'
+                              ? 'bg-white text-black font-extrabold'
+                              : 'bg-neutral-900 text-neutral-300 border border-neutral-800'
+                          }`}>
+                            {l.replacementPriority}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}

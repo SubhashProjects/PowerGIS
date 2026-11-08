@@ -10,7 +10,7 @@ import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { initialRegions } from '../../services/mockData';
 import {
-  Search, Bell, Globe, ChevronDown, LogOut, Menu, X
+  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, Sun, Moon
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -19,7 +19,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   const { user, switchUser, availableUsers, logout } = useAuth();
-  const { activeRegion, flyToRegion, setSelectedAsset } = useGIS();
+  const { activeRegion, flyToRegion, setSelectedAsset, themeMode, toggleThemeMode } = useGIS();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
@@ -126,6 +126,15 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
             title="Search Assets"
           >
             <Search className="w-4 h-4" />
+          </button>
+
+          {/* Theme Mode Toggle (Black / White) */}
+          <button
+            onClick={toggleThemeMode}
+            className="p-1.5 sm:p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
+            title={themeMode === 'black' ? 'Switch to Monochrome White Theme' : 'Switch to Monochrome Black Theme'}
+          >
+            {themeMode === 'black' ? <Sun className="w-4 h-4 text-white" /> : <Moon className="w-4 h-4 text-white" />}
           </button>
 
           {/* Notifications Bell Dropdown */}

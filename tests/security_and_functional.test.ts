@@ -308,6 +308,63 @@ async function runTestSuite() {
   }
 
   // --------------------------------------------------------------------------
+  // TEST GROUP 10: DATA EXCHANGE & SPATIAL IMPORT/EXPORT ENGINE
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 10: Data Exchange, GeoJSON & CSV Import/Export ---');
+  {
+    const { dataExchangeService } = await import('../src/services/dataExchangeService');
+    const adminUser = initialUsers.find(u => u.role === 'super_admin')!;
+    authService.setCurrentUser(adminUser);
+
+    // 1. GeoJSON parsing and import
+    const mockGeoJSON = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [79.8260, 11.9370] },
+          properties: { assetType: 'pole', poleNumber: 'P-TEST-IMP-99', code: 'POL-IMP-99', material: 'Steel' },
+        },
+        {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [79.8270, 11.9380] },
+          properties: { assetType: 'consumer', consumerNumber: 'CON-TEST-IMP-99', name: 'Test Consumer Premise' },
+        },
+      ],
+    };
+
+    const initialPolesCount = assetService.getPoles().length;
+    const initialConsumersCount = assetService.getConsumers().length;
+
+    // Simulate mock file object
+    const geojsonFile = {
+      name: 'network_sample.geojson',
+      text: async () => JSON.stringify(mockGeoJSON),
+    } as unknown as File;
+
+    const res = await dataExchangeService.importSpatialFile(geojsonFile);
+    assert(res.success === true, 'GeoJSON import file processing succeeds');
+    assert(res.importedCount === 2, 'Imports 2 valid features from GeoJSON');
+    assert(assetService.getPoles().length === initialPolesCount + 1, 'Imported pole is successfully added to live asset registry');
+    assert(assetService.getConsumers().length === initialConsumersCount + 1, 'Imported consumer is successfully added to live asset registry');
+
+    // 2. Duplicate Detection
+    const duplicateRes = await dataExchangeService.importSpatialFile(geojsonFile);
+    assert(duplicateRes.duplicateCount === 2, 'Strictly identifies and ignores duplicate asset records on re-import');
+
+    // 3. CSV Parsing & Import
+    const csvContent = 'Code,Name,Latitude,Longitude\nPOL-CSV-01,Test Pole 1,11.9350,79.8250\nPOL-CSV-02,Test Pole 2,11.9355,79.8255';
+    const csvFile = {
+      name: 'poles.csv',
+      text: async () => csvContent,
+    } as unknown as File;
+
+    const csvRes = await dataExchangeService.importSpatialFile(csvFile);
+    assert(csvRes.success === true, 'CSV file processing succeeds');
+    assert(csvRes.importedCount === 2, 'Imports 2 records from CSV file');
+  }
+
+  // --------------------------------------------------------------------------
   // TEST SUMMARY
   // --------------------------------------------------------------------------
   console.log('\n============================================================');

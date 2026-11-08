@@ -81,3 +81,70 @@ body {
 .monochrome-tile-filter {
   filter: grayscale(100%) contrast(120%) brightness(90%);
 }
+
+/* ==========================================================================
+   Monochrome White (Light) Theme Dynamic Inversion
+   ========================================================================== */
+html.theme-white body {
+  background-color: #f7f7f7 !important;
+  color: #171717 !important;
+}
+
+html.theme-white .bg-black {
+  background-color: #ffffff !important;
+}
+
+html.theme-white .bg-\[\#0a0a0a\] {
+  background-color: #fcfcfc !important;
+  border-color: #e5e5e5 !important;
+  color: #171717 !important;
+}
+
+html.theme-white .bg-neutral-950 {
+  background-color: #f5f5f5 !important;
+  border-color: #e5e5e5 !important;
+  color: #171717 !important;
+}
+
+html.theme-white .bg-neutral-900 {
+  background-color: #f0f0f0 !important;
+  border-color: #e0e0e0 !important;
+  color: #171717 !important;
+}
+
+html.theme-white .border-neutral-800,
+html.theme-white .border-neutral-850,
+html.theme-white .border-neutral-700 {
+  border-color: #e5e5e5 !important;
+}
+
+html.theme-white .text-white {
+  color: #000000 !important;
+}
+
+html.theme-white .text-neutral-100,
+html.theme-white .text-neutral-200,
+html.theme-white .text-neutral-300 {
+  color: #1f1f1f !important;
+}
+
+html.theme-white .text-neutral-400,
+html.theme-white .text-neutral-500 {
+  color: #525252 !important;
+}
+
+html.theme-white .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #d4d4d4 !important;
+}
+
+html.theme-white .leaflet-popup-tip {
+  background: #ffffff !important;
+}
+
+html.theme-white .leaflet-control-zoom a {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #d4d4d4 !important;
+}

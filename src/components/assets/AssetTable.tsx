@@ -1,20 +1,24 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ELECTRICAL ASSET REGISTER & TABULAR REPOSITORY
-// Covers: Substations, Feeders, DTs, Utility Poles, Conductors & Consumers
+// MONOCHROME B&W THEME • FUNCTIONAL CSV/GEOJSON EXPORT & SPATIAL IMPORT
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { assetService } from '../../services/assetService';
+import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
 import { useAuth } from '../../context/AuthContext';
 import {
-  Zap, Search, Filter, Download, Plus, CheckCircle, AlertTriangle, Eye
+  Zap, Search, Filter, Download, Plus, CheckCircle2, AlertTriangle, Eye, Upload, FileCode, X
 } from 'lucide-react';
 
 export const AssetTable: React.FC = () => {
   const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'transformers' | 'feeders' | 'poles' | 'substations' | 'consumers'>('transformers');
   const [searchQuery, setSearchQuery] = useState('');
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const transformers = assetService.getTransformers();
   const feeders = assetService.getFeeders();
@@ -22,248 +26,316 @@ export const AssetTable: React.FC = () => {
   const substations = assetService.getSubstations();
   const consumers = assetService.getConsumers();
 
-  const handleExportCSV = () => {
-    let rows: string[] = [];
-    if (activeTab === 'transformers') {
-      rows.push('Code,Name,Capacity KVA,Make,Load %,Oil %,Status');
-      transformers.forEach(t => rows.push(`"${t.code}","${t.name}",${t.capacityKVA},"${t.make}",${t.loadPercentage},${t.oilLevelPct},"${t.status}"`));
-    } else if (activeTab === 'feeders') {
-      rows.push('Code,Name,Voltage,Length km,Peak Load A,Energized,Status');
-      feeders.forEach(f => rows.push(`"${f.code}","${f.name}","${f.voltageClass}",${f.lengthKm},${f.peakLoadAmps},${f.isEnergized},"${f.status}"`));
-    } else if (activeTab === 'poles') {
-      rows.push('Pole Number,Code,Type,Material,Height m,Streetlight,Condition');
-      poles.forEach(p => rows.push(`"${p.poleNumber}","${p.code}","${p.poleType}","${p.material}",${p.heightMeters},${p.hasStreetlight},"${p.condition}"`));
-    } else if (activeTab === 'consumers') {
-      rows.push('Consumer Number,Name,Meter Number,Smart Meter,Sanctioned Load kW,Address');
-      consumers.forEach(c => rows.push(`"${c.consumerNumber}","${c.name}","${c.meterNumber}",${c.isSmartMeter},${c.sanctionedLoadKW},"${c.address}"`));
-    } else {
-      rows.push('Code,Name,Voltage,Capacity MVA,Feeders,Status');
-      substations.forEach(s => rows.push(`"${s.code}","${s.name}","${s.voltageClass}",${s.capacityMVA},${s.numFeeders},"${s.status}"`));
-    }
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `PowerGIS_${activeTab}_export.csv`;
-    a.click();
+    const res = await dataExchangeService.importSpatialFile(file);
+    setImportResult(res);
+    setRefreshKey(prev => prev + 1); // trigger re-render of asset arrays
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-4">
-      {/* Header & Export Actions */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
-            <Zap className="w-5 h-5" />
+    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-100 select-none">
+      {/* 1. Header & Actions Card */}
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-xl shadow-lg shadow-white/10 flex-shrink-0">
+            ⚡
           </div>
           <div>
-            <h2 className="font-bold text-sm text-white">Electrical Asset Master Register</h2>
-            <p className="text-xs text-slate-400">PostGIS Spatially Scoped Distribution Assets • {user.role.toUpperCase()}</p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">Electrical Asset Master Register</h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-white border border-neutral-700">
+                POSTGIS REPOSITORY
+              </span>
+            </div>
+            <p className="text-xs text-neutral-400 mt-0.5 font-mono">
+              Spatially Scoped Network Infrastructure • {user.role.toUpperCase()}
+            </p>
           </div>
         </div>
 
-        <button
-          onClick={handleExportCSV}
-          className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center space-x-1.5 transition-colors"
-        >
-          <Download className="w-3.5 h-3.5 text-sky-400" />
-          <span>Export CSV</span>
-        </button>
+        {/* Export & Import Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Hidden File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".geojson,.json,.csv"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+
+          {/* Import Button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs font-semibold text-neutral-200 flex items-center space-x-1.5 transition-all"
+            title="Import GeoJSON or CSV directly into asset registry"
+          >
+            <Upload className="w-3.5 h-3.5 text-white" />
+            <span>Import Dataset</span>
+          </button>
+
+          {/* Export GeoJSON Button */}
+          <button
+            onClick={() => dataExchangeService.exportGeoJSON([activeTab])}
+            className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs font-semibold text-neutral-200 flex items-center space-x-1.5 transition-all"
+            title="Download GeoJSON FeatureCollection of active tab"
+          >
+            <FileCode className="w-3.5 h-3.5 text-white" />
+            <span>GeoJSON</span>
+          </button>
+
+          {/* Export CSV Button */}
+          <button
+            onClick={() => dataExchangeService.exportCSV(activeTab)}
+            className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-white/10"
+            title="Download CSV asset register"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export CSV</span>
+          </button>
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-2 border-b border-slate-800 pb-2">
+      {/* Import Result Notification Banner */}
+      {importResult && (
+        <div className="p-4 rounded-2xl bg-[#0d0d0d] border border-neutral-700 text-white text-xs shadow-xl space-y-2 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+            <div className="flex items-center space-x-2 font-bold">
+              {importResult.success ? (
+                <CheckCircle2 className="w-4 h-4 text-white" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-white" />
+              )}
+              <span>{importResult.success ? 'Spatial Data Imported Successfully' : 'Import Incomplete'}</span>
+            </div>
+            <button onClick={() => setImportResult(null)} className="text-neutral-400 hover:text-white">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <p className="text-neutral-300 font-mono text-[11px]">{importResult.message}</p>
+          <div className="flex items-center space-x-3 font-mono text-[11px]">
+            <span className="px-2 py-0.5 rounded bg-white text-black font-bold">
+              Imported: {importResult.importedCount}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-800">
+              Duplicates: {importResult.duplicateCount}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Tabs Selector (Monochrome B&W Pills) */}
+      <div className="flex space-x-1.5 overflow-x-auto pb-1 border-b border-neutral-800 text-xs font-medium">
         <button
           onClick={() => setActiveTab('transformers')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            activeTab === 'transformers' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:bg-slate-800'
+          className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
+            activeTab === 'transformers'
+              ? 'bg-white text-black font-bold shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
           }`}
         >
           Distribution Transformers ({transformers.length})
         </button>
         <button
           onClick={() => setActiveTab('feeders')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            activeTab === 'feeders' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:bg-slate-800'
+          className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
+            activeTab === 'feeders'
+              ? 'bg-white text-black font-bold shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
           }`}
         >
-          Feeders ({feeders.length})
+          11kV/22kV Feeders ({feeders.length})
         </button>
         <button
           onClick={() => setActiveTab('poles')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            activeTab === 'poles' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:bg-slate-800'
+          className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
+            activeTab === 'poles'
+              ? 'bg-white text-black font-bold shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
           }`}
         >
           Utility Poles ({poles.length})
         </button>
         <button
           onClick={() => setActiveTab('consumers')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            activeTab === 'consumers' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:bg-slate-800'
+          className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
+            activeTab === 'consumers'
+              ? 'bg-white text-black font-bold shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
           }`}
         >
           Consumers & Meters ({consumers.length})
         </button>
         <button
           onClick={() => setActiveTab('substations')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            activeTab === 'substations' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:bg-slate-800'
+          className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
+            activeTab === 'substations'
+              ? 'bg-white text-black font-bold shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
           }`}
         >
           Substations ({substations.length})
         </button>
       </div>
 
-      {/* Table Content */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl shadow-xl overflow-hidden">
-        <table className="w-full text-xs text-left">
-          <thead className="bg-[#090f1a] text-slate-400 font-mono text-[10px] border-b border-slate-800">
-            {activeTab === 'transformers' && (
-              <tr>
-                <th className="p-3">Asset Code</th>
-                <th className="p-3">Transformer Name</th>
-                <th className="p-3">Capacity</th>
-                <th className="p-3">Make</th>
-                <th className="p-3">Loading</th>
-                <th className="p-3">Oil Level</th>
-                <th className="p-3">Phase Imbalance</th>
-                <th className="p-3">Status</th>
-              </tr>
-            )}
-            {activeTab === 'feeders' && (
-              <tr>
-                <th className="p-3">Feeder Code</th>
-                <th className="p-3">Feeder Name</th>
-                <th className="p-3">Voltage</th>
-                <th className="p-3">Length</th>
-                <th className="p-3">Conductor Type</th>
-                <th className="p-3">Peak Load</th>
-                <th className="p-3">Grid State</th>
-              </tr>
-            )}
-            {activeTab === 'poles' && (
-              <tr>
-                <th className="p-3">Pole Number</th>
-                <th className="p-3">Code</th>
-                <th className="p-3">Type</th>
-                <th className="p-3">Height</th>
-                <th className="p-3">Insulators</th>
-                <th className="p-3">Streetlight</th>
-                <th className="p-3">Condition</th>
-              </tr>
-            )}
-            {activeTab === 'consumers' && (
-              <tr>
-                <th className="p-3">Consumer #</th>
-                <th className="p-3">Name</th>
-                <th className="p-3">Meter Number</th>
-                <th className="p-3">Meter Type</th>
-                <th className="p-3">Sanctioned Load</th>
-                <th className="p-3">Address</th>
-              </tr>
-            )}
-            {activeTab === 'substations' && (
-              <tr>
-                <th className="p-3">Code</th>
-                <th className="p-3">Substation Name</th>
-                <th className="p-3">Voltage Class</th>
-                <th className="p-3">Capacity</th>
-                <th className="p-3">Feeders</th>
-                <th className="p-3">Commissioned</th>
-                <th className="p-3">Status</th>
-              </tr>
-            )}
-          </thead>
-
-          <tbody className="divide-y divide-slate-800/60 font-mono">
-            {activeTab === 'transformers' &&
-              transformers.map(t => (
-                <tr key={t.id} className="hover:bg-slate-800/30">
-                  <td className="p-3 font-bold text-sky-400">{t.code}</td>
-                  <td className="p-3 font-sans text-slate-200 font-semibold">{t.name}</td>
-                  <td className="p-3 text-slate-300">{t.capacityKVA} kVA</td>
-                  <td className="p-3 font-sans text-slate-400">{t.make}</td>
-                  <td className="p-3 text-amber-300 font-bold">{t.loadPercentage}%</td>
-                  <td className="p-3 text-emerald-400">{t.oilLevelPct}%</td>
-                  <td className="p-3 text-slate-300">{t.phaseImbalancePct}%</td>
-                  <td className="p-3">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold bg-emerald-500/10 text-emerald-400">
-                      {t.status}
-                    </span>
-                  </td>
+      {/* 3. Responsive Table Container */}
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-[#111111] text-neutral-400 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-800">
+              {activeTab === 'transformers' && (
+                <tr>
+                  <th className="p-3.5">Asset Code</th>
+                  <th className="p-3.5">Transformer Name</th>
+                  <th className="p-3.5">Rating (kVA)</th>
+                  <th className="p-3.5">Make</th>
+                  <th className="p-3.5">Loading (%)</th>
+                  <th className="p-3.5">Oil Level (%)</th>
+                  <th className="p-3.5">Phase Imbalance</th>
+                  <th className="p-3.5">Grid Status</th>
                 </tr>
-              ))}
-
-            {activeTab === 'feeders' &&
-              feeders.map(f => (
-                <tr key={f.id} className="hover:bg-slate-800/30">
-                  <td className="p-3 font-bold text-sky-400">{f.code}</td>
-                  <td className="p-3 font-sans text-slate-200 font-semibold">{f.name}</td>
-                  <td className="p-3 text-amber-300 font-bold">{f.voltageClass}</td>
-                  <td className="p-3 text-slate-300">{f.lengthKm} km</td>
-                  <td className="p-3 font-sans text-slate-400">{f.conductorType}</td>
-                  <td className="p-3 text-slate-200">{f.peakLoadAmps} A</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      f.isEnergized ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
-                    }`}>
-                      {f.isEnergized ? 'ENERGIZED' : 'SHUTDOWN'}
-                    </span>
-                  </td>
+              )}
+              {activeTab === 'feeders' && (
+                <tr>
+                  <th className="p-3.5">Feeder Code</th>
+                  <th className="p-3.5">Feeder Name</th>
+                  <th className="p-3.5">Voltage</th>
+                  <th className="p-3.5">Length (km)</th>
+                  <th className="p-3.5">Conductor Type</th>
+                  <th className="p-3.5">Peak Load (A)</th>
+                  <th className="p-3.5">Grid State</th>
                 </tr>
-              ))}
-
-            {activeTab === 'poles' &&
-              poles.map(p => (
-                <tr key={p.id} className="hover:bg-slate-800/30">
-                  <td className="p-3 font-bold text-sky-400">{p.poleNumber}</td>
-                  <td className="p-3 text-slate-400">{p.code}</td>
-                  <td className="p-3 font-sans text-slate-200">{p.poleType}</td>
-                  <td className="p-3 text-slate-300">{p.heightMeters} m</td>
-                  <td className="p-3 text-slate-400">{p.numInsulators}</td>
-                  <td className="p-3 text-amber-300">{p.hasStreetlight ? 'Yes (LED)' : 'No'}</td>
-                  <td className="p-3 text-emerald-400 font-semibold">{p.condition}</td>
+              )}
+              {activeTab === 'poles' && (
+                <tr>
+                  <th className="p-3.5">Pole Number</th>
+                  <th className="p-3.5">Code</th>
+                  <th className="p-3.5">Type</th>
+                  <th className="p-3.5">Height (m)</th>
+                  <th className="p-3.5">Insulators</th>
+                  <th className="p-3.5">Streetlight</th>
+                  <th className="p-3.5">Condition</th>
                 </tr>
-              ))}
-
-            {activeTab === 'consumers' &&
-              consumers.map(c => (
-                <tr key={c.id} className="hover:bg-slate-800/30">
-                  <td className="p-3 font-bold text-sky-400">{c.consumerNumber}</td>
-                  <td className="p-3 font-sans text-slate-200 font-semibold">{c.name}</td>
-                  <td className="p-3 text-slate-300">{c.meterNumber}</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                      c.isSmartMeter ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400'
-                    }`}>
-                      {c.isSmartMeter ? 'Smart Meter (AMI)' : 'Conventional'}
-                    </span>
-                  </td>
-                  <td className="p-3 text-slate-200">{c.sanctionedLoadKW} kW</td>
-                  <td className="p-3 font-sans text-slate-400">{c.address}</td>
+              )}
+              {activeTab === 'consumers' && (
+                <tr>
+                  <th className="p-3.5">Consumer #</th>
+                  <th className="p-3.5">Name</th>
+                  <th className="p-3.5">Meter Number</th>
+                  <th className="p-3.5">Meter Type</th>
+                  <th className="p-3.5">Sanctioned Load</th>
+                  <th className="p-3.5">Address</th>
                 </tr>
-              ))}
-
-            {activeTab === 'substations' &&
-              substations.map(s => (
-                <tr key={s.id} className="hover:bg-slate-800/30">
-                  <td className="p-3 font-bold text-red-400">{s.code}</td>
-                  <td className="p-3 font-sans text-slate-200 font-semibold">{s.name}</td>
-                  <td className="p-3 text-amber-300 font-bold">{s.voltageClass}</td>
-                  <td className="p-3 text-slate-200">{s.capacityMVA} MVA</td>
-                  <td className="p-3 text-slate-400">{s.numFeeders} Feeders</td>
-                  <td className="p-3 text-slate-400">{s.commissionDate}</td>
-                  <td className="p-3">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold bg-emerald-500/10 text-emerald-400">
-                      {s.status}
-                    </span>
-                  </td>
+              )}
+              {activeTab === 'substations' && (
+                <tr>
+                  <th className="p-3.5">Code</th>
+                  <th className="p-3.5">Substation Name</th>
+                  <th className="p-3.5">Voltage Class</th>
+                  <th className="p-3.5">Capacity</th>
+                  <th className="p-3.5">Active Feeders</th>
+                  <th className="p-3.5">Commissioned</th>
+                  <th className="p-3.5">Status</th>
                 </tr>
-              ))}
-          </tbody>
-        </table>
+              )}
+            </thead>
+
+            <tbody className="divide-y divide-neutral-850 font-mono text-neutral-300">
+              {activeTab === 'transformers' &&
+                transformers.map(t => (
+                  <tr key={t.id} className="hover:bg-neutral-900/60 transition-colors">
+                    <td className="p-3.5 font-bold text-white">{t.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{t.name}</td>
+                    <td className="p-3.5 text-neutral-300">{t.capacityKVA} kVA</td>
+                    <td className="p-3.5 font-sans text-neutral-400">{t.make}</td>
+                    <td className="p-3.5 text-white font-bold">{t.loadPercentage}%</td>
+                    <td className="p-3.5 text-neutral-300">{t.oilLevelPct}%</td>
+                    <td className="p-3.5 text-neutral-400">{t.phaseImbalancePct}%</td>
+                    <td className="p-3.5">
+                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-neutral-900 text-white border border-neutral-700">
+                        {t.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+
+              {activeTab === 'feeders' &&
+                feeders.map(f => (
+                  <tr key={f.id} className="hover:bg-neutral-900/60 transition-colors">
+                    <td className="p-3.5 font-bold text-white">{f.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{f.name}</td>
+                    <td className="p-3.5 text-neutral-200 font-bold">{f.voltageClass}</td>
+                    <td className="p-3.5 text-neutral-300">{f.lengthKm} km</td>
+                    <td className="p-3.5 font-sans text-neutral-400">{f.conductorType}</td>
+                    <td className="p-3.5 text-neutral-200">{f.peakLoadAmps} A</td>
+                    <td className="p-3.5">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        f.isEnergized
+                          ? 'bg-white text-black font-extrabold'
+                          : 'bg-neutral-900 text-neutral-500 border border-neutral-800'
+                      }`}>
+                        {f.isEnergized ? 'ENERGIZED' : 'SHUTDOWN'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+
+              {activeTab === 'poles' &&
+                poles.map(p => (
+                  <tr key={p.id} className="hover:bg-neutral-900/60 transition-colors">
+                    <td className="p-3.5 font-bold text-white">{p.poleNumber}</td>
+                    <td className="p-3.5 text-neutral-400">{p.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-200">{p.poleType}</td>
+                    <td className="p-3.5 text-neutral-300">{p.heightMeters} m</td>
+                    <td className="p-3.5 text-neutral-400">{p.numInsulators}</td>
+                    <td className="p-3.5 text-neutral-300">{p.hasStreetlight ? 'Yes (LED)' : 'No'}</td>
+                    <td className="p-3.5 text-white font-semibold">{p.condition}</td>
+                  </tr>
+                ))}
+
+              {activeTab === 'consumers' &&
+                consumers.map(c => (
+                  <tr key={c.id} className="hover:bg-neutral-900/60 transition-colors">
+                    <td className="p-3.5 font-bold text-white">{c.consumerNumber}</td>
+                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{c.name}</td>
+                    <td className="p-3.5 text-neutral-300">{c.meterNumber}</td>
+                    <td className="p-3.5">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        c.isSmartMeter
+                          ? 'bg-white text-black font-extrabold'
+                          : 'bg-neutral-900 text-neutral-400 border border-neutral-800'
+                      }`}>
+                        {c.isSmartMeter ? 'Smart Meter (AMI)' : 'Conventional'}
+                      </span>
+                    </td>
+                    <td className="p-3.5 text-neutral-200">{c.sanctionedLoadKW} kW</td>
+                    <td className="p-3.5 font-sans text-neutral-400">{c.address}</td>
+                  </tr>
+                ))}
+
+              {activeTab === 'substations' &&
+                substations.map(s => (
+                  <tr key={s.id} className="hover:bg-neutral-900/60 transition-colors">
+                    <td className="p-3.5 font-bold text-white">{s.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{s.name}</td>
+                    <td className="p-3.5 text-neutral-200 font-bold">{s.voltageClass}</td>
+                    <td className="p-3.5 text-neutral-200">{s.capacityMVA} MVA</td>
+                    <td className="p-3.5 text-neutral-400">{s.numFeeders} Feeders</td>
+                    <td className="p-3.5 text-neutral-400">{s.commissionDate}</td>
+                    <td className="p-3.5">
+                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-neutral-900 text-white border border-neutral-700">
+                        {s.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

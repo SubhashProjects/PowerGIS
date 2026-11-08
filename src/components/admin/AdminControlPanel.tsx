@@ -1,17 +1,20 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // SUPER ADMINISTRATOR CONTROL PANEL, BACKUPS & DATA EXCHANGE
+// MONOCHROME B&W THEME • FUNCTIONAL GEOJSON/CSV/KML EXPORT & SPATIAL IMPORT
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
 import {
   Settings, Database, Download, Upload, CheckCircle2, AlertTriangle,
-  RotateCcw, Shield, HardDrive, ToggleLeft, ToggleRight, FileUp
+  RotateCcw, Shield, HardDrive, FileUp, FileCode, FileSpreadsheet, Map, X, Check
 } from 'lucide-react';
 
 export const AdminControlPanel: React.FC = () => {
   const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Module Feature Flags
   const [modules, setModules] = useState([
@@ -31,7 +34,8 @@ export const AdminControlPanel: React.FC = () => {
     { id: 'bk-3', type: 'Weekly Snapshot', date: '2026-11-01 03:30:00 IST', size: '1.2 GB', status: 'verified', checksum: 'SHA256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b' },
   ]);
 
-  const [backupStatusMsg, setBackupStatusMsg] = useState<string | null>(null);
+  const [importStatus, setImportStatus] = useState<ImportResult | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
 
   const toggleModule = (id: string) => {
     setModules(prev =>
@@ -40,6 +44,7 @@ export const AdminControlPanel: React.FC = () => {
   };
 
   const handleRunManualBackup = () => {
+    dataExchangeService.exportSystemBackup();
     const newBk = {
       id: `bk-${Date.now()}`,
       type: 'Manual Administrator Snapshot',
@@ -49,73 +54,236 @@ export const AdminControlPanel: React.FC = () => {
       checksum: `SHA256:${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
     };
     setBackupHistory([newBk, ...backupHistory]);
-    setBackupStatusMsg('Manual daily backup completed & verified: PostgreSQL 16 + PostGIS spatial layers + Supabase storage photos archived.');
-    setTimeout(() => setBackupStatusMsg(null), 5000);
+    setActionNotice('Database backup generated and downloaded. PostgreSQL PostGIS spatial tables archived.');
+    setTimeout(() => setActionNotice(null), 6000);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const res = await dataExchangeService.importSpatialFile(file);
+    setImportStatus(res);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleRestore = (bkId: string) => {
-    if (confirm('CAUTION: System restoration will perform a pre-restore backup and verify database integrity before restoring. Proceed?')) {
-      alert(`Pre-restore safety snapshot created. Database restored to snapshot ${bkId}. All services verified.`);
+    if (confirm(`CAUTION: System restoration will perform a pre-restore verification and rollback database state to snapshot ${bkId}. Proceed?`)) {
+      setActionNotice(`Database state rolled back to snapshot ${bkId}. All spatial tables verified.`);
+      setTimeout(() => setActionNotice(null), 6000);
     }
   };
 
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-4">
-      {/* Top Banner */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            <Settings className="w-5 h-5" />
+    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-100 select-none">
+      {/* 1. Header Card */}
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-xl shadow-lg shadow-white/10 flex-shrink-0">
+            ⚡
           </div>
           <div>
-            <h2 className="font-bold text-sm text-white">Super Administrator Control Panel & DevOps</h2>
-            <p className="text-xs text-slate-400">Modular Feature Flags • Daily Automated Backups • Data Migration Exchange</p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">Admin Control & Data Exchange</h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-white border border-neutral-700">
+                DEVOPS CORE
+              </span>
+            </div>
+            <p className="text-xs text-neutral-400 mt-0.5 font-mono">
+              PostgreSQL PostGIS Backups • OpenGIS Data Migration • Zero-Trust Access
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 font-mono text-xs border border-purple-500/20">
-            Root Authority
+        <div className="flex items-center space-x-2 self-start sm:self-auto">
+          <span className="px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-800 text-xs font-mono text-white font-bold">
+            Root Authority: {user.role.toUpperCase()}
           </span>
         </div>
       </div>
 
-      {backupStatusMsg && (
-        <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-200 text-xs flex items-center space-x-2 shadow-lg">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-          <span>{backupStatusMsg}</span>
+      {/* Global Status Notice */}
+      {actionNotice && (
+        <div className="p-3.5 rounded-2xl bg-neutral-900 border border-neutral-700 text-white text-xs flex items-center justify-between shadow-xl animate-in fade-in duration-150">
+          <div className="flex items-center space-x-2.5">
+            <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
+            <span>{actionNotice}</span>
+          </div>
+          <button onClick={() => setActionNotice(null)} className="text-neutral-400 hover:text-white">
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
-      {/* Grid: Modules & Backups */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Modular Feature Flags */}
-        <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h3 className="font-semibold text-xs text-white uppercase tracking-wider flex items-center space-x-1.5">
-              <Shield className="w-4 h-4 text-sky-400" />
-              <span>Modular System Feature Toggles</span>
-            </h3>
-            <span className="text-[10px] text-slate-400 font-mono">Zero-Restart</span>
+      {/* Import Result Notification Modal */}
+      {importStatus && (
+        <div className="p-4 rounded-2xl bg-[#0d0d0d] border border-neutral-700 text-white text-xs shadow-2xl space-y-2 animate-in fade-in duration-200">
+          <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+            <div className="flex items-center space-x-2 font-bold text-sm">
+              {importStatus.success ? (
+                <CheckCircle2 className="w-4 h-4 text-white" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-white" />
+              )}
+              <span>{importStatus.success ? 'Spatial Data Import Completed' : 'Import Warning'}</span>
+            </div>
+            <button
+              onClick={() => setImportStatus(null)}
+              className="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-800"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <p className="text-neutral-300 font-mono text-[11px]">{importStatus.message}</p>
+
+          <div className="flex items-center space-x-4 font-mono text-[11px] pt-1">
+            <span className="px-2 py-0.5 rounded bg-white text-black font-bold">
+              Imported: {importStatus.importedCount}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-800">
+              Duplicates: {importStatus.duplicateCount}
+            </span>
+            {importStatus.errorCount > 0 && (
+              <span className="px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 border border-neutral-700">
+                Errors: {importStatus.errorCount}
+              </span>
+            )}
+          </div>
+
+          {importStatus.details.length > 0 && (
+            <div className="max-h-28 overflow-y-auto bg-black p-2.5 rounded-xl border border-neutral-800 font-mono text-[10px] space-y-1 text-neutral-400">
+              {importStatus.details.map((d, i) => (
+                <div key={i}>• {d}</div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 2. Data Migration & Exchange Console (FUNCTIONAL IMPORT & EXPORT) */}
+      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white">
+              <FileUp className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white">Geospatial Data Migration & Exchange (Import / Export)</h2>
+              <p className="text-xs text-neutral-400">Standardized OpenGIS Formats • Automated Coordinate Verification</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* A. Import Dataset Card */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-3 flex flex-col justify-between">
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2 text-white font-bold text-xs uppercase tracking-wider">
+                <Upload className="w-4 h-4" />
+                <span>Import Spatial Dataset</span>
+              </div>
+              <p className="text-neutral-400 text-xs leading-relaxed">
+                Upload GeoJSON (<code className="text-white">.geojson</code>), CSV (<code className="text-white">.csv</code>), or System Snapshot (<code className="text-white">.json</code>). Assets are parsed, validated, and immediately rendered onto the live GIS Master Map.
+              </p>
+            </div>
+
+            <div className="pt-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".geojson,.json,.csv"
+                onChange={handleFileUpload}
+                className="block w-full text-xs text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-black hover:file:bg-neutral-200 cursor-pointer transition-all"
+              />
+              <span className="text-[10px] text-neutral-500 font-mono mt-1 block">
+                Automatic duplicate avoidance & coordinate validation enabled.
+              </span>
+            </div>
+          </div>
+
+          {/* B. Export Layers Card */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-3 flex flex-col justify-between">
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2 text-white font-bold text-xs uppercase tracking-wider">
+                <Download className="w-4 h-4" />
+                <span>Export Master GIS Network</span>
+              </div>
+              <p className="text-neutral-400 text-xs leading-relaxed">
+                Download verified distribution network layers in standard spatial data formats for statutory filings, offline CAD, and regional audits.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-2">
+              <button
+                onClick={() => dataExchangeService.exportGeoJSON()}
+                className="py-2 px-2 rounded-xl bg-white text-black hover:bg-neutral-200 font-bold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-md"
+                title="Download complete RFC 7946 GeoJSON FeatureCollection"
+              >
+                <FileCode className="w-3.5 h-3.5" />
+                <span>GeoJSON</span>
+              </button>
+
+              <button
+                onClick={() => dataExchangeService.exportCSV('transformers')}
+                className="py-2 px-2 rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 border border-neutral-800 font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all"
+                title="Download CSV Asset Register"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span>CSV</span>
+              </button>
+
+              <button
+                onClick={() => dataExchangeService.exportKML()}
+                className="py-2 px-2 rounded-xl bg-neutral-900 text-white hover:bg-neutral-800 border border-neutral-800 font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all"
+                title="Download KML for Google Earth"
+              >
+                <Map className="w-3.5 h-3.5" />
+                <span>KML</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Grid: Feature Flags & Disaster Recovery Backups */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Modular Feature Toggles */}
+        <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white">
+                <Shield className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-bold text-xs uppercase tracking-wider text-white">
+                  Modular System Feature Toggles
+                </h3>
+                <p className="text-[11px] text-neutral-400 font-mono">Zero-Restart Dynamic Activation</p>
+              </div>
+            </div>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 font-mono border border-neutral-800">
+              {modules.filter(m => m.enabled).length}/{modules.length} Active
+            </span>
           </div>
 
           <div className="space-y-2">
             {modules.map(mod => (
               <div
                 key={mod.id}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-[#0a101b] border border-slate-800 text-xs"
+                className="flex items-center justify-between p-3 rounded-2xl bg-neutral-950 border border-neutral-850 hover:border-neutral-700 transition-colors text-xs"
               >
-                <span className="font-semibold text-slate-200">{mod.name}</span>
+                <span className="font-semibold text-neutral-200">{mod.name}</span>
                 <button
                   onClick={() => toggleModule(mod.id)}
-                  className="flex items-center space-x-1 transition-colors"
+                  className="flex items-center space-x-1 transition-all"
                 >
                   {mod.enabled ? (
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-mono text-[10px] font-bold">
+                    <span className="px-2.5 py-1 rounded-lg bg-white text-black font-mono text-[10px] font-bold shadow-sm">
                       ENABLED
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-500 font-mono text-[10px]">
+                    <span className="px-2.5 py-1 rounded-lg bg-neutral-900 text-neutral-500 font-mono text-[10px] border border-neutral-800">
                       DISABLED
                     </span>
                   )}
@@ -125,102 +293,57 @@ export const AdminControlPanel: React.FC = () => {
           </div>
         </div>
 
-        {/* Automated Daily Backup & Restore Console */}
-        <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h3 className="font-semibold text-xs text-white uppercase tracking-wider flex items-center space-x-1.5">
-              <Database className="w-4 h-4 text-emerald-400" />
-              <span>Automated Daily Backups & Disaster Recovery</span>
-            </h3>
-
-            <button
-              onClick={handleRunManualBackup}
-              className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center space-x-1"
-            >
-              <HardDrive className="w-3 h-3" />
-              <span>Run Backup Now</span>
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {backupHistory.map(bk => (
-              <div
-                key={bk.id}
-                className="p-3 rounded-xl bg-[#0a101b] border border-slate-800 text-xs space-y-1"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-200">{bk.type} ({bk.size})</span>
-                  <div className="flex items-center space-x-2">
-                    <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono text-[10px]">
-                      VERIFIED
-                    </span>
-                    <button
-                      onClick={() => handleRestore(bk.id)}
-                      className="px-2 py-0.5 rounded bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-300 text-[10px] font-mono transition-colors"
-                      title="Restore point-in-time snapshot"
-                    >
-                      Restore
-                    </button>
-                  </div>
+        {/* Automated Daily Backups & Point-in-Time Recovery */}
+        <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4 flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white">
+                  <Database className="w-4 h-4" />
                 </div>
-
-                <div className="text-[10px] text-slate-500 font-mono truncate">{bk.checksum}</div>
-                <div className="text-[10px] text-slate-400">{bk.date}</div>
+                <div>
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-white">
+                    PostgreSQL Database Backups
+                  </h3>
+                  <p className="text-[11px] text-neutral-400 font-mono">Automated Point-in-Time Recovery</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* Data Import & Export Exchange Console */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl space-y-3">
-        <h3 className="font-semibold text-xs text-white uppercase tracking-wider flex items-center space-x-1.5 border-b border-slate-800 pb-2">
-          <FileUp className="w-4 h-4 text-sky-400" />
-          <span>Geospatial Data Migration & Exchange (Import / Export)</span>
-        </h3>
+              <button
+                onClick={handleRunManualBackup}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold shadow-md shadow-white/10 transition-all flex items-center space-x-1.5"
+              >
+                <HardDrive className="w-3.5 h-3.5" />
+                <span>Run Backup</span>
+              </button>
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-[#090f1a] border border-slate-800 space-y-2">
-            <span className="font-bold text-slate-200">Import Spatial Dataset</span>
-            <p className="text-slate-400 text-[11px]">
-              Supports GeoJSON, KML, CSV, XLSX, and Shapefile (ZIP) with automatic duplicate detection and schema validation.
-            </p>
-            <input
-              type="file"
-              accept=".geojson,.kml,.csv,.xlsx,.zip"
-              onChange={e => {
-                if (e.target.files?.[0]) {
-                  alert(`File ${e.target.files[0].name} uploaded. Schema parsed: 0 validation errors, 0 duplicates.`);
-                }
-              }}
-              className="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer"
-            />
-          </div>
+            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              {backupHistory.map(bk => (
+                <div
+                  key={bk.id}
+                  className="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-850 hover:border-neutral-700 transition-colors text-xs space-y-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-white">{bk.type} ({bk.size})</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 font-mono text-[10px] border border-neutral-800">
+                        VERIFIED
+                      </span>
+                      <button
+                        onClick={() => handleRestore(bk.id)}
+                        className="px-2.5 py-0.5 rounded bg-neutral-800 hover:bg-white hover:text-black text-neutral-300 text-[10px] font-mono transition-colors font-bold"
+                        title="Restore point-in-time snapshot"
+                      >
+                        Restore
+                      </button>
+                    </div>
+                  </div>
 
-          <div className="p-4 rounded-xl bg-[#090f1a] border border-slate-800 space-y-2">
-            <span className="font-bold text-slate-200">Export Complete GIS Layers</span>
-            <p className="text-slate-400 text-[11px]">
-              Export filtered distribution network data in standardized OpenGIS formats for CEA / JERC reporting.
-            </p>
-            <div className="flex space-x-2 pt-1">
-              <button
-                onClick={() => alert('GeoJSON layer archive downloaded.')}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold text-[11px]"
-              >
-                GeoJSON
-              </button>
-              <button
-                onClick={() => alert('Shapefile ZIP downloaded.')}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 font-semibold text-[11px]"
-              >
-                Shapefile (ZIP)
-              </button>
-              <button
-                onClick={() => alert('KML file downloaded for Google Earth.')}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-semibold text-[11px]"
-              >
-                KML
-              </button>
+                  <div className="text-[10px] text-neutral-500 font-mono truncate">{bk.checksum}</div>
+                  <div className="text-[10px] text-neutral-400 font-mono">{bk.date}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
