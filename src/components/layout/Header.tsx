@@ -10,6 +10,7 @@ import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { initialRegions } from '../../services/mockData';
 import { NavTabId } from '../../config/navigationConfig';
+import { LABELS } from '../../config/labelsConfig';
 import {
   Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Clock, Settings
 } from 'lucide-react';
@@ -102,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           <button
             onClick={onToggleMobileMenu}
             className="p-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 md:hidden transition-colors"
-            aria-label="Toggle Navigation Drawer"
+            aria-label={LABELS.header.menuToggleAria}
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -115,19 +116,19 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           {/* Title */}
           <div>
             <div className="flex items-center space-x-1.5 sm:space-x-2">
-              <span className="font-black text-xs sm:text-sm text-slate-900 tracking-wider">POWERGIS</span>
+              <span className="font-black text-xs sm:text-sm text-slate-900 tracking-wider">{LABELS.header.brandName}</span>
               <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-extrabold border border-blue-200 uppercase tracking-wider">
-                DISTRIBUTION
+                {LABELS.header.brandBadge}
               </span>
             </div>
             <p className="text-[9px] sm:text-[10px] text-slate-500 font-medium hidden sm:block">
-              PowerGIS • Utility Asset Management & Operations Portal
+              {LABELS.header.brandSubtitle}
             </p>
           </div>
 
           {/* Dynamic Breadcrumbs (Desktop) */}
           <div className="hidden 2xl:flex items-center space-x-1.5 text-[11px] font-mono pl-3 border-l border-slate-200 min-w-0">
-            <span className="text-slate-400 font-sans flex-shrink-0">Jurisdiction:</span>
+            <span className="text-slate-400 font-sans flex-shrink-0">{LABELS.header.jurisdictionPrefix}</span>
             <span className="font-bold text-blue-900 bg-gradient-to-r from-blue-50 to-indigo-50 px-2.5 py-0.5 rounded-lg border border-blue-200 shadow-2xs truncate max-w-[280px]">
               {getBreadcrumb()}
             </span>
@@ -143,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
               type="text"
               value={searchQuery}
               onChange={handleSearch}
-              placeholder="Search assets, feeders, poles... (Ctrl + K)"
+              placeholder={LABELS.header.searchPlaceholder}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-14 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono"
             />
             <div className="absolute right-2 flex items-center space-x-0.5 pointer-events-none">
@@ -184,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           <button
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
             className="p-1.5 sm:p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 md:hidden transition-colors"
-            title="Search Assets"
+            title={LABELS.header.searchMobileTooltip}
           >
             <Search className="w-4 h-4" />
           </button>
@@ -198,7 +199,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           {/* White Theme Badge Indicator */}
           <div className="hidden 2xl:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-600">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>White Theme</span>
+            <span>{LABELS.header.whiteThemeBadge}</span>
           </div>
 
           {/* Notifications Bell Dropdown */}
@@ -206,7 +207,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-1.5 sm:p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 hover:text-neutral-900 transition-colors"
-              title="Role Notifications & Assignments"
+              title={LABELS.header.notificationsTooltip}
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
@@ -219,7 +220,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             {showNotifications && (
               <div className="absolute right-0 top-11 w-72 sm:w-96 bg-white border border-neutral-200 rounded-2xl shadow-2xl p-3 z-50">
                 <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-200 text-[10px] uppercase font-bold text-neutral-500">
-                  <span className="text-neutral-900 font-extrabold">Role Notifications ({notifications.length})</span>
+                  <span className="text-neutral-900 font-extrabold">{LABELS.header.notificationsTitle} ({notifications.length})</span>
                   <span className="font-mono text-neutral-600 px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200">
                     {user.role.toUpperCase()}
                   </span>
@@ -265,7 +266,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             {showRegionDropdown && (
               <div className="absolute right-0 top-10 w-48 bg-white border border-neutral-200 rounded-xl shadow-2xl py-1 z-50">
                 <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-neutral-500 border-b border-neutral-100">
-                  Union Territory Regions
+                  {LABELS.header.regionsTitle}
                 </div>
                 {initialRegions.map(reg => (
                   <button
@@ -304,22 +305,22 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           {user.role === 'super_admin' && onNavigateTab && (
             <button
               onClick={() => onNavigateTab('admin_panel')}
-              title="Super Administrator Management Console"
+              title={LABELS.header.adminConsoleTooltip}
               className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs transition-all font-bold cursor-pointer shadow-2xs"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
-              <span className="hidden lg:inline text-[11px]">Admin Console</span>
+              <span className="hidden lg:inline text-[11px]">{LABELS.header.adminConsole}</span>
             </button>
           )}
 
           {/* Sign Out Button */}
           <button
             onClick={logout}
-            title="Sign Out of PowerGIS"
+            title={LABELS.header.signOutTooltip}
             className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-50 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-700 border border-slate-200 text-xs transition-all font-semibold cursor-pointer shadow-2xs"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden md:inline text-[11px]">Sign Out</span>
+            <span className="hidden md:inline text-[11px]">{LABELS.header.signOut}</span>
           </button>
         </div>
       </div>
@@ -334,7 +335,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
               autoFocus
               value={searchQuery}
               onChange={handleSearch}
-              placeholder="Search assets, feeders, poles..."
+              placeholder={LABELS.header.searchMobilePlaceholder}
               className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-9 py-2 text-xs text-neutral-900 placeholder-neutral-500 focus:outline-none focus:border-neutral-900 font-mono"
             />
             <button

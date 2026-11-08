@@ -19,10 +19,15 @@
     "AppMetadataRegionCentersAndIntervals": "src/config/appConfig.ts",
     "MockDataInitialSeed": "src/services/mockData.ts",
     "SpatialCalculationMath": "src/lib/geoUtils.ts",
-    "UserAccountsAndRBACCRUD": "src/services/authService.ts"
+    "UserAccountsAndRBACCRUD": "src/services/authService.ts",
+    "UITextLabelsAndLocalization": "src/config/labelsConfig.ts"
   },
   "moduleRegistry": {
     "config": {
+      "src/config/labelsConfig.ts": {
+        "purpose": "Single Source of Truth for all user-facing text labels across the entire application (common, header, scopeHUD, zeroTrustGate, navigation, dashboard, admin, gisMap, assets, faults, workOrders, surveys, scada, outages, dataExchange).",
+        "exports": ["LABELS", "LabelsConfig"]
+      },
       "src/config/appConfig.ts": {
         "purpose": "Application identity, regional enclaves (Puducherry, Karaikal, Mahe, Yanam), default coordinates, zoom levels, telemetry intervals, and security passwords.",
         "exports": ["RegionalEnclave", "APP_CONFIG"]
@@ -49,7 +54,7 @@
       },
       "src/config/index.ts": {
         "purpose": "Barrel export for all configuration files.",
-        "exports": ["* from appConfig, themeConfig, basemapConfig, rbacConfig, workflowConfig, navigationConfig"]
+        "exports": ["* from appConfig, themeConfig, basemapConfig, rbacConfig, workflowConfig, navigationConfig, labelsConfig"]
       }
     },
     "context": {

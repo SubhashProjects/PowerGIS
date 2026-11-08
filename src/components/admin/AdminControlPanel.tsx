@@ -8,6 +8,7 @@ import React, { useState, useRef, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
 import { ROLES_REGISTRY } from '../../config/rbacConfig';
+import { LABELS } from '../../config/labelsConfig';
 import { UserProfile, OfficialRole } from '../../types/auth';
 import { initialRegions, initialDivisions, initialSections } from '../../services/mockData';
 import {
@@ -261,21 +262,21 @@ export const AdminControlPanel: React.FC = () => {
           <div className="min-w-0">
             <div className="flex items-center space-x-2 flex-wrap">
               <h1 className="text-base sm:text-lg font-extrabold text-slate-950 tracking-tight">
-                Super Administrator Command Console
+                {LABELS.admin.consoleTitle}
               </h1>
               <span className="text-[10px] font-mono uppercase font-extrabold px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200">
-                ROOT AUTHORITY
+                {LABELS.admin.rootAuthorityBadge}
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5 font-mono truncate">
-              User Accounts & RBAC • PostGIS Migration • Point-in-Time Backups • Zero-Trust Access
+              {LABELS.admin.consoleSubtitle}
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2 self-start sm:self-auto flex-shrink-0">
           <span className="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-mono text-slate-800 font-bold">
-            Active Session: {user.fullName.split(',')[0]} ({user.role.toUpperCase()})
+            {LABELS.admin.activeSessionPrefix} {user.fullName.split(',')[0]} ({user.role.toUpperCase()})
           </span>
         </div>
       </div>
@@ -304,7 +305,7 @@ export const AdminControlPanel: React.FC = () => {
           }`}
         >
           <Users className="w-4 h-4 flex-shrink-0" />
-          <span>Staff Accounts & RBAC ({users.length})</span>
+          <span>{LABELS.admin.tabUsers} ({users.length})</span>
         </button>
 
         <button
@@ -316,7 +317,7 @@ export const AdminControlPanel: React.FC = () => {
           }`}
         >
           <FileUp className="w-4 h-4 flex-shrink-0" />
-          <span>Geospatial Migration & Backups</span>
+          <span>{LABELS.admin.tabMigration}</span>
         </button>
 
         <button
@@ -328,7 +329,7 @@ export const AdminControlPanel: React.FC = () => {
           }`}
         >
           <Shield className="w-4 h-4 flex-shrink-0" />
-          <span>Modular Feature Toggles</span>
+          <span>{LABELS.admin.tabFeatures}</span>
         </button>
       </div>
 
@@ -347,7 +348,7 @@ export const AdminControlPanel: React.FC = () => {
                   type="text"
                   value={userSearchQuery}
                   onChange={e => setUserSearchQuery(e.target.value)}
-                  placeholder="Search staff by name, email, role, or designation..."
+                  placeholder={LABELS.admin.searchPlaceholder}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
                 />
               </div>
@@ -359,7 +360,7 @@ export const AdminControlPanel: React.FC = () => {
                   onChange={e => setRoleFilter(e.target.value)}
                   className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:bg-white focus:outline-none focus:border-blue-600 font-mono font-medium"
                 >
-                  <option value="all">All Roles ({users.length})</option>
+                  <option value="all">{LABELS.admin.allRolesOption} ({users.length})</option>
                   <option value="super_admin">Super Administrator</option>
                   <option value="se">Superintending Engineer (SE)</option>
                   <option value="ee">Executive Engineer (EE)</option>
@@ -380,7 +381,7 @@ export const AdminControlPanel: React.FC = () => {
                 className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm shadow-blue-500/20 cursor-pointer transition-all"
               >
                 <UserPlus className="w-4 h-4" />
-                <span>Add New User</span>
+                <span>{LABELS.admin.addUserButton}</span>
               </button>
 
               <button
@@ -391,7 +392,7 @@ export const AdminControlPanel: React.FC = () => {
                     setTimeout(() => setActionNotice(null), 5000);
                   }
                 }}
-                title="Reset all staff users to factory default initial personas"
+                title={LABELS.admin.resetDefaultTooltip}
                 className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -402,21 +403,21 @@ export const AdminControlPanel: React.FC = () => {
           {/* Quick Stats Summary */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">Total Staff Accounts</div>
+              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statTotalStaff}</div>
               <div className="text-xl font-extrabold text-slate-900 mt-1">{users.length}</div>
             </div>
             <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">Active Accounts</div>
+              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statActiveStaff}</div>
               <div className="text-xl font-extrabold text-emerald-600 mt-1">{users.filter(u => u.isActive).length}</div>
             </div>
             <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">Field Engineering Roles</div>
+              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statFieldRoles}</div>
               <div className="text-xl font-extrabold text-blue-600 mt-1">
                 {users.filter(u => ['se', 'ee', 'aee', 'ae', 'je'].includes(u.role)).length}
               </div>
             </div>
             <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">External Contractors</div>
+              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statContractors}</div>
               <div className="text-xl font-extrabold text-purple-600 mt-1">
                 {users.filter(u => u.role === 'contractor').length}
               </div>
@@ -429,12 +430,12 @@ export const AdminControlPanel: React.FC = () => {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-mono font-bold text-slate-500">
-                    <th className="py-3 px-4">Staff Member</th>
-                    <th className="py-3 px-4">Role & Designation</th>
-                    <th className="py-3 px-4 hidden md:table-cell">Jurisdiction Scope</th>
-                    <th className="py-3 px-4 hidden lg:table-cell">Contact</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3 px-4">{LABELS.admin.thStaffMember}</th>
+                    <th className="py-3 px-4">{LABELS.admin.thRoleDesignation}</th>
+                    <th className="py-3 px-4 hidden md:table-cell">{LABELS.admin.thJurisdiction}</th>
+                    <th className="py-3 px-4 hidden lg:table-cell">{LABELS.admin.thContact}</th>
+                    <th className="py-3 px-4">{LABELS.admin.thStatus}</th>
+                    <th className="py-3 px-4 text-right">{LABELS.admin.thActions}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -453,7 +454,7 @@ export const AdminControlPanel: React.FC = () => {
                                 <span>{u.fullName}</span>
                                 {isCurrent && (
                                   <span className="text-[9px] bg-blue-100 text-blue-800 font-mono px-1.5 py-0.2 rounded font-extrabold border border-blue-200">
-                                    YOU
+                                    {LABELS.common.youBadge}
                                   </span>
                                 )}
                               </div>
@@ -503,12 +504,12 @@ export const AdminControlPanel: React.FC = () => {
                           {u.isActive ? (
                             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                              <span>Active</span>
+                              <span>{LABELS.common.active}</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-mono font-bold">
                               <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                              <span>Inactive</span>
+                              <span>{LABELS.common.inactive}</span>
                             </span>
                           )}
                         </td>
@@ -528,13 +529,13 @@ export const AdminControlPanel: React.FC = () => {
                               }`}
                             >
                               <UserCheck className="w-3.5 h-3.5" />
-                              <span className="hidden xl:inline text-[10px]">Test Role</span>
+                              <span className="hidden xl:inline text-[10px]">{LABELS.admin.btnTestRole}</span>
                             </button>
 
                             {/* Edit Button */}
                             <button
                               onClick={() => openEditUserModal(u)}
-                              title="Edit user details and jurisdiction"
+                              title={LABELS.admin.btnEdit}
                               className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors cursor-pointer shadow-2xs"
                             >
                               <Pencil className="w-3.5 h-3.5" />
@@ -544,7 +545,7 @@ export const AdminControlPanel: React.FC = () => {
                             <button
                               onClick={() => setUserToDelete(u)}
                               disabled={isCurrent}
-                              title={isCurrent ? 'Cannot delete your active session' : 'Delete user account'}
+                              title={isCurrent ? 'Cannot delete your active session' : LABELS.admin.btnDelete}
                               className={`p-1.5 rounded-lg border transition-colors ${
                                 isCurrent
                                   ? 'bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed'
@@ -562,7 +563,7 @@ export const AdminControlPanel: React.FC = () => {
                   {filteredUsers.length === 0 && (
                     <tr>
                       <td colSpan={6} className="py-8 text-center text-slate-400 font-mono text-xs">
-                        No staff accounts matching search query or role filter.
+                        {LABELS.admin.emptyTable}
                       </td>
                     </tr>
                   )}
@@ -871,8 +872,8 @@ export const AdminControlPanel: React.FC = () => {
                   <UserPlus className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-950">Add New Staff User</h3>
-                  <p className="text-[11px] text-slate-500">Provision official role & organizational jurisdiction</p>
+                  <h3 className="font-bold text-sm text-slate-950">{LABELS.admin.modalAddTitle}</h3>
+                  <p className="text-[11px] text-slate-500">{LABELS.admin.modalAddSubtitle}</p>
                 </div>
               </div>
               <button
@@ -893,7 +894,7 @@ export const AdminControlPanel: React.FC = () => {
             <form onSubmit={handleSaveAddUser} className="space-y-3 text-xs">
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                  Full Name & Salutation *
+                  {LABELS.admin.fullNameLabel}
                 </label>
                 <input
                   type="text"
@@ -908,7 +909,7 @@ export const AdminControlPanel: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Username *
+                    {LABELS.admin.usernameLabel}
                   </label>
                   <input
                     type="text"
@@ -922,7 +923,7 @@ export const AdminControlPanel: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Official Email *
+                    {LABELS.admin.emailLabel}
                   </label>
                   <input
                     type="email"
@@ -938,7 +939,7 @@ export const AdminControlPanel: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Official Role *
+                    {LABELS.admin.roleLabel}
                   </label>
                   <select
                     value={formData.role}
@@ -959,7 +960,7 @@ export const AdminControlPanel: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Designation Title
+                    {LABELS.admin.designationLabel}
                   </label>
                   <input
                     type="text"
@@ -974,7 +975,7 @@ export const AdminControlPanel: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Mobile Phone
+                    {LABELS.admin.phoneLabel}
                   </label>
                   <input
                     type="text"
@@ -987,7 +988,7 @@ export const AdminControlPanel: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Default Password
+                    {LABELS.admin.passwordLabel}
                   </label>
                   <input
                     type="text"
@@ -1002,7 +1003,7 @@ export const AdminControlPanel: React.FC = () => {
               {formData.role === 'contractor' ? (
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Contractor Firm Name *
+                    {LABELS.admin.contractorFirmName} *
                   </label>
                   <input
                     type="text"
@@ -1016,7 +1017,7 @@ export const AdminControlPanel: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                      Region / Circle
+                      {LABELS.admin.regionCircle}
                     </label>
                     <select
                       value={formData.regionId}
@@ -1031,7 +1032,7 @@ export const AdminControlPanel: React.FC = () => {
 
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                      Section Jurisdiction
+                      {LABELS.admin.sectionJurisdiction}
                     </label>
                     <select
                       value={formData.sectionId}
@@ -1055,7 +1056,7 @@ export const AdminControlPanel: React.FC = () => {
                   className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                 />
                 <label htmlFor="addUserActive" className="text-xs text-slate-800 font-semibold cursor-pointer">
-                  Account Enabled & Active for Portal Authentication
+                  {LABELS.admin.accountActiveLabel}
                 </label>
               </div>
 
@@ -1065,13 +1066,13 @@ export const AdminControlPanel: React.FC = () => {
                   onClick={() => setShowAddModal(false)}
                   className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
                 >
-                  Cancel
+                  {LABELS.common.cancel}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer shadow-md shadow-blue-500/20"
                 >
-                  Create Staff Account
+                  {LABELS.admin.btnCreateAccount}
                 </button>
               </div>
             </form>
@@ -1091,7 +1092,7 @@ export const AdminControlPanel: React.FC = () => {
                   <Pencil className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-950">Edit Staff Profile</h3>
+                  <h3 className="font-bold text-sm text-slate-950">{LABELS.admin.modalEditTitle}</h3>
                   <p className="text-[11px] text-slate-500 font-mono">Modifying @{editingUser.username}</p>
                 </div>
               </div>
@@ -1113,7 +1114,7 @@ export const AdminControlPanel: React.FC = () => {
             <form onSubmit={handleSaveEditUser} className="space-y-3 text-xs">
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                  Full Name & Salutation *
+                  {LABELS.admin.fullNameLabel}
                 </label>
                 <input
                   type="text"
@@ -1127,7 +1128,7 @@ export const AdminControlPanel: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Username *
+                    {LABELS.admin.usernameLabel}
                   </label>
                   <input
                     type="text"
@@ -1140,7 +1141,7 @@ export const AdminControlPanel: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Official Email *
+                    {LABELS.admin.emailLabel}
                   </label>
                   <input
                     type="email"
@@ -1155,7 +1156,7 @@ export const AdminControlPanel: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Official Role *
+                    {LABELS.admin.roleLabel}
                   </label>
                   <select
                     value={formData.role}
@@ -1176,7 +1177,7 @@ export const AdminControlPanel: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Designation Title
+                    {LABELS.admin.designationLabel}
                   </label>
                   <input
                     type="text"
@@ -1190,7 +1191,7 @@ export const AdminControlPanel: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Mobile Phone
+                    {LABELS.admin.phoneLabel}
                   </label>
                   <input
                     type="text"
@@ -1202,7 +1203,7 @@ export const AdminControlPanel: React.FC = () => {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Password
+                    {LABELS.admin.passwordLabel}
                   </label>
                   <input
                     type="text"
@@ -1216,7 +1217,7 @@ export const AdminControlPanel: React.FC = () => {
               {formData.role === 'contractor' ? (
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Contractor Firm Name
+                    {LABELS.admin.contractorFirmName}
                   </label>
                   <input
                     type="text"
@@ -1229,7 +1230,7 @@ export const AdminControlPanel: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                      Region / Circle
+                      {LABELS.admin.regionCircle}
                     </label>
                     <select
                       value={formData.regionId}
@@ -1244,7 +1245,7 @@ export const AdminControlPanel: React.FC = () => {
 
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                      Section Jurisdiction
+                      {LABELS.admin.sectionJurisdiction}
                     </label>
                     <select
                       value={formData.sectionId}
@@ -1268,7 +1269,7 @@ export const AdminControlPanel: React.FC = () => {
                   className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                 />
                 <label htmlFor="editUserActive" className="text-xs text-slate-800 font-semibold cursor-pointer">
-                  Account Active & Enabled for Zero-Trust Access
+                  {LABELS.admin.accountActiveLabel}
                 </label>
               </div>
 
@@ -1278,13 +1279,13 @@ export const AdminControlPanel: React.FC = () => {
                   onClick={() => setEditingUser(null)}
                   className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
                 >
-                  Cancel
+                  {LABELS.common.cancel}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer shadow-md shadow-blue-500/20"
                 >
-                  Save Changes
+                  {LABELS.common.save}
                 </button>
               </div>
             </form>
@@ -1303,16 +1304,16 @@ export const AdminControlPanel: React.FC = () => {
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-slate-950">Confirm Deletion</h3>
-                <p className="text-xs text-slate-500 font-mono">Remove staff profile from system</p>
+                <h3 className="font-bold text-sm text-slate-950">{LABELS.admin.modalDeleteTitle}</h3>
+                <p className="text-xs text-slate-500 font-mono">{LABELS.admin.modalDeleteSubtitle}</p>
               </div>
             </div>
 
             <p className="text-xs text-slate-600 leading-relaxed">
-              Are you sure you want to permanently delete the staff record for{' '}
+              {LABELS.admin.modalDeleteConfirmText}{' '}
               <span className="font-bold text-slate-900">{userToDelete.fullName}</span> (
-              <span className="font-mono">{userToDelete.email}</span>)?
-              This will revoke all active zero-trust session tokens.
+              <span className="font-mono">{userToDelete.email}</span>)?{' '}
+              {LABELS.admin.modalDeleteConfirmRevoke}
             </p>
 
             <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
@@ -1320,13 +1321,13 @@ export const AdminControlPanel: React.FC = () => {
                 onClick={() => setUserToDelete(null)}
                 className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs cursor-pointer"
               >
-                Cancel
+                {LABELS.common.cancel}
               </button>
               <button
                 onClick={confirmDeleteUser}
                 className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer shadow-md shadow-rose-500/20"
               >
-                Delete Account
+                {LABELS.admin.btnDeleteAccount}
               </button>
             </div>
           </div>

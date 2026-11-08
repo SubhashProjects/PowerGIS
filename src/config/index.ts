@@ -9,3 +9,4 @@ export * from './basemapConfig';
 export * from './rbacConfig';
 export * from './workflowConfig';
 export * from './navigationConfig';
+export * from './labelsConfig';

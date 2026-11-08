@@ -410,6 +410,31 @@ async function runTestSuite() {
   }
 
   // --------------------------------------------------------------------------
+  // TEST GROUP 12: CENTRAL LABELS (SSOT) INTEGRITY
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 12: Centralized UI Labels (SSOT) ---');
+  {
+    const { LABELS } = await import('../src/config/labelsConfig');
+    const { NAVIGATION_ITEMS } = await import('../src/config/navigationConfig');
+
+    assert(Boolean(LABELS.header.brandName), 'LABELS.header.brandName is defined');
+    assert(LABELS.header.brandName === 'POWERGIS', 'Brand name is POWERGIS');
+    assert(Boolean(LABELS.zeroTrustGate.policyBadge), 'Zero-Trust Gate policy badge is defined');
+    assert(Boolean(LABELS.admin.consoleTitle), 'Admin console title is defined');
+    assert(Boolean(LABELS.scopeHUD.activeIdentityPrefix), 'Scope HUD active identity prefix is defined');
+
+    // Verify navigation item labels are bound to LABELS.navigation
+    const dashboardNav = NAVIGATION_ITEMS.find(n => n.id === 'dashboard');
+    assert(dashboardNav?.label === LABELS.navigation.dashboard, 'Dashboard navigation label is wired to LABELS.navigation.dashboard');
+
+    const gisMapNav = NAVIGATION_ITEMS.find(n => n.id === 'gis_map');
+    assert(gisMapNav?.label === LABELS.navigation.gisMap, 'GIS Map navigation label is wired to LABELS.navigation.gisMap');
+
+    const adminNav = NAVIGATION_ITEMS.find(n => n.id === 'admin_panel');
+    assert(adminNav?.label === LABELS.navigation.adminPanel, 'Admin Panel navigation label is wired to LABELS.navigation.adminPanel');
+  }
+
+  // --------------------------------------------------------------------------
   // TEST SUMMARY
   // --------------------------------------------------------------------------
   console.log('\n============================================================');

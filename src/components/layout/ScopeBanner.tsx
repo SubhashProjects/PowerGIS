@@ -8,6 +8,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getRoleDefinition } from '../../config/rbacConfig';
+import { LABELS } from '../../config/labelsConfig';
 import { ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
 
 export const ScopeBanner: React.FC = () => {
@@ -16,7 +17,7 @@ export const ScopeBanner: React.FC = () => {
 
   const roleTitle = roleDef.title;
   const jurisdictionLabel = user.contractorCompany
-    ? `${user.contractorCompany} (Staging Sandbox Isolation)`
+    ? `${user.contractorCompany} ${LABELS.scopeHUD.stagingIsolationSuffix}`
     : roleDef.defaultJurisdiction;
   const privilegeTags = roleDef.privilegeTags;
 
@@ -39,14 +40,14 @@ export const ScopeBanner: React.FC = () => {
         )}
 
         <div className="flex items-center space-x-1.5 font-mono text-[11px] min-w-0 flex-wrap sm:flex-nowrap">
-          <span className="text-slate-500 font-sans hidden sm:inline flex-shrink-0">Active Identity:</span>
+          <span className="text-slate-500 font-sans hidden sm:inline flex-shrink-0">{LABELS.scopeHUD.activeIdentityPrefix}</span>
           <span className="font-extrabold text-blue-900 bg-white/95 px-2 py-0.5 rounded-lg border border-blue-200 shadow-xs flex-shrink-0">
             {roleTitle}
           </span>
 
           <span className="text-slate-400 flex-shrink-0">·</span>
 
-          <span className="text-slate-500 font-sans hidden sm:inline flex-shrink-0">Jurisdiction:</span>
+          <span className="text-slate-500 font-sans hidden sm:inline flex-shrink-0">{LABELS.scopeHUD.jurisdictionPrefix}</span>
           <span
             title={jurisdictionLabel}
             className="font-bold text-slate-900 bg-white/70 px-2 py-0.5 rounded-lg border border-slate-200 truncate max-w-[220px] sm:max-w-md lg:max-w-xl"
@@ -58,7 +59,7 @@ export const ScopeBanner: React.FC = () => {
 
       {/* Right: Privilege Tags & Zero-Trust RLS */}
       <div className="hidden lg:flex items-center space-x-1.5 text-[10px] font-mono">
-        <span className="text-slate-500 mr-0.5 font-sans">Privileges:</span>
+        <span className="text-slate-500 mr-0.5 font-sans">{LABELS.scopeHUD.privilegesPrefix}</span>
         {privilegeTags.map((tag, i) => {
           let badgeStyle = 'bg-white text-blue-800 border-blue-200 shadow-2xs';
           if (tag.includes('No Live') || tag.includes('Strict')) {
@@ -85,7 +86,7 @@ export const ScopeBanner: React.FC = () => {
 
         <span className="flex items-center space-x-1 px-2 py-0.5 bg-gradient-to-r from-blue-700 to-indigo-700 text-white rounded-md font-bold shadow-xs">
           <Lock className="w-2.5 h-2.5 text-cyan-300" />
-          <span>RLS Active</span>
+          <span>{LABELS.scopeHUD.rlsActiveBadge}</span>
         </span>
       </div>
     </div>

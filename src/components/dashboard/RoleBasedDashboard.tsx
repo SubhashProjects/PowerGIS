@@ -10,6 +10,7 @@ import { authService } from '../../services/authService';
 import { notificationService, RoleAssignment, RoleNotification } from '../../services/notificationService';
 import { NavTabId } from '../layout/Sidebar';
 import { NAVIGATION_ITEMS } from '../../config/navigationConfig';
+import { LABELS } from '../../config/labelsConfig';
 import { DashboardAnalyticsCharts } from './DashboardAnalyticsCharts';
 import {
   Shield,
@@ -228,7 +229,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
                 <CheckSquare className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-slate-950">My Pending Assignments</h2>
+                <h2 className="text-base font-bold text-slate-950">{LABELS.dashboard.assignmentsTitle}</h2>
                 <p className="text-xs text-slate-500">
                   Tasks directly assigned to your official jurisdiction & approval tier.
                 </p>
@@ -244,7 +245,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
                     : 'text-slate-600 hover:text-slate-950'
                 }`}
               >
-                All ({dashboardData.assignments.length})
+                {LABELS.dashboard.filterAll} ({dashboardData.assignments.length})
               </button>
               <button
                 onClick={() => setFilterPriority('immediate')}
@@ -254,7 +255,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
                     : 'text-slate-600 hover:text-slate-950'
                 }`}
               >
-                Immediate
+                {LABELS.dashboard.filterImmediate}
               </button>
             </div>
           </div>
@@ -310,7 +311,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
 
             {filteredAssignments.length === 0 && (
               <div className="text-center py-12 text-xs text-slate-400 font-mono">
-                No assignments pending for current filter.
+                {LABELS.dashboard.noAssignments}
               </div>
             )}
           </div>
@@ -321,10 +322,10 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
             <div className="flex items-center space-x-2">
               <Bell className="w-4 h-4 text-blue-600" />
-              <h2 className="text-base font-bold text-slate-950">Notifications</h2>
+              <h2 className="text-base font-bold text-slate-950">{LABELS.dashboard.notificationsTitle}</h2>
               {unreadCount > 0 && (
                 <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rose-500 to-red-600 text-white font-mono font-bold text-[10px] shadow-xs">
-                  {unreadCount} New
+                  {unreadCount} {LABELS.dashboard.notificationsNewSuffix}
                 </span>
               )}
             </div>
@@ -334,7 +335,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
                 onClick={handleMarkAllAsRead}
                 className="text-[11px] text-blue-600 hover:text-blue-800 underline font-mono transition-colors cursor-pointer"
               >
-                Mark all read
+                {LABELS.dashboard.markAllRead}
               </button>
             )}
           </div>
@@ -393,9 +394,9 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs">
         <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-slate-100">
           <Sparkles className="w-4 h-4 text-indigo-600" />
-          <h2 className="text-base font-bold text-slate-950">Authorized Quick Actions</h2>
+          <h2 className="text-base font-bold text-slate-950">{LABELS.dashboard.quickActionsTitle}</h2>
           <span className="text-xs text-slate-500 font-mono">
-            — Scoped to {user.role.toUpperCase()} entitlements
+            {LABELS.dashboard.quickActionsScopedPrefix}{user.role.toUpperCase()}{LABELS.dashboard.quickActionsScopedSuffix}
           </span>
         </div>
 
@@ -423,7 +424,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
                   </p>
                 </div>
                 <div className="mt-3 pt-2 border-t border-slate-200 text-[10px] text-blue-600 group-hover:text-blue-800 font-mono uppercase font-bold">
-                  Access Module →
+                  {LABELS.dashboard.accessModuleCTA}
                 </div>
               </button>
             );

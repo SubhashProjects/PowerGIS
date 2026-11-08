@@ -33,6 +33,7 @@ import { LoginPage } from './components/auth/LoginPage';
 import { RoleBasedDashboard } from './components/dashboard/RoleBasedDashboard';
 import { notificationService } from './services/notificationService';
 import { NAVIGATION_ITEMS } from './config/navigationConfig';
+import { LABELS } from './config/labelsConfig';
 import { X, Zap, ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -89,20 +90,20 @@ const MainLayout: React.FC = () => {
                 <ShieldAlert className="w-8 h-8" />
               </div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 mb-2">
-                Zero-Trust Access Control • Statutory Policy 4.2
+                {LABELS.zeroTrustGate.policyBadge}
               </span>
               <h2 className="text-lg font-bold text-slate-900 mb-1">
-                Access Restricted by Role Entitlement
+                {LABELS.zeroTrustGate.heading}
               </h2>
               <p className="text-xs text-slate-600 max-w-md mb-6 leading-relaxed">
-                Your official active role (<span className="font-bold text-slate-900">{user.role.toUpperCase()}</span> — {user.designation}) is not provisioned with statutory authorization for the module <span className="font-bold text-slate-900">"{currentNav?.label || activeTab}"</span>.
+                {LABELS.zeroTrustGate.messagePrefix}<span className="font-bold text-slate-900">{user.role.toUpperCase()}</span> — {user.designation}{LABELS.zeroTrustGate.messageMiddle}<span className="font-bold text-slate-900">{currentNav?.label || activeTab}</span>{LABELS.zeroTrustGate.messageSuffix}
               </p>
               <button
                 onClick={() => setActiveTab('dashboard')}
                 className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center space-x-2 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Return to Permitted Command Center</span>
+                <span>{LABELS.zeroTrustGate.returnButton}</span>
               </button>
             </div>
           ) : (

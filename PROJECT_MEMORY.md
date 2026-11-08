@@ -24,6 +24,7 @@ Never edit scattered files or hardcode values directly in components. Use this m
 | **Substations, Feeders & DTR Seed** | [`src/services/mockData.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/services/mockData.ts) | Asset Register, GIS overlays, Network topology, SCADA points |
 | **Geodesic & Proximity Math** | [`src/lib/geoUtils.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/lib/geoUtils.ts) | Fault nearest-pole distance, feeder projection, map rotation geometry |
 | **User Management & RBAC CRUD** | [`src/services/authService.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/services/authService.ts) | Admin Control Panel user table, Add/Edit/Delete modals, Testing persona switch |
+| **All UI Text Labels & Localization** | [`src/config/labelsConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/labelsConfig.ts) | Common, Header, Scope HUD, Zero-Trust Gate, Navigation, Dashboard, Admin, GIS Map, Assets, Faults |
 
 ---
 
@@ -38,12 +39,13 @@ PowerGISWeb/
 ├── package.json                       # Dependencies & build scripts
 ├── vite.config.ts                     # Vite bundler configuration (base: './')
 ├── tests/
-│   └── security_and_functional.test.ts # 78 automated security, RBAC & functional tests
+│   └── security_and_functional.test.ts # 86 automated security, RBAC, labels & functional tests
 └── src/
     ├── main.tsx                       # React DOM root render
     ├── App.tsx                        # Core shell, tab router, and modal coordinator
     ├── index.css                      # Tailwind base & Leaflet high-contrast rules
     ├── config/                        # SINGLE SOURCE OF TRUTH (SSOT)
+    │   ├── labelsConfig.ts            # Central dictionary of all UI text labels across the application
     │   ├── appConfig.ts               # Identity, enclaves, coordinates, timing intervals
     │   ├── themeConfig.ts             # Palette tokens, gradients, status & priority styling
     │   ├── basemapConfig.ts           # 8 Color Basemaps, Google Roadmap default, category badges
