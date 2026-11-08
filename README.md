@@ -120,63 +120,6 @@ The system includes an extensive 34-test automated suite covering zero-trust jur
 npx tsx tests/security_and_functional.test.ts
 ```
 
-Output:
-```
-============================================================
- POWERGIS - AUTOMATED TEST SUITE EXECUTION
-============================================================
---- TEST GROUP 1: Role Permissions & Authorization ---
-  ✓ PASS: Super Admin can manage users
-  ✓ PASS: Super Admin can configure system
-  ✓ PASS: Contractor can submit surveys
-  ✓ PASS: Contractor CANNOT approve surveys
-  ✓ PASS: JE can verify field surveys
-  ✓ PASS: JE CANNOT give final AE approval
-  ✓ PASS: Auditor CANNOT edit assets (Read-Only)
-  ✓ PASS: Auditor can export data for regulatory reports
-
---- TEST GROUP 2: Strict Jurisdiction Segregation ---
-  ✓ PASS: JE Anand can access his assigned Marapalam Ward
-  ✓ PASS: SECURITY: JE Anand CANNOT access Karaikal jurisdiction
-  ✓ PASS: EE Urban can access subordinate Marapalam section
-  ✓ PASS: SECURITY: EE Urban CANNOT access Karaikal division records
-  ✓ PASS: Super Admin can access Puducherry
-  ✓ PASS: Super Admin can access Karaikal
-
---- TEST GROUP 3: Multi-Tier Survey Staging & Approval Workflow ---
-  ✓ PASS: Survey submitted by contractor enters submitted state
-  ✓ PASS: SECURITY: Staged asset does NOT appear in live GIS prior to approval
-  ✓ PASS: Survey status advances to je_verified
-  ✓ PASS: SECURITY: Staged asset still NOT in live GIS after JE verification alone
-  ✓ PASS: AE approval promoted 1 staging asset to live GIS
-  ✓ PASS: Survey status is now ae_approved
-  ✓ PASS: Verified asset is now published to live production GIS
-  ✓ PASS: SECURITY: Rejection without mandatory reason is strictly rejected
-
---- TEST GROUP 4: Fault Distance & Network Proximity Engine ---
-  ✓ PASS: Calculates distance from nearest pole (straight-line)
-  ✓ PASS: Calculates distance from nearest DT
-  ✓ PASS: Calculates distance along feeder route (LineString projection)
-  ✓ PASS: Calculates distance from section office
-
---- TEST GROUP 5: IEEE 1366 Reliability Indices ---
-  ✓ PASS: Calculates SAIFI index (System Average Interruption Frequency)
-  ✓ PASS: Calculates SAIDI index (System Average Interruption Duration)
-  ✓ PASS: Calculates CAIDI index (Customer Average Interruption Duration)
-  ✓ PASS: Calculates Energy Not Served (ENS in MWh)
-
---- TEST GROUP 6: ISO 55000 Asset Risk Scoring ---
-  ✓ PASS: Calculates composite risk score within 0-100 range
-  ✓ PASS: Assigns risk category (Low/Moderate/High/Critical)
-  ✓ PASS: Generates ISO 55000 engineering action plan
-
-============================================================
- TEST EXECUTION SUMMARY: 34 PASSED, 0 FAILED
-============================================================
-```
-
----
-
 ## 6. Building for Production
 
 ```bash
@@ -203,5 +146,4 @@ To execute the database schema on Supabase Cloud or an In-House PostgreSQL 16 + 
 
 ## 8. Deployment & Version Control
 
-- **Repository**: [https://github.com/SubhashProjects/PowerGIS](https://github.com/SubhashProjects/PowerGIS)
-- **Author**: Electricity Department, Government of Puducherry
+- **Repository**: [https://github.com/SubhashProjects/PowerGIS](https://github.com/SubhashProjects/PowerGIS
