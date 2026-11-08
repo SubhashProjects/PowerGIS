@@ -4,7 +4,7 @@
 
 ## 1. Executive Summary & Organizational Scope
 
-The **Electricity GIS, Distribution Asset Management & O&M Platform** is a production-grade, enterprise utility operations system developed specifically for the **Electricity Department, Government of Puducherry**.
+The **Electricity GIS, Distribution Asset Management & O&M Platform** is a production-grade, enterprise utility operations system**.
 
 ### All Four Geographically Distinct Enclaves Covered:
 1. **Puducherry** (Urban Boulevard, Semi-urban, and Rural Circles)
