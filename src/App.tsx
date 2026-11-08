@@ -44,7 +44,7 @@ const MainLayout: React.FC = () => {
   const unreadCount = roleData.notifications.filter(n => !n.read).length;
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-black text-neutral-100 font-sans">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#f8f9fa] text-neutral-900 font-sans">
       {/* 1. Global Header with Mobile Drawer Trigger */}
       <Header onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)} />
 
@@ -68,7 +68,7 @@ const MainLayout: React.FC = () => {
 
         {/* Primary Viewport Area (includes bottom padding on mobile when bottom nav is present) */}
         <main
-          className={`flex-1 relative flex flex-col bg-black min-h-0 ${
+          className={`flex-1 relative flex flex-col bg-[#f8f9fa] min-h-0 ${
             activeTab === 'gis_map'
               ? 'overflow-hidden'
               : 'overflow-y-auto pb-16 md:pb-0'

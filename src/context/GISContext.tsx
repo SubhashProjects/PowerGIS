@@ -33,12 +33,12 @@ interface GISContextType {
 const GISContext = createContext<GISContextType | undefined>(undefined);
 
 export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('carto_dark');
+  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('carto_light');
   const [layers, setLayers] = useState<GISLayerState[]>(initialGISLayers);
   const [activeRegion, setActiveRegion] = useState<string>('reg-pdy');
   const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
   const [bearing, setBearingState] = useState<number>(0);
-  const [themeMode, setThemeModeState] = useState<'black' | 'white'>('black');
+  const [themeMode, setThemeModeState] = useState<'black' | 'white'>('white');
 
   const normalizeBearing = (deg: number): number => {
     const mod = deg % 360;
@@ -61,18 +61,13 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const setThemeMode = (mode: 'black' | 'white') => {
-    setThemeModeState(mode);
-    if (mode === 'white') {
-      setBasemap('carto_light');
-      document.documentElement.classList.add('theme-white');
-    } else {
-      setBasemap('carto_dark');
-      document.documentElement.classList.remove('theme-white');
-    }
+    setThemeModeState('white');
+    setBasemap('carto_light');
+    document.documentElement.classList.add('theme-white');
   };
 
   const toggleThemeMode = () => {
-    setThemeMode(themeMode === 'black' ? 'white' : 'black');
+    setThemeMode('white');
   };
 
   const [measurement, setMeasurement] = useState<MapMeasurement>({

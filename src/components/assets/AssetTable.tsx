@@ -1,7 +1,7 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ELECTRICAL ASSET REGISTER & TABULAR REPOSITORY
-// MONOCHROME B&W THEME • FUNCTIONAL CSV/GEOJSON EXPORT & SPATIAL IMPORT
+// PURE WHITE THEME • FUNCTIONAL CSV/GEOJSON EXPORT & SPATIAL IMPORT
 // ============================================================================
 
 import React, { useState, useRef } from 'react';
@@ -37,21 +37,21 @@ export const AssetTable: React.FC = () => {
   };
 
   return (
-    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-100 select-none">
+    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* 1. Header & Actions Card */}
-      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-neutral-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-xl shadow-lg shadow-white/10 flex-shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-xl shadow-xs flex-shrink-0">
             ⚡
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">Electrical Asset Master Register</h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-white border border-neutral-700">
+              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">Electrical Asset Master Register</h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-800 border border-neutral-300">
                 POSTGIS REPOSITORY
               </span>
             </div>
-            <p className="text-xs text-neutral-400 mt-0.5 font-mono">
+            <p className="text-xs text-neutral-500 mt-0.5 font-mono">
               Spatially Scoped Network Infrastructure • {user.role.toUpperCase()}
             </p>
           </div>
@@ -71,27 +71,27 @@ export const AssetTable: React.FC = () => {
           {/* Import Button */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs font-semibold text-neutral-200 flex items-center space-x-1.5 transition-all"
+            className="px-3.5 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-xs font-semibold text-neutral-800 flex items-center space-x-1.5 transition-all"
             title="Import GeoJSON or CSV directly into asset registry"
           >
-            <Upload className="w-3.5 h-3.5 text-white" />
+            <Upload className="w-3.5 h-3.5 text-neutral-700" />
             <span>Import Dataset</span>
           </button>
 
           {/* Export GeoJSON Button */}
           <button
             onClick={() => dataExchangeService.exportGeoJSON([activeTab])}
-            className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs font-semibold text-neutral-200 flex items-center space-x-1.5 transition-all"
+            className="px-3.5 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-xs font-semibold text-neutral-800 flex items-center space-x-1.5 transition-all"
             title="Download GeoJSON FeatureCollection of active tab"
           >
-            <FileCode className="w-3.5 h-3.5 text-white" />
+            <FileCode className="w-3.5 h-3.5 text-neutral-700" />
             <span>GeoJSON</span>
           </button>
 
           {/* Export CSV Button */}
           <button
             onClick={() => dataExchangeService.exportCSV(activeTab)}
-            className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-white/10"
+            className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs"
             title="Download CSV asset register"
           >
             <Download className="w-3.5 h-3.5" />
@@ -102,40 +102,40 @@ export const AssetTable: React.FC = () => {
 
       {/* Import Result Notification Banner */}
       {importResult && (
-        <div className="p-4 rounded-2xl bg-[#0d0d0d] border border-neutral-700 text-white text-xs shadow-xl space-y-2 animate-in fade-in duration-150">
-          <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+        <div className="p-4 rounded-2xl bg-white border border-neutral-300 text-neutral-900 text-xs shadow-md space-y-2 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
             <div className="flex items-center space-x-2 font-bold">
               {importResult.success ? (
-                <CheckCircle2 className="w-4 h-4 text-white" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               ) : (
-                <AlertTriangle className="w-4 h-4 text-white" />
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
               )}
               <span>{importResult.success ? 'Spatial Data Imported Successfully' : 'Import Incomplete'}</span>
             </div>
-            <button onClick={() => setImportResult(null)} className="text-neutral-400 hover:text-white">
+            <button onClick={() => setImportResult(null)} className="text-neutral-500 hover:text-neutral-900">
               <X className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-neutral-300 font-mono text-[11px]">{importResult.message}</p>
+          <p className="text-neutral-700 font-mono text-[11px]">{importResult.message}</p>
           <div className="flex items-center space-x-3 font-mono text-[11px]">
-            <span className="px-2 py-0.5 rounded bg-white text-black font-bold">
+            <span className="px-2 py-0.5 rounded bg-neutral-900 text-white font-bold">
               Imported: {importResult.importedCount}
             </span>
-            <span className="px-2 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-800">
+            <span className="px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200">
               Duplicates: {importResult.duplicateCount}
             </span>
           </div>
         </div>
       )}
 
-      {/* 2. Tabs Selector (Monochrome B&W Pills) */}
-      <div className="flex space-x-1.5 overflow-x-auto pb-1 border-b border-neutral-800 text-xs font-medium">
+      {/* 2. Tabs Selector (White Theme Pills) */}
+      <div className="flex space-x-1.5 overflow-x-auto pb-1 border-b border-neutral-200 text-xs font-medium">
         <button
           onClick={() => setActiveTab('transformers')}
           className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
             activeTab === 'transformers'
-              ? 'bg-white text-black font-bold shadow-md'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+              ? 'bg-neutral-900 text-white font-bold shadow-xs'
+              : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
           }`}
         >
           Distribution Transformers ({transformers.length})
@@ -144,8 +144,8 @@ export const AssetTable: React.FC = () => {
           onClick={() => setActiveTab('feeders')}
           className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
             activeTab === 'feeders'
-              ? 'bg-white text-black font-bold shadow-md'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+              ? 'bg-neutral-900 text-white font-bold shadow-xs'
+              : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
           }`}
         >
           11kV/22kV Feeders ({feeders.length})
@@ -154,8 +154,8 @@ export const AssetTable: React.FC = () => {
           onClick={() => setActiveTab('poles')}
           className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
             activeTab === 'poles'
-              ? 'bg-white text-black font-bold shadow-md'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+              ? 'bg-neutral-900 text-white font-bold shadow-xs'
+              : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
           }`}
         >
           Utility Poles ({poles.length})
@@ -164,8 +164,8 @@ export const AssetTable: React.FC = () => {
           onClick={() => setActiveTab('consumers')}
           className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
             activeTab === 'consumers'
-              ? 'bg-white text-black font-bold shadow-md'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+              ? 'bg-neutral-900 text-white font-bold shadow-xs'
+              : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
           }`}
         >
           Consumers & Meters ({consumers.length})
@@ -174,8 +174,8 @@ export const AssetTable: React.FC = () => {
           onClick={() => setActiveTab('substations')}
           className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap ${
             activeTab === 'substations'
-              ? 'bg-white text-black font-bold shadow-md'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+              ? 'bg-neutral-900 text-white font-bold shadow-xs'
+              : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
           }`}
         >
           Substations ({substations.length})
@@ -183,10 +183,10 @@ export const AssetTable: React.FC = () => {
       </div>
 
       {/* 3. Responsive Table Container */}
-      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl shadow-2xl overflow-hidden">
+      <div className="bg-white border border-neutral-200 rounded-3xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
-            <thead className="bg-[#111111] text-neutral-400 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-800">
+            <thead className="bg-neutral-50 text-neutral-600 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-200">
               {activeTab === 'transformers' && (
                 <tr>
                   <th className="p-3.5">Asset Code</th>
@@ -244,19 +244,19 @@ export const AssetTable: React.FC = () => {
               )}
             </thead>
 
-            <tbody className="divide-y divide-neutral-850 font-mono text-neutral-300">
+            <tbody className="divide-y divide-neutral-100 font-mono text-neutral-700">
               {activeTab === 'transformers' &&
                 transformers.map(t => (
-                  <tr key={t.id} className="hover:bg-neutral-900/60 transition-colors">
-                    <td className="p-3.5 font-bold text-white">{t.code}</td>
-                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{t.name}</td>
-                    <td className="p-3.5 text-neutral-300">{t.capacityKVA} kVA</td>
-                    <td className="p-3.5 font-sans text-neutral-400">{t.make}</td>
-                    <td className="p-3.5 text-white font-bold">{t.loadPercentage}%</td>
-                    <td className="p-3.5 text-neutral-300">{t.oilLevelPct}%</td>
-                    <td className="p-3.5 text-neutral-400">{t.phaseImbalancePct}%</td>
+                  <tr key={t.id} className="hover:bg-neutral-50/80 transition-colors">
+                    <td className="p-3.5 font-bold text-neutral-950">{t.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-900 font-semibold">{t.name}</td>
+                    <td className="p-3.5 text-neutral-700">{t.capacityKVA} kVA</td>
+                    <td className="p-3.5 font-sans text-neutral-600">{t.make}</td>
+                    <td className="p-3.5 text-neutral-950 font-bold">{t.loadPercentage}%</td>
+                    <td className="p-3.5 text-neutral-700">{t.oilLevelPct}%</td>
+                    <td className="p-3.5 text-neutral-600">{t.phaseImbalancePct}%</td>
                     <td className="p-3.5">
-                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-neutral-900 text-white border border-neutral-700">
+                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-neutral-100 text-neutral-800 border border-neutral-300">
                         {t.status}
                       </span>
                     </td>
@@ -265,18 +265,18 @@ export const AssetTable: React.FC = () => {
 
               {activeTab === 'feeders' &&
                 feeders.map(f => (
-                  <tr key={f.id} className="hover:bg-neutral-900/60 transition-colors">
-                    <td className="p-3.5 font-bold text-white">{f.code}</td>
-                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{f.name}</td>
-                    <td className="p-3.5 text-neutral-200 font-bold">{f.voltageClass}</td>
-                    <td className="p-3.5 text-neutral-300">{f.lengthKm} km</td>
-                    <td className="p-3.5 font-sans text-neutral-400">{f.conductorType}</td>
-                    <td className="p-3.5 text-neutral-200">{f.peakLoadAmps} A</td>
+                  <tr key={f.id} className="hover:bg-neutral-50/80 transition-colors">
+                    <td className="p-3.5 font-bold text-neutral-950">{f.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-900 font-semibold">{f.name}</td>
+                    <td className="p-3.5 text-neutral-800 font-bold">{f.voltageClass}</td>
+                    <td className="p-3.5 text-neutral-700">{f.lengthKm} km</td>
+                    <td className="p-3.5 font-sans text-neutral-600">{f.conductorType}</td>
+                    <td className="p-3.5 text-neutral-800">{f.peakLoadAmps} A</td>
                     <td className="p-3.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         f.isEnergized
-                          ? 'bg-white text-black font-extrabold'
-                          : 'bg-neutral-900 text-neutral-500 border border-neutral-800'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold'
+                          : 'bg-neutral-100 text-neutral-600 border border-neutral-200'
                       }`}>
                         {f.isEnergized ? 'ENERGIZED' : 'SHUTDOWN'}
                       </span>
@@ -286,48 +286,48 @@ export const AssetTable: React.FC = () => {
 
               {activeTab === 'poles' &&
                 poles.map(p => (
-                  <tr key={p.id} className="hover:bg-neutral-900/60 transition-colors">
-                    <td className="p-3.5 font-bold text-white">{p.poleNumber}</td>
-                    <td className="p-3.5 text-neutral-400">{p.code}</td>
-                    <td className="p-3.5 font-sans text-neutral-200">{p.poleType}</td>
-                    <td className="p-3.5 text-neutral-300">{p.heightMeters} m</td>
-                    <td className="p-3.5 text-neutral-400">{p.numInsulators}</td>
-                    <td className="p-3.5 text-neutral-300">{p.hasStreetlight ? 'Yes (LED)' : 'No'}</td>
-                    <td className="p-3.5 text-white font-semibold">{p.condition}</td>
+                  <tr key={p.id} className="hover:bg-neutral-50/80 transition-colors">
+                    <td className="p-3.5 font-bold text-neutral-950">{p.poleNumber}</td>
+                    <td className="p-3.5 text-neutral-600">{p.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-800">{p.poleType}</td>
+                    <td className="p-3.5 text-neutral-700">{p.heightMeters} m</td>
+                    <td className="p-3.5 text-neutral-600">{p.numInsulators}</td>
+                    <td className="p-3.5 text-neutral-700">{p.hasStreetlight ? 'Yes (LED)' : 'No'}</td>
+                    <td className="p-3.5 text-neutral-900 font-semibold">{p.condition}</td>
                   </tr>
                 ))}
 
               {activeTab === 'consumers' &&
                 consumers.map(c => (
-                  <tr key={c.id} className="hover:bg-neutral-900/60 transition-colors">
-                    <td className="p-3.5 font-bold text-white">{c.consumerNumber}</td>
-                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{c.name}</td>
-                    <td className="p-3.5 text-neutral-300">{c.meterNumber}</td>
+                  <tr key={c.id} className="hover:bg-neutral-50/80 transition-colors">
+                    <td className="p-3.5 font-bold text-neutral-950">{c.consumerNumber}</td>
+                    <td className="p-3.5 font-sans text-neutral-900 font-semibold">{c.name}</td>
+                    <td className="p-3.5 text-neutral-700">{c.meterNumber}</td>
                     <td className="p-3.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         c.isSmartMeter
-                          ? 'bg-white text-black font-extrabold'
-                          : 'bg-neutral-900 text-neutral-400 border border-neutral-800'
+                          ? 'bg-neutral-900 text-white font-extrabold'
+                          : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
                       }`}>
                         {c.isSmartMeter ? 'Smart Meter (AMI)' : 'Conventional'}
                       </span>
                     </td>
-                    <td className="p-3.5 text-neutral-200">{c.sanctionedLoadKW} kW</td>
-                    <td className="p-3.5 font-sans text-neutral-400">{c.address}</td>
+                    <td className="p-3.5 text-neutral-800">{c.sanctionedLoadKW} kW</td>
+                    <td className="p-3.5 font-sans text-neutral-600">{c.address}</td>
                   </tr>
                 ))}
 
               {activeTab === 'substations' &&
                 substations.map(s => (
-                  <tr key={s.id} className="hover:bg-neutral-900/60 transition-colors">
-                    <td className="p-3.5 font-bold text-white">{s.code}</td>
-                    <td className="p-3.5 font-sans text-neutral-100 font-semibold">{s.name}</td>
-                    <td className="p-3.5 text-neutral-200 font-bold">{s.voltageClass}</td>
-                    <td className="p-3.5 text-neutral-200">{s.capacityMVA} MVA</td>
-                    <td className="p-3.5 text-neutral-400">{s.numFeeders} Feeders</td>
-                    <td className="p-3.5 text-neutral-400">{s.commissionDate}</td>
+                  <tr key={s.id} className="hover:bg-neutral-50/80 transition-colors">
+                    <td className="p-3.5 font-bold text-neutral-950">{s.code}</td>
+                    <td className="p-3.5 font-sans text-neutral-900 font-semibold">{s.name}</td>
+                    <td className="p-3.5 text-neutral-800 font-bold">{s.voltageClass}</td>
+                    <td className="p-3.5 text-neutral-800">{s.capacityMVA} MVA</td>
+                    <td className="p-3.5 text-neutral-600">{s.numFeeders} Feeders</td>
+                    <td className="p-3.5 text-neutral-600">{s.commissionDate}</td>
                     <td className="p-3.5">
-                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-neutral-900 text-white border border-neutral-700">
+                      <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-neutral-100 text-neutral-800 border border-neutral-300">
                         {s.status}
                       </span>
                     </td>

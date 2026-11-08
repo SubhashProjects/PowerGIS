@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// ENTERPRISE HEADER COMPONENT - MONOCHROME B&W & MOBILE ADAPTIVE
+// ENTERPRISE HEADER COMPONENT - PURE WHITE THEME & MOBILE ADAPTIVE
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -10,7 +10,7 @@ import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { initialRegions } from '../../services/mockData';
 import {
-  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, Sun, Moon
+  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -19,7 +19,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   const { user, switchUser, availableUsers, logout } = useAuth();
-  const { activeRegion, flyToRegion, setSelectedAsset, themeMode, toggleThemeMode } = useGIS();
+  const { activeRegion, flyToRegion, setSelectedAsset } = useGIS();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
@@ -50,33 +50,33 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   };
 
   return (
-    <header className="relative bg-black border-b border-neutral-800 z-30 select-none">
+    <header className="relative bg-white border-b border-neutral-200 z-30 select-none shadow-sm">
       <div className="h-14 px-3 sm:px-4 flex items-center justify-between">
         {/* Left: Mobile Menu Button & Brand */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           {/* Mobile Hamburger Drawer Trigger */}
           <button
             onClick={onToggleMobileMenu}
-            className="p-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 md:hidden transition-colors"
+            className="p-1.5 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 md:hidden transition-colors"
             aria-label="Toggle Navigation Drawer"
           >
             <Menu className="w-5 h-5" />
           </button>
 
           {/* Logo Emblem */}
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white text-black flex items-center justify-center font-bold text-sm sm:text-base shadow-lg shadow-white/10 flex-shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-bold text-sm sm:text-base shadow-sm flex-shrink-0">
             ⚡
           </div>
 
           {/* Title */}
           <div>
             <div className="flex items-center space-x-1.5 sm:space-x-2">
-              <span className="font-extrabold text-xs sm:text-sm text-white tracking-wider">POWERGIS</span>
-              <span className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded bg-white/10 text-neutral-200 font-semibold border border-white/20 uppercase tracking-wider">
+              <span className="font-extrabold text-xs sm:text-sm text-neutral-950 tracking-wider">POWERGIS</span>
+              <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-800 font-semibold border border-neutral-200 uppercase tracking-wider">
                 DISTRIBUTION
               </span>
             </div>
-            <p className="text-[9px] sm:text-[10px] text-neutral-400 font-medium hidden sm:block">
+            <p className="text-[9px] sm:text-[10px] text-neutral-500 font-medium hidden sm:block">
               PowerGIS • Asset Management & O&M Platform
             </p>
           </div>
@@ -91,24 +91,24 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search assets, feeders, poles..."
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-mono"
+              className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-4 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition-all font-mono"
             />
           </div>
 
           {/* Dropdown Results */}
           {searchResults.length > 0 && (
-            <div className="absolute top-10 left-0 right-0 bg-[#0d0d0d] border border-neutral-800 rounded-lg shadow-2xl overflow-hidden z-50">
+            <div className="absolute top-10 left-0 right-0 bg-white border border-neutral-200 rounded-lg shadow-2xl overflow-hidden z-50">
               {searchResults.map(res => (
                 <button
                   key={res.id || res.code || res.poleNumber}
                   onClick={() => handleSelectResult(res)}
-                  className="w-full text-left px-3 py-2 text-xs hover:bg-neutral-800 flex items-center justify-between border-b border-neutral-800/60 last:border-0"
+                  className="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50 flex items-center justify-between border-b border-neutral-100 last:border-0"
                 >
                   <div>
-                    <div className="font-semibold text-white">{res.name || res.code || res.poleNumber}</div>
-                    <div className="text-[10px] text-neutral-400 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
+                    <div className="font-semibold text-neutral-900">{res.name || res.code || res.poleNumber}</div>
+                    <div className="text-[10px] text-neutral-500 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 font-mono">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200 font-mono">
                     {res.voltageClass || res.capacityKVA ? `${res.capacityKVA}kVA` : 'Asset'}
                   </span>
                 </button>
@@ -122,41 +122,40 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           {/* Mobile Search Button Toggle */}
           <button
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="p-1.5 sm:p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 md:hidden transition-colors"
+            className="p-1.5 sm:p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 md:hidden transition-colors"
             title="Search Assets"
           >
             <Search className="w-4 h-4" />
           </button>
 
-          {/* Theme Mode Toggle (Black / White) */}
-          <button
-            onClick={toggleThemeMode}
-            className="p-1.5 sm:p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
-            title={themeMode === 'black' ? 'Switch to Monochrome White Theme' : 'Switch to Monochrome Black Theme'}
-          >
-            {themeMode === 'black' ? <Sun className="w-4 h-4 text-white" /> : <Moon className="w-4 h-4 text-white" />}
-          </button>
+          {/* White Theme Badge Indicator */}
+          <div className="hidden lg:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-600">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>White Theme</span>
+          </div>
 
           {/* Notifications Bell Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-1.5 sm:p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
+              className="relative p-1.5 sm:p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 hover:text-neutral-900 transition-colors"
               title="Role Notifications & Assignments"
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black font-bold text-[9px] flex items-center justify-center font-mono shadow-sm">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-neutral-900 text-white font-bold text-[9px] flex items-center justify-center font-mono shadow-sm">
                   {unreadCount}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 top-11 w-72 sm:w-96 bg-[#0a0a0a] border border-neutral-800 rounded-2xl shadow-2xl p-3 z-50">
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800 text-[10px] uppercase font-bold text-neutral-400">
-                  <span className="text-white">Role Notifications ({notifications.length})</span>
-                  <span className="font-mono text-neutral-400">{user.role.toUpperCase()}</span>
+              <div className="absolute right-0 top-11 w-72 sm:w-96 bg-white border border-neutral-200 rounded-2xl shadow-2xl p-3 z-50">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-200 text-[10px] uppercase font-bold text-neutral-500">
+                  <span className="text-neutral-900 font-extrabold">Role Notifications ({notifications.length})</span>
+                  <span className="font-mono text-neutral-600 px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200">
+                    {user.role.toUpperCase()}
+                  </span>
                 </div>
 
                 <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -166,16 +165,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                       onClick={() => {
                         notificationService.markAsRead(n.id);
                       }}
-                      className="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transition-all text-left"
+                      className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100 transition-all text-left cursor-pointer"
                     >
                       <div className="flex items-center justify-between text-[10px] mb-1">
-                        <span className="font-mono uppercase font-bold text-white bg-neutral-800 px-1 rounded">
+                        <span className="font-mono uppercase font-bold text-neutral-800 bg-white border border-neutral-200 px-1.5 py-0.2 rounded shadow-2xs">
                           {n.priority}
                         </span>
                         <span className="text-neutral-500 font-mono">{n.timestamp}</span>
                       </div>
-                      <div className="font-semibold text-xs text-white leading-tight">{n.title}</div>
-                      <div className="text-[11px] text-neutral-400 mt-0.5 leading-snug">{n.message}</div>
+                      <div className="font-semibold text-xs text-neutral-900 leading-tight">{n.title}</div>
+                      <div className="text-[11px] text-neutral-600 mt-0.5 leading-snug">{n.message}</div>
                     </div>
                   ))}
                 </div>
@@ -187,18 +186,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           <div className="relative">
             <button
               onClick={() => setShowRegionDropdown(!showRegionDropdown)}
-              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs text-neutral-200 transition-colors"
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs text-neutral-800 transition-colors"
             >
-              <Globe className="w-3.5 h-3.5 text-neutral-300" />
+              <Globe className="w-3.5 h-3.5 text-neutral-600" />
               <span className="font-medium truncate max-w-[70px] sm:max-w-none">
                 {initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry'}
               </span>
-              <ChevronDown className="w-3 h-3 text-neutral-400" />
+              <ChevronDown className="w-3 h-3 text-neutral-500" />
             </button>
 
             {showRegionDropdown && (
-              <div className="absolute right-0 top-10 w-44 bg-[#0d0d0d] border border-neutral-800 rounded-lg shadow-2xl py-1 z-50">
-                <div className="px-3 py-1 text-[10px] uppercase font-bold text-neutral-500">
+              <div className="absolute right-0 top-10 w-48 bg-white border border-neutral-200 rounded-xl shadow-2xl py-1 z-50">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-neutral-500 border-b border-neutral-100">
                   Union Territory Regions
                 </div>
                 {initialRegions.map(reg => (
@@ -208,12 +207,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                       flyToRegion(reg.id);
                       setShowRegionDropdown(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-neutral-800 ${
-                      activeRegion === reg.id ? 'text-white font-semibold bg-white/10' : 'text-neutral-300'
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-neutral-50 ${
+                      activeRegion === reg.id ? 'text-neutral-900 font-bold bg-neutral-100' : 'text-neutral-700'
                     }`}
                   >
                     <span>{reg.name}</span>
-                    <span className="text-[10px] text-neutral-500 font-mono">{reg.code}</span>
+                    <span className="text-[10px] text-neutral-400 font-mono">{reg.code}</span>
                   </button>
                 ))}
               </div>
@@ -224,23 +223,23 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           <div className="relative">
             <button
               onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-              className="flex items-center space-x-1.5 sm:space-x-2 px-1.5 sm:px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs transition-colors"
+              className="flex items-center space-x-1.5 sm:space-x-2 px-1.5 sm:px-2.5 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs text-neutral-900 transition-colors"
             >
-              <div className="w-6 h-6 rounded bg-white text-black font-bold flex items-center justify-center text-[10px] uppercase flex-shrink-0">
+              <div className="w-6 h-6 rounded bg-neutral-900 text-white font-bold flex items-center justify-center text-[10px] uppercase flex-shrink-0">
                 {user.role.substring(0, 2)}
               </div>
               <div className="text-left hidden sm:block">
-                <div className="font-semibold text-white leading-tight">{user.fullName.split(',')[0]}</div>
-                <div className="text-[10px] text-neutral-400 font-medium leading-none">{user.designation}</div>
+                <div className="font-semibold text-neutral-900 leading-tight">{user.fullName.split(',')[0]}</div>
+                <div className="text-[10px] text-neutral-500 font-medium leading-none">{user.designation}</div>
               </div>
-              <ChevronDown className="w-3 h-3 text-neutral-400" />
+              <ChevronDown className="w-3 h-3 text-neutral-500" />
             </button>
 
             {showRoleDropdown && (
-              <div className="absolute right-0 top-11 w-72 sm:w-80 bg-[#0d0d0d] border border-neutral-800 rounded-xl shadow-2xl py-2 z-50">
-                <div className="px-3 pb-2 mb-1 border-b border-neutral-800 text-[10px] font-bold text-neutral-400 uppercase tracking-wider flex items-center justify-between">
+              <div className="absolute right-0 top-11 w-72 sm:w-80 bg-white border border-neutral-200 rounded-xl shadow-2xl py-2 z-50">
+                <div className="px-3 pb-2 mb-1 border-b border-neutral-200 text-[10px] font-bold text-neutral-500 uppercase tracking-wider flex items-center justify-between">
                   <span>Switch Engineering Persona</span>
-                  <span className="text-white font-mono">11 Roles</span>
+                  <span className="text-neutral-900 font-mono font-bold bg-neutral-100 px-1.5 py-0.5 rounded">11 Roles</span>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {availableUsers.map(u => (
@@ -250,16 +249,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                         switchUser(u.id);
                         setShowRoleDropdown(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center space-x-3 hover:bg-neutral-800/80 transition-colors ${
-                        user.id === u.id ? 'bg-white/10 border-l-2 border-white' : ''
+                      className={`w-full text-left px-3 py-2 text-xs flex items-center space-x-3 hover:bg-neutral-50 transition-colors ${
+                        user.id === u.id ? 'bg-neutral-100 border-l-3 border-neutral-900 font-bold' : ''
                       }`}
                     >
-                      <span className="px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-200 font-mono text-[10px] uppercase font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-800 font-mono text-[10px] uppercase font-bold">
                         {u.role}
                       </span>
                       <div className="flex-1 truncate">
-                        <div className="font-semibold text-neutral-100 truncate">{u.fullName}</div>
-                        <div className="text-[10px] text-neutral-400 truncate">{u.designation}</div>
+                        <div className="font-semibold text-neutral-900 truncate">{u.fullName}</div>
+                        <div className="text-[10px] text-neutral-500 truncate">{u.designation}</div>
                       </div>
                     </button>
                   ))}
@@ -272,7 +271,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           <button
             onClick={logout}
             title="Sign Out of PowerGIS"
-            className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-neutral-900 hover:bg-white hover:text-black text-neutral-300 border border-neutral-800 text-xs transition-all font-semibold"
+            className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-neutral-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-neutral-700 border border-neutral-200 text-xs transition-all font-semibold"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden md:inline">Sign Out</span>
@@ -282,7 +281,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
 
       {/* Mobile Slide-down Search Bar */}
       {mobileSearchOpen && (
-        <div className="px-3 py-2 border-t border-neutral-800 bg-[#0a0a0a] md:hidden">
+        <div className="px-3 py-2 border-t border-neutral-200 bg-white md:hidden">
           <div className="relative flex items-center">
             <Search className="w-4 h-4 text-neutral-400 absolute left-3 pointer-events-none" />
             <input
@@ -291,7 +290,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search assets, feeders, poles..."
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-lg pl-9 pr-9 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white font-mono"
+              className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-9 py-2 text-xs text-neutral-900 placeholder-neutral-500 focus:outline-none focus:border-neutral-900 font-mono"
             />
             <button
               onClick={() => {
@@ -299,25 +298,25 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                 setSearchQuery('');
                 setSearchResults([]);
               }}
-              className="absolute right-2 p-1 text-neutral-400 hover:text-white"
+              className="absolute right-2 p-1 text-neutral-400 hover:text-neutral-900"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {searchResults.length > 0 && (
-            <div className="mt-2 bg-[#0d0d0d] border border-neutral-800 rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+            <div className="mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto">
               {searchResults.map(res => (
                 <button
                   key={res.id || res.code || res.poleNumber}
                   onClick={() => handleSelectResult(res)}
-                  className="w-full text-left px-3 py-2.5 text-xs hover:bg-neutral-800 flex items-center justify-between border-b border-neutral-800/60 last:border-0"
+                  className="w-full text-left px-3 py-2.5 text-xs hover:bg-neutral-50 flex items-center justify-between border-b border-neutral-100 last:border-0"
                 >
                   <div>
-                    <div className="font-semibold text-white">{res.name || res.code || res.poleNumber}</div>
-                    <div className="text-[10px] text-neutral-400 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
+                    <div className="font-semibold text-neutral-900">{res.name || res.code || res.poleNumber}</div>
+                    <div className="text-[10px] text-neutral-500 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 font-mono">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200 font-mono">
                     {res.voltageClass || res.capacityKVA ? `${res.capacityKVA}kVA` : 'Asset'}
                   </span>
                 </button>

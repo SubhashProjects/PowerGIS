@@ -1,6 +1,6 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// DEDICATED ENTERPRISE LOGIN PAGE - MONOCHROME BLACK & WHITE THEME
+// DEDICATED ENTERPRISE LOGIN PAGE - PURE WHITE THEME
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -83,40 +83,40 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-black text-neutral-100 flex flex-col justify-between selection:bg-white selection:text-black">
+    <div className="min-h-screen w-full bg-[#f8f9fa] text-neutral-900 flex flex-col justify-between selection:bg-neutral-900 selection:text-white">
       {/* Top Banner & Enterprise Header */}
-      <header className="border-b border-neutral-800 bg-black/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between">
+      <header className="border-b border-neutral-200 bg-white/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between shadow-xs">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-white text-black p-0.5 shadow-lg shadow-white/10 flex items-center justify-center font-bold text-lg">
+          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white p-0.5 shadow-xs flex items-center justify-center font-bold text-lg">
             ⚡
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-base tracking-wider text-white">
+              <span className="font-extrabold text-base tracking-wider text-neutral-950">
                 POWERGIS
               </span>
-              <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-neutral-900 text-neutral-300 border border-neutral-700">
+              <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 border border-neutral-300">
                 v2.0 Enterprise
               </span>
             </div>
-            <p className="text-[11px] text-neutral-400 font-medium">
+            <p className="text-[11px] text-neutral-500 font-medium">
               Electricity Distribution GIS, Network Asset Management & O&M Platform
             </p>
           </div>
         </div>
 
-        <div className="hidden md:flex items-center space-x-6 text-xs text-neutral-400">
+        <div className="hidden md:flex items-center space-x-6 text-xs text-neutral-600">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            <span className="text-neutral-300 font-medium">Grid Operations Online</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-neutral-800 font-medium">Grid Operations Online</span>
           </div>
-          <div className="h-4 w-px bg-neutral-800" />
+          <div className="h-4 w-px bg-neutral-200" />
           <div className="flex items-center space-x-1.5 font-mono text-[11px]">
-            <Layers className="w-3.5 h-3.5 text-neutral-300" />
+            <Layers className="w-3.5 h-3.5 text-neutral-500" />
             <span>4 Regions Active</span>
           </div>
           <div className="flex items-center space-x-1.5 font-mono text-[11px]">
-            <Shield className="w-3.5 h-3.5 text-neutral-300" />
+            <Shield className="w-3.5 h-3.5 text-neutral-500" />
             <span>Zero-Trust RLS</span>
           </div>
         </div>
@@ -126,68 +126,68 @@ export const LoginPage: React.FC = () => {
       <main className="flex-1 flex flex-col lg:flex-row items-stretch justify-center p-4 lg:p-8 gap-8 max-w-7xl mx-auto w-full">
         {/* Left Side: Login Credentials Card */}
         <div className="w-full lg:w-[460px] flex flex-col justify-center">
-          <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+          <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
             <div className="relative">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 text-xs font-semibold mb-4">
-                <Shield className="w-3.5 h-3.5 text-white" />
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-semibold mb-4">
+                <Shield className="w-3.5 h-3.5 text-neutral-900" />
                 <span>Statutory Utility Authentication</span>
               </div>
 
-              <h1 className="text-2xl font-bold text-white tracking-tight">Staff Sign In</h1>
-              <p className="text-xs text-neutral-400 mt-1 mb-6">
+              <h1 className="text-2xl font-bold text-neutral-950 tracking-tight">Staff Sign In</h1>
+              <p className="text-xs text-neutral-500 mt-1 mb-6">
                 Access your assigned regional network jurisdiction, live SCADA, and asset registers.
               </p>
 
               {error && (
-                <div className="mb-5 p-3.5 rounded-xl bg-neutral-900 border border-neutral-700 flex items-start space-x-2.5 text-neutral-200 text-xs">
-                  <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-white" />
+                <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-start space-x-2.5 text-rose-800 text-xs">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
                   <div className="flex-1 font-mono">{error}</div>
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
                     Official Email / Staff Username
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <User className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       required
                       value={identifier}
                       onChange={e => setIdentifier(e.target.value)}
                       placeholder="e.g. ee.urban@powergis.internal"
-                      className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white font-mono transition-all"
+                      className="w-full bg-neutral-50 border border-neutral-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs font-semibold text-neutral-300">Password</label>
+                    <label className="text-xs font-semibold text-neutral-700">Password</label>
                     <button
                       type="button"
                       onClick={() => setShowForgotModal(true)}
-                      className="text-xs text-neutral-400 hover:text-white underline transition-colors"
+                      className="text-xs text-neutral-500 hover:text-neutral-900 underline transition-colors"
                     >
                       Forgot password?
                     </button>
                   </div>
                   <div className="relative">
-                    <KeyRound className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <KeyRound className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       required
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-10 pr-10 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white font-mono transition-all"
+                      className="w-full bg-neutral-50 border border-neutral-300 rounded-xl pl-10 pr-10 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -195,12 +195,12 @@ export const LoginPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-1">
-                  <label className="flex items-center space-x-2 text-neutral-400 cursor-pointer select-none">
+                  <label className="flex items-center space-x-2 text-neutral-600 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={e => setRememberMe(e.target.checked)}
-                      className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-white focus:ring-white focus:ring-offset-0"
+                      className="w-4 h-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
                     />
                     <span>Remember staff session</span>
                   </label>
@@ -210,10 +210,10 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold text-sm shadow-lg shadow-white/10 flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] disabled:opacity-50 mt-2"
+                  className="w-full py-3 px-4 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-sm shadow-sm flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] disabled:opacity-50 mt-2"
                 >
                   {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
                       <span>Enter Operations Workspace</span>
@@ -224,8 +224,8 @@ export const LoginPage: React.FC = () => {
               </form>
 
               {/* Zero-Trust Notice */}
-              <div className="mt-6 pt-5 border-t border-neutral-800 text-[11px] text-neutral-400 flex items-start space-x-2">
-                <Info className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
+              <div className="mt-6 pt-5 border-t border-neutral-100 text-[11px] text-neutral-500 flex items-start space-x-2">
+                <Info className="w-4 h-4 text-neutral-800 flex-shrink-0 mt-0.5" />
                 <p>
                   Zero-trust jurisdiction RLS enforced at database layer. Each staff persona operates strictly within designated territorial bounds.
                 </p>
@@ -236,18 +236,18 @@ export const LoginPage: React.FC = () => {
 
         {/* Right Side: Interactive Test Personas & Dummy Data Switcher */}
         <div className="flex-1 flex flex-col justify-center">
-          <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-6 sm:p-7 backdrop-blur-xl shadow-2xl flex flex-col">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-neutral-800">
+          <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-neutral-100">
               <div>
                 <div className="flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4 text-white" />
-                  <h2 className="text-base font-bold text-white">Engineering Personas & Test Data</h2>
+                  <Sparkles className="w-4 h-4 text-neutral-900" />
+                  <h2 className="text-base font-bold text-neutral-950">Engineering Personas & Test Data</h2>
                 </div>
-                <p className="text-xs text-neutral-400 mt-0.5">
+                <p className="text-xs text-neutral-500 mt-0.5">
                   Select any official role below for instant 1-click login or to autofill test credentials.
                 </p>
               </div>
-              <span className="self-start sm:self-auto text-[11px] px-2.5 py-1 rounded-lg bg-neutral-900 text-neutral-200 font-mono border border-neutral-700 font-semibold">
+              <span className="self-start sm:self-auto text-[11px] px-2.5 py-1 rounded-lg bg-neutral-100 text-neutral-800 font-mono border border-neutral-200 font-semibold">
                 11 Official Roles
               </span>
             </div>
@@ -262,13 +262,13 @@ export const LoginPage: React.FC = () => {
                     onClick={() => handleSelectPersona(u)}
                     className={`p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-neutral-900 border-white text-white shadow-lg ring-1 ring-white/40'
-                        : 'bg-[#111111] border-neutral-800 hover:border-neutral-700 hover:bg-[#161616]'
+                        ? 'bg-neutral-50 border-neutral-900 text-neutral-950 shadow-sm ring-2 ring-neutral-900'
+                        : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/60'
                     }`}
                   >
                     <div>
                       <div className="flex items-start justify-between gap-2 mb-1.5">
-                        <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md border bg-neutral-800 text-neutral-200 border-neutral-700">
+                        <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md border bg-neutral-100 text-neutral-800 border-neutral-200">
                           {u.role.replace('_', ' ')}
                         </span>
                         <button
@@ -277,24 +277,24 @@ export const LoginPage: React.FC = () => {
                             e.stopPropagation();
                             handleOneClickLogin(u);
                           }}
-                          className="text-[10px] px-2.5 py-1 rounded-lg bg-white hover:bg-neutral-200 text-black font-bold flex items-center space-x-1 transition-all shadow-sm"
+                          className="text-[10px] px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-black text-white font-bold flex items-center space-x-1 transition-all shadow-2xs"
                         >
                           <span>1-Click</span>
                           <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>
 
-                      <div className="font-semibold text-xs text-white leading-snug">
+                      <div className="font-semibold text-xs text-neutral-950 leading-snug">
                         {u.fullName}
                       </div>
-                      <div className="text-[11px] text-neutral-400 mt-0.5 line-clamp-1">
+                      <div className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">
                         {u.designation}
                       </div>
                     </div>
 
-                    <div className="mt-2.5 pt-2 border-t border-neutral-800/80 flex items-center justify-between text-[10px] text-neutral-400 font-mono">
+                    <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
                       <span className="truncate max-w-[140px]">{u.email}</span>
-                      <span className="text-white font-semibold">{u.password}</span>
+                      <span className="text-neutral-900 font-semibold">{u.password}</span>
                     </div>
                   </div>
                 );
@@ -302,22 +302,22 @@ export const LoginPage: React.FC = () => {
             </div>
 
             {/* Quick Test Data Stats Summary */}
-            <div className="mt-4 pt-4 border-t border-neutral-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              <div className="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800">
-                <div className="text-base font-bold text-white font-mono">4</div>
-                <div className="text-[10px] text-neutral-400 uppercase font-semibold">Regions</div>
+            <div className="mt-4 pt-4 border-t border-neutral-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="text-base font-bold text-neutral-950 font-mono">4</div>
+                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Regions</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800">
-                <div className="text-base font-bold text-white font-mono">8</div>
-                <div className="text-[10px] text-neutral-400 uppercase font-semibold">Substations</div>
+              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="text-base font-bold text-neutral-950 font-mono">8</div>
+                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Substations</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800">
-                <div className="text-base font-bold text-white font-mono">7 DTRs</div>
-                <div className="text-[10px] text-neutral-400 uppercase font-semibold">Transformers</div>
+              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="text-base font-bold text-neutral-950 font-mono">7 DTRs</div>
+                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Transformers</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-neutral-900 border border-neutral-800">
-                <div className="text-base font-bold text-white font-mono">22+</div>
-                <div className="text-[10px] text-neutral-400 uppercase font-semibold">Modules</div>
+              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="text-base font-bold text-neutral-950 font-mono">22+</div>
+                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Modules</div>
               </div>
             </div>
           </div>
@@ -325,13 +325,13 @@ export const LoginPage: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-neutral-800 bg-black px-6 py-3 text-xs text-neutral-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <footer className="border-t border-neutral-200 bg-white px-6 py-3 text-xs text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-xs">
         <div className="flex items-center space-x-2">
           <span>&copy; 2026 PowerGIS Enterprise. All rights reserved.</span>
           <span>•</span>
-          <span>Black & White Edition</span>
+          <span className="font-semibold text-neutral-800">White Edition</span>
         </div>
-        <div className="flex items-center space-x-4 font-mono text-[11px] text-neutral-400">
+        <div className="flex items-center space-x-4 font-mono text-[11px] text-neutral-500">
           <span>PostGIS 3.4 Engine</span>
           <span>•</span>
           <span>IEEE 1366 / ISO 55000</span>
@@ -340,25 +340,25 @@ export const LoginPage: React.FC = () => {
 
       {/* Forgot Password Modal */}
       {showForgotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="bg-[#0e0e0e] border border-neutral-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <h3 className="text-base font-bold text-white flex items-center space-x-2">
-              <KeyRound className="w-5 h-5 text-white" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+          <div className="bg-white border border-neutral-200 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <h3 className="text-base font-bold text-neutral-950 flex items-center space-x-2">
+              <KeyRound className="w-5 h-5 text-neutral-900" />
               <span>Reset Staff Password</span>
             </h3>
-            <p className="text-xs text-neutral-400 mt-1 mb-4">
+            <p className="text-xs text-neutral-500 mt-1 mb-4">
               Enter your registered staff email or username. An administrative verification code will be generated.
             </p>
 
             {forgotFeedback ? (
-              <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-700 text-white text-xs flex items-center space-x-2 font-mono">
-                <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-white" />
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2 font-mono">
+                <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
                 <span>{forgotFeedback}</span>
               </div>
             ) : (
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-neutral-700 mb-1">
                     Staff Email or Username
                   </label>
                   <input
@@ -367,20 +367,20 @@ export const LoginPage: React.FC = () => {
                     value={forgotInput}
                     onChange={e => setForgotInput(e.target.value)}
                     placeholder="e.g. ee.urban@powergis.internal"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white font-mono"
+                    className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 font-mono"
                   />
                 </div>
                 <div className="flex items-center justify-end space-x-3 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowForgotModal(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-bold shadow-lg shadow-white/10 transition-all"
+                    className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-bold shadow-sm transition-all"
                   >
                     Send Reset Token
                   </button>

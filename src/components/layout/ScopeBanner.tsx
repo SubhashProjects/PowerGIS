@@ -1,11 +1,11 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// SCOPE & JURISDICTION ENTITLEMENT BANNER - MONOCHROME B&W THEME
+// SCOPE & JURISDICTION ENTITLEMENT BANNER - PURE WHITE THEME
 // ============================================================================
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ShieldAlert, ShieldCheck, MapPin, Building, Lock } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
 
 export const ScopeBanner: React.FC = () => {
   const { user } = useAuth();
@@ -39,29 +39,35 @@ export const ScopeBanner: React.FC = () => {
     <div
       className={`px-4 py-1.5 border-b text-xs flex items-center justify-between select-none ${
         isRestricted
-          ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
-          : 'bg-[#080808] border-neutral-800 text-neutral-300'
+          ? 'bg-amber-50/70 border-amber-200/80 text-amber-900'
+          : 'bg-neutral-50 border-neutral-200 text-neutral-800'
       }`}
     >
       <div className="flex items-center space-x-2 truncate">
         {isRestricted ? (
-          <ShieldAlert className="w-3.5 h-3.5 text-white flex-shrink-0" />
+          <ShieldAlert className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
         ) : (
-          <ShieldCheck className="w-3.5 h-3.5 text-white flex-shrink-0" />
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
         )}
-        <span className="font-semibold text-white uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 border border-neutral-700">
+        <span
+          className={`font-semibold uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded border ${
+            isRestricted
+              ? 'bg-amber-100 text-amber-900 border-amber-300'
+              : 'bg-white text-neutral-900 border-neutral-300 font-bold'
+          }`}
+        >
           Entitlement
         </span>
-        <span className="truncate text-neutral-300 font-mono text-[11px]">{getJurisdictionLabel()}</span>
+        <span className="truncate font-mono text-[11px] font-medium">{getJurisdictionLabel()}</span>
       </div>
 
       <div className="hidden sm:flex items-center space-x-3 text-[11px] font-mono">
-        <span className="flex items-center space-x-1 text-neutral-400">
-          <Lock className="w-3 h-3 text-white" />
+        <span className="flex items-center space-x-1 text-neutral-600">
+          <Lock className="w-3 h-3 text-neutral-900" />
           <span>Zero-Trust RLS</span>
         </span>
-        <span className="text-neutral-600">•</span>
-        <span className="text-white font-bold bg-neutral-800 px-1.5 py-0.5 rounded border border-neutral-700 text-[10px]">
+        <span className="text-neutral-400">•</span>
+        <span className="text-neutral-950 font-bold bg-white px-1.5 py-0.5 rounded border border-neutral-300 text-[10px] shadow-2xs">
           {user.role.toUpperCase()}
         </span>
       </div>

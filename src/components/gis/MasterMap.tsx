@@ -415,8 +415,8 @@ export const MasterMap: React.FC = () => {
     measurement.points.forEach(pt => {
       const marker = L.circleMarker(pt, {
         radius: 5,
-        fillColor: '#FFFFFF',
-        color: '#000000',
+        fillColor: '#0f172a',
+        color: '#ffffff',
         weight: 2,
         fillOpacity: 1,
       });
@@ -425,7 +425,7 @@ export const MasterMap: React.FC = () => {
 
     if (measurement.mode === 'distance' && measurement.points.length > 1) {
       const line = L.polyline(measurement.points, {
-        color: '#FFFFFF',
+        color: '#0f172a',
         weight: 3,
         dashArray: '6, 6',
       });
@@ -439,9 +439,9 @@ export const MasterMap: React.FC = () => {
       measurement.totalDistanceM = Math.round((measurement.totalDistanceM + dist) * 10) / 10;
     } else if (measurement.mode === 'area' && measurement.points.length >= 3) {
       const polygon = L.polygon(measurement.points, {
-        color: '#FFFFFF',
-        fillColor: '#FFFFFF',
-        fillOpacity: 0.25,
+        color: '#0f172a',
+        fillColor: '#0f172a',
+        fillOpacity: 0.15,
         weight: 2,
       });
       mg.addLayer(polygon);
@@ -450,7 +450,7 @@ export const MasterMap: React.FC = () => {
   }, [measurement.points]);
 
   return (
-    <div className="relative w-full h-full flex-1 bg-black overflow-hidden select-none">
+    <div className="relative w-full h-full flex-1 bg-neutral-100 overflow-hidden select-none">
       {/* Basemap Switcher Floating Widget */}
       <BasemapSwitcher />
 
