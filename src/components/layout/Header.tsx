@@ -3,14 +3,14 @@
 // ENTERPRISE HEADER COMPONENT - PURE WHITE THEME & MOBILE ADAPTIVE
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useGIS } from '../../context/GISContext';
 import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { initialRegions } from '../../services/mockData';
 import {
-  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck
+  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Clock, Layers
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -26,6 +26,43 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState<string>('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Live Operational Clock (Ticking every 1 second - IST & UTC)
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      // IST is UTC+5:30
+      const options: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Kolkata',
+      };
+      const formatted = new Intl.DateTimeFormat('en-IN', options).format(now);
+      setCurrentTime(`${formatted} IST · UTC+05:30`);
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Global Ctrl + K Keyboard Shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const roleData = notificationService.getDashboardData(user);
   const notifications = roleData.notifications;
@@ -47,6 +84,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
     setSearchResults([]);
     setSearchQuery('');
     setMobileSearchOpen(false);
+  };
+
+  // Breadcrumb determination based on active region & role
+  const getBreadcrumb = () => {
+    const regionName = initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry UT';
+    return `${regionName} › Circle-I › Div-Urban › Marapalam Section`;
   };
 
   return (
@@ -80,19 +123,36 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
               PowerGIS • Asset Management & O&M Platform
             </p>
           </div>
+
+          {/* Dynamic Breadcrumbs (Desktop) */}
+          <div className="hidden xl:flex items-center space-x-1.5 text-[11px] font-mono text-neutral-500 pl-4 border-l border-neutral-200">
+            <span className="text-neutral-400 font-sans">Jurisdiction:</span>
+            <span className="font-semibold text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded border border-neutral-200">
+              {getBreadcrumb()}
+            </span>
+          </div>
         </div>
 
-        {/* Global Asset Search (Desktop) */}
-        <div className="relative w-72 lg:w-96 hidden md:block">
+        {/* Global Asset Search (Desktop) with Ctrl + K */}
+        <div className="relative w-64 lg:w-80 hidden md:block">
           <div className="relative flex items-center">
             <Search className="w-4 h-4 text-neutral-400 absolute left-3 pointer-events-none" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={handleSearch}
-              placeholder="Search assets, feeders, poles..."
-              className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-4 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition-all font-mono"
+              placeholder="Search assets, feeders, poles... (Ctrl + K)"
+              className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-14 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition-all font-mono"
             />
+            <div className="absolute right-2 flex items-center space-x-0.5 pointer-events-none">
+              <kbd className="px-1 py-0.5 text-[9px] font-mono font-bold bg-neutral-200 text-neutral-600 rounded border border-neutral-300">
+                Ctrl
+              </kbd>
+              <kbd className="px-1 py-0.5 text-[9px] font-mono font-bold bg-neutral-200 text-neutral-600 rounded border border-neutral-300">
+                K
+              </kbd>
+            </div>
           </div>
 
           {/* Dropdown Results */}
@@ -128,8 +188,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
             <Search className="w-4 h-4" />
           </button>
 
+          {/* Live Operational Clock (IST / UTC) */}
+          <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-800 shadow-2xs">
+            <Clock className="w-3.5 h-3.5 text-neutral-500 animate-pulse" />
+            <span className="font-semibold">{currentTime}</span>
+          </div>
+
           {/* White Theme Badge Indicator */}
-          <div className="hidden lg:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-600">
+          <div className="hidden 2xl:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-600">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span>White Theme</span>
           </div>

@@ -12,6 +12,7 @@ import { Sidebar, NavTabId } from './components/layout/Sidebar';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { MasterMap } from './components/gis/MasterMap';
 import { AssetTable } from './components/assets/AssetTable';
+import { CapitalProjectsRDSS } from './components/projects/CapitalProjectsRDSS';
 import { SmartMeterDashboard } from './components/smartMeters/SmartMeterDashboard';
 import { WarrantyRegister } from './components/warranties/WarrantyRegister';
 import { FaultList } from './components/faults/FaultList';
@@ -77,6 +78,7 @@ const MainLayout: React.FC = () => {
           {activeTab === 'dashboard' && <RoleBasedDashboard onNavigateTab={tab => setActiveTab(tab)} />}
           {activeTab === 'gis_map' && <MasterMap />}
           {activeTab === 'assets' && <AssetTable />}
+          {activeTab === 'capital_projects' && <CapitalProjectsRDSS />}
           {activeTab === 'smart_meters' && <SmartMeterDashboard />}
           {activeTab === 'warranties' && <WarrantyRegister />}
           {activeTab === 'faults' && <FaultList />}

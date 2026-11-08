@@ -8,13 +8,14 @@ import { useAuth } from '../../context/AuthContext';
 import {
   Map, Zap, Gauge, ShieldCheck, AlertTriangle, CheckSquare,
   Smartphone, FileCheck, Cpu, Power, GitFork, Calendar,
-  BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound, LayoutDashboard, X
+  BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound, LayoutDashboard, X, Building2
 } from 'lucide-react';
 
 export type NavTabId =
   | 'dashboard'
   | 'gis_map'
   | 'assets'
+  | 'capital_projects'
   | 'smart_meters'
   | 'warranties'
   | 'faults'
@@ -56,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'dashboard', label: 'Role Dashboard & Tasks', icon: LayoutDashboard },
     { id: 'gis_map', label: 'GIS Master Map', icon: Map },
     { id: 'assets', label: 'Electrical Assets', icon: Zap, roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'] },
+    { id: 'capital_projects', label: 'Capital Projects (RDSS)', icon: Building2, roles: ['super_admin', 'se', 'ee', 'contractor', 'auditor'] },
     { id: 'smart_meters', label: 'Smart Meter Dashboard', icon: Gauge, roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'] },
     { id: 'warranties', label: 'Warranties & Lifecycle', icon: ShieldCheck, roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'auditor'] },
     { id: 'faults', label: 'Faults & Distance Calc', icon: AlertTriangle, roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'contractor', 'auditor'] },

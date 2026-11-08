@@ -1,35 +1,73 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// SCOPE & JURISDICTION ENTITLEMENT BANNER - PURE WHITE THEME
+// SCOPE HUD INDICATOR (PERSISTENT STICKY BANNER) - SECTION 3.2
+// Format: [Active Identity: {Role}] · [Jurisdiction: {Scope}] · [Privileges: {Tags}]
 // ============================================================================
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, Lock, Activity, Key } from 'lucide-react';
 
 export const ScopeBanner: React.FC = () => {
   const { user } = useAuth();
 
+  const getRoleTitle = () => {
+    switch (user.role) {
+      case 'super_admin': return 'Super Administrator';
+      case 'se': return 'Superintending Engineer (SE)';
+      case 'ee': return 'Executive Engineer (EE)';
+      case 'aee': return 'Asst. Executive Engineer (AEE)';
+      case 'ae': return 'Section Engineer (AE)';
+      case 'je': return 'Junior Engineer (JE)';
+      case 'contractor': return 'EPC Contractor';
+      case 'auditor': return 'Regulatory & Vigilance Auditor';
+      default: return user.fullName || user.username || 'Utility Engineer';
+    }
+  };
+
   const getJurisdictionLabel = () => {
     switch (user.role) {
       case 'super_admin':
-        return 'Unrestricted System-Wide Oversight (All 4 Regions: Puducherry, Karaikal, Mahe, Yanam)';
+        return 'Puducherry UT (Universal State-Wide Oversight)';
       case 'se':
-        return `Circle Jurisdiction: ${user.regionId === 'reg-pdy' ? 'Puducherry Circle (Urban & Rural Circles)' : 'Karaikal, Mahe & Yanam Circle'}`;
+        return user.regionId === 'reg-pdy' ? 'Puducherry Circle (Urban & Rural Circles)' : 'Karaikal, Mahe & Yanam Circle';
       case 'ee':
-        return 'Divisional Scoping: Urban Distribution Division (Feeders, DTRs, Breakdowns & Work Orders)';
+        return 'Urban Operations Division (Feeders, DTRs & Dispatch)';
       case 'aee':
-        return 'Sub-Divisional Scope: Town Sub-Division (Maintenance Supervision & Approvals)';
+        return 'Town Sub-Division (Maintenance Supervision & Approvals)';
       case 'ae':
-        return 'Section Scoping: Marapalam O&M Section (JE Approval, Fault Cleared Verification)';
+        return 'Marapalam O&M Section (JE Approval & Fault Cleared Verification)';
       case 'je':
-        return 'STRICT JE JURISDICTION: Marapalam Commercial Ward (Asset Editing & Contractor Verification Only)';
+        return 'Marapalam Commercial Ward (Strict Local Section Scope)';
       case 'contractor':
-        return `CONTRACTOR STAGING ISOLATION: ${user.contractorCompany || 'Larsen Power Ltd'} (Draft Survey & Offline GPS Uploads Only - No Live GIS Modification)`;
+        return `${user.contractorCompany || 'Larsen Power Ltd'} (Staging Sandbox Isolation)`;
       case 'auditor':
-        return 'Read-Only Regulatory & Grid Compliance Inspection Mode (Audit Trails Enabled)';
+        return 'State-Wide Regulatory Compliance & Energy Loss Audits';
       default:
-        return 'Role-based View Active';
+        return 'Standard Distribution Scope';
+    }
+  };
+
+  const getPrivilegeTags = (): string[] => {
+    switch (user.role) {
+      case 'super_admin':
+        return ['SCADA Switching', 'PTW Clear', 'Topology Trace', 'DB Backup', 'Zero-Trust RLS'];
+      case 'se':
+        return ['RDSS Capital Schemes', 'SCADA Oversight', 'SLA Enforcement', 'PTW Approval'];
+      case 'ee':
+        return ['Feeder Dispatch', 'SCADA Switching', 'WO Release', 'Outage Approval'];
+      case 'aee':
+        return ['Sub-Div Operations', 'Survey Sign-Off', 'WO Verification'];
+      case 'ae':
+        return ['PTW Line Clearance', 'JE Verification', 'SLD Control', 'Breakdown Clearance'];
+      case 'je':
+        return ['Field Survey Verify', 'Pole Snapping', 'Fault Proximity', 'Local Section Only'];
+      case 'contractor':
+        return ['Staging Sandbox Only', 'GPS Photo Upload', 'No Live GIS Writes'];
+      case 'auditor':
+        return ['Read-Only RLS', 'Regulatory Exports', 'Loss Audits', 'Tamper Log'];
+      default:
+        return ['Standard Access'];
     }
   };
 
@@ -37,38 +75,56 @@ export const ScopeBanner: React.FC = () => {
 
   return (
     <div
-      className={`px-4 py-1.5 border-b text-xs flex items-center justify-between select-none ${
+      className={`px-3 sm:px-4 py-1.5 border-b text-xs flex flex-wrap items-center justify-between gap-1.5 select-none ${
         isRestricted
-          ? 'bg-amber-50/70 border-amber-200/80 text-amber-900'
-          : 'bg-neutral-50 border-neutral-200 text-neutral-800'
+          ? 'bg-amber-50/80 border-amber-200 text-amber-950'
+          : 'bg-slate-50/90 border-slate-200 text-slate-800'
       }`}
     >
+      {/* Left: Active Identity & Jurisdiction */}
       <div className="flex items-center space-x-2 truncate">
         {isRestricted ? (
           <ShieldAlert className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
         ) : (
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
         )}
-        <span
-          className={`font-semibold uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded border ${
-            isRestricted
-              ? 'bg-amber-100 text-amber-900 border-amber-300'
-              : 'bg-white text-neutral-900 border-neutral-300 font-bold'
-          }`}
-        >
-          Entitlement
-        </span>
-        <span className="truncate font-mono text-[11px] font-medium">{getJurisdictionLabel()}</span>
+
+        <div className="flex items-center space-x-1.5 font-mono text-[11px] truncate">
+          <span className="text-neutral-500 font-sans hidden sm:inline">Active Identity:</span>
+          <span className="font-bold text-neutral-900 bg-white px-1.5 py-0.5 rounded border border-neutral-300 shadow-2xs">
+            {getRoleTitle()}
+          </span>
+
+          <span className="text-neutral-300">·</span>
+
+          <span className="text-neutral-500 font-sans hidden sm:inline">Jurisdiction:</span>
+          <span className="font-semibold text-neutral-800 truncate">
+            {getJurisdictionLabel()}
+          </span>
+        </div>
       </div>
 
-      <div className="hidden sm:flex items-center space-x-3 text-[11px] font-mono">
-        <span className="flex items-center space-x-1 text-neutral-600">
-          <Lock className="w-3 h-3 text-neutral-900" />
-          <span>Zero-Trust RLS</span>
-        </span>
-        <span className="text-neutral-400">•</span>
-        <span className="text-neutral-950 font-bold bg-white px-1.5 py-0.5 rounded border border-neutral-300 text-[10px] shadow-2xs">
-          {user.role.toUpperCase()}
+      {/* Right: Privilege Tags & Zero-Trust RLS */}
+      <div className="hidden lg:flex items-center space-x-1.5 text-[10px] font-mono">
+        <span className="text-neutral-400 mr-1 font-sans">Privileges:</span>
+        {getPrivilegeTags().map((tag, i) => (
+          <span
+            key={i}
+            className={`px-1.5 py-0.5 rounded border font-semibold ${
+              tag.includes('No Live') || tag.includes('Strict')
+                ? 'bg-amber-100 text-amber-900 border-amber-300'
+                : 'bg-white text-neutral-700 border-neutral-300 shadow-2xs'
+            }`}
+          >
+            {tag}
+          </span>
+        ))}
+
+        <span className="text-neutral-300">•</span>
+
+        <span className="flex items-center space-x-1 px-1.5 py-0.5 bg-neutral-900 text-white rounded font-bold">
+          <Lock className="w-2.5 h-2.5 text-emerald-400" />
+          <span>RLS Active</span>
         </span>
       </div>
     </div>

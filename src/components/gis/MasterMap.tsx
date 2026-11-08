@@ -15,6 +15,7 @@ import { BasemapSwitcher } from './BasemapSwitcher';
 import { LayerTree } from './LayerTree';
 import { MeasureTool } from './MeasureTool';
 import { MapRotationControl } from './MapRotationControl';
+import { MapAttributeDrawer } from './MapAttributeDrawer';
 import { calculateHaversineDistance, calculatePolygonArea } from '../../lib/geoUtils';
 
 export const MasterMap: React.FC = () => {
@@ -449,6 +450,15 @@ export const MasterMap: React.FC = () => {
     }
   }, [measurement.points]);
 
+  // Handle Selected Asset FlyTo & Centering
+  useEffect(() => {
+    if (!selectedAsset || !mapInstanceRef.current) return;
+    const coords = selectedAsset.coordinates || (selectedAsset.latitude && selectedAsset.longitude ? [selectedAsset.latitude, selectedAsset.longitude] : null);
+    if (coords && Array.isArray(coords) && coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+      mapInstanceRef.current.flyTo(coords as [number, number], 17, { duration: 1.0 });
+    }
+  }, [selectedAsset]);
+
   return (
     <div className="relative w-full h-full flex-1 bg-neutral-100 overflow-hidden select-none">
       {/* Basemap Switcher Floating Widget */}
@@ -462,6 +472,9 @@ export const MasterMap: React.FC = () => {
 
       {/* Measurement & GPS Toolbar */}
       <MeasureTool />
+
+      {/* Synchronized Bottom Attribute Drawer (Section 6.4) */}
+      <MapAttributeDrawer onSelectAsset={setSelectedAsset} selectedAsset={selectedAsset} />
 
       {/* Leaflet DOM container */}
       <div ref={mapContainerRef} className="w-full h-full z-10" />

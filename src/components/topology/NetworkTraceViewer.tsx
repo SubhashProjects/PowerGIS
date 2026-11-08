@@ -1,12 +1,12 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// NETWORK TOPOLOGY & UPSTREAM/DOWNSTREAM GRAPH TRACING ENGINE
-// Analyzes: Source Substations, Feeders, DT Service Areas, Connected Consumers
+// NETWORK TOPOLOGY & UPSTREAM/DOWNSTREAM GRAPH TRACING ENGINE (SECTION 8)
+// PURE WHITE THEME & ELECTRICAL SUPPLY GRAPH TOPOLOGY
 // ============================================================================
 
 import React, { useState } from 'react';
 import { assetService } from '../../services/assetService';
-import { GitFork, ArrowUp, ArrowDown, Cpu, Zap, Box, Users, ShieldAlert } from 'lucide-react';
+import { GitFork, ArrowUp, ArrowDown, Cpu, Zap, Box, Users, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 export const NetworkTraceViewer: React.FC = () => {
   const [selectedFeederId, setSelectedFeederId] = useState<string>('fdr-mara-1');
@@ -21,26 +21,35 @@ export const NetworkTraceViewer: React.FC = () => {
   const connectedConsumers = assetService.getConsumers().filter(c => c.feederId === currentFeeder.id);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto space-y-4">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Banner */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl flex items-center justify-between">
+      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
-            <GitFork className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+            <GitFork className="w-5 h-5 text-sky-400" />
           </div>
           <div>
-            <h2 className="font-bold text-sm text-white">Network Topology & Upstream/Downstream Tracing</h2>
-            <p className="text-xs text-slate-400">Electrical Connectivity Analysis • Feeder to DT Service Area to End Consumer</p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+                Network Topology & Supply Graph Tracing
+              </h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
+                POSTGIS PGROUTING
+              </span>
+            </div>
+            <p className="text-xs text-neutral-500 font-mono mt-0.5">
+              Source Substation › 11kV Feeder Backbone › DT Service Areas › End Consumer Points
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 self-start sm:self-auto">
           <button
             onClick={() => setTraceDirection('upstream')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1 transition-all ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
               traceDirection === 'upstream'
-                ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30'
-                : 'bg-slate-800 text-slate-400 hover:text-white'
+                ? 'bg-neutral-900 text-white shadow-xs font-bold'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200'
             }`}
           >
             <ArrowUp className="w-3.5 h-3.5" />
@@ -48,10 +57,10 @@ export const NetworkTraceViewer: React.FC = () => {
           </button>
           <button
             onClick={() => setTraceDirection('downstream')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1 transition-all ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
               traceDirection === 'downstream'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'bg-slate-800 text-slate-400 hover:text-white'
+                ? 'bg-neutral-900 text-white shadow-xs font-bold'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200'
             }`}
           >
             <ArrowDown className="w-3.5 h-3.5" />
@@ -60,14 +69,14 @@ export const NetworkTraceViewer: React.FC = () => {
         </div>
       </div>
 
-      {/* Feeder Selector */}
-      <div className="bg-[#121b2d] border border-slate-700/80 rounded-2xl p-4 shadow-xl flex items-center justify-between">
+      {/* Feeder Selector & Metrics Strip */}
+      <div className="bg-white border border-neutral-200 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <span className="text-xs text-slate-400 font-medium">Select Distribution Feeder:</span>
+          <span className="text-xs text-neutral-600 font-medium font-mono">Select Active Feeder:</span>
           <select
             value={selectedFeederId}
             onChange={e => setSelectedFeederId(e.target.value)}
-            className="bg-[#0b1220] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono"
+            className="bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-1.5 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
           >
             {feeders.map(f => (
               <option key={f.id} value={f.id}>
@@ -78,93 +87,105 @@ export const NetworkTraceViewer: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4 text-xs font-mono">
-          <span className="text-slate-400">Length: <b className="text-sky-400">{currentFeeder.lengthKm} km</b></span>
-          <span className="text-slate-400">Peak Load: <b className="text-amber-400">{currentFeeder.peakLoadAmps} A</b></span>
+          <span className="text-neutral-600">Length: <b className="text-neutral-900">{currentFeeder.lengthKm} km</b></span>
+          <span className="text-neutral-600">Peak Load: <b className="text-amber-700">{currentFeeder.peakLoadAmps} A</b></span>
+          <span className="text-neutral-600">Conductor: <b className="text-neutral-900">{currentFeeder.conductorType}</b></span>
         </div>
       </div>
 
       {/* GRAPH TOPOLOGY HIERARCHY TREE */}
-      <div className="bg-[#0b101c] border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
-        <h3 className="font-bold text-xs text-white uppercase tracking-wider flex items-center space-x-2">
-          <span>Electrical Supply Graph Topology</span>
-          <span className="text-[10px] text-sky-400 font-mono">
-            {traceDirection === 'upstream' ? '(Load -> Source Grid Substation)' : '(Source Substation -> Feeder -> DTs -> End Consumers)'}
+      <div className="bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-neutral-100 pb-3">
+          <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider flex items-center space-x-2">
+            <span>Electrical Supply Graph Topology</span>
+          </h3>
+          <span className="text-[11px] text-neutral-500 font-mono">
+            {traceDirection === 'upstream'
+              ? 'Direction: Downstream Consumer › Source Grid Substation'
+              : 'Direction: Source Substation › 11kV Feeder › Distribution Transformers › Consumers'}
           </span>
-        </h3>
+        </div>
 
         {/* Level 1: Substation */}
-        <div className="p-4 rounded-xl bg-[#111a2c] border border-slate-700/70 flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20">
+            <div className="p-2.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-200">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[10px] uppercase font-bold text-red-400">Source Grid Substation</div>
-              <div className="font-bold text-sm text-white">{sourceSubstation?.name || 'Marapalam 110kV'}</div>
-              <div className="text-xs text-slate-400 font-mono">{sourceSubstation?.code} • {sourceSubstation?.voltageClass}</div>
+              <div className="text-[10px] uppercase font-bold text-rose-700 font-mono">Level 1: Source Grid Substation</div>
+              <div className="font-bold text-sm text-neutral-950">{sourceSubstation?.name || 'Marapalam 110kV Primary'}</div>
+              <div className="text-xs text-neutral-500 font-mono mt-0.5">{sourceSubstation?.code} • {sourceSubstation?.voltageClass}</div>
             </div>
           </div>
-          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 font-mono">
-            OPERATIONAL
+          <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono">
+            OPERATIONAL (ENERGIZED)
           </span>
         </div>
 
         {/* Level 2: Feeder Backbone */}
-        <div className="ml-6 pl-6 border-l-2 border-sky-500/40 space-y-4">
-          <div className="p-4 rounded-xl bg-[#111a2c] border border-sky-500/30 flex items-center justify-between">
+        <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-sky-400 space-y-4">
+          <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
+              <div className="p-2.5 rounded-lg bg-sky-50 text-sky-600 border border-sky-200">
                 <Zap className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[10px] uppercase font-bold text-sky-400">11kV Feeder Trunk</div>
-                <div className="font-bold text-sm text-white">{currentFeeder.name}</div>
-                <div className="text-xs text-slate-400 font-mono">{currentFeeder.conductorType} • {currentFeeder.lengthKm} km</div>
+                <div className="text-[10px] uppercase font-bold text-sky-700 font-mono">Level 2: 11kV Feeder Trunk</div>
+                <div className="font-bold text-sm text-neutral-950">{currentFeeder.name}</div>
+                <div className="text-xs text-neutral-500 font-mono mt-0.5">{currentFeeder.conductorType} • {currentFeeder.lengthKm} km</div>
               </div>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/10 text-sky-400 font-mono">
-              ENERGIZED
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200 font-mono">
+              ENERGIZED ({currentFeeder.peakLoadAmps}A)
             </span>
           </div>
 
           {/* Level 3: Connected DT Service Areas */}
-          <div className="ml-6 pl-6 border-l-2 border-emerald-500/40 space-y-3">
-            <div className="text-xs font-semibold text-slate-300">
-              Stepped Down Transformers ({connectedDTs.length} DT Service Areas):
+          <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-emerald-400 space-y-3">
+            <div className="text-xs font-bold text-neutral-800 font-mono">
+              Level 3: Stepped Down Transformers ({connectedDTs.length} DT Service Areas):
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {connectedDTs.map(dt => (
-                <div key={dt.id} className="p-3 rounded-xl bg-[#0e1626] border border-slate-700/80 space-y-2">
+                <div key={dt.id} className="p-3.5 rounded-xl bg-white border border-neutral-200 shadow-2xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-emerald-300">{dt.name}</span>
-                    <span className="font-mono text-[10px] text-slate-400">{dt.capacityKVA} kVA</span>
+                    <span className="font-bold text-xs text-neutral-950">{dt.name}</span>
+                    <span className="font-mono text-[10px] font-bold text-neutral-700 px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200">
+                      {dt.capacityKVA} kVA
+                    </span>
                   </div>
-                  <div className="text-[11px] text-slate-400 flex items-center justify-between">
-                    <span>Loading: <b className="text-slate-200">{dt.loadPercentage}%</b></span>
-                    <span>Oil Level: <b className="text-slate-200">{dt.oilLevelPct}%</b></span>
+                  <div className="text-[11px] text-neutral-500 font-mono flex items-center justify-between pt-1 border-t border-neutral-100">
+                    <span>Loading: <b className="text-neutral-900">{dt.loadPercentage}%</b></span>
+                    <span>Oil Level: <b className="text-neutral-900">{dt.oilLevelPct}%</b></span>
+                    <span>Imbalance: <b className="text-amber-700">{dt.phaseImbalancePct}%</b></span>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Level 4: Connected Consumers */}
-            <div className="ml-6 pl-6 border-l-2 border-purple-500/40 space-y-2">
-              <div className="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
-                <Users className="w-3.5 h-3.5 text-purple-400" />
-                <span>Connected Downstream Consumer Services ({connectedConsumers.length} Verified Premises):</span>
+            <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-purple-400 space-y-2.5">
+              <div className="text-xs font-bold text-neutral-800 font-mono flex items-center space-x-1.5">
+                <Users className="w-3.5 h-3.5 text-purple-600" />
+                <span>Level 4: Connected Downstream Consumer Services ({connectedConsumers.length} Verified Premises):</span>
               </div>
 
               <div className="space-y-1.5">
                 {connectedConsumers.map(c => (
-                  <div key={c.id} className="p-2.5 rounded-lg bg-[#0a101b] border border-slate-800 text-xs flex items-center justify-between">
+                  <div key={c.id} className="p-3 rounded-xl bg-white border border-neutral-200 text-xs flex items-center justify-between shadow-2xs">
                     <div>
-                      <span className="font-semibold text-slate-200">{c.name}</span>
-                      <span className="text-[11px] text-slate-400 font-mono ml-2">({c.consumerNumber})</span>
-                      <div className="text-[10px] text-slate-500">{c.address}</div>
+                      <span className="font-bold text-neutral-950">{c.name}</span>
+                      <span className="text-[11px] text-neutral-500 font-mono ml-2">({c.consumerNumber})</span>
+                      <div className="text-[10px] text-neutral-400 mt-0.5">{c.address}</div>
                     </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400">
-                      {c.isSmartMeter ? 'Smart Meter' : 'Conventional'}
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono border font-semibold ${
+                      c.isSmartMeter
+                        ? 'bg-purple-50 text-purple-800 border-purple-200'
+                        : 'bg-neutral-100 text-neutral-700 border-neutral-200'
+                    }`}>
+                      {c.isSmartMeter ? 'Smart Prepaid' : 'Conventional'}
                     </span>
                   </div>
                 ))}

@@ -1,7 +1,7 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// WARRANTY & EQUIPMENT LIFECYCLE REGISTER - MONOCHROME B&W THEME
-// 30/60/90-Day Expiry Alerts • Batch Warranties • Useful Life Depreciation
+// WARRANTY & EQUIPMENT LIFECYCLE REGISTER
+// PURE WHITE THEME & OEM GUARANTEE EXPIRY ALERTS
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -17,22 +17,24 @@ export const WarrantyRegister: React.FC = () => {
   const expiringSoon = warranties.filter(w => w.daysToExpiry <= 60);
 
   return (
-    <div className="p-3.5 sm:p-6 max-w-6xl mx-auto space-y-4 sm:space-y-6 text-neutral-100 select-none">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Banner */}
-      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-white text-black font-extrabold flex items-center justify-center text-xl shadow-lg shadow-white/10 flex-shrink-0">
-            ⚡
+      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+            <ShieldCheck className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">Warranty & Equipment Lifecycle Register</h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-neutral-900 text-white border border-neutral-700">
+              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+                Warranty & Equipment Lifecycle Register
+              </h1>
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
                 OEM GUARANTEES
               </span>
             </div>
-            <p className="text-xs text-neutral-400 mt-0.5 font-mono">
-              Advance Expiry Alerts (30/60/90 Days) • Manufacturer Guarantees & Depreciation
+            <p className="text-xs text-neutral-500 font-mono mt-0.5">
+              Advance Expiry Alerts (30/60/90 Days) · Manufacturer Guarantees & Asset Depreciation
             </p>
           </div>
         </div>
@@ -40,24 +42,30 @@ export const WarrantyRegister: React.FC = () => {
         <div className="flex flex-wrap items-center gap-1.5 self-start md:self-auto text-xs font-semibold">
           <button
             onClick={() => setFilterMode('expiring')}
-            className={`px-3.5 py-2 rounded-xl transition-all ${
-              filterMode === 'expiring' ? 'bg-white text-black font-bold shadow-md' : 'bg-neutral-900 text-neutral-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              filterMode === 'expiring'
+                ? 'bg-neutral-900 text-white font-bold shadow-xs'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200'
             }`}
           >
             Expiring Soon ({expiringSoon.length})
           </button>
           <button
             onClick={() => setFilterMode('all')}
-            className={`px-3.5 py-2 rounded-xl transition-all ${
-              filterMode === 'all' ? 'bg-white text-black font-bold shadow-md' : 'bg-neutral-900 text-neutral-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              filterMode === 'all'
+                ? 'bg-neutral-900 text-white font-bold shadow-xs'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200'
             }`}
           >
             All Warranties ({warranties.length})
           </button>
           <button
             onClick={() => setFilterMode('lifecycle')}
-            className={`px-3.5 py-2 rounded-xl transition-all ${
-              filterMode === 'lifecycle' ? 'bg-white text-black font-bold shadow-md' : 'bg-neutral-900 text-neutral-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              filterMode === 'lifecycle'
+                ? 'bg-neutral-900 text-white font-bold shadow-xs'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900 border border-neutral-200'
             }`}
           >
             Asset Lifecycle ({lifecycles.length})
@@ -66,17 +74,20 @@ export const WarrantyRegister: React.FC = () => {
       </div>
 
       {/* Main Table */}
-      <div className="bg-[#0a0a0a] border border-neutral-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
         {filterMode !== 'lifecycle' ? (
           <div>
-            <h3 className="font-bold text-xs text-white uppercase tracking-wider mb-3">
-              Equipment Warranty Records
-            </h3>
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5 mb-3">
+              <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
+                Equipment Warranty Records
+              </h3>
+              <span className="text-[10px] text-neutral-500 font-mono">Contractual Cover</span>
+            </div>
 
-            <div className="border border-neutral-800 rounded-2xl overflow-hidden">
+            <div className="border border-neutral-200 rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-[#111111] text-neutral-400 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-800">
+                  <thead className="bg-neutral-50 text-neutral-600 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-200">
                     <tr>
                       <th className="p-3">Asset Code</th>
                       <th className="p-3">Category</th>
@@ -87,23 +98,23 @@ export const WarrantyRegister: React.FC = () => {
                       <th className="p-3">Warranty Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-850 font-mono text-neutral-300">
+                  <tbody className="divide-y divide-neutral-100 font-mono text-neutral-700">
                     {(filterMode === 'expiring' ? expiringSoon : warranties).map(w => {
                       const isUrgent = w.daysToExpiry <= 30;
                       return (
-                        <tr key={w.id} className="hover:bg-neutral-900/60 transition-colors">
-                          <td className="p-3 font-bold text-white">{w.equipmentCode}</td>
-                          <td className="p-3 text-neutral-200 font-sans">{w.equipmentType}</td>
-                          <td className="p-3 font-sans text-neutral-400">{w.manufacturer}</td>
-                          <td className="p-3 text-neutral-400">{w.commencementDate}</td>
-                          <td className="p-3 text-neutral-200">{w.expiryDate}</td>
+                        <tr key={w.id} className="hover:bg-neutral-50 transition-colors">
+                          <td className="p-3 font-bold text-neutral-950">{w.equipmentCode}</td>
+                          <td className="p-3 text-neutral-900 font-sans">{w.equipmentType}</td>
+                          <td className="p-3 font-sans text-neutral-500">{w.manufacturer}</td>
+                          <td className="p-3 text-neutral-500">{w.commencementDate}</td>
+                          <td className="p-3 text-neutral-900 font-semibold">{w.expiryDate}</td>
                           <td className="p-3 font-bold">
-                            <span className={isUrgent ? 'text-white underline' : 'text-neutral-300'}>
+                            <span className={isUrgent ? 'text-rose-700 font-extrabold' : 'text-neutral-900'}>
                               {w.daysToExpiry} days
                             </span>
                           </td>
                           <td className="p-3">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-neutral-900 text-white border border-neutral-700">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-800 border border-emerald-300">
                               {w.claimStatus}
                             </span>
                           </td>
@@ -117,14 +128,17 @@ export const WarrantyRegister: React.FC = () => {
           </div>
         ) : (
           <div>
-            <h3 className="font-bold text-xs text-white uppercase tracking-wider mb-3">
-              Equipment Lifecycle & Aging Register
-            </h3>
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5 mb-3">
+              <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
+                Equipment Lifecycle & Aging Register
+              </h3>
+              <span className="text-[10px] text-neutral-500 font-mono">Depreciation Schedules</span>
+            </div>
 
-            <div className="border border-neutral-800 rounded-2xl overflow-hidden">
+            <div className="border border-neutral-200 rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-[#111111] text-neutral-400 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-800">
+                  <thead className="bg-neutral-50 text-neutral-600 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-200">
                     <tr>
                       <th className="p-3">Asset Code</th>
                       <th className="p-3">Category</th>
@@ -135,20 +149,20 @@ export const WarrantyRegister: React.FC = () => {
                       <th className="p-3">Replacement Priority</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-850 font-mono text-neutral-300">
+                  <tbody className="divide-y divide-neutral-100 font-mono text-neutral-700">
                     {lifecycles.map(l => (
-                      <tr key={l.id} className="hover:bg-neutral-900/60 transition-colors">
-                        <td className="p-3 font-bold text-white">{l.assetCode}</td>
-                        <td className="p-3 text-neutral-200 font-sans">{l.assetType}</td>
-                        <td className="p-3 text-neutral-400">{l.installationDate}</td>
-                        <td className="p-3 text-neutral-400">{l.expectedLifeYears} Years</td>
-                        <td className="p-3 text-neutral-100 font-bold">{l.currentAgeYears} Yrs</td>
-                        <td className="p-3 text-white font-mono">{l.conditionScore} / 100</td>
+                      <tr key={l.id} className="hover:bg-neutral-50 transition-colors">
+                        <td className="p-3 font-bold text-neutral-950">{l.assetCode}</td>
+                        <td className="p-3 text-neutral-900 font-sans">{l.assetType}</td>
+                        <td className="p-3 text-neutral-500">{l.installationDate}</td>
+                        <td className="p-3 text-neutral-500">{l.expectedLifeYears} Years</td>
+                        <td className="p-3 text-neutral-950 font-bold">{l.currentAgeYears} Yrs</td>
+                        <td className="p-3 text-neutral-900 font-bold">{l.conditionScore} / 100</td>
                         <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
                             l.replacementPriority === 'High' || l.replacementPriority === 'Critical'
-                              ? 'bg-white text-black font-extrabold'
-                              : 'bg-neutral-900 text-neutral-300 border border-neutral-800'
+                              ? 'bg-rose-50 text-rose-800 border-rose-300'
+                              : 'bg-neutral-100 text-neutral-700 border-neutral-200'
                           }`}>
                             {l.replacementPriority}
                           </span>

@@ -6,6 +6,7 @@
 
 import { ScadaTelemetryPoint, ScadaAlarm } from '../types/operations';
 import { initialScadaPoints, initialScadaAlarms } from './mockData';
+import { faultService } from './faultService';
 
 export class ScadaService {
   private static instance: ScadaService;
@@ -38,10 +39,83 @@ export class ScadaService {
   public toggleBreaker(tag: string): void {
     const pt = this.points.find(p => p.tag === tag);
     if (pt) {
-      pt.breakerStatus = pt.breakerStatus === 'CLOSED' ? 'OPEN' : 'CLOSED';
+      const newState = pt.breakerStatus === 'CLOSED' ? 'OPEN' : 'CLOSED';
+      pt.breakerStatus = newState;
       pt.lastUpdated = 'Just now';
+
+      // Auto-event ticket and alarm if breaker tripped open
+      if (newState === 'OPEN') {
+        this.alarms.unshift({
+          id: `alm-${Date.now()}`,
+          tag: pt.tag,
+          alarmCode: `ALM-${Date.now()}`,
+          severity: 'critical',
+          message: `TRIP EVENT: ${pt.description} Opened. Downstream de-energized.`,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          status: 'active',
+        });
+
+        // Generate emergency fault ticket
+        faultService.registerFault({
+          category: 'SCADA Breaker Trip',
+          description: `Emergency Outage: Breaker ${pt.description} tripped. Downstream load dropped.`,
+          priority: 'critical',
+          status: 'new',
+          feederId: 'fdr-mara-1',
+          sectionId: 'sec-mara',
+          reportedBy: 'SCADA IEC-104 Gateway',
+          affectedConsumersEst: 420,
+          coordinates: [11.9280, 79.8240],
+        });
+      }
+
       this.notifyListeners();
     }
+  }
+
+  public operateBreakerWithSBO(tag: string, targetState: 'OPEN' | 'CLOSED', reason: string, operatorName: string): boolean {
+    const pt = this.points.find(p => p.tag === tag);
+    if (!pt) return false;
+
+    pt.breakerStatus = targetState;
+    pt.lastUpdated = 'Just now';
+
+    if (targetState === 'OPEN') {
+      this.alarms.unshift({
+        id: `alm-${Date.now()}`,
+        tag: pt.tag,
+        alarmCode: `ALM-${Date.now()}`,
+        severity: 'critical',
+        message: `SBO TRIP: ${pt.description} operated by ${operatorName}. Reason: ${reason}`,
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        status: 'active',
+      });
+
+      faultService.registerFault({
+        category: 'Supervisory Breaker Operation',
+        description: `Breaker ${pt.description} opened by ${operatorName}. Reason: ${reason}`,
+        priority: 'critical',
+        status: 'new',
+        feederId: 'fdr-mara-1',
+        sectionId: 'sec-mara',
+        reportedBy: operatorName,
+        affectedConsumersEst: 380,
+        coordinates: [11.9280, 79.8240],
+      });
+    } else {
+      this.alarms.unshift({
+        id: `alm-${Date.now()}`,
+        tag: pt.tag,
+        alarmCode: `ALM-${Date.now()}`,
+        severity: 'high',
+        message: `SBO CLOSE: ${pt.description} re-energized by ${operatorName}. Reason: ${reason}`,
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        status: 'acknowledged',
+      });
+    }
+
+    this.notifyListeners();
+    return true;
   }
 
   public acknowledgeAlarm(alarmCode: string): void {
