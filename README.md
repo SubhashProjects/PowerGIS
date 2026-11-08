@@ -146,4 +146,4 @@ To execute the database schema on Supabase Cloud or an In-House PostgreSQL 16 + 
 
 ## 8. Deployment & Version Control
 
-- **Repository**: [https://github.com/SubhashProjects/PowerGIS](https://github.com/SubhashProjects/PowerGIS
+- **Repository**: https://github.com/SubhashProjects/PowerGIS
