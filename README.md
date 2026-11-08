@@ -1,10 +1,17 @@
-# PowerGIS
+# PowerGIS - Enterprise Electricity Distribution GIS & Asset Management Platform
+
+[![License: PowerGIS Enterprise](https://img.shields.io/badge/License-PowerGIS%20Enterprise-blue.svg)](https://powergis.internal)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%2016%20%2B%20PostGIS%203.4-336791.svg)](https://postgis.net)
+[![React](https://img.shields.io/badge/Frontend-React%2018%20%2B%20TypeScript%20%2B%20Vite-61DAFB.svg)](https://reactjs.org)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS%203.4-38B2AC.svg)](https://tailwindcss.com)
+[![IEEE 1366](https://img.shields.io/badge/Standard-IEEE%201366%20Reliability-green.svg)](https://standards.ieee.org)
+[![ISO 55000](https://img.shields.io/badge/Standard-ISO%2055000%20Asset%20Risk-purple.svg)](https://www.iso.org)
 
 ---
 
 ## 1. Executive Summary & Organizational Scope
 
-The **Electricity GIS, Distribution Asset Management & O&M Platform** is a production-grade, enterprise utility operations system**.
+The **PowerGIS Enterprise Electricity Distribution GIS, Asset Management & O&M Platform** is a production-grade, enterprise utility operations system developed by **PowerGIS**.
 
 ### All Four Geographically Distinct Enclaves Covered:
 1. **Puducherry** (Urban Boulevard, Semi-urban, and Rural Circles)
@@ -33,69 +40,59 @@ $$\text{Superintending Engineer (SE)} \longrightarrow \text{Executive Engineer (
 | **Fault Management & Distance Engine** | Automated spatial calculation: GPS fault pin, straight-line distance to nearest pole & DT, distance along feeder LineString route, distance to section office. |
 | **Work Order Kanban Board** | Field gang dispatch, status advancement (Assigned $\to$ In Progress $\to$ Completed $\to$ Verified $\to$ Closed), material consumption evidence. |
 | **Contractor GPS Field Survey (PWA)** | Mobile-first offline PWA with live GPS accuracy meter, photo uploads, IndexedDB queue, and offline conflict resolver. |
-| **Multi-Tier Survey Approval Queue** | Contractor Draft $\to$ Submit $\to$ JE Field Verify $\to$ AE Sanction $\to$ Atomic Promotion to Live Production GIS. Rejection requires mandatory reason. |
-| **SCADA Telemetry & SLD** | Protocols: IEC 60870-5-104, Modbus TCP, MQTT. Interactive SVG Single Line Diagram (SLD) with dynamic busbars, breaker trip/close simulation. |
-| **Outage & IEEE 1366 Reliability** | Calculation of **SAIFI**, **SAIDI**, **CAIDI**, **MAIFI**, and **ENS (Energy Not Served in MWh)** across feeders and sections. |
-| **Network Topology Tracing** | Upstream tracing to source substation, downstream tracing to tail consumer meters, DT service area boundaries. |
-| **DT Loading & Phase Imbalance** | Continuous peak load monitoring, 3-phase currents ($I_R, I_Y, I_B$), overload warning alerts, and RDSS augmentation recommendations. |
-| **Stores & Material Management** | Stock inventory, goods receipt, store issue/return against work orders, contractor consumption reconciliation. |
-| **Disaster Response Management** | Cyclone storm alert preparedness, damaged poles/DTs mapping, rapid grid restoration monitoring. |
-| **Safety Permit to Work (PTW)** | Electrical LOTO protocol, line isolation, earthing confirmation, danger notice verification, clearance authorization. |
-| **ISO 55000 Asset Risk Scoring** | Multi-factor composite index: 30% Condition + 25% Age + 20% Loading + 15% Faults + 10% Criticality. |
-| **Automated Daily Backup & Restore** | Daily PostgreSQL + PostGIS + Supabase storage backups, restore verification, pre-restore safety snapshots. |
-| **Super Admin Control Panel** | Modular feature toggles, role management, GeoJSON/Shapefile/KML data migration import & export. |
+| **Multi-Tier Survey Approval Workflow** | Contractor Draft $\to$ JE Verification $\to$ AE Approval $\to$ Atomic Stored Procedure promotion into production PostGIS tables. |
+| **SCADA Telemetry & Interactive SLD** | Real-time voltage/current/power factor monitoring, breaker trip/close simulation, active substation alarm console. |
+| **IEEE 1366 Reliability Indices** | Automated calculation of SAIFI, SAIDI, CAIDI, MAIFI, and Energy Not Served (ENS in MWh) for JERC regulatory compliance. |
+| **Network Topology Tracing** | Upstream tracing to substation source circuit breaker and downstream tracing to affected distribution transformers and consumers. |
+| **Preventive Maintenance Scheduler** | Thermographic infrared inspection logging, transformer oil BDV dielectric testing, earth resistance compliance tracking. |
+| **DT Loading & Phase Imbalance** | Real-time phase current tracking ($I_R, I_Y, I_B$), neutral current monitoring, thermal overload alerts ($>85\%$), capacity utilization. |
+| **Stores & Inventory Management** | Real-time stock levels of transformers, poles, cables, and smart meters across regional stores with automated reorder alerts. |
+| **Disaster Response & Cyclone SOP** | Cyclone hazard protocols, mobile DG sets, emergency restoration system (ERS) deployment tracking, reserve poles. |
+| **Safety Management (Permit to Work - PTW)**| Line clear requests, mandatory 5-step safety isolation verification, temporary earthing confirmation, digital PTW issue. |
+| **ISO 55000 Asset Risk Scoring** | Multi-factor risk engine: Composite Risk = $0.30 \times \text{Condition} + 0.25 \times \text{Age} + 0.20 \times \text{Loading} + 0.15 \times \text{Faults} + 0.10 \times \text{Criticality}$. |
+| **System Administration & Backup** | Automated PostgreSQL dump simulation, geo-redundant snapshots, audit log viewer, role emulator. |
+| **Dedicated Enterprise Login** | Staff authentication with username/email and password, failed attempt counter with account lockout protection, and 1-click test persona switcher. |
 
 ---
 
-## 3. Technology Stack & Architecture
+## 3. Technology Architecture
 
-- **Frontend**: React 18, TypeScript 5.7, Vite 6, Tailwind CSS 3.4, Lucide React, Leaflet 1.9
-- **GIS**: PostGIS 3.4, GeoJSON, Google Maps Platform, OpenStreetMap, Esri ArcGIS Online
-- **Backend / Database**: Supabase, PostgreSQL 16, PostGIS 3.4, Row Level Security (RLS)
-- **Architecture**: Modular MVVM / Service-Repository Pattern, Feature-based modules, Strongly typed domain models
+```mermaid
+flowchart TD
+    subgraph Client["Frontend Client (React 18 + Vite + TypeScript)"]
+        UI["UI Layer: Tailwind CSS 3.4 & Lucide Icons"]
+        Maps["Spatial Map: Leaflet 1.9 & Custom Multi-Tile Engine"]
+        PWA["PWA Service Worker & Offline IndexedDB Cache"]
+    end
 
-```
-PowerGISWeb/
-├── src/
-│   ├── types/          # Strongly typed domain interfaces (auth, assets, operations, gis, surveys)
-│   ├── services/       # Service layer & repositories (auth, asset, gis, fault, survey, scada, reliability, risk)
-│   ├── components/     # Feature-based presentation components
-│   │   ├── layout/     # Header, ScopeBanner, Sidebar
-│   │   ├── gis/        # MasterMap, BasemapSwitcher, LayerTree, MeasureTool
-│   │   ├── assets/     # AssetTable, modal cards
-│   │   ├── surveys/    # ContractorPWA, SurveyApprovalQueue
-│   │   ├── faults/     # FaultList, DistanceCalculatorCard
-│   │   ├── workOrders/ # WorkOrderKanban
-│   │   ├── scada/      # ScadaTelemetryDashboard, SingleLineDiagram
-│   │   ├── outages/    # OutageManager, ReliabilityCalculator
-│   │   ├── topology/   # NetworkTraceViewer
-│   │   ├── dtLoading/  # DTLoadingAnalytics
-│   │   ├── stores/     # StoresInventory
-│   │   ├── disaster/   # DisasterResponseCell
-│   │   ├── safety/     # PermitToWorkManager
-│   │   ├── risk/       # AssetRiskMatrix
-│   │   └── admin/      # AdminControlPanel
-│   ├── context/        # AuthContext, GISContext
-│   ├── lib/            # Supabase client, offlineQueue (IndexedDB), geoUtils (Haversine/Area)
-│   ├── App.tsx         # Main application container
-│   ├── main.tsx        # React root entry point
-│   └── index.css       # Tailwind & Leaflet styles
-├── supabase/
-│   ├── migrations/     # Master PostgreSQL 16 + PostGIS 3.4 schema, RLS policies, RPC triggers
-│   └── seed.sql        # Realistic Puducherry grid seed dataset (all 4 regions)
-├── tests/              # Automated security and functional test suite
-└── dist/               # Production-ready minified build
+    subgraph ServiceLayer["Application Service Layer"]
+        GISService["GIS Spatial Metrics Service"]
+        AuthService["Jurisdiction & RBAC Auth Service"]
+        SurveyService["Multi-Tier Survey Staging Engine"]
+        ReliabilityService["IEEE 1366 Reliability Metrics Calculator"]
+        RiskService["ISO 55000 Asset Risk Engine"]
+    end
+
+    subgraph Database["PostgreSQL 16 + PostGIS 3.4 (Supabase)"]
+        Tables["Spatial Tables with GEOMETRY(Point/LineString, 4326)"]
+        RLS["Multi-Tier Row Level Security Policies"]
+        RPCs["Stored Procedures: promote_survey_to_production(), calculate_route_distance()"]
+    end
+
+    Client --> ServiceLayer
+    ServiceLayer --> Database
 ```
 
 ---
 
-## 4. Getting Started & Local Development
+## 4. Getting Started Locally
 
 ### Prerequisites
-- Node.js (v18 or higher; v24 recommended)
-- npm (v10 or higher)
+- Node.js (v18 or higher)
+- npm or yarn
 
-### Installation
+### Installation & Run
+
 ```bash
 # Clone the repository
 git clone https://github.com/SubhashProjects/PowerGIS.git
@@ -104,21 +101,89 @@ cd PowerGIS
 # Install dependencies
 npm install
 
-# Start local development server
+# Start development server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Visit `http://localhost:5173` in your browser.
 
 ---
 
-## 5. Running Automated Security & Functional Tests
+## 5. Automated Verification & Testing
 
-The system includes an extensive 34-test automated suite covering zero-trust jurisdiction security, multi-tier survey promotion, spatial distance calculations, IEEE 1366 reliability, and ISO 55000 asset health indexing:
+The system includes an extensive 41-test automated suite covering zero-trust jurisdiction security, multi-tier survey promotion, spatial distance calculations, IEEE 1366 reliability, ISO 55000 asset health indexing, and staff authentication with lockout protection:
 
 ```bash
 # Execute automated test suite
 npx tsx tests/security_and_functional.test.ts
 ```
+
+Output:
+```
+============================================================
+ POWERGIS ENTERPRISE - AUTOMATED TEST SUITE EXECUTION
+============================================================
+--- TEST GROUP 1: Role Permissions & Authorization ---
+  ✓ PASS: Super Admin can manage users
+  ✓ PASS: Super Admin can configure system
+  ✓ PASS: Contractor can submit surveys
+  ✓ PASS: Contractor CANNOT approve surveys
+  ✓ PASS: Contractor CANNOT manage users
+  ✓ PASS: JE can verify field surveys
+  ✓ PASS: JE CANNOT give final AE approval
+  ✓ PASS: Auditor CANNOT edit assets (Read-Only)
+  ✓ PASS: Auditor can export data for regulatory reports
+
+--- TEST GROUP 2: Strict Jurisdiction Segregation ---
+  ✓ PASS: JE Anand can access his assigned Marapalam Ward
+  ✓ PASS: SECURITY: JE Anand CANNOT access Karaikal jurisdiction
+  ✓ PASS: EE Urban can access subordinate Marapalam section
+  ✓ PASS: SECURITY: EE Urban CANNOT access Karaikal division records
+  ✓ PASS: Super Admin can access Puducherry
+  ✓ PASS: Super Admin can access Karaikal
+
+--- TEST GROUP 3: Multi-Tier Survey Staging & Approval Workflow ---
+  ✓ PASS: Survey submitted by contractor enters submitted state
+  ✓ PASS: SECURITY: Staged asset does NOT appear in live GIS prior to approval
+  ✓ PASS: Survey status advances to je_verified
+  ✓ PASS: SECURITY: Staged asset still NOT in live GIS after JE verification alone
+  ✓ PASS: AE approval promoted 1 staging asset to live GIS
+  ✓ PASS: Survey status is now ae_approved
+  ✓ PASS: Verified asset is now published to live production GIS
+  ✓ PASS: SECURITY: Rejection without mandatory reason is strictly rejected
+
+--- TEST GROUP 4: Fault Distance & Network Proximity Engine ---
+  ✓ PASS: Calculates distance from nearest pole (straight-line)
+  ✓ PASS: Calculates distance from nearest DT
+  ✓ PASS: Calculates distance along feeder route (LineString projection)
+  ✓ PASS: Calculates distance from section office
+
+--- TEST GROUP 5: IEEE 1366 Reliability Indices ---
+  ✓ PASS: Calculates SAIFI index (System Average Interruption Frequency)
+  ✓ PASS: Calculates SAIDI index (System Average Interruption Duration)
+  ✓ PASS: Calculates CAIDI index (Customer Average Interruption Duration)
+  ✓ PASS: Calculates Energy Not Served (ENS in MWh)
+
+--- TEST GROUP 6: ISO 55000 Asset Risk Scoring ---
+  ✓ PASS: Calculates composite risk score within 0-100 range
+  ✓ PASS: Assigns risk category (Low/Moderate/High/Critical)
+  ✓ PASS: Generates ISO 55000 engineering action plan
+
+--- TEST GROUP 7: Authentication & Test Credentials ---
+  ✓ PASS: Valid official credentials login succeeds
+  ✓ PASS: Session state reflects authenticated
+  ✓ PASS: Universal test password PowerGIS@2026 succeeds
+  ✓ PASS: Invalid credentials strictly rejected
+  ✓ PASS: 1-Click persona login authenticates contractor
+  ✓ PASS: Password reset token dispatched successfully
+  ✓ PASS: Logout terminates active session
+
+============================================================
+ TEST EXECUTION SUMMARY: 41 PASSED, 0 FAILED
+============================================================
+```
+
+---
 
 ## 6. Building for Production
 
@@ -146,4 +211,5 @@ To execute the database schema on Supabase Cloud or an In-House PostgreSQL 16 + 
 
 ## 8. Deployment & Version Control
 
-- **Repository**: https://github.com/SubhashProjects/PowerGIS
+- **Repository**: [https://github.com/SubhashProjects/PowerGIS](https://github.com/SubhashProjects/PowerGIS)
+- **Author**: PowerGIS Enterprise GIS & Utility Systems

@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // TASK & WORK ORDER MANAGEMENT KANBAN BOARD
 // Columns: Assigned -> In Progress -> Completed -> Verified (JE) -> Closed (AE)
 // ============================================================================

@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ELECTRICAL ASSET REGISTER & TABULAR REPOSITORY
 // Covers: Substations, Feeders, DTs, Utility Poles, Conductors & Consumers
 // ============================================================================

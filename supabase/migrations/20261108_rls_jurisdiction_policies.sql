@@ -1,5 +1,5 @@
 -- ============================================================================
--- PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+-- POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 -- PRODUCTION ROW-LEVEL SECURITY (RLS) JURISDICTION POLICIES
 -- Zero-Trust Multi-Tier Hierarchy: Super Admin -> SE -> EE -> AEE -> AE -> JE -> Contractor
 -- ============================================================================

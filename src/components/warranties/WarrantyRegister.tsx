@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // WARRANTY & EQUIPMENT LIFECYCLE REGISTER
 // 30/60/90-Day Expiry Alerts • Batch Warranties • Useful Life Depreciation
 // ============================================================================

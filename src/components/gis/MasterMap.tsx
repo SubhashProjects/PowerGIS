@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // MASTER GIS MAP ENGINE: LEAFLET + MULTI-BASEMAP + POSTGIS OVERLAYS
 // ============================================================================
 

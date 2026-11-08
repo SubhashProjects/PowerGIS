@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // NAVIGATION SIDEBAR COMPONENT WITH FEATURE MODULES
 // ============================================================================
 

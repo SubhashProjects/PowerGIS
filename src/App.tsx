@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ROOT APPLICATION CONTAINER & VIEW ROUTER
 // ============================================================================
 
@@ -27,6 +27,7 @@ import { DisasterResponseCell } from './components/disaster/DisasterResponseCell
 import { PermitToWorkManager } from './components/safety/PermitToWorkManager';
 import { AssetRiskMatrix } from './components/risk/AssetRiskMatrix';
 import { AdminControlPanel } from './components/admin/AdminControlPanel';
+import { LoginPage } from './components/auth/LoginPage';
 import { X, ExternalLink, Zap, MapPin } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -145,12 +146,24 @@ const MainLayout: React.FC = () => {
   );
 };
 
+const AppContent: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  return (
+    <GISProvider>
+      <MainLayout />
+    </GISProvider>
+  );
+};
+
 export const App: React.FC = () => {
   return (
     <AuthProvider>
-      <GISProvider>
-        <MainLayout />
-      </GISProvider>
+      <AppContent />
     </AuthProvider>
   );
 };

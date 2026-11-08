@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // NETWORK TOPOLOGY & UPSTREAM/DOWNSTREAM GRAPH TRACING ENGINE
 // Analyzes: Source Substations, Feeders, DT Service Areas, Connected Consumers
 // ============================================================================

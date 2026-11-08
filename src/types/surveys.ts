@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // DOMAIN TYPES: CONTRACTOR FIELD SURVEY, STAGING & APPROVAL WORKFLOW
 // ============================================================================
 

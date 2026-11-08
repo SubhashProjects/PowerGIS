@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // AUTOMATED TEST SUITE: SECURITY, STRICT JURISDICTION RLS & CORE WORKFLOWS
 // ============================================================================
 
@@ -26,7 +26,7 @@ function assert(condition: boolean, testName: string) {
 
 async function runTestSuite() {
   console.log('\n============================================================');
-  console.log(' PUDUCHERRY POWERGIS - AUTOMATED TEST SUITE EXECUTION');
+  console.log(' POWERGIS ENTERPRISE - AUTOMATED TEST SUITE EXECUTION');
   console.log('============================================================\n');
 
   // --------------------------------------------------------------------------
@@ -184,6 +184,37 @@ async function runTestSuite() {
     assert(risk.totalRiskScore >= 0 && risk.totalRiskScore <= 100, 'Calculates composite risk score within 0-100 range');
     assert(Boolean(risk.riskCategory), 'Assigns risk category (Low/Moderate/High/Critical)');
     assert(Boolean(risk.recommendation), 'Generates ISO 55000 engineering action plan');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 7: AUTHENTICATION, TEST CREDENTIALS & LOCKOUT PROTECTION
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 7: Authentication & Test Credentials ---');
+  {
+    // 1. Valid credentials login
+    const loginOk = authService.login('ee.urban@powergis.internal', 'EEUrban@2026');
+    assert(loginOk.success === true && loginOk.user?.username === 'ee_urban', 'Valid official credentials login succeeds');
+    assert(authService.isAuthenticated() === true, 'Session state reflects authenticated');
+
+    // 2. Universal enterprise test password
+    const universalLogin = authService.login('superadmin@powergis.internal', 'PowerGIS@2026');
+    assert(universalLogin.success === true && universalLogin.user?.role === 'super_admin', 'Universal test password PowerGIS@2026 succeeds');
+
+    // 3. Invalid credentials rejected
+    const badLogin = authService.login('je.marapalam@powergis.internal', 'WrongPassword123!');
+    assert(badLogin.success === false, 'Invalid credentials strictly rejected');
+
+    // 4. 1-Click persona test login
+    const personaRes = authService.loginAsPersona('user-contractor');
+    assert(personaRes.success === true && personaRes.user?.role === 'contractor', '1-Click persona login authenticates contractor');
+
+    // 5. Password reset request
+    const resetRes = authService.requestPasswordReset('ae.marapalam@powergis.internal');
+    assert(resetRes.success === true && resetRes.message.includes('dispatched'), 'Password reset token dispatched successfully');
+
+    // 6. Sign out session clearance
+    authService.logout();
+    assert(authService.isAuthenticated() === false, 'Logout terminates active session');
   }
 
   // --------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 -- ============================================================================
--- PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+-- POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 -- IEEE 1366 OUTAGE RELIABILITY ENGINE: SAIFI, SAIDI, CAIDI, MAIFI & ENS
 -- ============================================================================
 

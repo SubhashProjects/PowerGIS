@@ -1,17 +1,20 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // AUTHENTICATION CONTEXT PROVIDER WITH ROLE SWITCHER EMULATOR
 // ============================================================================
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, RolePermission } from '../types/auth';
-import { authService } from '../services/authService';
+import { authService, LoginResult } from '../services/authService';
 import { initialUsers } from '../services/mockData';
 
 interface AuthContextType {
   user: UserProfile;
   permissions: RolePermission;
   availableUsers: UserProfile[];
+  isAuthenticated: boolean;
+  login: (identifier: string, password: string) => LoginResult;
+  loginAsPersona: (userId: string) => LoginResult;
   switchUser: (userId: string) => void;
   logout: () => void;
 }
@@ -20,6 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile>(authService.getCurrentUser());
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(authService.isAuthenticated());
   const [permissions, setPermissions] = useState<RolePermission>(
     authService.getRolePermissions(user.role)
   );
@@ -27,6 +31,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     setPermissions(authService.getRolePermissions(user.role));
   }, [user]);
+
+  const login = (identifier: string, password: string): LoginResult => {
+    const res = authService.login(identifier, password);
+    if (res.success && res.user) {
+      setUser(res.user);
+      setIsAuthenticated(true);
+    }
+    return res;
+  };
+
+  const loginAsPersona = (userId: string): LoginResult => {
+    const res = authService.loginAsPersona(userId);
+    if (res.success && res.user) {
+      setUser(res.user);
+      setIsAuthenticated(true);
+    }
+    return res;
+  };
 
   const switchUser = (userId: string) => {
     const target = initialUsers.find(u => u.id === userId);
@@ -37,10 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    // Switch to Auditor or Superadmin
-    const defaultUser = initialUsers[0];
-    authService.setCurrentUser(defaultUser);
-    setUser(defaultUser);
+    authService.logout();
+    setIsAuthenticated(false);
   };
 
   return (
@@ -49,6 +69,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         permissions,
         availableUsers: initialUsers,
+        isAuthenticated,
+        login,
+        loginAsPersona,
         switchUser,
         logout,
       }}

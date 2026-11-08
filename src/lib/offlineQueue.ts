@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // CONTRACTOR PWA OFFLINE STORAGE & SYNC QUEUE (INDEXEDDB & LOCALSTORAGE)
 // ============================================================================
 

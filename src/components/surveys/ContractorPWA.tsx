@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // CONTRACTOR GPS FIELD SURVEY WEBPAGE (MOBILE-FIRST PWA)
 // Features: Live GPS Accuracy, Offline Queue, Meter-to-Pole Mapping, Photo Capture
 // ============================================================================

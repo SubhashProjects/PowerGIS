@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // SMART METER MANAGEMENT & ADVANCED METERING INFRASTRUCTURE (AMI)
 // ============================================================================
 

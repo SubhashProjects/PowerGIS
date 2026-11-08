@@ -1,6 +1,7 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
-// MASTER REPOSITORY SEED DATA: ALL 4 REGIONS & COMPLETE OPERATIONAL STATE
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
+// MASTER REPOSITORY COMPREHENSIVE DUMMY & TEST DATA FOR ALL 4 REGIONS
+// Covers: Puducherry, Karaikal, Mahe, Yanam (All Fields & Modules Populated)
 // ============================================================================
 
 import { Region, Division, Subdivision, OMSection, JEJurisdiction, UserProfile } from '../types/auth';
@@ -8,51 +9,73 @@ import { Substation, Feeder, Transformer, Pole, Conductor, Consumer, WarrantyRec
 import { Fault, WorkOrder, Outage, OutageReliabilityMetrics, SafetyPermit, ScadaTelemetryPoint, ScadaAlarm, StoresItem, DisasterEvent } from '../types/operations';
 import { SurveySubmission, SurveyStagingAsset } from '../types/surveys';
 
-// 1. Regions (All 4 Enclaves)
+// ----------------------------------------------------------------------------
+// 1. REGIONS (All 4 Distinct Enclaves of the Union Territory)
+// ----------------------------------------------------------------------------
 export const initialRegions: Region[] = [
-  { id: 'reg-pdy', code: 'REG-PDY', name: 'Puducherry', headquarters: 'Gubert Avenue, Puducherry' },
-  { id: 'reg-kkl', code: 'REG-KKL', name: 'Karaikal', headquarters: 'Beach Road, Karaikal' },
-  { id: 'reg-mah', code: 'REG-MAH', name: 'Mahe', headquarters: 'Civil Station Road, Mahe' },
-  { id: 'reg-yan', code: 'REG-YAN', name: 'Yanam', headquarters: 'Pillaraya Street, Yanam' },
+  { id: 'reg-pdy', code: 'REG-PDY', name: 'Puducherry', headquarters: 'Gubert Avenue, Puducherry - 605001' },
+  { id: 'reg-kkl', code: 'REG-KKL', name: 'Karaikal', headquarters: 'Beach Road, Karaikal - 609602' },
+  { id: 'reg-mah', code: 'REG-MAH', name: 'Mahe', headquarters: 'Civil Station Road, Mahe - 673310' },
+  { id: 'reg-yan', code: 'REG-YAN', name: 'Yanam', headquarters: 'Pillaraya Street, Yanam - 533464' },
 ];
 
-// 2. Divisions
+// ----------------------------------------------------------------------------
+// 2. DIVISIONS (Official PowerGIS Circles)
+// ----------------------------------------------------------------------------
 export const initialDivisions: Division[] = [
   { id: 'div-urban', regionId: 'reg-pdy', code: 'DIV-URBAN', name: 'Urban Distribution Division', eeInCharge: 'Er. M. Sivakumar, EE', phone: '+91 94430 11001' },
   { id: 'div-rural-n', regionId: 'reg-pdy', code: 'DIV-RURAL-N', name: 'Rural North Division', eeInCharge: 'Er. R. Baskaran, EE', phone: '+91 94430 11002' },
+  { id: 'div-rural-s', regionId: 'reg-pdy', code: 'DIV-RURAL-S', name: 'Rural South Division', eeInCharge: 'Er. P. Shanmugam, EE', phone: '+91 94430 11005' },
   { id: 'div-kkl', regionId: 'reg-kkl', code: 'DIV-KKL', name: 'Karaikal Electricity Division', eeInCharge: 'Er. K. Murugesan, EE', phone: '+91 94430 11003' },
-  { id: 'div-mahe-yan', regionId: 'reg-mah', code: 'DIV-MAHE-YAN', name: 'Outlying Regions Division', eeInCharge: 'Er. V. Radhakrishnan, EE', phone: '+91 94430 11004' },
+  { id: 'div-mahe-yan', regionId: 'reg-mah', code: 'DIV-MAHE-YAN', name: 'Outlying Regions Division (Mahe & Yanam)', eeInCharge: 'Er. V. Radhakrishnan, EE', phone: '+91 94430 11004' },
 ];
 
-// 3. Subdivisions
+// ----------------------------------------------------------------------------
+// 3. SUBDIVISIONS
+// ----------------------------------------------------------------------------
 export const initialSubdivisions: Subdivision[] = [
   { id: 'sub-town', divisionId: 'div-urban', code: 'SUBDIV-TOWN', name: 'Town Sub-Division', aeeInCharge: 'Er. S. Jayakumar, AEE' },
   { id: 'sub-blvd', divisionId: 'div-urban', code: 'SUBDIV-BLVD', name: 'Boulevard Sub-Division', aeeInCharge: 'Er. P. Thirunavukkarasu, AEE' },
+  { id: 'sub-vill', divisionId: 'div-rural-n', code: 'SUBDIV-VILL', name: 'Villianur Sub-Division', aeeInCharge: 'Er. C. Arumugam, AEE' },
   { id: 'sub-kkl', divisionId: 'div-kkl', code: 'SUBDIV-KKL-TOWN', name: 'Karaikal Town Sub-Division', aeeInCharge: 'Er. N. Ravichandran, AEE' },
   { id: 'sub-mahe', divisionId: 'div-mahe-yan', code: 'SUBDIV-MAHE', name: 'Mahe O&M Sub-Division', aeeInCharge: 'Er. K. Mukundan, AEE' },
+  { id: 'sub-yanam', divisionId: 'div-mahe-yan', code: 'SUBDIV-YANAM', name: 'Yanam O&M Sub-Division', aeeInCharge: 'Er. D. Satyanarayana, AEE' },
 ];
 
-// 4. O&M Sections
+// ----------------------------------------------------------------------------
+// 4. O&M SECTIONS
+// ----------------------------------------------------------------------------
 export const initialSections: OMSection[] = [
-  { id: 'sec-mara', subdivisionId: 'sub-town', code: 'SEC-MARAPALAM', name: 'Marapalam O&M Section', aeInCharge: 'Er. T. Senthil Nathan, AE', officeAddress: 'Maraimalai Adigal Salai, Marapalam', latitude: 11.9216, longitude: 79.8183 },
-  { id: 'sec-heri', subdivisionId: 'sub-blvd', code: 'SEC-HERITAGE', name: 'Heritage French Quarter Section', aeInCharge: 'Er. G. Ilangovan, AE', officeAddress: 'Rue Romain Rolland, White Town', latitude: 11.9360, longitude: 79.8340 },
-  { id: 'sec-laws', subdivisionId: 'sub-town', code: 'SEC-LAWSPET', name: 'Lawspet O&M Section', aeInCharge: 'Er. D. Raman, AE', officeAddress: 'Airport Road, Lawspet', latitude: 11.9682, longitude: 79.8124 },
+  { id: 'sec-mara', subdivisionId: 'sub-town', code: 'SEC-MARAPALAM', name: 'Marapalam O&M Section', aeInCharge: 'Er. T. Senthil Nathan, AE', officeAddress: 'Maraimalai Adigal Salai, Marapalam, Puducherry', latitude: 11.9216, longitude: 79.8183 },
+  { id: 'sec-heri', subdivisionId: 'sub-blvd', code: 'SEC-HERITAGE', name: 'Heritage French Quarter Section', aeInCharge: 'Er. G. Ilangovan, AE', officeAddress: 'Rue Romain Rolland, White Town, Puducherry', latitude: 11.9360, longitude: 79.8340 },
+  { id: 'sec-laws', subdivisionId: 'sub-town', code: 'SEC-LAWSPET', name: 'Lawspet O&M Section', aeInCharge: 'Er. D. Raman, AE', officeAddress: 'Airport Road, Lawspet, Puducherry', latitude: 11.9682, longitude: 79.8124 },
+  { id: 'sec-muth', subdivisionId: 'sub-blvd', code: 'SEC-MUTHIALPET', name: 'Muthialpet O&M Section', aeInCharge: 'Er. K. Balamurugan, AE', officeAddress: 'M.G. Road, Muthialpet, Puducherry', latitude: 11.9540, longitude: 79.8340 },
+  { id: 'sec-vill', subdivisionId: 'sub-vill', code: 'SEC-VILLIANUR', name: 'Villianur Rural Section', aeInCharge: 'Er. M. Saravanan, AE', officeAddress: 'Main Road, Villianur, Puducherry', latitude: 11.9168, longitude: 79.7562 },
   { id: 'sec-kkl', subdivisionId: 'sub-kkl', code: 'SEC-KKL-PORT', name: 'Karaikal Port O&M Section', aeInCharge: 'Er. M. Anbarasan, AE', officeAddress: 'Keezha Kasakudy, Karaikal', latitude: 10.9250, longitude: 79.8390 },
+  { id: 'sec-mahe', subdivisionId: 'sub-mahe', code: 'SEC-MAHE-COAST', name: 'Mahe Coastal Section', aeInCharge: 'Er. T. Sreedharan, AE', officeAddress: 'Court Road, Mahe', latitude: 11.7018, longitude: 75.5342 },
+  { id: 'sec-yan', subdivisionId: 'sub-yanam', code: 'SEC-YANAM-RIVER', name: 'Yanam Godavari Delta Section', aeInCharge: 'Er. V. Subbarao, AE', officeAddress: 'Main Road, Yanam', latitude: 16.7320, longitude: 82.2175 },
 ];
 
-// 5. JE Jurisdictions
+// ----------------------------------------------------------------------------
+// 5. JE JURISDICTIONS
+// ----------------------------------------------------------------------------
 export const initialJurisdictions: JEJurisdiction[] = [
   { id: 'jur-mara-1', sectionId: 'sec-mara', code: 'JE-JUR-MARA-01', name: 'Marapalam Commercial Ward', jeName: 'Er. V. Anand, JE' },
   { id: 'jur-mara-2', sectionId: 'sec-mara', code: 'JE-JUR-MARA-02', name: 'Orleanpet Residential Ward', jeName: 'Er. K. Prakash, JE' },
-  { id: 'jur-heri-1', sectionId: 'sec-heri', code: 'JE-JUR-HERI-01', name: 'White Town & Beach Road', jeName: 'Er. P. Dinesh, JE' },
+  { id: 'jur-heri-1', sectionId: 'sec-heri', code: 'JE-JUR-HERI-01', name: 'White Town & Beach Promenade Ward', jeName: 'Er. P. Dinesh, JE' },
+  { id: 'jur-laws-1', sectionId: 'sec-laws', code: 'JE-JUR-LAWS-01', name: 'Lawspet Airport Road Ward', jeName: 'Er. S. Rajendran, JE' },
+  { id: 'jur-kkl-1', sectionId: 'sec-kkl', code: 'JE-JUR-KKL-01', name: 'Karaikal Harbor Express Ward', jeName: 'Er. N. Gunasekaran, JE' },
 ];
 
-// 6. User Profiles (11 Official Personas for instant switching & testing)
+// ----------------------------------------------------------------------------
+// 6. OFFICIAL USER PERSONAS (All Roles & Test Credentials for Quick Login)
+// ----------------------------------------------------------------------------
 export const initialUsers: UserProfile[] = [
   {
     id: 'user-superadmin',
     username: 'superadmin',
-    email: 'superadmin@electricity.py.gov.in',
+    email: 'superadmin@powergis.internal',
+    password: 'Admin@PowerGIS2026',
     fullName: 'Shri. S. Vaitheeswaran, IAS',
     role: 'super_admin',
     designation: 'Director of IT & Geospatial Systems',
@@ -62,10 +85,11 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-se1',
     username: 'se_puducherry_1',
-    email: 'se1.pdy@electricity.py.gov.in',
+    email: 'se1.pdy@powergis.internal',
+    password: 'SEUrban@2026',
     fullName: 'Er. T. Chandrasekaran',
     role: 'se',
-    designation: 'Superintending Engineer (Circle I - Urban)',
+    designation: 'Superintending Engineer (Circle I - Urban Puducherry)',
     phone: '+91 94430 00001',
     regionId: 'reg-pdy',
     isActive: true,
@@ -73,10 +97,11 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-se2',
     username: 'se_puducherry_2',
-    email: 'se2.pdy@electricity.py.gov.in',
+    email: 'se2.pdy@powergis.internal',
+    password: 'SERural@2026',
     fullName: 'Er. A. Rajagopalan',
     role: 'se',
-    designation: 'Superintending Engineer (Circle II - Rural)',
+    designation: 'Superintending Engineer (Circle II - Rural Puducherry)',
     phone: '+91 94430 00002',
     regionId: 'reg-pdy',
     isActive: true,
@@ -84,10 +109,11 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-se3',
     username: 'se_karaikal',
-    email: 'se.kkl@electricity.py.gov.in',
+    email: 'se.kkl@powergis.internal',
+    password: 'SEOuter@2026',
     fullName: 'Er. M. Balasubramanian',
     role: 'se',
-    designation: 'Superintending Engineer (Karaikal, Mahe & Yanam)',
+    designation: 'Superintending Engineer (Karaikal, Mahe & Yanam Circle)',
     phone: '+91 94430 00003',
     regionId: 'reg-kkl',
     isActive: true,
@@ -95,10 +121,11 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-ee',
     username: 'ee_urban',
-    email: 'ee.urban@electricity.py.gov.in',
+    email: 'ee.urban@powergis.internal',
+    password: 'EEUrban@2026',
     fullName: 'Er. M. Sivakumar',
     role: 'ee',
-    designation: 'Executive Engineer (Urban Operations)',
+    designation: 'Executive Engineer (Urban Operations Division)',
     phone: '+91 94430 11001',
     regionId: 'reg-pdy',
     divisionId: 'div-urban',
@@ -107,7 +134,8 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-aee',
     username: 'aee_town',
-    email: 'aee.town@electricity.py.gov.in',
+    email: 'aee.town@powergis.internal',
+    password: 'AEETown@2026',
     fullName: 'Er. S. Jayakumar',
     role: 'aee',
     designation: 'Assistant Executive Engineer (Town Sub-Division)',
@@ -120,7 +148,8 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-ae',
     username: 'ae_marapalam',
-    email: 'ae.marapalam@electricity.py.gov.in',
+    email: 'ae.marapalam@powergis.internal',
+    password: 'AEMarapalam@2026',
     fullName: 'Er. T. Senthil Nathan',
     role: 'ae',
     designation: 'Assistant Engineer (Marapalam Section)',
@@ -134,7 +163,8 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-je',
     username: 'je_marapalam',
-    email: 'je.marapalam@electricity.py.gov.in',
+    email: 'je.marapalam@powergis.internal',
+    password: 'JEMarapalam@2026',
     fullName: 'Er. V. Anand',
     role: 'je',
     designation: 'Junior Engineer (Marapalam Commercial Ward)',
@@ -150,6 +180,7 @@ export const initialUsers: UserProfile[] = [
     id: 'user-contractor',
     username: 'contractor_epc',
     email: 'survey.epc@larsenpower.com',
+    password: 'Contractor@2026',
     fullName: 'Er. Rajesh Kumar',
     role: 'contractor',
     designation: 'Authorized EPC Field Survey Contractor',
@@ -165,7 +196,8 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-gisadmin',
     username: 'gis_admin',
-    email: 'gisadmin@electricity.py.gov.in',
+    email: 'gisadmin@powergis.internal',
+    password: 'GISAdmin@2026',
     fullName: 'S. Ananthi',
     role: 'gis_admin',
     designation: 'Principal Spatial Data Administrator',
@@ -175,27 +207,33 @@ export const initialUsers: UserProfile[] = [
   {
     id: 'user-auditor',
     username: 'grid_auditor',
-    email: 'auditor@jercuts.gov.in',
+    email: 'auditor@powergis.internal',
+    password: 'Auditor@2026',
     fullName: 'Dr. S. Ramachandran',
     role: 'auditor',
-    designation: 'JERC Regulatory Grid Compliance Auditor',
+    designation: 'Principal Regulatory Grid Auditor',
     phone: '+91 94430 11015',
     isActive: true,
   },
 ];
 
-// 7. Substations (Real Puducherry Coordinates)
+// ----------------------------------------------------------------------------
+// 7. SUBSTATIONS (Puducherry, Karaikal, Mahe, Yanam)
+// ----------------------------------------------------------------------------
 export const initialSubstations: Substation[] = [
   { id: 'ss-mara', code: 'SS-MARA-110', name: 'Marapalam 110/22kV Substation', voltageClass: '110kV', capacityMVA: 80, numFeeders: 6, regionId: 'reg-pdy', divisionId: 'div-urban', sectionId: 'sec-mara', status: 'operational', commissionDate: '2015-08-15', coordinates: [11.9216, 79.8183] },
-  { id: 'ss-vill', code: 'SS-VILL-230', name: 'Villianur 230/110kV Auto Substation', voltageClass: '230kV', capacityMVA: 200, numFeeders: 8, regionId: 'reg-pdy', divisionId: 'div-rural-n', status: 'operational', commissionDate: '2012-01-26', coordinates: [11.9168, 79.7562] },
+  { id: 'ss-vill', code: 'SS-VILL-230', name: 'Villianur 230/110kV Auto Substation', voltageClass: '230kV', capacityMVA: 200, numFeeders: 8, regionId: 'reg-pdy', divisionId: 'div-rural-n', sectionId: 'sec-vill', status: 'operational', commissionDate: '2012-01-26', coordinates: [11.9168, 79.7562] },
   { id: 'ss-laws', code: 'SS-LAWS-066', name: 'Lawspet 66/11kV Substation', voltageClass: '66kV', capacityMVA: 50, numFeeders: 4, regionId: 'reg-pdy', divisionId: 'div-urban', sectionId: 'sec-laws', status: 'operational', commissionDate: '2018-05-10', coordinates: [11.9682, 79.8124] },
-  { id: 'ss-muth', code: 'SS-MUTH-033', name: 'Muthialpet 33/11kV Substation', voltageClass: '33kV', capacityMVA: 25, numFeeders: 4, regionId: 'reg-pdy', divisionId: 'div-urban', sectionId: 'sec-heri', status: 'operational', commissionDate: '2020-03-22', coordinates: [11.9540, 79.8340] },
+  { id: 'ss-muth', code: 'SS-MUTH-033', name: 'Muthialpet 33/11kV Substation', voltageClass: '33kV', capacityMVA: 25, numFeeders: 4, regionId: 'reg-pdy', divisionId: 'div-urban', sectionId: 'sec-muth', status: 'operational', commissionDate: '2020-03-22', coordinates: [11.9540, 79.8340] },
+  { id: 'ss-vnag', code: 'SS-VNAG-033', name: 'Venkata Nagar 33/11kV Substation', voltageClass: '33kV', capacityMVA: 30, numFeeders: 5, regionId: 'reg-pdy', divisionId: 'div-urban', sectionId: 'sec-heri', status: 'operational', commissionDate: '2019-11-04', coordinates: [11.9360, 79.8248] },
   { id: 'ss-kkl', code: 'SS-KKL-110', name: 'Karaikal Port 110/33kV Substation', voltageClass: '110kV', capacityMVA: 60, numFeeders: 5, regionId: 'reg-kkl', divisionId: 'div-kkl', sectionId: 'sec-kkl', status: 'operational', commissionDate: '2016-10-18', coordinates: [10.9230, 79.8385] },
-  { id: 'ss-mahe', code: 'SS-MAHE-066', name: 'Mahe 66/11kV Substation', voltageClass: '66kV', capacityMVA: 20, numFeeders: 3, regionId: 'reg-mah', divisionId: 'div-mahe-yan', status: 'operational', commissionDate: '2019-02-14', coordinates: [11.7018, 75.5342] },
-  { id: 'ss-yan', code: 'SS-YAN-033', name: 'Yanam Godavari 33/11kV Substation', voltageClass: '33kV', capacityMVA: 16, numFeeders: 3, regionId: 'reg-yan', divisionId: 'div-mahe-yan', status: 'operational', commissionDate: '2021-07-09', coordinates: [16.7320, 82.2175] },
+  { id: 'ss-mahe', code: 'SS-MAHE-066', name: 'Mahe 66/11kV Substation', voltageClass: '66kV', capacityMVA: 20, numFeeders: 3, regionId: 'reg-mah', divisionId: 'div-mahe-yan', sectionId: 'sec-mahe', status: 'operational', commissionDate: '2019-02-14', coordinates: [11.7018, 75.5342] },
+  { id: 'ss-yan', code: 'SS-YAN-033', name: 'Yanam Godavari 33/11kV Substation', voltageClass: '33kV', capacityMVA: 16, numFeeders: 3, regionId: 'reg-yan', divisionId: 'div-mahe-yan', sectionId: 'sec-yan', status: 'operational', commissionDate: '2021-07-09', coordinates: [16.7320, 82.2175] },
 ];
 
-// 8. Feeders
+// ----------------------------------------------------------------------------
+// 8. FEEDERS (LineStrings across all 4 regions)
+// ----------------------------------------------------------------------------
 export const initialFeeders: Feeder[] = [
   {
     id: 'fdr-mara-1',
@@ -203,7 +241,7 @@ export const initialFeeders: Feeder[] = [
     name: 'Marapalam - Boulevard 11kV Feeder',
     substationId: 'ss-mara',
     voltageClass: '11kV',
-    conductorType: 'Rabbit ACSR (50 sqmm)',
+    conductorType: 'Rabbit ACSR (52.88 sqmm)',
     lengthKm: 4.8,
     peakLoadAmps: 245,
     ratedCapacityAmps: 350,
@@ -264,9 +302,96 @@ export const initialFeeders: Feeder[] = [
       [11.9560, 79.8200],
     ],
   },
+  {
+    id: 'fdr-vill-4',
+    code: 'FDR-VILL-04',
+    name: 'Villianur - Industrial Estate 22kV',
+    substationId: 'ss-vill',
+    voltageClass: '22kV',
+    conductorType: 'Panther ACSR (200 sqmm)',
+    lengthKm: 7.4,
+    peakLoadAmps: 310,
+    ratedCapacityAmps: 450,
+    regionId: 'reg-pdy',
+    divisionId: 'div-rural-n',
+    sectionId: 'sec-vill',
+    isEnergized: true,
+    status: 'operational',
+    coordinates: [
+      [11.9168, 79.7562],
+      [11.9210, 79.7620],
+      [11.9250, 79.7710],
+      [11.9280, 79.7820],
+    ],
+  },
+  {
+    id: 'fdr-kkl-1',
+    code: 'FDR-KKL-01',
+    name: 'Karaikal Harbor Express 33kV Feeder',
+    substationId: 'ss-kkl',
+    voltageClass: '33kV',
+    conductorType: 'Panther ACSR',
+    lengthKm: 6.4,
+    peakLoadAmps: 210,
+    ratedCapacityAmps: 450,
+    regionId: 'reg-kkl',
+    divisionId: 'div-kkl',
+    sectionId: 'sec-kkl',
+    isEnergized: true,
+    status: 'operational',
+    coordinates: [
+      [10.9230, 79.8385],
+      [10.9260, 79.8410],
+      [10.9300, 79.8450],
+    ],
+  },
+  {
+    id: 'fdr-mahe-1',
+    code: 'FDR-MAHE-01',
+    name: 'Mahe River Coastal 11kV Feeder',
+    substationId: 'ss-mahe',
+    voltageClass: '11kV',
+    conductorType: 'Rabbit ACSR',
+    lengthKm: 4.1,
+    peakLoadAmps: 160,
+    ratedCapacityAmps: 350,
+    regionId: 'reg-mah',
+    divisionId: 'div-mahe-yan',
+    sectionId: 'sec-mahe',
+    isEnergized: true,
+    status: 'operational',
+    coordinates: [
+      [11.7018, 75.5342],
+      [11.7050, 75.5380],
+      [11.7090, 75.5410],
+    ],
+  },
+  {
+    id: 'fdr-yan-1',
+    code: 'FDR-YAN-01',
+    name: 'Yanam Godavari Delta 11kV Feeder',
+    substationId: 'ss-yan',
+    voltageClass: '11kV',
+    conductorType: 'Rabbit ACSR',
+    lengthKm: 3.8,
+    peakLoadAmps: 140,
+    ratedCapacityAmps: 350,
+    regionId: 'reg-yan',
+    divisionId: 'div-mahe-yan',
+    sectionId: 'sec-yan',
+    isEnergized: true,
+    status: 'operational',
+    coordinates: [
+      [16.7320, 82.2175],
+      [16.7350, 82.2210],
+      [16.7380, 82.2240],
+    ],
+  },
 ];
 
-// 9. Transformers (DTs)
+// ----------------------------------------------------------------------------
+// 9. TRANSFORMERS (DTs)
+// ----------------------------------------------------------------------------
 export const initialTransformers: Transformer[] = [
   {
     id: 'dt-blvd-1',
@@ -275,7 +400,7 @@ export const initialTransformers: Transformer[] = [
     feederId: 'fdr-mara-1',
     capacityKVA: 250,
     voltageRatio: '11kV/415V',
-    make: 'Voltamp Transformers',
+    make: 'Voltamp Transformers Ltd',
     serialNumber: 'VT-2022-8812',
     installationDate: '2022-03-10',
     loadPercentage: 68.5,
@@ -317,7 +442,7 @@ export const initialTransformers: Transformer[] = [
     feederId: 'fdr-laws-3',
     capacityKVA: 160,
     voltageRatio: '11kV/415V',
-    make: 'Kirloskar Electric',
+    make: 'Kirloskar Electric Ltd',
     serialNumber: 'KEC-2023-1102',
     installationDate: '2023-01-15',
     loadPercentage: 45.2,
@@ -327,19 +452,103 @@ export const initialTransformers: Transformer[] = [
     regionId: 'reg-pdy',
     divisionId: 'div-urban',
     sectionId: 'sec-laws',
+    jeJurisdictionId: 'jur-laws-1',
     status: 'operational',
     coordinates: [11.9600, 79.8160],
   },
+  {
+    id: 'dt-indu-4',
+    code: 'DTR-INDU-04',
+    name: 'Sedarapet Industrial DTR 1000kVA',
+    feederId: 'fdr-vill-4',
+    capacityKVA: 1000,
+    voltageRatio: '22kV/415V',
+    make: 'Schneider Electric Systems',
+    serialNumber: 'SCH-2020-4491',
+    installationDate: '2020-06-18',
+    loadPercentage: 94.5,
+    oilLevelPct: 88.0,
+    hasOilLeakage: false,
+    phaseImbalancePct: 9.2,
+    regionId: 'reg-pdy',
+    divisionId: 'div-rural-n',
+    sectionId: 'sec-vill',
+    status: 'operational',
+    coordinates: [11.9250, 79.7710],
+  },
+  {
+    id: 'dt-kkl-5',
+    code: 'DTR-KKL-05',
+    name: 'Karaikal Harbor DTR 400kVA',
+    feederId: 'fdr-kkl-1',
+    capacityKVA: 400,
+    voltageRatio: '33kV/415V',
+    make: 'Schneider Electric Systems',
+    serialNumber: 'SCH-2020-5512',
+    installationDate: '2020-07-22',
+    loadPercentage: 76.4,
+    oilLevelPct: 94.0,
+    hasOilLeakage: false,
+    phaseImbalancePct: 4.1,
+    regionId: 'reg-kkl',
+    divisionId: 'div-kkl',
+    sectionId: 'sec-kkl',
+    jeJurisdictionId: 'jur-kkl-1',
+    status: 'operational',
+    coordinates: [10.9270, 79.8420],
+  },
+  {
+    id: 'dt-mahe-6',
+    code: 'DTR-MAHE-06',
+    name: 'Mahe Civil Station DTR 250kVA',
+    feederId: 'fdr-mahe-1',
+    capacityKVA: 250,
+    voltageRatio: '11kV/415V',
+    make: 'Voltamp Transformers',
+    serialNumber: 'VT-2021-3091',
+    installationDate: '2021-04-18',
+    loadPercentage: 54.0,
+    oilLevelPct: 97.0,
+    hasOilLeakage: false,
+    phaseImbalancePct: 2.8,
+    regionId: 'reg-mah',
+    divisionId: 'div-mahe-yan',
+    sectionId: 'sec-mahe',
+    status: 'operational',
+    coordinates: [11.7050, 75.5380],
+  },
+  {
+    id: 'dt-yan-7',
+    code: 'DTR-YAN-07',
+    name: 'Yanam Godavari Ferry DTR 160kVA',
+    feederId: 'fdr-yan-1',
+    capacityKVA: 160,
+    voltageRatio: '11kV/415V',
+    make: 'Kirloskar Electric',
+    serialNumber: 'KEC-2022-7721',
+    installationDate: '2022-09-14',
+    loadPercentage: 48.5,
+    oilLevelPct: 98.0,
+    hasOilLeakage: false,
+    phaseImbalancePct: 3.1,
+    regionId: 'reg-yan',
+    divisionId: 'div-mahe-yan',
+    sectionId: 'sec-yan',
+    status: 'operational',
+    coordinates: [16.7350, 82.2210],
+  },
 ];
 
-// 10. Utility Poles
+// ----------------------------------------------------------------------------
+// 10. UTILITY POLES (HT 11m, LT 9m, Rail Poles)
+// ----------------------------------------------------------------------------
 export const initialPoles: Pole[] = [
   {
     id: 'pol-mara-1',
     code: 'POL-MARA-001',
     poleNumber: 'P-01/MARA',
     poleType: 'PSCC 9m',
-    material: 'Pre-stressed Concrete',
+    material: 'Pre-stressed Concrete (PSCC)',
     heightMeters: 9.0,
     feederId: 'fdr-mara-1',
     transformerId: 'dt-blvd-1',
@@ -359,7 +568,7 @@ export const initialPoles: Pole[] = [
     code: 'POL-MARA-002',
     poleNumber: 'P-02/MARA',
     poleType: 'PSCC 9m',
-    material: 'Pre-stressed Concrete',
+    material: 'Pre-stressed Concrete (PSCC)',
     heightMeters: 9.0,
     feederId: 'fdr-mara-1',
     transformerId: 'dt-blvd-1',
@@ -379,7 +588,7 @@ export const initialPoles: Pole[] = [
     code: 'POL-HERI-010',
     poleNumber: 'P-10/HERI',
     poleType: 'Steel Tubular 11m',
-    material: 'Galvanized Steel',
+    material: 'Galvanized Steel Tubular',
     heightMeters: 11.0,
     feederId: 'fdr-heri-2',
     transformerId: 'dt-heri-2',
@@ -399,7 +608,7 @@ export const initialPoles: Pole[] = [
     code: 'POL-HERI-011',
     poleNumber: 'P-11/HERI',
     poleType: 'Steel Tubular 11m',
-    material: 'Galvanized Steel',
+    material: 'Galvanized Steel Tubular',
     heightMeters: 11.0,
     feederId: 'fdr-heri-2',
     transformerId: 'dt-heri-2',
@@ -414,9 +623,31 @@ export const initialPoles: Pole[] = [
     status: 'operational',
     coordinates: [11.9385, 79.8315],
   },
+  {
+    id: 'pol-kkl-1',
+    code: 'POL-KKL-001',
+    poleNumber: 'P-01/KKL',
+    poleType: 'Rail Pole 13m',
+    material: 'Rolled Steel Joist (RSJ)',
+    heightMeters: 13.0,
+    feederId: 'fdr-kkl-1',
+    transformerId: 'dt-kkl-5',
+    numInsulators: 9,
+    condition: 'Good',
+    hasStreetlight: true,
+    installationDate: '2020-07-24',
+    regionId: 'reg-kkl',
+    divisionId: 'div-kkl',
+    sectionId: 'sec-kkl',
+    jeJurisdictionId: 'jur-kkl-1',
+    status: 'operational',
+    coordinates: [10.9260, 79.8410],
+  },
 ];
 
-// 11. Conductors
+// ----------------------------------------------------------------------------
+// 11. CONDUCTORS (Conductor Master Types & Spans)
+// ----------------------------------------------------------------------------
 export const initialConductors: Conductor[] = [
   {
     id: 'cnd-mara-1',
@@ -424,7 +655,7 @@ export const initialConductors: Conductor[] = [
     feederId: 'fdr-mara-1',
     startPoleId: 'pol-mara-1',
     endPoleId: 'pol-mara-2',
-    conductorType: 'Rabbit ACSR',
+    conductorType: 'Rabbit ACSR (52.88 sqmm)',
     voltageClass: '11kV',
     lengthMeters: 42.5,
     ratedCurrentAmps: 200,
@@ -440,7 +671,7 @@ export const initialConductors: Conductor[] = [
     feederId: 'fdr-heri-2',
     startPoleId: 'pol-heri-10',
     endPoleId: 'pol-heri-11',
-    conductorType: 'Dog ACSR',
+    conductorType: 'Dog ACSR (100 sqmm)',
     voltageClass: '11kV',
     lengthMeters: 48.0,
     ratedCurrentAmps: 280,
@@ -452,14 +683,16 @@ export const initialConductors: Conductor[] = [
   },
 ];
 
-// 12. Consumers (Smart vs Non-Smart Mapping)
+// ----------------------------------------------------------------------------
+// 12. CONSUMERS & METER-TO-POLE SPATIAL MAPPINGS (Smart vs Conventional)
+// ----------------------------------------------------------------------------
 export const initialConsumers: Consumer[] = [
   {
     id: 'con-1',
     consumerNumber: 'CON-04-102-9901',
     accountNumber: 'ACC-PDY-101',
     name: 'Alliance Francaise de Pondichery',
-    address: '58 Suffren Street, White Town, Puducherry',
+    address: '58 Suffren Street, White Town, Puducherry - 605001',
     category: 'Commercial',
     sanctionedLoadKW: 35.0,
     poleId: 'pol-heri-10',
@@ -481,7 +714,7 @@ export const initialConsumers: Consumer[] = [
     consumerNumber: 'CON-04-102-9902',
     accountNumber: 'ACC-PDY-102',
     name: 'Aurobindo Ashram Guest House',
-    address: 'Marine Street, White Town',
+    address: 'Marine Street, White Town, Puducherry - 605001',
     category: 'Domestic',
     sanctionedLoadKW: 15.0,
     poleId: 'pol-heri-11',
@@ -503,7 +736,7 @@ export const initialConsumers: Consumer[] = [
     consumerNumber: 'CON-04-102-9903',
     accountNumber: 'ACC-PDY-103',
     name: 'Pondicherry Central Bus Stand Complex',
-    address: 'Maraimalai Adigal Salai, Marapalam',
+    address: 'Maraimalai Adigal Salai, Marapalam, Puducherry',
     category: 'Commercial',
     sanctionedLoadKW: 65.0,
     poleId: 'pol-mara-1',
@@ -511,7 +744,7 @@ export const initialConsumers: Consumer[] = [
     feederId: 'fdr-mara-1',
     meterNumber: 'CONV-GEN-1020',
     isSmartMeter: false,
-    meterMake: 'Genus Power',
+    meterMake: 'Genus Power Infrastructure',
     meterInstallDate: '2019-08-25',
     status: 'active',
     regionId: 'reg-pdy',
@@ -520,9 +753,55 @@ export const initialConsumers: Consumer[] = [
     jeJurisdictionId: 'jur-mara-1',
     coordinates: [11.9270, 79.8220],
   },
+  {
+    id: 'con-4',
+    consumerNumber: 'CON-04-102-9904',
+    accountNumber: 'ACC-PDY-104',
+    name: 'JIPMER Super Specialty Block Sub-feed',
+    address: 'Dhanvantari Nagar, Gorimedu, Puducherry',
+    category: 'Commercial',
+    sanctionedLoadKW: 120.0,
+    poleId: 'pol-mara-2',
+    transformerId: 'dt-blvd-1',
+    feederId: 'fdr-mara-1',
+    meterNumber: 'SMTR-SCH-8841',
+    isSmartMeter: true,
+    meterMake: 'Schneider Smart Grid',
+    meterInstallDate: '2023-02-18',
+    status: 'active',
+    regionId: 'reg-pdy',
+    divisionId: 'div-urban',
+    sectionId: 'sec-mara',
+    jeJurisdictionId: 'jur-mara-1',
+    coordinates: [11.9290, 79.8235],
+  },
+  {
+    id: 'con-5',
+    consumerNumber: 'CON-04-201-8801',
+    accountNumber: 'ACC-KKL-201',
+    name: 'Karaikal Port Terminal Warehouse',
+    address: 'Keezha Kasakudy, Karaikal Harbor Area',
+    category: 'Industrial',
+    sanctionedLoadKW: 250.0,
+    poleId: 'pol-kkl-1',
+    transformerId: 'dt-kkl-5',
+    feederId: 'fdr-kkl-1',
+    meterNumber: 'SMTR-LT-9901',
+    isSmartMeter: true,
+    meterMake: 'L&T Smart Grid',
+    meterInstallDate: '2023-08-11',
+    status: 'active',
+    regionId: 'reg-kkl',
+    divisionId: 'div-kkl',
+    sectionId: 'sec-kkl',
+    jeJurisdictionId: 'jur-kkl-1',
+    coordinates: [10.9265, 79.8415],
+  },
 ];
 
-// 13. Faults & Distance Measurements
+// ----------------------------------------------------------------------------
+// 13. FAULTS & FAULT DISTANCE MEASUREMENTS
+// ----------------------------------------------------------------------------
 export const initialFaults: Fault[] = [
   {
     id: 'flt-1',
@@ -569,9 +848,32 @@ export const initialFaults: Fault[] = [
     reportedAt: '2026-11-08T04:15:00Z',
     coordinates: [11.9380, 79.8310],
   },
+  {
+    id: 'flt-3',
+    faultCode: 'FLT-2026-0003',
+    category: 'Insulator Flashover',
+    description: 'Disc insulator flashover on 11kV Airport Feeder near Lawspet Substation',
+    priority: 'medium',
+    status: 'assigned',
+    feederId: 'fdr-laws-3',
+    transformerId: 'dt-arpt-3',
+    poleId: 'pol-mara-2',
+    sectionId: 'sec-laws',
+    reportedBy: 'user-ae',
+    assignedTo: 'user-je',
+    distanceFromPoleM: 4.8,
+    distanceFromDtM: 340.0,
+    distanceAlongFeederM: 1100.0,
+    distanceFromOfficeKm: 0.5,
+    affectedConsumersEst: 160,
+    reportedAt: '2026-11-08T05:00:00Z',
+    coordinates: [11.9610, 79.8170],
+  },
 ];
 
-// 14. Work Orders (Kanban Tasks)
+// ----------------------------------------------------------------------------
+// 14. WORK ORDERS & TASKS (Kanban Columns)
+// ----------------------------------------------------------------------------
 export const initialWorkOrders: WorkOrder[] = [
   {
     id: 'wo-1',
@@ -604,15 +906,48 @@ export const initialWorkOrders: WorkOrder[] = [
     aeApproved: false,
     dueDate: '2026-11-10',
   },
+  {
+    id: 'wo-3',
+    orderNumber: 'WO-2026-0103',
+    faultId: 'flt-3',
+    title: 'Replace 11kV Polymer Disc Insulator on Airport Feeder',
+    category: 'Preventive Maintenance',
+    instructions: 'Clean saline residue on adjacent cross-arms, mount 24kV creepage anti-fog insulator.',
+    priority: 'medium',
+    status: 'completed',
+    assignedCrew: 'Lawspet Patrol Crew',
+    sectionId: 'sec-laws',
+    jeVerified: true,
+    aeApproved: false,
+    dueDate: '2026-11-09',
+  },
+  {
+    id: 'wo-4',
+    orderNumber: 'WO-2026-0104',
+    title: 'Smart Meter AMI Retrofit on 50 Domestic Consumers',
+    category: 'Smart Meter Installation',
+    instructions: 'Replace electromechanical meters with 4G cellular smart meters; verify pole mapping coordinates.',
+    priority: 'low',
+    status: 'closed',
+    assignedCrew: 'Larsen Power AMI Gang',
+    contractorId: 'user-contractor',
+    sectionId: 'sec-mara',
+    jeVerified: true,
+    aeApproved: true,
+    dueDate: '2026-11-05',
+    completedAt: '2026-11-05T17:00:00Z',
+  },
 ];
 
-// 15. Survey Submissions & Staging
+// ----------------------------------------------------------------------------
+// 15. CONTRACTOR SURVEY SUBMISSIONS & STAGING
+// ----------------------------------------------------------------------------
 export const initialSurveys: SurveySubmission[] = [
   {
     id: 'surv-1',
     submissionCode: 'SURV-2026-081',
     contractorId: 'user-contractor',
-    contractorName: 'Er. Rajesh Kumar (Larsen Power)',
+    contractorName: 'Er. Rajesh Kumar (Larsen Power Ltd)',
     jeId: 'user-je',
     jeName: 'Er. V. Anand, JE',
     aeId: 'user-ae',
@@ -634,7 +969,7 @@ export const initialStagingAssets: SurveyStagingAsset[] = [
     submissionId: 'surv-1',
     assetType: 'pole',
     temporaryCode: 'TMP-POL-081-1',
-    attributes: { pole_type: 'PSCC 9m', condition: 'Good', num_insulators: 3, feeder: 'FDR-MARA-01' },
+    attributes: { pole_number: 'P-03/MARA', pole_type: 'PSCC 9m', num_insulators: 3, feeder: 'FDR-MARA-01' },
     gpsAccuracyM: 1.8,
     altitudeM: 12.4,
     validationStatus: 'valid',
@@ -653,7 +988,9 @@ export const initialStagingAssets: SurveyStagingAsset[] = [
   },
 ];
 
-// 16. Outages & IEEE 1366 Reliability Metrics
+// ----------------------------------------------------------------------------
+// 16. OUTAGES & IEEE 1366 RELIABILITY METRICS
+// ----------------------------------------------------------------------------
 export const initialOutages: Outage[] = [
   {
     id: 'out-1',
@@ -661,7 +998,7 @@ export const initialOutages: Outage[] = [
     feederId: 'fdr-mara-1',
     transformerId: 'dt-blvd-1',
     outageType: 'Emergency',
-    reason: 'Feeder trip on snapped conductor',
+    reason: 'Feeder trip on snapped conductor across Maraimalai Adigal Salai',
     startTime: '2026-11-08T03:30:00Z',
     expectedRestoration: '2026-11-08T07:00:00Z',
     durationMinutes: 210,
@@ -669,6 +1006,21 @@ export const initialOutages: Outage[] = [
     energyNotServedKWh: 1250,
     sectionId: 'sec-mara',
     status: 'active',
+  },
+  {
+    id: 'out-2',
+    outageCode: 'OUT-2026-022',
+    feederId: 'fdr-laws-3',
+    outageType: 'Planned',
+    reason: 'Scheduled jumper replacement & tree overhang trimming',
+    startTime: '2026-11-06T09:00:00Z',
+    expectedRestoration: '2026-11-06T12:00:00Z',
+    actualRestoration: '2026-11-06T11:45:00Z',
+    durationMinutes: 165,
+    affectedConsumersCount: 320,
+    energyNotServedKWh: 640,
+    sectionId: 'sec-laws',
+    status: 'restored',
   },
 ];
 
@@ -699,18 +1051,24 @@ export const initialReliabilityMetrics: OutageReliabilityMetrics[] = [
   },
 ];
 
-// 17. SCADA Telemetry & Alarms
+// ----------------------------------------------------------------------------
+// 17. SCADA TELEMETRY & ALARMS
+// ----------------------------------------------------------------------------
 export const initialScadaPoints: ScadaTelemetryPoint[] = [
-  { id: 'scd-1', tag: 'MARA_110_BUS_VOLT', description: 'Marapalam 110kV Bus Voltage', substationId: 'ss-mara', voltageKV: 111.4, currentAmps: 0, activePowerMW: 0, reactivePowerMVAR: 0, frequencyHz: 50.02, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Just now' },
-  { id: 'scd-2', tag: 'FDR_MARA_01_AMP', description: 'Marapalam Feeder 1 Current (Phase A)', substationId: 'ss-mara', feederId: 'fdr-mara-1', voltageKV: 11.2, currentAmps: 245.8, activePowerMW: 4.82, reactivePowerMVAR: 1.15, frequencyHz: 50.01, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Just now' },
-  { id: 'scd-3', tag: 'FDR_HERI_02_AMP', description: 'Heritage Feeder 2 Current', substationId: 'ss-mara', feederId: 'fdr-heri-2', voltageKV: 11.1, currentAmps: 278.4, activePowerMW: 5.40, reactivePowerMVAR: 1.30, frequencyHz: 50.02, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Just now' },
+  { id: 'scd-1', tag: 'MARA_110_BUS_VOLT', description: 'Marapalam 110kV Bus Voltage', substationId: 'ss-mara', voltageKV: 111.4, currentAmps: 0, activePowerMW: 0, reactivePowerMVAR: 0, frequencyHz: 50.02, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Live' },
+  { id: 'scd-2', tag: 'FDR_MARA_01_AMP', description: 'Marapalam Feeder 1 Current (Phase A)', substationId: 'ss-mara', feederId: 'fdr-mara-1', voltageKV: 11.2, currentAmps: 245.8, activePowerMW: 4.82, reactivePowerMVAR: 1.15, frequencyHz: 50.01, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Live' },
+  { id: 'scd-3', tag: 'FDR_HERI_02_AMP', description: 'Heritage Feeder 2 Current', substationId: 'ss-mara', feederId: 'fdr-heri-2', voltageKV: 11.1, currentAmps: 278.4, activePowerMW: 5.40, reactivePowerMVAR: 1.30, frequencyHz: 50.02, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Live' },
+  { id: 'scd-4', tag: 'VILL_230_BUS_VOLT', description: 'Villianur 230kV Bus Voltage', substationId: 'ss-vill', voltageKV: 228.6, currentAmps: 512.0, activePowerMW: 185.0, reactivePowerMVAR: 22.0, frequencyHz: 50.02, breakerStatus: 'CLOSED', quality: 'GOOD', lastUpdated: 'Live' },
 ];
 
 export const initialScadaAlarms: ScadaAlarm[] = [
   { id: 'alm-1', tag: 'FDR_MARA_01_AMP', alarmCode: 'ALM-OC-401', severity: 'high', message: 'Feeder FDR-MARA-01 current exceeded 245A warning threshold (245.8A recorded)', status: 'active', timestamp: '15 mins ago' },
+  { id: 'alm-2', tag: 'DTR_HERI_02_TEMP', alarmCode: 'ALM-TMP-502', severity: 'critical', message: 'DTR-HERI-02 oil temperature alarm: 78°C exceeds 75°C statutory CEA threshold', status: 'active', timestamp: '22 mins ago' },
 ];
 
-// 18. Safety Permits (PTW)
+// ----------------------------------------------------------------------------
+// 18. SAFETY PERMITS (Permit to Work - PTW)
+// ----------------------------------------------------------------------------
 export const initialPTWs: SafetyPermit[] = [
   {
     id: 'ptw-1',
@@ -728,23 +1086,44 @@ export const initialPTWs: SafetyPermit[] = [
     issueTime: '2026-11-08T04:00:00Z',
     sectionId: 'sec-mara',
   },
+  {
+    id: 'ptw-2',
+    ptwNumber: 'PTW-2026-042',
+    feederId: 'fdr-heri-2',
+    feederCode: 'FDR-HERI-02',
+    applicantName: 'Er. P. Dinesh, JE',
+    issuingOfficerName: 'Er. G. Ilangovan, AE',
+    workDescription: 'Radiator fin gasket replacement and top-up filtration on DTR-HERI-02',
+    isolationPoints: 'Feeder Breaker CB-HERI-02 isolated and locked with red padlock #14',
+    earthingConfirmed: true,
+    dangerNoticesPosted: true,
+    gasDischargeTested: true,
+    status: 'requested',
+    sectionId: 'sec-heri',
+  },
 ];
 
-// 19. Stores Inventory
+// ----------------------------------------------------------------------------
+// 19. STORES & MATERIAL INVENTORY
+// ----------------------------------------------------------------------------
 export const initialStores: StoresItem[] = [
-  { id: 'mat-1', itemCode: 'MAT-ACSR-RAB', name: 'Rabbit ACSR Conductor (50 sqmm)', category: 'Conductor', unitOfMeasure: 'KM', currentStock: 18.5, reorderLevel: 5.0, unitCostINR: 42000, sectionId: 'sec-mara' },
-  { id: 'mat-2', itemCode: 'MAT-POL-PSCC9', name: 'PSCC Utility Pole 9m 200kg', category: 'Pole', unitOfMeasure: 'NOS', currentStock: 64, reorderLevel: 20, unitCostINR: 4800, sectionId: 'sec-mara' },
-  { id: 'mat-3', itemCode: 'MAT-MTR-SMART', name: 'Single Phase Smart Energy Meter 5-30A', category: 'Smart Meter', unitOfMeasure: 'NOS', currentStock: 350, reorderLevel: 100, unitCostINR: 3200, sectionId: 'sec-mara' },
-  { id: 'mat-4', itemCode: 'MAT-OIL-TRNS', name: 'Mineral Transformer Insulating Oil', category: 'Transformer Oil', unitOfMeasure: 'LITRE', currentStock: 1200, reorderLevel: 400, unitCostINR: 140, sectionId: 'sec-mara' },
+  { id: 'mat-1', itemCode: 'MAT-ACSR-RAB', name: 'Rabbit ACSR Conductor (52.88 sqmm)', category: 'Conductor', unitOfMeasure: 'KM', currentStock: 18.5, reorderLevel: 5.0, unitCostINR: 42000, sectionId: 'sec-mara' },
+  { id: 'mat-2', itemCode: 'MAT-POL-PSCC9', name: 'PSCC Utility Pole 9m 200kg Heavy Duty', category: 'Pole', unitOfMeasure: 'NOS', currentStock: 64, reorderLevel: 20, unitCostINR: 4800, sectionId: 'sec-mara' },
+  { id: 'mat-3', itemCode: 'MAT-MTR-SMART', name: 'Single Phase Smart Energy Meter 5-30A (AMI)', category: 'Smart Meter', unitOfMeasure: 'NOS', currentStock: 350, reorderLevel: 100, unitCostINR: 3200, sectionId: 'sec-mara' },
+  { id: 'mat-4', itemCode: 'MAT-OIL-TRNS', name: 'Mineral Transformer Insulating Oil (Uninhibited)', category: 'Transformer Oil', unitOfMeasure: 'LITRE', currentStock: 1200, reorderLevel: 400, unitCostINR: 140, sectionId: 'sec-mara' },
+  { id: 'mat-5', itemCode: 'MAT-INS-PIN11', name: '11kV Porcelain Pin Insulator with GI Spindle', category: 'Insulator', unitOfMeasure: 'NOS', currentStock: 240, reorderLevel: 50, unitCostINR: 380, sectionId: 'sec-mara' },
+  { id: 'mat-6', itemCode: 'MAT-CBL-XLPE', name: '11kV 3Cx300 sqmm Armored Aluminum XLPE Cable', category: 'Conductor', unitOfMeasure: 'METER', currentStock: 850, reorderLevel: 200, unitCostINR: 1850, sectionId: 'sec-mara' },
 ];
 
-// 20. Disaster Events
+// ----------------------------------------------------------------------------
+// 20. DISASTER MANAGEMENT EVENTS
+// ----------------------------------------------------------------------------
 export const initialDisasters: DisasterEvent[] = [
   {
     id: 'dis-1',
     code: 'DIS-2026-CYCLONE',
-    eventType: 'Cyclone Alert Category 1',
-    name: 'Coastal Monsoon Storm Emergency Plan',
+    eventType: 'Cyclone Storm Alert Response Plan',
+    name: 'Coastal Monsoon Storm Emergency Response Plan',
     affectedRegions: ['Puducherry', 'Karaikal'],
     startDate: '2026-11-01',
     status: 'restoration_in_progress',
@@ -755,14 +1134,18 @@ export const initialDisasters: DisasterEvent[] = [
   },
 ];
 
-// 21. Warranties & Lifecycle Records
+// ----------------------------------------------------------------------------
+// 21. WARRANTIES & LIFECYCLE RECORDS
+// ----------------------------------------------------------------------------
 export const initialWarranties: WarrantyRecord[] = [
-  { id: 'war-1', equipmentType: 'Transformer', equipmentId: 'dt-blvd-1', equipmentCode: 'DTR-BLVD-01', manufacturer: 'Voltamp Transformers', commencementDate: '2022-03-10', expiryDate: '2027-03-10', daysToExpiry: 485, claimStatus: 'active' },
+  { id: 'war-1', equipmentType: 'Transformer', equipmentId: 'dt-blvd-1', equipmentCode: 'DTR-BLVD-01', manufacturer: 'Voltamp Transformers Ltd', commencementDate: '2022-03-10', expiryDate: '2027-03-10', daysToExpiry: 485, claimStatus: 'active' },
   { id: 'war-2', equipmentType: 'Smart Meter', equipmentId: 'con-1', equipmentCode: 'SMTR-LT-44910', manufacturer: 'L&T Smart Grid', commencementDate: '2023-04-12', expiryDate: '2026-12-15', daysToExpiry: 37, claimStatus: 'expiring_soon' },
   { id: 'war-3', equipmentType: 'Transformer', equipmentId: 'dt-heri-2', equipmentCode: 'DTR-HERI-02', manufacturer: 'ABB India Ltd', commencementDate: '2021-11-20', expiryDate: '2026-11-20', daysToExpiry: 12, claimStatus: 'expiring_soon' },
+  { id: 'war-4', equipmentType: 'Pole', equipmentId: 'pol-mara-1', equipmentCode: 'POL-MARA-001', manufacturer: 'Puducherry Concrete Works', commencementDate: '2022-03-12', expiryDate: '2032-03-12', daysToExpiry: 1950, claimStatus: 'active' },
 ];
 
 export const initialLifecycles: EquipmentLifecycleRecord[] = [
   { id: 'lc-1', assetType: 'Transformer', assetId: 'dt-blvd-1', assetCode: 'DTR-BLVD-01', installationDate: '2022-03-10', expectedLifeYears: 25, currentAgeYears: 4.6, conditionScore: 88, replacementPriority: 'Low', isExpired: false, sectionId: 'sec-mara' },
   { id: 'lc-2', assetType: 'Pole', assetId: 'pol-mara-1', assetCode: 'POL-MARA-001', installationDate: '2004-06-15', expectedLifeYears: 20, currentAgeYears: 22.4, conditionScore: 42, replacementPriority: 'High', isExpired: true, sectionId: 'sec-mara' },
+  { id: 'lc-3', assetType: 'Transformer', assetId: 'dt-heri-2', assetCode: 'DTR-HERI-02', installationDate: '2011-04-10', expectedLifeYears: 25, currentAgeYears: 15.6, conditionScore: 58, replacementPriority: 'Medium', isExpired: false, sectionId: 'sec-heri' },
 ];

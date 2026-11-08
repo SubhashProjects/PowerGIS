@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ENTERPRISE HEADER COMPONENT WITH TELEMETRY, SEARCH & ROLE EMULATOR
 // ============================================================================
 
@@ -9,11 +9,11 @@ import { useGIS } from '../../context/GISContext';
 import { assetService } from '../../services/assetService';
 import { initialRegions } from '../../services/mockData';
 import {
-  Search, Shield, Bell, Activity, MapPin, ChevronDown, User, Globe
+  Search, Shield, Bell, Activity, MapPin, ChevronDown, User, Globe, LogOut
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { user, switchUser, availableUsers } = useAuth();
+  const { user, switchUser, availableUsers, logout } = useAuth();
   const { activeRegion, flyToRegion, setSelectedAsset } = useGIS();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -46,12 +46,12 @@ export const Header: React.FC = () => {
         </div>
         <div>
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-sm text-slate-100 tracking-wide">PUDUCHERRY ELECTRICITY</span>
+            <span className="font-bold text-sm text-slate-100 tracking-wide">POWERGIS</span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 font-semibold border border-sky-500/20">
               GIS PORTAL
             </span>
           </div>
-          <p className="text-[10px] text-slate-400 font-medium">Govt. of Puducherry • Distribution Asset Management & O&M</p>
+          <p className="text-[10px] text-slate-400 font-medium">PowerGIS • Distribution Asset Management & O&M</p>
         </div>
       </div>
 
@@ -182,6 +182,16 @@ export const Header: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Sign Out Button */}
+        <button
+          onClick={logout}
+          title="Sign Out of PowerGIS"
+          className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs transition-colors"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          <span className="hidden md:inline font-semibold">Sign Out</span>
+        </button>
       </div>
     </header>
   );

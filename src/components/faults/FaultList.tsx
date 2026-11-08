@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // FAULT MANAGEMENT & NETWORK DISTANCE ENGINE
 // Calculates: Nearest Pole, Nearest DT, Distance along feeder, Office distance
 // ============================================================================

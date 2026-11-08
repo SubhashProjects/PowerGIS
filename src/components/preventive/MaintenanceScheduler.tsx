@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // PREVENTIVE MAINTENANCE SCHEDULER (CONDITIONAL & CYCLICAL)
 // Automatically schedules maintenance based on condition, age & seasonal weather
 // ============================================================================

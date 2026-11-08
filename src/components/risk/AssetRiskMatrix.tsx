@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ISO 55000 ASSET RISK SCORING & HEALTH INDEX MATRIX
 // Formula: 30% Condition + 25% Age + 20% Loading + 15% Faults + 10% Criticality
 // ============================================================================

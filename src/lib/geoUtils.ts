@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // GEOSPATIAL UTILITIES: HAVERSINE, PROJECTIONS, AREA & NETWORK DISTANCES
 // ============================================================================
 

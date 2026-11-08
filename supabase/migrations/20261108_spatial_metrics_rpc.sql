@@ -1,5 +1,5 @@
 -- ============================================================================
--- PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+-- POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 -- SPATIAL DISTANCE & NETWORK TOPOLOGY CALCULATION RPC FUNCTIONS
 -- Computes: Nearest Pole distance, Nearest DT distance, Distance along feeder,
 -- Straight-line vs Network topology distance, Nearest Section Office distance

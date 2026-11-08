@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // MULTI-BASEMAP SWITCHER CONTROL (GOOGLE MAPS, OSM & ESRI)
 // ============================================================================
 

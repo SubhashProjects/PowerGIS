@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // CONTRACTOR SURVEY & STAGING APPROVAL WORKFLOW SERVICE
 // Enforces: Contractor Draft -> Submit -> JE Verify -> AE Approve -> Production GIS
 // ============================================================================

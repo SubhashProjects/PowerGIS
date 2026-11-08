@@ -1,6 +1,8 @@
 {
-  "name": "powergis-puducherry-platform",
+  "name": "powergis-enterprise-platform",
   "version": "2.0.0",
+  "description": "PowerGIS Enterprise Electricity Distribution GIS & Asset Management Platform",
+  "author": "PowerGIS",
   "private": true,
   "type": "module",
   "scripts": {

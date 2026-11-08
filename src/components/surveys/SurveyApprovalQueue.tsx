@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // MULTI-TIER SURVEY APPROVAL QUEUE (CONTRACTOR -> JE -> AE -> LIVE GIS)
 // ============================================================================
 

@@ -1,5 +1,5 @@
 -- ============================================================================
--- PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+-- POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 -- MULTI-TIER SURVEY STAGING TO PRODUCTION PUBLISHING RPC WORKFLOW
 -- Enforces: Contractor Submit -> JE Verify -> AE Approve -> Production Live GIS
 -- ============================================================================

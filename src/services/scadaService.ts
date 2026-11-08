@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // SCADA TELEMETRY & SUBSTATION SINGLE LINE DIAGRAM (SLD) SERVICE
 // Protocols: IEC 60870-5-104, Modbus TCP, MQTT
 // ============================================================================

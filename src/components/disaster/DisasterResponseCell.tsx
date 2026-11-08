@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // DISASTER MANAGEMENT & EMERGENCY GRID RESTORATION CELL
 // Storm, Cyclone & Flood Response • Infrastructure Damage Mapping
 // ============================================================================

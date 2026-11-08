@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // DOMAIN TYPES: AUTH, ROLES, JURISDICTIONS & PERMISSIONS
 // ============================================================================
 
@@ -63,6 +63,7 @@ export interface UserProfile {
   id: string;
   username: string;
   email: string;
+  password?: string;
   fullName: string;
   role: OfficialRole;
   designation: string;

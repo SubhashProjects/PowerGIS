@@ -1,5 +1,5 @@
 -- ============================================================================
--- PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+-- POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 -- PRODUCTION SEED DATA: All 4 Regions (Puducherry, Karaikal, Mahe, Yanam)
 -- Realistic Coordinate Polygons & Electrical Network Topologies
 -- ============================================================================
@@ -47,16 +47,16 @@ ON CONFLICT (code) DO NOTHING;
 INSERT INTO public.user_profiles (
     id, username, email, full_name, role, designation, phone, region_id, division_id, subdivision_id, section_id, je_jurisdiction_id
 ) VALUES
-('20000000-0000-0000-0000-000000000001', 'superadmin', 'superadmin@electricity.py.gov.in', 'System Administrator', 'super_admin', 'Director of IT & Geospatial Systems', '+91 413 2336331', NULL, NULL, NULL, NULL, NULL),
-('20000000-0000-0000-0000-000000000002', 'se_puducherry_1', 'se1.pdy@electricity.py.gov.in', 'Er. T. Chandrasekaran', 'se', 'Superintending Engineer (Circle I - Urban)', '+91 94430 00001', '11000000-0000-0000-0000-000000000001', NULL, NULL, NULL, NULL),
-('20000000-0000-0000-0000-000000000003', 'se_puducherry_2', 'se2.pdy@electricity.py.gov.in', 'Er. A. Rajagopalan', 'se', 'Superintending Engineer (Circle II - Rural)', '+91 94430 00002', '11000000-0000-0000-0000-000000000001', NULL, NULL, NULL, NULL),
-('20000000-0000-0000-0000-000000000004', 'se_karaikal', 'se.kkl@electricity.py.gov.in', 'Er. M. Balasubramanian', 'se', 'Superintending Engineer (Karaikal, Mahe & Yanam)', '+91 94430 00003', '11000000-0000-0000-0000-000000000002', NULL, NULL, NULL, NULL),
-('20000000-0000-0000-0000-000000000005', 'ee_urban', 'ee.urban@electricity.py.gov.in', 'Er. M. Sivakumar', 'ee', 'Executive Engineer (Urban Operations)', '+91 94430 11001', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', NULL, NULL, NULL),
-('20000000-0000-0000-0000-000000000006', 'aee_town', 'aee.town@electricity.py.gov.in', 'Er. S. Jayakumar', 'aee', 'Assistant Executive Engineer (Town Sub-Division)', '+91 94430 11005', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', NULL, NULL),
-('20000000-0000-0000-0000-000000000007', 'ae_marapalam', 'ae.marapalam@electricity.py.gov.in', 'Er. T. Senthil Nathan', 'ae', 'Assistant Engineer (Marapalam Section)', '+91 94430 11007', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', '14000000-0000-0000-0000-000000000001', NULL),
-('20000000-0000-0000-0000-000000000008', 'je_marapalam', 'je.marapalam@electricity.py.gov.in', 'Er. V. Anand', 'je', 'Junior Engineer (Marapalam Commercial Ward)', '+91 94430 11008', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', '14000000-0000-0000-0000-000000000001', '15000000-0000-0000-0000-000000000001'),
+('20000000-0000-0000-0000-000000000001', 'superadmin', 'superadmin@powergis.internal', 'System Administrator', 'super_admin', 'Director of IT & Geospatial Systems', '+91 413 2336331', NULL, NULL, NULL, NULL, NULL),
+('20000000-0000-0000-0000-000000000002', 'se_puducherry_1', 'se1.pdy@powergis.internal', 'Er. T. Chandrasekaran', 'se', 'Superintending Engineer (Circle I - Urban)', '+91 94430 00001', '11000000-0000-0000-0000-000000000001', NULL, NULL, NULL, NULL),
+('20000000-0000-0000-0000-000000000003', 'se_puducherry_2', 'se2.pdy@powergis.internal', 'Er. A. Rajagopalan', 'se', 'Superintending Engineer (Circle II - Rural)', '+91 94430 00002', '11000000-0000-0000-0000-000000000001', NULL, NULL, NULL, NULL),
+('20000000-0000-0000-0000-000000000004', 'se_karaikal', 'se.kkl@powergis.internal', 'Er. M. Balasubramanian', 'se', 'Superintending Engineer (Karaikal, Mahe & Yanam)', '+91 94430 00003', '11000000-0000-0000-0000-000000000002', NULL, NULL, NULL, NULL),
+('20000000-0000-0000-0000-000000000005', 'ee_urban', 'ee.urban@powergis.internal', 'Er. M. Sivakumar', 'ee', 'Executive Engineer (Urban Operations)', '+91 94430 11001', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', NULL, NULL, NULL),
+('20000000-0000-0000-0000-000000000006', 'aee_town', 'aee.town@powergis.internal', 'Er. S. Jayakumar', 'aee', 'Assistant Executive Engineer (Town Sub-Division)', '+91 94430 11005', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', NULL, NULL),
+('20000000-0000-0000-0000-000000000007', 'ae_marapalam', 'ae.marapalam@powergis.internal', 'Er. T. Senthil Nathan', 'ae', 'Assistant Engineer (Marapalam Section)', '+91 94430 11007', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', '14000000-0000-0000-0000-000000000001', NULL),
+('20000000-0000-0000-0000-000000000008', 'je_marapalam', 'je.marapalam@powergis.internal', 'Er. V. Anand', 'je', 'Junior Engineer (Marapalam Commercial Ward)', '+91 94430 11008', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', '14000000-0000-0000-0000-000000000001', '15000000-0000-0000-0000-000000000001'),
 ('20000000-0000-0000-0000-000000000009', 'contractor_epc', 'survey.epc@larsenpower.com', 'Er. Rajesh Kumar', 'contractor', 'Authorized EPC Survey Contractor', '+91 98840 22001', '11000000-0000-0000-0000-000000000001', '12000000-0000-0000-0000-000000000001', '13000000-0000-0000-0000-000000000001', '14000000-0000-0000-0000-000000000001', '15000000-0000-0000-0000-000000000001'),
-('20000000-0000-0000-0000-000000000010', 'gis_administrator', 'gisadmin@electricity.py.gov.in', 'S. Ananthi', 'gis_admin', 'Principal Spatial Data Administrator', '+91 94430 11010', NULL, NULL, NULL, NULL, NULL),
+('20000000-0000-0000-0000-000000000010', 'gis_administrator', 'gisadmin@powergis.internal', 'S. Ananthi', 'gis_admin', 'Principal Spatial Data Administrator', '+91 94430 11010', NULL, NULL, NULL, NULL, NULL),
 ('20000000-0000-0000-0000-000000000011', 'grid_auditor', 'auditor@jercuts.gov.in', 'Dr. S. Ramachandran', 'auditor', 'JERC Regulatory Grid Auditor', '+91 94430 11015', NULL, NULL, NULL, NULL, NULL)
 ON CONFLICT (username) DO NOTHING;
 

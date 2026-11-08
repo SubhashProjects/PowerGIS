@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // ELECTRICAL SAFETY & PERMIT TO WORK (PTW) WORKFLOW MANAGER
 // Isolation, Earthing, Danger Notices, Line Clear & Restoration Authorizations
 // ============================================================================

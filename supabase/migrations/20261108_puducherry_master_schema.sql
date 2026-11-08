@@ -1,5 +1,5 @@
 -- ============================================================================
--- PUDUCHERRY ELECTRICITY DEPARTMENT GIS, ASSET MANAGEMENT & O&M PLATFORM
+-- PowerGIS GIS, ASSET MANAGEMENT & O&M PLATFORM
 -- PRODUCTION POSTGRESQL 16 + POSTGIS 3.4 MASTER SCHEMA
 -- Covers: Puducherry, Karaikal, Mahe, Yanam (All 4 Regions)
 -- Organizational Hierarchy: SE -> EE -> AEE -> AE -> JE

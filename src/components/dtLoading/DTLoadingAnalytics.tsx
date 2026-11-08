@@ -1,5 +1,5 @@
 // ============================================================================
-// PUDUCHERRY ELECTRICITY DEPARTMENT GIS PLATFORM
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // DISTRIBUTION TRANSFORMER (DT) LOADING & PHASE IMBALANCE ANALYTICS
 // Monitors: Peak Loading, Phase Current (IR, IY, IB), Overload & Augmentation
 // ============================================================================
