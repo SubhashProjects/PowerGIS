@@ -1,17 +1,10 @@
-# Puducherry Electricity Department GIS, Distribution Asset Management & O&M Platform (PowerGIS)
-
-[![License: Government of Puducherry](https://img.shields.io/badge/License-Govt%20of%20Puducherry-blue.svg)](https://electricity.py.gov.in)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%2016%20%2B%20PostGIS%203.4-336791.svg)](https://postgis.net)
-[![React](https://img.shields.io/badge/Frontend-React%2018%20%2B%20TypeScript%20%2B%20Vite-61DAFB.svg)](https://reactjs.org)
-[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS%203.4-38B2AC.svg)](https://tailwindcss.com)
-[![IEEE 1366](https://img.shields.io/badge/Standard-IEEE%201366%20Reliability-green.svg)](https://standards.ieee.org)
-[![ISO 55000](https://img.shields.io/badge/Standard-ISO%2055000%20Asset%20Risk-purple.svg)](https://www.iso.org)
+# PowerGIS
 
 ---
 
 ## 1. Executive Summary & Organizational Scope
 
-The **Puducherry Electricity GIS, Distribution Asset Management & O&M Platform** is a production-grade, enterprise utility operations system developed specifically for the **Electricity Department, Government of Puducherry**.
+The **Electricity GIS, Distribution Asset Management & O&M Platform** is a production-grade, enterprise utility operations system developed specifically for the **Electricity Department, Government of Puducherry**.
 
 ### All Four Geographically Distinct Enclaves Covered:
 1. **Puducherry** (Urban Boulevard, Semi-urban, and Rural Circles)
@@ -130,7 +123,7 @@ npx tsx tests/security_and_functional.test.ts
 Output:
 ```
 ============================================================
- PUDUCHERRY POWERGIS - AUTOMATED TEST SUITE EXECUTION
+ POWERGIS - AUTOMATED TEST SUITE EXECUTION
 ============================================================
 --- TEST GROUP 1: Role Permissions & Authorization ---
   ✓ PASS: Super Admin can manage users
