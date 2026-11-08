@@ -5,35 +5,10 @@
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import {
-  Map, Zap, Gauge, ShieldCheck, AlertTriangle, CheckSquare,
-  Smartphone, FileCheck, Cpu, Power, GitFork, Calendar,
-  BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound, LayoutDashboard, X, Building2
-} from 'lucide-react';
+import { NAVIGATION_ITEMS, NavTabId } from '../../config/navigationConfig';
+import { X } from 'lucide-react';
 
-export type NavTabId =
-  | 'dashboard'
-  | 'gis_map'
-  | 'assets'
-  | 'capital_projects'
-  | 'smart_meters'
-  | 'warranties'
-  | 'faults'
-  | 'work_orders'
-  | 'contractor_pwa'
-  | 'survey_approvals'
-  | 'scada'
-  | 'outages'
-  | 'topology'
-  | 'preventive'
-  | 'dt_loading'
-  | 'stores'
-  | 'disaster'
-  | 'safety_ptw'
-  | 'asset_risk'
-  | 'backup_restore'
-  | 'admin_panel'
-  | 'auth_login';
+export type { NavTabId };
 
 interface SidebarProps {
   activeTab: NavTabId;
@@ -44,14 +19,6 @@ interface SidebarProps {
   onCloseMobile?: () => void;
 }
 
-interface NavItemDef {
-  id: NavTabId;
-  label: string;
-  icon: any;
-  color: string;
-  roles?: string[];
-}
-
 export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onSelectTab,
@@ -60,31 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
 }) => {
   const { user } = useAuth();
-
-  const navItems: NavItemDef[] = [
-    { id: 'dashboard', label: 'Role Dashboard & Tasks', icon: LayoutDashboard, color: 'text-blue-600' },
-    { id: 'gis_map', label: 'GIS Master Map', icon: Map, color: 'text-emerald-600' },
-    { id: 'assets', label: 'Electrical Assets', icon: Zap, color: 'text-amber-500', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'] },
-    { id: 'capital_projects', label: 'Capital Projects (RDSS)', icon: Building2, color: 'text-teal-600', roles: ['super_admin', 'se', 'ee', 'contractor', 'auditor'] },
-    { id: 'smart_meters', label: 'Smart Meter Dashboard', icon: Gauge, color: 'text-cyan-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'] },
-    { id: 'warranties', label: 'Warranties & Lifecycle', icon: ShieldCheck, color: 'text-indigo-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'auditor'] },
-    { id: 'faults', label: 'Faults & Distance Calc', icon: AlertTriangle, color: 'text-rose-500', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'contractor', 'auditor'] },
-    { id: 'work_orders', label: 'Tasks & Work Orders', icon: CheckSquare, color: 'text-violet-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je'] },
-    { id: 'contractor_pwa', label: 'Contractor GPS Survey (PWA)', icon: Smartphone, color: 'text-fuchsia-600', roles: ['contractor', 'super_admin', 'je', 'ae'] },
-    { id: 'survey_approvals', label: 'Survey Approval Queue', icon: FileCheck, color: 'text-emerald-600', roles: ['je', 'ae', 'aee', 'ee', 'se', 'super_admin'] },
-    { id: 'scada', label: 'SCADA Telemetry & SLD', icon: Cpu, color: 'text-rose-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'gis_admin'] },
-    { id: 'outages', label: 'Outages & IEEE Reliability', icon: Power, color: 'text-orange-500', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'auditor'] },
-    { id: 'topology', label: 'Network Topology Tracing', icon: GitFork, color: 'text-sky-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'gis_admin'] },
-    { id: 'preventive', label: 'Preventive Maintenance', icon: Calendar, color: 'text-lime-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je'] },
-    { id: 'dt_loading', label: 'DT Loading & Imbalance', icon: BarChart2, color: 'text-amber-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'gis_admin'] },
-    { id: 'stores', label: 'Stores & Material Mgmt', icon: Package, color: 'text-yellow-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je'] },
-    { id: 'disaster', label: 'Disaster Management', icon: CloudRain, color: 'text-blue-500', roles: ['super_admin', 'se', 'ee', 'aee', 'ae'] },
-    { id: 'safety_ptw', label: 'Safety Permit to Work (PTW)', icon: HardHat, color: 'text-red-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor'] },
-    { id: 'asset_risk', label: 'ISO 55000 Asset Risk', icon: Target, color: 'text-purple-600', roles: ['super_admin', 'se', 'ee', 'aee', 'auditor'] },
-    { id: 'backup_restore', label: 'Backup & Data Exchange', icon: Database, color: 'text-indigo-500', roles: ['super_admin', 'gis_admin', 'auditor'] },
-    { id: 'admin_panel', label: 'Admin Control Panel', icon: Settings, color: 'text-slate-600', roles: ['super_admin', 'se', 'gis_admin'] },
-    { id: 'auth_login', label: 'Staff Login & Personas', icon: KeyRound, color: 'text-blue-700' },
-  ];
+  const navItems = NAVIGATION_ITEMS;
 
   const handleItemClick = (id: NavTabId) => {
     onSelectTab(id);

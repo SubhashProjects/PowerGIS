@@ -9,18 +9,11 @@ import { useAuth } from '../../context/AuthContext';
 import { faultService } from '../../services/faultService';
 import { initialUsers } from '../../services/mockData';
 import { Fault, FaultStatus, FaultPriority } from '../../types/operations';
+import { FAULT_LIFECYCLE_STAGES as STAGES, SLA_HOURS, getStageIndex } from '../../config/workflowConfig';
 import {
   AlertTriangle, CheckCircle2, Clock, MapPin, Plus, Compass, Wrench, X,
   ShieldCheck, AlertOctagon, CheckSquare, ArrowRight, UserCheck, Timer
 } from 'lucide-react';
-
-// SLA Allowed Durations (Hours) per Section 9.2
-const SLA_HOURS: Record<FaultPriority, number> = {
-  critical: 4,  // Feeder breakdown
-  high: 8,      // DTR fuse failure
-  medium: 24,   // Low voltage / leaning pole
-  low: 72,      // Vegetation / meter inspection
-};
 
 export const FaultList: React.FC = () => {
   const { user } = useAuth();
@@ -142,23 +135,6 @@ export const FaultList: React.FC = () => {
       statusColor,
       percentElapsed,
     };
-  };
-
-  // 8-stage sequence definitions
-  const STAGES: Array<{ key: FaultStatus; label: string; stageNum: number }> = [
-    { key: 'new', label: '1. Open', stageNum: 1 },
-    { key: 'assigned', label: '2. Assigned', stageNum: 2 },
-    { key: 'acknowledged', label: '3. Accepted', stageNum: 3 },
-    { key: 'in_progress', label: '4. In Progress', stageNum: 4 },
-    { key: 'material_required', label: '5. On Hold', stageNum: 5 },
-    { key: 'completed', label: '6. Resolved', stageNum: 6 },
-    { key: 'verified', label: '7. Verified', stageNum: 7 },
-    { key: 'closed', label: '8. Closed', stageNum: 8 },
-  ];
-
-  const getStageIndex = (status: FaultStatus): number => {
-    const idx = STAGES.findIndex(s => s.key === status);
-    return idx >= 0 ? idx : 0;
   };
 
   const filteredFaults = faults.filter(f => {

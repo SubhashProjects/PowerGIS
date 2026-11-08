@@ -2,74 +2,23 @@
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // SCOPE HUD INDICATOR (PERSISTENT STICKY BANNER) - SECTION 3.2
 // Format: [Active Identity: {Role}] · [Jurisdiction: {Scope}] · [Privileges: {Tags}]
+// Modular Architecture - Consumes SSOT from src/config/rbacConfig
 // ============================================================================
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ShieldAlert, ShieldCheck, Lock, Activity, Key } from 'lucide-react';
+import { getRoleDefinition } from '../../config/rbacConfig';
+import { ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
 
 export const ScopeBanner: React.FC = () => {
   const { user } = useAuth();
+  const roleDef = getRoleDefinition(user.role);
 
-  const getRoleTitle = () => {
-    switch (user.role) {
-      case 'super_admin': return 'Super Administrator';
-      case 'se': return 'Superintending Engineer (SE)';
-      case 'ee': return 'Executive Engineer (EE)';
-      case 'aee': return 'Asst. Executive Engineer (AEE)';
-      case 'ae': return 'Section Engineer (AE)';
-      case 'je': return 'Junior Engineer (JE)';
-      case 'contractor': return 'EPC Contractor';
-      case 'auditor': return 'Regulatory & Vigilance Auditor';
-      default: return user.fullName || user.username || 'Utility Engineer';
-    }
-  };
-
-  const getJurisdictionLabel = () => {
-    switch (user.role) {
-      case 'super_admin':
-        return 'Puducherry UT (Universal State-Wide Oversight)';
-      case 'se':
-        return user.regionId === 'reg-pdy' ? 'Puducherry Circle (Urban & Rural Circles)' : 'Karaikal, Mahe & Yanam Circle';
-      case 'ee':
-        return 'Urban Operations Division (Feeders, DTRs & Dispatch)';
-      case 'aee':
-        return 'Town Sub-Division (Maintenance Supervision & Approvals)';
-      case 'ae':
-        return 'Marapalam O&M Section (JE Approval & Fault Cleared Verification)';
-      case 'je':
-        return 'Marapalam Commercial Ward (Strict Local Section Scope)';
-      case 'contractor':
-        return `${user.contractorCompany || 'Larsen Power Ltd'} (Staging Sandbox Isolation)`;
-      case 'auditor':
-        return 'State-Wide Regulatory Compliance & Energy Loss Audits';
-      default:
-        return 'Standard Distribution Scope';
-    }
-  };
-
-  const getPrivilegeTags = (): string[] => {
-    switch (user.role) {
-      case 'super_admin':
-        return ['SCADA Switching', 'PTW Clear', 'Topology Trace', 'DB Backup', 'Zero-Trust RLS'];
-      case 'se':
-        return ['RDSS Capital Schemes', 'SCADA Oversight', 'SLA Enforcement', 'PTW Approval'];
-      case 'ee':
-        return ['Feeder Dispatch', 'SCADA Switching', 'WO Release', 'Outage Approval'];
-      case 'aee':
-        return ['Sub-Div Operations', 'Survey Sign-Off', 'WO Verification'];
-      case 'ae':
-        return ['PTW Line Clearance', 'JE Verification', 'SLD Control', 'Breakdown Clearance'];
-      case 'je':
-        return ['Field Survey Verify', 'Pole Snapping', 'Fault Proximity', 'Local Section Only'];
-      case 'contractor':
-        return ['Staging Sandbox Only', 'GPS Photo Upload', 'No Live GIS Writes'];
-      case 'auditor':
-        return ['Read-Only RLS', 'Regulatory Exports', 'Loss Audits', 'Tamper Log'];
-      default:
-        return ['Standard Access'];
-    }
-  };
+  const roleTitle = roleDef.title;
+  const jurisdictionLabel = user.contractorCompany
+    ? `${user.contractorCompany} (Staging Sandbox Isolation)`
+    : roleDef.defaultJurisdiction;
+  const privilegeTags = roleDef.privilegeTags;
 
   const isRestricted = user.role === 'je' || user.role === 'contractor';
 
@@ -92,14 +41,14 @@ export const ScopeBanner: React.FC = () => {
         <div className="flex items-center space-x-1.5 font-mono text-[11px] truncate">
           <span className="text-slate-500 font-sans hidden sm:inline">Active Identity:</span>
           <span className="font-extrabold text-blue-900 bg-white/95 px-2 py-0.5 rounded-lg border border-blue-200 shadow-xs">
-            {getRoleTitle()}
+            {roleTitle}
           </span>
 
           <span className="text-slate-400">·</span>
 
           <span className="text-slate-500 font-sans hidden sm:inline">Jurisdiction:</span>
           <span className="font-bold text-slate-900 bg-white/70 px-2 py-0.5 rounded-lg border border-slate-200 truncate">
-            {getJurisdictionLabel()}
+            {jurisdictionLabel}
           </span>
         </div>
       </div>
@@ -107,7 +56,7 @@ export const ScopeBanner: React.FC = () => {
       {/* Right: Privilege Tags & Zero-Trust RLS */}
       <div className="hidden lg:flex items-center space-x-1.5 text-[10px] font-mono">
         <span className="text-slate-500 mr-0.5 font-sans">Privileges:</span>
-        {getPrivilegeTags().map((tag, i) => {
+        {privilegeTags.map((tag, i) => {
           let badgeStyle = 'bg-white text-blue-800 border-blue-200 shadow-2xs';
           if (tag.includes('No Live') || tag.includes('Strict')) {
             badgeStyle = 'bg-amber-100/90 text-amber-900 border-amber-300';

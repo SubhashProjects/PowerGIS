@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { useGIS } from '../../context/GISContext';
 import { availableBasemaps } from '../../services/gisService';
+import { getBasemapCategoryBadge } from '../../config/basemapConfig';
 import { Layers, ChevronDown, Check, Globe } from 'lucide-react';
 
 export const BasemapSwitcher: React.FC = () => {
@@ -13,15 +14,6 @@ export const BasemapSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const selected = availableBasemaps.find(b => b.id === currentBasemap) || availableBasemaps[0];
-
-  const getCategoryColor = (cat: string) => {
-    switch (cat) {
-      case 'Google': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'OpenStreetMap': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'Esri': return 'bg-purple-50 text-purple-700 border-purple-200';
-      default: return 'bg-slate-100 text-slate-700 border-slate-200';
-    }
-  };
 
   return (
     <div className="absolute top-4 right-4 z-[1000] select-none">
@@ -66,7 +58,7 @@ export const BasemapSwitcher: React.FC = () => {
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold border ${
                         isCurrent
                           ? 'bg-white/20 text-white border-white/30'
-                          : getCategoryColor(b.category)
+                          : getBasemapCategoryBadge(b.category).bg
                       }`}>
                         {b.category}
                       </span>

@@ -6,6 +6,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { BasemapProviderId, GISLayerState, GISOverlayLayerId, MapMeasurement } from '../types/gis';
 import { initialGISLayers, regionCoordinates } from '../services/gisService';
+import { DEFAULT_BASEMAP_ID } from '../config/basemapConfig';
+import { APP_CONFIG } from '../config/appConfig';
 
 interface GISContextType {
   currentBasemap: BasemapProviderId;
@@ -33,9 +35,9 @@ interface GISContextType {
 const GISContext = createContext<GISContextType | undefined>(undefined);
 
 export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('google_roadmap');
+  const [currentBasemap, setBasemap] = useState<BasemapProviderId>(DEFAULT_BASEMAP_ID);
   const [layers, setLayers] = useState<GISLayerState[]>(initialGISLayers);
-  const [activeRegion, setActiveRegion] = useState<string>('reg-pdy');
+  const [activeRegion, setActiveRegion] = useState<string>(APP_CONFIG.defaultRegionId);
   const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
   const [bearing, setBearingState] = useState<number>(0);
   const [themeMode, setThemeModeState] = useState<'black' | 'white'>('white');
@@ -62,7 +64,7 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setThemeMode = (mode: 'black' | 'white') => {
     setThemeModeState('white');
-    setBasemap('google_roadmap');
+    setBasemap(DEFAULT_BASEMAP_ID);
     document.documentElement.classList.add('theme-white');
   };
 

@@ -8,6 +8,7 @@
 import React, { useState } from 'react';
 import { initialWorkOrders } from '../../services/mockData';
 import { WorkOrder, WorkOrderStatus } from '../../types/operations';
+import { WORK_ORDER_COLUMNS } from '../../config/workflowConfig';
 import {
   CheckSquare, Plus, User, ArrowRight, X, Clock, Calendar, CheckCircle2
 } from 'lucide-react';
@@ -22,13 +23,7 @@ export const WorkOrderKanban: React.FC = () => {
   const [instructions, setInstructions] = useState('');
   const [assignedCrew, setAssignedCrew] = useState('Marapalam Breakdown Gang #1');
 
-  const columns: Array<{ id: WorkOrderStatus; title: string; topBorder: string; badgeBg: string }> = [
-    { id: 'assigned', title: '1. Assigned to Crew', topBorder: 'border-t-4 border-t-blue-500', badgeBg: 'bg-blue-100 text-blue-800' },
-    { id: 'in_progress', title: '2. In Progress / On Site', topBorder: 'border-t-4 border-t-amber-500', badgeBg: 'bg-amber-100 text-amber-800' },
-    { id: 'completed', title: '3. Work Completed', topBorder: 'border-t-4 border-t-emerald-500', badgeBg: 'bg-emerald-100 text-emerald-800' },
-    { id: 'verified', title: '4. JE Verified', topBorder: 'border-t-4 border-t-purple-500', badgeBg: 'bg-purple-100 text-purple-800' },
-    { id: 'closed', title: '5. AE Approved & Closed', topBorder: 'border-t-4 border-t-teal-600', badgeBg: 'bg-teal-100 text-teal-800' },
-  ];
+  const columns = WORK_ORDER_COLUMNS;
 
   const handleAdvanceStatus = (orderId: string, currentStatus: WorkOrderStatus) => {
     let nextStatus: WorkOrderStatus = currentStatus;

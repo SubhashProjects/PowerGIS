@@ -1,0 +1,165 @@
+{
+  "project": {
+    "name": "PowerGIS Enterprise GIS Platform",
+    "version": "2.0.0-PROD",
+    "architecture": "Modular Pure White & Vibrant Color Utility Architecture (SSOT)",
+    "mission": "Mission-critical electrical distribution GIS, SCADA integration, 8-stage breakdown ticketing, and RDSS capital works for Puducherry Union Territory",
+    "gitHubPages": "https://subhashprojects.github.io/PowerGIS/",
+    "remotes": {
+      "subhash": "https://github.com/SubhashProjects/PowerGIS.git",
+      "origin": "https://github.com/sv007git/PowerGIS.git"
+    }
+  },
+  "changeRoutingTable": {
+    "ColorsAndTheme": "src/config/themeConfig.ts",
+    "BasemapProvidersAndDefaults": "src/config/basemapConfig.ts",
+    "RolesPermissionsAndJurisdictionHUD": "src/config/rbacConfig.ts",
+    "NavigationItemsAndTabRouting": "src/config/navigationConfig.ts",
+    "FaultStagesSLAHoursAndKanbanColumns": "src/config/workflowConfig.ts",
+    "AppMetadataRegionCentersAndIntervals": "src/config/appConfig.ts",
+    "MockDataInitialSeed": "src/services/mockData.ts",
+    "SpatialCalculationMath": "src/lib/geoUtils.ts"
+  },
+  "moduleRegistry": {
+    "config": {
+      "src/config/appConfig.ts": {
+        "purpose": "Application identity, regional enclaves (Puducherry, Karaikal, Mahe, Yanam), default coordinates, zoom levels, telemetry intervals, and security passwords.",
+        "exports": ["RegionalEnclave", "APP_CONFIG"]
+      },
+      "src/config/themeConfig.ts": {
+        "purpose": "Design tokens, primary/accent/success/warning gradients, hex colors, role badges, getPriorityStyle(), and getStatusStyle() helper functions.",
+        "exports": ["THEME_CONFIG"]
+      },
+      "src/config/basemapConfig.ts": {
+        "purpose": "8 Vibrant Color Basemaps (Google, OSM, Esri), default basemap ID (google_roadmap), URL templates, attributions, and category color badges.",
+        "exports": ["DEFAULT_BASEMAP_ID", "BASEMAP_PROVIDERS", "getBasemapCategoryBadge"]
+      },
+      "src/config/rbacConfig.ts": {
+        "purpose": "16 utility roles registry, hierarchy tiers, default jurisdictions, privilege tags, and granular permission flags.",
+        "exports": ["RoleDefinition", "ROLES_REGISTRY", "getRoleDefinition"]
+      },
+      "src/config/workflowConfig.ts": {
+        "purpose": "8-stage fault progression lifecycle, IEEE/JERC SLA allowed hours (4h, 8h, 24h, 72h), and 5-column work order Kanban board definitions.",
+        "exports": ["SLA_HOURS", "StageDefinition", "FAULT_LIFECYCLE_STAGES", "getStageIndex", "KanbanColumnDef", "WORK_ORDER_COLUMNS"]
+      },
+      "src/config/navigationConfig.ts": {
+        "purpose": "Central routing table for 22 navigation tabs, icon components, role access arrays, color accents, and descriptions.",
+        "exports": ["NavTabId", "NavItemConfig", "NAVIGATION_ITEMS"]
+      },
+      "src/config/index.ts": {
+        "purpose": "Barrel export for all configuration files.",
+        "exports": ["* from appConfig, themeConfig, basemapConfig, rbacConfig, workflowConfig, navigationConfig"]
+      }
+    },
+    "context": {
+      "src/context/AuthContext.tsx": {
+        "purpose": "Zero-trust session state, active user profile, login, fast persona switcher, and role state management.",
+        "exports": ["AuthProvider", "useAuth"]
+      },
+      "src/context/GISContext.tsx": {
+        "purpose": "Map state provider: current basemap, active layers, measurement tool (distance/area), region flyTo, selected asset, map bearing (0-360°), and rotation.",
+        "exports": ["GISProvider", "useGIS"]
+      }
+    },
+    "services": {
+      "src/services/gisService.ts": {
+        "purpose": "GIS service bridge importing availableBasemaps and region coordinates from src/config.",
+        "exports": ["availableBasemaps", "defaultBasemapId", "initialGISLayers", "regionCoordinates"]
+      },
+      "src/services/authService.ts": {
+        "purpose": "Authentication, user credential validation, role permissions calculation, and jurisdiction lookup.",
+        "exports": ["authService"]
+      },
+      "src/services/faultService.ts": {
+        "purpose": "8-stage fault ticket CRUD, status progression, crew assignment, and distance calculation trigger.",
+        "exports": ["faultService"]
+      },
+      "src/services/scadaService.ts": {
+        "purpose": "IEC 60870-5-104 & Modbus telemetry simulator, Select-Before-Operate (SBO) breaker command dispatch, and alarm feed.",
+        "exports": ["scadaService"]
+      },
+      "src/services/surveyService.ts": {
+        "purpose": "Contractor staging sandbox, multi-tier survey verification (JE check -> AE approval), and live GIS asset promotion.",
+        "exports": ["surveyService"]
+      },
+      "src/services/assetService.ts": {
+        "purpose": "Electrical asset inventory search, filtering by region/voltage, and GIS spatial coordinate linking.",
+        "exports": ["assetService"]
+      },
+      "src/services/notificationService.ts": {
+        "purpose": "Role-based dashboard metrics, pending assignments, notifications feed, and read/unread state tracking.",
+        "exports": ["notificationService"]
+      },
+      "src/services/dataExchangeService.ts": {
+        "purpose": "GeoJSON, CSV, and Shapefile import/export engine with schema validation and duplicate detection.",
+        "exports": ["dataExchangeService"]
+      },
+      "src/services/reliabilityService.ts": {
+        "purpose": "IEEE 1366 reliability indices calculation (SAIFI, SAIDI, CAIDI, and Energy Not Served).",
+        "exports": ["reliabilityService"]
+      },
+      "src/services/riskService.ts": {
+        "purpose": "ISO 55000 asset risk scoring (Probability of Failure × Consequence of Failure) and action planning.",
+        "exports": ["riskService"]
+      },
+      "src/services/mockData.ts": {
+        "purpose": "Real-world Puducherry grid seed dataset: substations, 22kV/11kV feeders, DTRs, poles, smart meters, faults, work orders.",
+        "exports": ["initialUsers", "initialSubstations", "initialFeeders", "initialTransformers", "initialPoles", "initialConsumers", "initialFaults", "initialWorkOrders"]
+      }
+    },
+    "lib": {
+      "src/lib/geoUtils.ts": {
+        "purpose": "Haversine geodesic distance, polygon area, nearest pole/DT computation, feeder line projection, and coordinate rotation translation.",
+        "exports": ["calculateHaversineDistance", "calculatePolygonArea", "findNearestPoint", "projectPointOnLineString", "rotatePoint"]
+      },
+      "src/lib/offlineQueue.ts": {
+        "purpose": "IndexedDB / localStorage offline survey queue for field crews with auto-sync when online.",
+        "exports": ["offlineQueue"]
+      },
+      "src/lib/supabase.ts": {
+        "purpose": "Supabase PostgreSQL / PostGIS 3.4 client initialization and real-time subscription channels.",
+        "exports": ["supabase"]
+      }
+    },
+    "components": {
+      "gis": {
+        "src/components/gis/MasterMap.tsx": "Full-screen Leaflet GIS map with 360° canvas rotation, SVG single-line overlay, and attribute synchronization.",
+        "src/components/gis/BasemapSwitcher.tsx": "Multi-vendor colorful basemap launcher (Google Roadmap default, OSM, Esri).",
+        "src/components/gis/LayerTree.tsx": "Floating overlay switcher (Substations, HT/LT Feeders, DTRs, Poles, Smart Meters).",
+        "src/components/gis/MapRotationControl.tsx": "Compass dial, angle slider (0-359°), cardinal presets, and North reset button.",
+        "src/components/gis/MeasureTool.tsx": "Interactive point-to-point distance and polygon area measuring tool.",
+        "src/components/gis/MapAttributeDrawer.tsx": "Bottom synchronized asset attribute drawer with real-time flyTo and specs."
+      },
+      "layout": {
+        "src/components/layout/Header.tsx": "UTC/IST operational clock, search bar, enclave switcher, notification bell, user switcher.",
+        "src/components/layout/Sidebar.tsx": "Vibrant collapsible navigation sidebar consuming NAVIGATION_ITEMS from src/config.",
+        "src/components/layout/ScopeBanner.tsx": "Persistent sticky HUD banner showing Active Identity, Jurisdiction Scope, and Privilege Tags.",
+        "src/components/layout/MobileBottomNav.tsx": "Mobile bottom navigation bar for quick touch switching."
+      },
+      "dashboard": {
+        "src/components/dashboard/RoleBasedDashboard.tsx": "Persona-scoped dashboard with statutory permission badges, KPI metrics, assignments, and quick actions.",
+        "src/components/dashboard/DashboardAnalyticsCharts.tsx": "Recharts visual analytics: 24h demand area curve, asset distribution donut, IEEE 1366 reliability bars, and feeder capacity gauges."
+      },
+      "operations": {
+        "src/components/faults/FaultList.tsx": "8-stage breakdown ticket management, live IEEE SLA countdown timers, and geodesic proximity box.",
+        "src/components/workOrders/WorkOrderKanban.tsx": "5-column maintenance task Kanban board consuming WORK_ORDER_COLUMNS from src/config.",
+        "src/components/scada/ScadaTelemetryDashboard.tsx": "IEC-104 telemetry, interactive substation SLD with Select-Before-Operate (SBO) remote breaker control.",
+        "src/components/projects/CapitalProjectsRDSS.tsx": "RDSS capital works tracker with physical progress (%) vs financial expenditure (₹ Cr) milestones.",
+        "src/components/surveys/ContractorPWA.tsx": "Mobile field survey PWA interface with GPS capture and photo staging.",
+        "src/components/surveys/SurveyApprovalQueue.tsx": "Multi-tier verification queue (JE check -> AE approval -> live GIS promotion).",
+        "src/components/smartMeters/SmartMeterDashboard.tsx": "AMI smart metering telecommunications, load profiles, and tamper detection.",
+        "src/components/topology/NetworkTraceViewer.tsx": "Network topology tracing: upstream to substation, downstream to consumers.",
+        "src/components/safety/PermitToWorkManager.tsx": "Digital Permit to Work (PTW) line clearance and earthing verification.",
+        "src/components/risk/AssetRiskMatrix.tsx": "ISO 55000 asset risk matrix (5x5 PoF vs CoF) and health index ranking.",
+        "src/components/warranties/WarrantyRegister.tsx": "Asset warranty expiration tracker and vendor claims management.",
+        "src/components/outages/OutageManager.tsx": "Power outage management and IEEE 1366 reliability calculation.",
+        "src/components/preventive/MaintenanceScheduler.tsx": "Preventive maintenance scheduler and checklist audit.",
+        "src/components/dtLoading/DTLoadingAnalytics.tsx": "Distribution transformer load curves and phase imbalance analyzer.",
+        "src/components/stores/StoresInventory.tsx": "Utility materials inventory, critical spares, and scrap tracking.",
+        "src/components/disaster/DisasterResponseCell.tsx": "Cyclone and flood emergency response planning and restoration cell.",
+        "src/components/admin/AdminControlPanel.tsx": "User management, role assignment, and zero-trust RLS security administration.",
+        "src/components/auth/LoginPage.tsx": "Official staff login and 1-click persona switcher."
+      }
+    }
+  }
+}
