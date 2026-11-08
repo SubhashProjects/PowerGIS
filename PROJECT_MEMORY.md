@@ -17,12 +17,13 @@ Never edit scattered files or hardcode values directly in components. Use this m
 |---|---|---|
 | **Theme Colors & Gradients** | [`src/config/themeConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/themeConfig.ts) | Header, Sidebar, Dashboard, KPI cards, Status pills, Priority badges |
 | **Basemap Engines & Defaults** | [`src/config/basemapConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/basemapConfig.ts) | Master Map, Basemap Switcher dropdown, GIS Context, Initial render |
-| **Roles, Rights & Scope HUD** | [`src/config/rbacConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/rbacConfig.ts) | Scope HUD Banner, Role Dashboard, Permission checklist, Zero-Trust RLS |
-| **Navigation Menu & Tabs** | [`src/config/navigationConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/navigationConfig.ts) | Desktop Sidebar, Mobile Drawer, Mobile Bottom Nav, Router switching |
+| **Roles, Rights & Scope HUD** | [`src/config/rbacConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/rbacConfig.ts) | Scope HUD Banner, Role Dashboard, Permission checklist, Zero-Trust RLS, Admin User Management |
+| **Navigation Menu & Tabs** | [`src/config/navigationConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/navigationConfig.ts) | Desktop Sidebar, Mobile Drawer, Mobile Bottom Nav, Router switching, Module role gating |
 | **Ticket Stages & SLA Hours** | [`src/config/workflowConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/workflowConfig.ts) | Fault List stepper, SLA countdown watcher, Work Order Kanban columns |
 | **Enclave Coordinates & Zoom** | [`src/config/appConfig.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/config/appConfig.ts) | Enclave Quick-Fly switcher, Leaflet center bounds, Initial coordinates |
 | **Substations, Feeders & DTR Seed** | [`src/services/mockData.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/services/mockData.ts) | Asset Register, GIS overlays, Network topology, SCADA points |
 | **Geodesic & Proximity Math** | [`src/lib/geoUtils.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/lib/geoUtils.ts) | Fault nearest-pole distance, feeder projection, map rotation geometry |
+| **User Management & RBAC CRUD** | [`src/services/authService.ts`](file:///c:/Users/HARISH%20VYAS/Project/PowerGISWeb/src/services/authService.ts) | Admin Control Panel user table, Add/Edit/Delete modals, Testing persona switch |
 
 ---
 
@@ -37,7 +38,7 @@ PowerGISWeb/
 ├── package.json                       # Dependencies & build scripts
 ├── vite.config.ts                     # Vite bundler configuration (base: './')
 ├── tests/
-│   └── security_and_functional.test.ts # 69 automated security, RBAC & functional tests
+│   └── security_and_functional.test.ts # 78 automated security, RBAC & functional tests
 └── src/
     ├── main.tsx                       # React DOM root render
     ├── App.tsx                        # Core shell, tab router, and modal coordinator

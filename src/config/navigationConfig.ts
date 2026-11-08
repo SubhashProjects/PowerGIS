@@ -31,8 +31,7 @@ export type NavTabId =
   | 'safety_ptw'
   | 'asset_risk'
   | 'backup_restore'
-  | 'admin_panel'
-  | 'auth_login';
+  | 'admin_panel';
 
 export interface NavItemConfig {
   id: NavTabId;
@@ -64,6 +63,5 @@ export const NAVIGATION_ITEMS: NavItemConfig[] = [
   { id: 'safety_ptw', label: 'Safety Permit to Work (PTW)', icon: HardHat, color: 'text-red-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor'], description: 'Digital line clear permits, earthing confirmation, and safety interlocks' },
   { id: 'asset_risk', label: 'ISO 55000 Asset Risk', icon: Target, color: 'text-purple-600', roles: ['super_admin', 'se', 'ee', 'aee', 'auditor'], description: 'Risk matrix (Probability of Failure × Consequence of Failure)' },
   { id: 'backup_restore', label: 'Backup & Data Exchange', icon: Database, color: 'text-indigo-500', roles: ['super_admin', 'gis_admin', 'auditor'], description: 'Database snapshots, GeoJSON/Shapefile export, and audit archive logs' },
-  { id: 'admin_panel', label: 'Admin Control Panel', icon: Settings, color: 'text-slate-600', roles: ['super_admin', 'se', 'gis_admin'], description: 'User account management, role assignments, and RLS security policies' },
-  { id: 'auth_login', label: 'Staff Login & Personas', icon: KeyRound, color: 'text-blue-700', description: 'Fast 1-click official persona switcher and session management' },
+  { id: 'admin_panel', label: 'Admin Control Panel', icon: Settings, color: 'text-slate-600', roles: ['super_admin'], description: 'Staff user accounts, RBAC entitlements, system configuration, and audit logs' },
 ];

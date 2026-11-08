@@ -31,23 +31,26 @@ export const ScopeBanner: React.FC = () => {
       }`}
     >
       {/* Left: Active Identity & Jurisdiction */}
-      <div className="flex items-center space-x-2 truncate">
+      <div className="flex items-center space-x-2 min-w-0 flex-1 max-w-full">
         {isRestricted ? (
           <ShieldAlert className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 animate-pulse" />
         ) : (
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
         )}
 
-        <div className="flex items-center space-x-1.5 font-mono text-[11px] truncate">
-          <span className="text-slate-500 font-sans hidden sm:inline">Active Identity:</span>
-          <span className="font-extrabold text-blue-900 bg-white/95 px-2 py-0.5 rounded-lg border border-blue-200 shadow-xs">
+        <div className="flex items-center space-x-1.5 font-mono text-[11px] min-w-0 flex-wrap sm:flex-nowrap">
+          <span className="text-slate-500 font-sans hidden sm:inline flex-shrink-0">Active Identity:</span>
+          <span className="font-extrabold text-blue-900 bg-white/95 px-2 py-0.5 rounded-lg border border-blue-200 shadow-xs flex-shrink-0">
             {roleTitle}
           </span>
 
-          <span className="text-slate-400">·</span>
+          <span className="text-slate-400 flex-shrink-0">·</span>
 
-          <span className="text-slate-500 font-sans hidden sm:inline">Jurisdiction:</span>
-          <span className="font-bold text-slate-900 bg-white/70 px-2 py-0.5 rounded-lg border border-slate-200 truncate">
+          <span className="text-slate-500 font-sans hidden sm:inline flex-shrink-0">Jurisdiction:</span>
+          <span
+            title={jurisdictionLabel}
+            className="font-bold text-slate-900 bg-white/70 px-2 py-0.5 rounded-lg border border-slate-200 truncate max-w-[220px] sm:max-w-md lg:max-w-xl"
+          >
             {jurisdictionLabel}
           </span>
         </div>

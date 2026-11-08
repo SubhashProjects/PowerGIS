@@ -9,20 +9,21 @@ import { useGIS } from '../../context/GISContext';
 import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { initialRegions } from '../../services/mockData';
+import { NavTabId } from '../../config/navigationConfig';
 import {
-  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Clock, Layers
+  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Clock, Settings
 } from 'lucide-react';
 
 interface HeaderProps {
   onToggleMobileMenu?: () => void;
+  onNavigateTab?: (tab: NavTabId) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
-  const { user, switchUser, availableUsers, logout } = useAuth();
+export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTab }) => {
+  const { user, logout } = useAuth();
   const { activeRegion, flyToRegion, setSelectedAsset } = useGIS();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -125,9 +126,9 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           </div>
 
           {/* Dynamic Breadcrumbs (Desktop) */}
-          <div className="hidden xl:flex items-center space-x-1.5 text-[11px] font-mono pl-4 border-l border-slate-200">
-            <span className="text-slate-400 font-sans">Jurisdiction:</span>
-            <span className="font-bold text-blue-900 bg-gradient-to-r from-blue-50 to-indigo-50 px-2.5 py-0.5 rounded-lg border border-blue-200 shadow-2xs">
+          <div className="hidden 2xl:flex items-center space-x-1.5 text-[11px] font-mono pl-3 border-l border-slate-200 min-w-0">
+            <span className="text-slate-400 font-sans flex-shrink-0">Jurisdiction:</span>
+            <span className="font-bold text-blue-900 bg-gradient-to-r from-blue-50 to-indigo-50 px-2.5 py-0.5 rounded-lg border border-blue-200 shadow-2xs truncate max-w-[280px]">
               {getBreadcrumb()}
             </span>
           </div>
@@ -189,8 +190,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           </button>
 
           {/* Live Operational Clock (IST / UTC) */}
-          <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] font-mono text-neutral-800 shadow-2xs">
-            <Clock className="w-3.5 h-3.5 text-neutral-500 animate-pulse" />
+          <div className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-800 shadow-2xs flex-shrink-0">
+            <Clock className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
             <span className="font-semibold">{currentTime}</span>
           </div>
 
@@ -285,62 +286,40 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
             )}
           </div>
 
-          {/* Persona Role Switcher */}
-          <div className="relative">
-            <button
-              onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-              className="flex items-center space-x-1.5 sm:space-x-2 px-1.5 sm:px-2.5 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs text-neutral-900 transition-colors"
-            >
-              <div className="w-6 h-6 rounded bg-neutral-900 text-white font-bold flex items-center justify-center text-[10px] uppercase flex-shrink-0">
-                {user.role.substring(0, 2)}
-              </div>
-              <div className="text-left hidden sm:block">
-                <div className="font-semibold text-neutral-900 leading-tight">{user.fullName.split(',')[0]}</div>
-                <div className="text-[10px] text-neutral-500 font-medium leading-none">{user.designation}</div>
-              </div>
-              <ChevronDown className="w-3 h-3 text-neutral-500" />
-            </button>
-
-            {showRoleDropdown && (
-              <div className="absolute right-0 top-11 w-72 sm:w-80 bg-white border border-neutral-200 rounded-xl shadow-2xl py-2 z-50">
-                <div className="px-3 pb-2 mb-1 border-b border-neutral-200 text-[10px] font-bold text-neutral-500 uppercase tracking-wider flex items-center justify-between">
-                  <span>Switch Engineering Persona</span>
-                  <span className="text-neutral-900 font-mono font-bold bg-neutral-100 px-1.5 py-0.5 rounded">11 Roles</span>
-                </div>
-                <div className="max-h-80 overflow-y-auto">
-                  {availableUsers.map(u => (
-                    <button
-                      key={u.id}
-                      onClick={() => {
-                        switchUser(u.id);
-                        setShowRoleDropdown(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center space-x-3 hover:bg-neutral-50 transition-colors ${
-                        user.id === u.id ? 'bg-neutral-100 border-l-3 border-neutral-900 font-bold' : ''
-                      }`}
-                    >
-                      <span className="px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-800 font-mono text-[10px] uppercase font-bold">
-                        {u.role}
-                      </span>
-                      <div className="flex-1 truncate">
-                        <div className="font-semibold text-neutral-900 truncate">{u.fullName}</div>
-                        <div className="text-[10px] text-neutral-500 truncate">{u.designation}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* User Profile Identity Badge (Static, Professional) */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 shadow-2xs">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-700 text-white font-extrabold flex items-center justify-center text-[10px] uppercase flex-shrink-0 shadow-xs">
+              {user.fullName ? user.fullName.substring(0, 2).toUpperCase() : user.role.substring(0, 2).toUpperCase()}
+            </div>
+            <div className="text-left hidden sm:block max-w-[130px] lg:max-w-[170px] truncate">
+              <div className="font-bold text-slate-900 leading-tight truncate">{user.fullName.split(',')[0]}</div>
+              <div className="text-[10px] text-slate-500 font-medium leading-none truncate">{user.designation}</div>
+            </div>
+            <span className="hidden md:inline-block px-1.5 py-0.5 rounded-md bg-blue-100/80 text-blue-800 font-mono text-[9px] font-extrabold uppercase border border-blue-200">
+              {user.role}
+            </span>
           </div>
+
+          {/* Super Admin Direct Access Link */}
+          {user.role === 'super_admin' && onNavigateTab && (
+            <button
+              onClick={() => onNavigateTab('admin_panel')}
+              title="Super Administrator Management Console"
+              className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs transition-all font-bold cursor-pointer shadow-2xs"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+              <span className="hidden lg:inline text-[11px]">Admin Console</span>
+            </button>
+          )}
 
           {/* Sign Out Button */}
           <button
             onClick={logout}
             title="Sign Out of PowerGIS"
-            className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-neutral-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-neutral-700 border border-neutral-200 text-xs transition-all font-semibold"
+            className="flex items-center space-x-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-50 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-700 border border-slate-200 text-xs transition-all font-semibold cursor-pointer shadow-2xs"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden md:inline">Sign Out</span>
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden md:inline text-[11px]">Sign Out</span>
           </button>
         </div>
       </div>

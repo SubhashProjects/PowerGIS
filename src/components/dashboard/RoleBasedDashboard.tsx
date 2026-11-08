@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { notificationService, RoleAssignment, RoleNotification } from '../../services/notificationService';
 import { NavTabId } from '../layout/Sidebar';
+import { NAVIGATION_ITEMS } from '../../config/navigationConfig';
 import { DashboardAnalyticsCharts } from './DashboardAnalyticsCharts';
 import {
   Shield,
@@ -94,6 +95,11 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
     'from-amber-500 to-orange-500',
   ];
 
+  const permittedQuickActions = dashboardData.quickActions.filter(action => {
+    const nav = NAVIGATION_ITEMS.find(item => item.id === action.targetTab);
+    return !nav?.roles || nav.roles.includes(user.role);
+  });
+
   return (
     <div className="flex-1 bg-[#f8fafc] text-slate-900 p-3.5 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 selection:bg-blue-600 selection:text-white">
       {/* 1. Identity & Statutory Entitlement Header Card */}
@@ -178,7 +184,12 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {dashboardData.metrics.map((metric, idx) => {
           const accent = metricAccents[idx % metricAccents.length];
-          return (
+          const permittedQuickActions = dashboardData.quickActions.filter(action => {
+    const nav = NAVIGATION_ITEMS.find(item => item.id === action.targetTab);
+    return !nav?.roles || nav.roles.includes(user.role);
+  });
+
+  return (
             <div
               key={idx}
               className={`bg-white border border-slate-200 rounded-2xl p-5 hover:border-slate-300 hover:shadow-lg transition-all shadow-xs flex flex-col justify-between ${accent.topBorder}`}
@@ -389,7 +400,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {dashboardData.quickActions.map((action, idx) => {
+          {permittedQuickActions.map((action, idx) => {
             const iconGradient = quickActionIcons[idx % quickActionIcons.length];
             return (
               <button

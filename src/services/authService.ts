@@ -9,6 +9,7 @@ import { initialUsers } from './mockData';
 const SESSION_KEY = 'powergis_active_user_session';
 const AUTH_STATUS_KEY = 'powergis_auth_status';
 const FAILED_ATTEMPTS_KEY = 'powergis_failed_attempts';
+const USERS_STORAGE_KEY = 'powergis_users_store_v2';
 
 export interface LoginResult {
   success: boolean;
@@ -19,18 +20,20 @@ export interface LoginResult {
 
 export class AuthService {
   private static instance: AuthService;
+  private users: UserProfile[] = [];
   private currentUser: UserProfile = initialUsers[4]; // Default persona: Er. M. Sivakumar, EE Urban
   private authenticated: boolean = true; // Default to true so workspace loads out of the box
   private failedAttempts: Record<string, number> = {};
 
   private constructor() {
+    this.loadUsers();
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         const savedAuth = localStorage.getItem(AUTH_STATUS_KEY);
         const savedUser = localStorage.getItem(SESSION_KEY);
         if (savedAuth === 'true' && savedUser) {
           const parsed = JSON.parse(savedUser);
-          const matched = initialUsers.find(u => u.id === parsed.id);
+          const matched = this.users.find(u => u.id === parsed.id);
           if (matched) {
             this.currentUser = matched;
             this.authenticated = true;
@@ -43,6 +46,35 @@ export class AuthService {
       }
     } catch {
       // Fallback in non-browser env
+    }
+  }
+
+  private loadUsers(): void {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(USERS_STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            this.users = parsed;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse stored users:', e);
+      }
+    }
+    this.users = [...initialUsers];
+    this.saveUsers();
+  }
+
+  private saveUsers(): void {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(this.users));
+      } catch (e) {
+        console.warn('Failed to persist users to localStorage:', e);
+      }
     }
   }
 
@@ -68,6 +100,64 @@ export class AuthService {
     }
   }
 
+  public getAllUsers(): UserProfile[] {
+    return [...this.users];
+  }
+
+  public addUser(userData: Omit<UserProfile, 'id'> & { id?: string }): UserProfile {
+    const newId = userData.id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    const newUser: UserProfile = {
+      ...userData,
+      id: newId,
+      isActive: userData.isActive !== undefined ? userData.isActive : true,
+      password: userData.password || 'PowerGIS@2026',
+    };
+    this.users.unshift(newUser);
+    this.saveUsers();
+    return newUser;
+  }
+
+  public updateUser(id: string, updates: Partial<UserProfile>): UserProfile | null {
+    const index = this.users.findIndex(u => u.id === id);
+    if (index === -1) return null;
+
+    const updatedUser: UserProfile = {
+      ...this.users[index],
+      ...updates,
+    };
+    this.users[index] = updatedUser;
+
+    // If current logged-in user is updated, keep session in sync
+    if (this.currentUser.id === id) {
+      this.currentUser = updatedUser;
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(updatedUser));
+      }
+    }
+
+    this.saveUsers();
+    return updatedUser;
+  }
+
+  public deleteUser(id: string): { success: boolean; message: string } {
+    if (this.currentUser.id === id) {
+      return { success: false, message: 'Security Policy Violation: Cannot delete your own active administrator account session.' };
+    }
+    const beforeCount = this.users.length;
+    this.users = this.users.filter(u => u.id !== id);
+    if (this.users.length === beforeCount) {
+      return { success: false, message: 'User record not found.' };
+    }
+    this.saveUsers();
+    return { success: true, message: 'User record deleted successfully from database.' };
+  }
+
+  public resetUsersToDefault(): UserProfile[] {
+    this.users = [...initialUsers];
+    this.saveUsers();
+    return [...this.users];
+  }
+
   /**
    * Enterprise Credentials Login with Lockout & Validation
    */
@@ -84,7 +174,7 @@ export class AuthService {
       };
     }
 
-    const matchedUser = initialUsers.find(
+    const matchedUser = this.users.find(
       u => u.username.toLowerCase() === trimmedId || u.email.toLowerCase() === trimmedId
     );
 
@@ -142,7 +232,7 @@ export class AuthService {
    * Instant 1-Click Persona Login for Testing & Role Verification
    */
   public loginAsPersona(userId: string): LoginResult {
-    const matched = initialUsers.find(u => u.id === userId);
+    const matched = this.users.find(u => u.id === userId);
     if (!matched) {
       return { success: false, error: 'Persona not found' };
     }
@@ -177,7 +267,7 @@ export class AuthService {
    */
   public requestPasswordReset(identifier: string): { success: boolean; message: string } {
     const trimmed = identifier.trim().toLowerCase();
-    const user = initialUsers.find(
+    const user = this.users.find(
       u => u.username.toLowerCase() === trimmed || u.email.toLowerCase() === trimmed
     );
     if (!user) {

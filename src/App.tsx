@@ -32,7 +32,8 @@ import { AdminControlPanel } from './components/admin/AdminControlPanel';
 import { LoginPage } from './components/auth/LoginPage';
 import { RoleBasedDashboard } from './components/dashboard/RoleBasedDashboard';
 import { notificationService } from './services/notificationService';
-import { X, Zap } from 'lucide-react';
+import { NAVIGATION_ITEMS } from './config/navigationConfig';
+import { X, Zap, ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const { user } = useAuth();
@@ -44,10 +45,16 @@ const MainLayout: React.FC = () => {
   const roleData = notificationService.getDashboardData(user);
   const unreadCount = roleData.notifications.filter(n => !n.read).length;
 
+  const currentNav = NAVIGATION_ITEMS.find(item => item.id === activeTab);
+  const isAuthorized = !currentNav?.roles || currentNav.roles.includes(user.role);
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#f8f9fa] text-neutral-900 font-sans">
       {/* 1. Global Header with Mobile Drawer Trigger */}
-      <Header onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)} />
+      <Header
+        onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}
+        onNavigateTab={tab => setActiveTab(tab)}
+      />
 
       {/* 2. Statutory Scope & Entitlement Banner */}
       <ScopeBanner />
@@ -67,7 +74,7 @@ const MainLayout: React.FC = () => {
           onCloseMobile={() => setMobileMenuOpen(false)}
         />
 
-        {/* Primary Viewport Area (includes bottom padding on mobile when bottom nav is present) */}
+        {/* Primary Viewport Area */}
         <main
           className={`flex-1 relative flex flex-col bg-[#f8f9fa] min-h-0 ${
             activeTab === 'gis_map'
@@ -75,28 +82,54 @@ const MainLayout: React.FC = () => {
               : 'overflow-y-auto pb-16 md:pb-0'
           }`}
         >
-          {activeTab === 'dashboard' && <RoleBasedDashboard onNavigateTab={tab => setActiveTab(tab)} />}
-          {activeTab === 'gis_map' && <MasterMap />}
-          {activeTab === 'assets' && <AssetTable />}
-          {activeTab === 'capital_projects' && <CapitalProjectsRDSS />}
-          {activeTab === 'smart_meters' && <SmartMeterDashboard />}
-          {activeTab === 'warranties' && <WarrantyRegister />}
-          {activeTab === 'faults' && <FaultList />}
-          {activeTab === 'work_orders' && <WorkOrderKanban />}
-          {activeTab === 'contractor_pwa' && <ContractorPWA />}
-          {activeTab === 'survey_approvals' && <SurveyApprovalQueue />}
-          {activeTab === 'scada' && <ScadaTelemetryDashboard />}
-          {activeTab === 'outages' && <OutageManager />}
-          {activeTab === 'topology' && <NetworkTraceViewer />}
-          {activeTab === 'preventive' && <MaintenanceScheduler />}
-          {activeTab === 'dt_loading' && <DTLoadingAnalytics />}
-          {activeTab === 'stores' && <StoresInventory />}
-          {activeTab === 'disaster' && <DisasterResponseCell />}
-          {activeTab === 'safety_ptw' && <PermitToWorkManager />}
-          {activeTab === 'asset_risk' && <AssetRiskMatrix />}
-          {activeTab === 'backup_restore' && <AdminControlPanel />}
-          {activeTab === 'admin_panel' && <AdminControlPanel />}
-          {activeTab === 'auth_login' && <LoginPage />}
+          {/* Strict Zero-Trust Role Jurisdiction Access Gate */}
+          {!isAuthorized ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none bg-slate-50 min-h-[460px]">
+              <div className="w-16 h-16 rounded-3xl bg-amber-100 border border-amber-300 text-amber-700 flex items-center justify-center mb-4 shadow-sm">
+                <ShieldAlert className="w-8 h-8" />
+              </div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 mb-2">
+                Zero-Trust Access Control • Statutory Policy 4.2
+              </span>
+              <h2 className="text-lg font-bold text-slate-900 mb-1">
+                Access Restricted by Role Entitlement
+              </h2>
+              <p className="text-xs text-slate-600 max-w-md mb-6 leading-relaxed">
+                Your official active role (<span className="font-bold text-slate-900">{user.role.toUpperCase()}</span> — {user.designation}) is not provisioned with statutory authorization for the module <span className="font-bold text-slate-900">"{currentNav?.label || activeTab}"</span>.
+              </p>
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center space-x-2 cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Return to Permitted Command Center</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              {activeTab === 'dashboard' && <RoleBasedDashboard onNavigateTab={tab => setActiveTab(tab)} />}
+              {activeTab === 'gis_map' && <MasterMap />}
+              {activeTab === 'assets' && <AssetTable />}
+              {activeTab === 'capital_projects' && <CapitalProjectsRDSS />}
+              {activeTab === 'smart_meters' && <SmartMeterDashboard />}
+              {activeTab === 'warranties' && <WarrantyRegister />}
+              {activeTab === 'faults' && <FaultList />}
+              {activeTab === 'work_orders' && <WorkOrderKanban />}
+              {activeTab === 'contractor_pwa' && <ContractorPWA />}
+              {activeTab === 'survey_approvals' && <SurveyApprovalQueue />}
+              {activeTab === 'scada' && <ScadaTelemetryDashboard />}
+              {activeTab === 'outages' && <OutageManager />}
+              {activeTab === 'topology' && <NetworkTraceViewer />}
+              {activeTab === 'preventive' && <MaintenanceScheduler />}
+              {activeTab === 'dt_loading' && <DTLoadingAnalytics />}
+              {activeTab === 'stores' && <StoresInventory />}
+              {activeTab === 'disaster' && <DisasterResponseCell />}
+              {activeTab === 'safety_ptw' && <PermitToWorkManager />}
+              {activeTab === 'asset_risk' && <AssetRiskMatrix />}
+              {activeTab === 'backup_restore' && <AdminControlPanel />}
+              {activeTab === 'admin_panel' && <AdminControlPanel />}
+            </>
+          )}
 
           {/* Asset Detail Flyout Drawer (When selected on map or via search) */}
           {selectedAsset && (

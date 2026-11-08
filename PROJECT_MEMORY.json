@@ -18,7 +18,8 @@
     "FaultStagesSLAHoursAndKanbanColumns": "src/config/workflowConfig.ts",
     "AppMetadataRegionCentersAndIntervals": "src/config/appConfig.ts",
     "MockDataInitialSeed": "src/services/mockData.ts",
-    "SpatialCalculationMath": "src/lib/geoUtils.ts"
+    "SpatialCalculationMath": "src/lib/geoUtils.ts",
+    "UserAccountsAndRBACCRUD": "src/services/authService.ts"
   },
   "moduleRegistry": {
     "config": {

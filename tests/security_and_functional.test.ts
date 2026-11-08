@@ -365,6 +365,51 @@ async function runTestSuite() {
   }
 
   // --------------------------------------------------------------------------
+  // TEST GROUP 11: ADMIN USER MANAGEMENT CRUD & PERSONA IMPERSONATION
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 11: Admin User Management CRUD & RBAC ---');
+  {
+    const initialUsersCount = authService.getAllUsers().length;
+    assert(initialUsersCount > 0, 'authService.getAllUsers() returns pre-seeded utility users');
+
+    // 1. Add New User
+    const newUser = authService.addUser({
+      fullName: 'Er. Test Assistant Engineer',
+      username: 'ae_test_user',
+      email: 'ae.test@powergis.internal',
+      role: 'ae',
+      designation: 'Assistant Engineer (Test Section)',
+      phone: '+91 94430 99999',
+      isActive: true,
+    });
+    assert(Boolean(newUser.id), 'authService.addUser creates user with unique id');
+    assert(authService.getAllUsers().length === initialUsersCount + 1, 'Total users count incremented after addUser');
+
+    // 2. Update User
+    const updated = authService.updateUser(newUser.id, {
+      fullName: 'Er. Test Assistant Engineer (Promoted)',
+      designation: 'Assistant Executive Engineer (Promoted)',
+      role: 'aee',
+    });
+    assert(updated?.role === 'aee', 'authService.updateUser updates official role');
+    assert(updated?.fullName.includes('Promoted'), 'authService.updateUser updates full name');
+
+    // 3. Security: Cannot delete own active session
+    const currentActive = authService.getCurrentUser();
+    const selfDeleteRes = authService.deleteUser(currentActive.id);
+    assert(selfDeleteRes.success === false, 'SECURITY: Super Admin cannot delete their own active session');
+
+    // 4. Delete Created User
+    const deleteRes = authService.deleteUser(newUser.id);
+    assert(deleteRes.success === true, 'authService.deleteUser deletes non-active user');
+    assert(authService.getAllUsers().length === initialUsersCount, 'Total users count returns to previous count after deleteUser');
+
+    // 5. Reset Users to Default
+    authService.resetUsersToDefault();
+    assert(authService.getAllUsers().length === initialUsers.length, 'authService.resetUsersToDefault restores initial user personas');
+  }
+
+  // --------------------------------------------------------------------------
   // TEST SUMMARY
   // --------------------------------------------------------------------------
   console.log('\n============================================================');
