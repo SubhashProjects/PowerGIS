@@ -6,8 +6,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build && node scripts/sync_dist.js",
+    "dev": "node scripts/prepare_build.js && vite",
+    "build": "node scripts/prepare_build.js && tsc && vite build && node scripts/sync_dist.js",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
