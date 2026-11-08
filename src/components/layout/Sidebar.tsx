@@ -1,12 +1,17 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// NAVIGATION SIDEBAR COMPONENT - VIBRANT COLORFUL THEME & STRICT ROLE GATING
+// NAVIGATION SIDEBAR COMPONENT - GROUPED MODULE CATEGORIES & COMPACT STUNNING UI
 // ============================================================================
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { NAVIGATION_ITEMS, NavTabId } from '../../config/navigationConfig';
-import { X } from 'lucide-react';
+import {
+  NAVIGATION_ITEMS,
+  NAVIGATION_CATEGORIES,
+  NavTabId,
+  NavCategory,
+} from '../../config/navigationConfig';
+import { X, ChevronRight } from 'lucide-react';
 
 export type { NavTabId };
 
@@ -27,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
 }) => {
   const { user } = useAuth();
-  const navItems = NAVIGATION_ITEMS;
 
   const handleItemClick = (id: NavTabId) => {
     onSelectTab(id);
@@ -36,28 +40,65 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const navList = (
-    <div className="flex-1 py-3 overflow-y-auto space-y-1 px-2.5">
-      {navItems.map(item => {
-        if (item.roles && !item.roles.includes(user.role)) return null;
+  // Render grouped items by category
+  const renderCategorizedNav = (isCompactView: boolean) => (
+    <div className="flex-1 py-2 overflow-y-auto space-y-3 px-2">
+      {NAVIGATION_CATEGORIES.map(category => {
+        const categoryItems = NAVIGATION_ITEMS.filter(
+          item =>
+            item.category === category.name &&
+            (!item.roles || item.roles.includes(user.role))
+        );
 
-        const Icon = item.icon;
-        const isActive = activeTab === item.id;
+        // If no items permitted in this category for user role, hide the whole category
+        if (categoryItems.length === 0) return null;
 
         return (
-          <button
-            key={item.id}
-            onClick={() => handleItemClick(item.id)}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
-              isActive
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/25 ring-1 ring-blue-400/30'
-                : 'text-slate-700 hover:text-blue-900 hover:bg-blue-50/80'
-            }`}
-            title={item.label}
-          >
-            <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive ? 'text-white' : item.color}`} />
-            <span className="truncate">{item.label}</span>
-          </button>
+          <div key={category.name} className="space-y-0.5">
+            {/* Category Header */}
+            {!isCompactView ? (
+              <div className="flex items-center justify-between px-2 pt-1 pb-1 text-[10px] uppercase font-bold tracking-wider font-mono text-slate-600">
+                <span>{category.name}</span>
+                <span className={`text-[9px] px-1.5 py-0.2 rounded border font-semibold ${category.accentColor}`}>
+                  {categoryItems.length}
+                </span>
+              </div>
+            ) : (
+              <div className="my-1.5 border-t border-slate-100" />
+            )}
+
+            {/* Category Items */}
+            <div className="space-y-0.5">
+              {categoryItems.map(item => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleItemClick(item.id)}
+                    className={`w-full flex items-center ${
+                      isCompactView ? 'justify-center p-2' : 'space-x-2.5 px-2.5 py-1.5'
+                    } rounded-xl text-xs transition-all cursor-pointer group ${
+                      isActive
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/20 ring-1 ring-blue-400/30'
+                        : 'text-slate-700 hover:text-blue-900 hover:bg-blue-50/70 font-medium'
+                    }`}
+                    title={item.label}
+                  >
+                    <Icon
+                      className={`w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110 ${
+                        isActive ? 'text-white' : item.color
+                      }`}
+                    />
+                    {!isCompactView && (
+                      <span className="truncate text-left text-[12px]">{item.label}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         );
       })}
     </div>
@@ -71,37 +112,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           collapsed ? 'w-16' : 'w-64'
         }`}
       >
-        <div className="flex-1 py-3 overflow-y-auto space-y-1 px-2.5">
-          {navItems.map(item => {
-            if (item.roles && !item.roles.includes(user.role)) return null;
-
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleItemClick(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/25 ring-1 ring-blue-400/30'
-                    : 'text-slate-700 hover:text-blue-900 hover:bg-blue-50/80'
-                }`}
-                title={item.label}
-              >
-                <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive ? 'text-white' : item.color}`} />
-                {!collapsed && <span className="truncate">{item.label}</span>}
-              </button>
-            );
-          })}
-        </div>
+        {renderCategorizedNav(collapsed)}
 
         {/* Footer Info */}
         {!collapsed && (
-          <div className="p-3 border-t border-slate-200 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-white">
+          <div className="p-2.5 border-t border-slate-200 bg-gradient-to-br from-blue-50/50 to-white">
             <div className="text-[10px] text-slate-500 flex justify-between items-center font-mono">
-              <span className="font-semibold text-slate-700">PowerGIS Enterprise</span>
-              <span className="text-blue-700 font-extrabold bg-blue-100/80 px-1.5 py-0.2 rounded border border-blue-200">Color Edition</span>
+              <span className="font-semibold text-slate-700">PowerGIS Modular</span>
+              <span className="text-blue-700 font-extrabold bg-blue-100 px-1.5 py-0.2 rounded border border-blue-200">
+                {user.role.toUpperCase()}
+              </span>
             </div>
           </div>
         )}
@@ -119,30 +139,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Slide-out Drawer */}
           <div className="relative w-72 max-w-[80vw] bg-white border-r border-slate-200 flex flex-col h-full z-10 shadow-2xl animate-in slide-in-from-left duration-200">
             {/* Drawer Header */}
-            <div className="h-14 border-b border-slate-200 px-4 flex items-center justify-between bg-gradient-to-r from-blue-50/60 via-indigo-50/40 to-white">
+            <div className="h-13 border-b border-slate-200 px-4 flex items-center justify-between bg-gradient-to-r from-blue-50/60 via-indigo-50/40 to-white">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-black text-sm shadow-md shadow-blue-500/20">
                   ⚡
                 </div>
                 <div>
                   <div className="font-black text-xs text-slate-950 tracking-wider">POWERGIS</div>
-                  <div className="text-[9px] text-blue-600 font-semibold font-mono">Operations Menu</div>
+                  <div className="text-[9px] text-blue-600 font-semibold font-mono">Grouped Modules</div>
                 </div>
               </div>
 
               <button
                 onClick={onCloseMobile}
-                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Nav list */}
-            {navList}
+            {renderCategorizedNav(false)}
 
             {/* Drawer Footer */}
-            <div className="p-3 border-t border-slate-200 bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-white">
+            <div className="p-3 border-t border-slate-200 bg-gradient-to-br from-blue-50/60 to-white">
               <div className="text-[10px] text-slate-500 flex justify-between items-center font-mono">
                 <span className="font-medium text-slate-700">PowerGIS Mobile</span>
                 <span className="text-blue-700 font-extrabold bg-blue-100 px-2 py-0.5 rounded border border-blue-200">

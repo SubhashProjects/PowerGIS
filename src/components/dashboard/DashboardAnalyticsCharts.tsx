@@ -139,116 +139,92 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // ==========================================================================
   if (role === 'contractor') {
     return (
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         {/* Contractor Header */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-600 to-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-pink-500/20 flex-shrink-0">
-              <Compass className="w-5 h-5 text-white animate-spin-slow" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 via-rose-600 to-purple-600 text-white flex items-center justify-center font-bold text-base shadow-sm shadow-pink-500/20 flex-shrink-0">
+              <Compass className="w-4 h-4 text-white" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+                <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
                   EPC Field Survey Analytics & Geolocation QA
                 </h2>
-                <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-600 text-white shadow-xs">
-                  GPS QA Stream
+                <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-600 text-white shadow-2xs">
+                  GPS QA
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 font-mono">
+              <p className="text-[11px] text-slate-500 font-mono">
                 Differential GPS Fixes • Staged Asset Pipeline • Field Survey Accuracy
               </p>
             </div>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-pink-50 border border-pink-200 text-xs font-mono text-pink-800 flex items-center space-x-2">
-            <Crosshair className="w-3.5 h-3.5 text-pink-600" />
+          <div className="px-2.5 py-1 rounded-lg bg-pink-50 border border-pink-200 text-[11px] font-mono text-pink-800 flex items-center space-x-1.5 self-start sm:self-auto">
+            <Crosshair className="w-3 h-3 text-pink-600" />
             <span className="font-bold">Offline Staging Ready</span>
           </div>
         </div>
 
         {/* Contractor Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
           {/* Daily Survey Cadence Bar Chart (2 cols) */}
-          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
               <div>
-                <div className="flex items-center space-x-2">
-                  <BarChart3 className="w-4 h-4 text-pink-600" />
-                  <h3 className="text-sm font-bold text-slate-950">Daily Field Survey Cadence (Poles & DTs Mapped)</h3>
+                <div className="flex items-center space-x-1.5">
+                  <BarChart3 className="w-3.5 h-3.5 text-pink-600" />
+                  <h3 className="text-xs font-bold text-slate-950">Daily Field Survey Cadence (Poles & DTs Mapped)</h3>
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Comparison of Assets Surveyed vs Verified by JE Field Staff
-                </p>
               </div>
-              <div className="flex items-center space-x-3 text-xs font-mono">
+              <div className="flex items-center space-x-2 text-[10px] font-mono">
                 <span className="flex items-center space-x-1 text-pink-700 font-semibold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span>
+                  <span className="w-2 h-2 rounded-full bg-pink-500 inline-block"></span>
                   <span>Surveyed</span>
                 </span>
                 <span className="flex items-center space-x-1 text-emerald-700 font-semibold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                   <span>JE Verified</span>
                 </span>
               </div>
             </div>
 
-            <div className="h-64 w-full">
+            <div className="h-52 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={contractorDailyCadence} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={contractorDailyCadence} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="day" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <Tooltip
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white/95 backdrop-blur-md p-3 rounded-2xl border border-slate-200 shadow-xl font-mono text-xs space-y-1">
-                            <div className="font-bold text-slate-950 border-b border-slate-100 pb-1">
-                              Day: {label}
-                            </div>
-                            <div className="text-pink-700 font-semibold flex justify-between space-x-4">
-                              <span>Surveyed:</span>
-                              <span className="font-bold">{payload[0].value} assets</span>
-                            </div>
-                            <div className="text-emerald-700 font-semibold flex justify-between space-x-4">
-                              <span>JE Verified:</span>
-                              <span className="font-bold">{payload[1]?.value} assets</span>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Bar dataKey="completed" name="Surveyed" fill="#EC4899" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="verified" name="Verified" fill="#10B981" radius={[6, 6, 0, 0]} />
+                  <XAxis dataKey="day" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <Tooltip />
+                  <Bar dataKey="completed" name="Surveyed" fill="#EC4899" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="verified" name="Verified" fill="#10B981" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* GPS Accuracy Tier Donut (1 col) */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-            <div className="pb-3 mb-2 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Crosshair className="w-4 h-4 text-purple-600" />
-                <h3 className="text-sm font-bold text-slate-950">GPS Precision Fix Tier</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+            <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <Crosshair className="w-3.5 h-3.5 text-purple-600" />
+                <h3 className="text-xs font-bold text-slate-950">GPS Precision Fix Tier</h3>
               </div>
-              <span className="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">
-                DGPS Accuracy
+              <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.2 rounded-full">
+                DGPS
               </span>
             </div>
 
-            <div className="h-48 w-full relative flex items-center justify-center">
+            <div className="h-38 w-full relative flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={contractorAccuracyData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
-                    outerRadius={75}
+                    innerRadius={42}
+                    outerRadius={62}
                     paddingAngle={3}
                     dataKey="percentage"
                   >
@@ -260,18 +236,18 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-lg font-black font-mono text-slate-950">160</span>
-                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
-                  Points QA'd
+                <span className="text-base font-black font-mono text-slate-950">160</span>
+                <span className="text-[8px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
+                  Points
                 </span>
               </div>
             </div>
 
-            <div className="space-y-1.5 pt-2">
+            <div className="space-y-1 pt-1.5">
               {contractorAccuracyData.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[10px] font-mono">
+                <div key={idx} className="flex items-center justify-between p-1 rounded-md bg-slate-50 text-[9px] font-mono">
                   <span className="flex items-center space-x-1.5 truncate">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                     <span className="text-slate-700 truncate">{item.name}</span>
                   </span>
                   <span className="font-bold text-slate-950 ml-2">{item.percentage}%</span>
@@ -282,26 +258,26 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
         </div>
 
         {/* Contractor Field Staging Progress Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border-t-4 border-t-pink-500 border border-slate-200 rounded-2xl p-4 shadow-2xs">
-            <div className="text-[10px] font-mono font-bold uppercase text-slate-500">Poles Geotagged</div>
-            <div className="text-2xl font-black font-mono mt-1 text-slate-950">142 / 150</div>
-            <div className="text-[11px] text-pink-700 font-semibold mt-2">94.6% Ward Target Reached</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <div className="bg-white border-t-3 border-t-pink-500 border border-slate-200 rounded-xl p-3 shadow-2xs">
+            <div className="text-[9px] font-mono font-bold uppercase text-slate-500">Poles Geotagged</div>
+            <div className="text-xl font-black font-mono mt-0.5 text-slate-950">142 / 150</div>
+            <div className="text-[10px] text-pink-700 font-semibold mt-1">94.6% Target</div>
           </div>
-          <div className="bg-white border-t-4 border-t-cyan-500 border border-slate-200 rounded-2xl p-4 shadow-2xs">
-            <div className="text-[10px] font-mono font-bold uppercase text-slate-500">Conductor Spans Mapped</div>
-            <div className="text-2xl font-black font-mono mt-1 text-slate-950">12.4 km</div>
-            <div className="text-[11px] text-cyan-700 font-semibold mt-2">Rabbit & Dog ACSR</div>
+          <div className="bg-white border-t-3 border-t-cyan-500 border border-slate-200 rounded-xl p-3 shadow-2xs">
+            <div className="text-[9px] font-mono font-bold uppercase text-slate-500">Conductors Digitized</div>
+            <div className="text-xl font-black font-mono mt-0.5 text-slate-950">12.4 km</div>
+            <div className="text-[10px] text-cyan-700 font-semibold mt-1">ACSR Spans</div>
           </div>
-          <div className="bg-white border-t-4 border-t-amber-500 border border-slate-200 rounded-2xl p-4 shadow-2xs">
-            <div className="text-[10px] font-mono font-bold uppercase text-slate-500">Awaiting JE Verification</div>
-            <div className="text-2xl font-black font-mono mt-1 text-slate-950">6 Assets</div>
-            <div className="text-[11px] text-amber-700 font-semibold mt-2">Staged in Review Queue</div>
+          <div className="bg-white border-t-3 border-t-amber-500 border border-slate-200 rounded-xl p-3 shadow-2xs">
+            <div className="text-[9px] font-mono font-bold uppercase text-slate-500">Awaiting JE Verify</div>
+            <div className="text-xl font-black font-mono mt-0.5 text-slate-950">6 Assets</div>
+            <div className="text-[10px] text-amber-700 font-semibold mt-1">In Queue</div>
           </div>
-          <div className="bg-white border-t-4 border-t-emerald-500 border border-slate-200 rounded-2xl p-4 shadow-2xs">
-            <div className="text-[10px] font-mono font-bold uppercase text-slate-500">Live PostGIS Promotion</div>
-            <div className="text-2xl font-black font-mono mt-1 text-slate-950">136 Assets</div>
-            <div className="text-[11px] text-emerald-700 font-semibold mt-2">AE Approved & Published</div>
+          <div className="bg-white border-t-3 border-t-emerald-500 border border-slate-200 rounded-xl p-3 shadow-2xs">
+            <div className="text-[9px] font-mono font-bold uppercase text-slate-500">Live PostGIS</div>
+            <div className="text-xl font-black font-mono mt-0.5 text-slate-950">136 Assets</div>
+            <div className="text-[10px] text-emerald-700 font-semibold mt-1">Published</div>
           </div>
         </div>
       </div>
@@ -314,95 +290,90 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // ==========================================================================
   if (role === 'je') {
     return (
-      <div className="space-y-6">
+      <div className="space-y-3.5">
         {/* JE Header */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20 flex-shrink-0">
-              <Wrench className="w-5 h-5 text-white animate-pulse" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-base shadow-sm shadow-blue-500/20 flex-shrink-0">
+              <Wrench className="w-4 h-4 text-white" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+                <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
                   Ward Jurisdiction Telemetry & Restoration Analytics
                 </h2>
-                <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs">
+                <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-2xs">
                   Ward Command
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 font-mono">
+              <p className="text-[11px] text-slate-500 font-mono">
                 Marapalam Commercial Ward • Breakdown Tickets • Section Asset Health
               </p>
             </div>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-mono text-blue-800 flex items-center space-x-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+          <div className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-[11px] font-mono text-blue-800 flex items-center space-x-1.5 self-start sm:self-auto">
+            <ShieldCheck className="w-3 h-3 text-blue-600" />
             <span className="font-bold">Ward Patrol Online</span>
           </div>
         </div>
 
         {/* JE Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
           {/* Breakdown Restoration Chart */}
-          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-              <div>
-                <div className="flex items-center space-x-2">
-                  <BarChart3 className="w-4 h-4 text-blue-600" />
-                  <h3 className="text-sm font-bold text-slate-950">Ward Faults Reported vs Restored (Weekly)</h3>
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Line Patrol breakdown response time & restoration rate
-                </p>
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+              <div className="flex items-center space-x-1.5">
+                <BarChart3 className="w-3.5 h-3.5 text-blue-600" />
+                <h3 className="text-xs font-bold text-slate-950">Ward Faults Reported vs Restored (Weekly)</h3>
               </div>
-              <div className="flex items-center space-x-3 text-xs font-mono">
+              <div className="flex items-center space-x-2 text-[10px] font-mono">
                 <span className="flex items-center space-x-1 text-rose-700 font-semibold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>
+                  <span className="w-2 h-2 rounded-full bg-rose-500 inline-block"></span>
                   <span>Reported</span>
                 </span>
                 <span className="flex items-center space-x-1 text-emerald-700 font-semibold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                   <span>Restored</span>
                 </span>
               </div>
             </div>
 
-            <div className="h-64 w-full">
+            <div className="h-52 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={jeWeeklyBreakdowns} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={jeWeeklyBreakdowns} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="day" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} />
+                  <XAxis dataKey="day" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} />
                   <Tooltip />
-                  <Bar dataKey="reported" name="Reported" fill="#F43F5E" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="restored" name="Restored" fill="#10B981" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="reported" name="Reported" fill="#F43F5E" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="restored" name="Restored" fill="#10B981" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Ward Assets Donut */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-            <div className="pb-3 mb-2 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <PieIcon className="w-4 h-4 text-indigo-600" />
-                <h3 className="text-sm font-bold text-slate-950">Ward Asset Inventory</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+            <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <PieIcon className="w-3.5 h-3.5 text-indigo-600" />
+                <h3 className="text-xs font-bold text-slate-950">Ward Asset Inventory</h3>
               </div>
-              <span className="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">
+              <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.2 rounded-full">
                 Ward Count
               </span>
             </div>
 
-            <div className="h-48 w-full relative flex items-center justify-center">
+            <div className="h-38 w-full relative flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={jeWardAssetData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
-                    outerRadius={75}
+                    innerRadius={42}
+                    outerRadius={62}
                     paddingAngle={3}
                     dataKey="percentage"
                   >
@@ -414,18 +385,18 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-lg font-black font-mono text-slate-950">32</span>
-                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
+                <span className="text-base font-black font-mono text-slate-950">32</span>
+                <span className="text-[8px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
                   Ward Assets
                 </span>
               </div>
             </div>
 
-            <div className="space-y-1.5 pt-2">
+            <div className="space-y-1 pt-1.5">
               {jeWardAssetData.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[10px] font-mono">
+                <div key={idx} className="flex items-center justify-between p-1 rounded-md bg-slate-50 text-[9px] font-mono">
                   <span className="flex items-center space-x-1.5 truncate">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                     <span className="text-slate-700 truncate">{item.name}</span>
                   </span>
                   <span className="font-bold text-slate-950 ml-2">{item.count}</span>
@@ -444,44 +415,44 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // ==========================================================================
   if (role === 'ae' || role === 'aee') {
     return (
-      <div className="space-y-6">
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-cyan-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-emerald-500/20 flex-shrink-0">
-              <Zap className="w-5 h-5 text-white" />
+      <div className="space-y-3.5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-cyan-600 text-white flex items-center justify-center font-bold text-base shadow-sm shadow-emerald-500/20 flex-shrink-0">
+              <Zap className="w-4 h-4 text-white" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+                <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
                   Section Feeder Loading & Substation Telemetry
                 </h2>
-                <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
+                <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
                   Section Dispatch
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5 font-mono">
-                Marapalam O&M Section • Feeder Thermal Amperage • Safety PTW Authorizations
+              <p className="text-[11px] text-slate-500 font-mono">
+                Marapalam O&M Section • Feeder Thermal Amperage • Safety PTW Clearances
               </p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           {/* Section 24h Area Demand */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-            <div className="pb-3 mb-3 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-emerald-600" />
-                <h3 className="text-sm font-bold text-slate-950">Section Feeder 24h Demand Profile (MW)</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+            <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                <h3 className="text-xs font-bold text-slate-950">Section Feeder 24h Demand Profile (MW)</h3>
               </div>
-              <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
                 Peak: 38.4 MW
               </span>
             </div>
 
-            <div className="h-64 w-full">
+            <div className="h-52 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={hourlyDemandData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart data={hourlyDemandData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorAE" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
@@ -489,39 +460,39 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="time" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} unit="MW" />
+                  <XAxis dataKey="time" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="MW" />
                   <Tooltip />
-                  <Area type="monotone" dataKey="demandMW" name="Demand (MW)" stroke="#059669" strokeWidth={2.5} fill="url(#colorAE)" />
+                  <Area type="monotone" dataKey="demandMW" name="Demand (MW)" stroke="#059669" strokeWidth={2} fill="url(#colorAE)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Feeder Thermal Loading Progress Gauges */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-              <div className="flex items-center space-x-2">
-                <Gauge className="w-4 h-4 text-blue-600" />
-                <h3 className="text-sm font-bold text-slate-950">Feeder Capacity & Thermal Amperage</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+              <div className="flex items-center space-x-1.5">
+                <Gauge className="w-3.5 h-3.5 text-blue-600" />
+                <h3 className="text-xs font-bold text-slate-950">Feeder Capacity & Thermal Amperage</h3>
               </div>
-              <span className="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">
-                SCADA Telemetry
+              <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.2 rounded-full">
+                SCADA Feeds
               </span>
             </div>
 
-            <div className="space-y-4 my-auto">
+            <div className="space-y-3 my-auto">
               {feederUtilization.map((fdr, idx) => (
-                <div key={idx} className="space-y-1.5 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                <div key={idx} className="space-y-1 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-900 truncate">{fdr.name}</span>
-                    <div className="flex items-center space-x-2 font-mono text-[11px]">
-                      <span className="text-slate-500">{fdr.currentA}A / {fdr.maxA}A</span>
+                    <span className="font-semibold text-slate-900 truncate text-[11px]">{fdr.name}</span>
+                    <div className="flex items-center space-x-1.5 font-mono text-[10px]">
+                      <span className="text-slate-500">{fdr.currentA}A</span>
                       <span
-                        className={`font-bold px-1.5 py-0.2 rounded text-[10px] ${
+                        className={`font-bold px-1 py-0.1 rounded text-[9px] ${
                           fdr.loadPct > 80
-                            ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                            : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-emerald-100 text-emerald-800'
                         }`}
                       >
                         {fdr.loadPct}%
@@ -529,7 +500,7 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                     </div>
                   </div>
 
-                  <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full bg-gradient-to-r ${fdr.gradient}`}
                       style={{ width: `${fdr.loadPct}%` }}
@@ -550,41 +521,41 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // ==========================================================================
   if (role === 'auditor') {
     return (
-      <div className="space-y-6">
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex items-center justify-between">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-500/20">
-              <ShieldCheck className="w-5 h-5 text-white" />
+      <div className="space-y-3.5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-base shadow-sm shadow-indigo-500/20">
+              <ShieldCheck className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-950">Statutory & Regulatory Audit Telemetry</h2>
-              <p className="text-xs text-slate-500 font-mono">JERC Compliance Standards • IEEE 1366 Reliability Indices</p>
+              <h2 className="text-sm sm:text-base font-bold text-slate-950">Statutory & Regulatory Audit Telemetry</h2>
+              <p className="text-[11px] text-slate-500 font-mono">JERC Compliance Standards • IEEE 1366 Reliability Indices</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-950 mb-1">Monthly IEEE 1366 Reliability (SAIDI vs 45min SLA)</h3>
-            <div className="h-64 w-full pt-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
+            <h3 className="text-xs font-bold text-slate-950 mb-1">Monthly IEEE 1366 Reliability (SAIDI vs 45min SLA)</h3>
+            <div className="h-52 w-full pt-1">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyReliabilityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={monthlyReliabilityData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} unit="m" />
+                  <XAxis dataKey="month" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="m" />
                   <Tooltip />
-                  <Bar dataKey="saidiMin" name="SAIDI (Mins)" fill="#6366F1" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="saidiMin" name="SAIDI (Mins)" fill="#6366F1" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-950 mb-1">Spatial Asset Register Audit</h3>
-            <div className="h-64 w-full flex items-center justify-center">
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
+            <h3 className="text-xs font-bold text-slate-950 mb-1">Spatial Asset Register Audit</h3>
+            <div className="h-52 w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={assetDistributionData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="percentage">
+                  <Pie data={assetDistributionData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="percentage">
                     {assetDistributionData.map((e, idx) => (
                       <Cell key={idx} fill={e.color} stroke="#FFFFFF" strokeWidth={2} />
                     ))}
@@ -601,39 +572,39 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
 
   // ==========================================================================
   // VIEW 5: EXECUTIVE & SYSTEM ADMINISTRATION (EE, SE, SUPER ADMIN, GIS ADMIN)
-  // Full comprehensive utility macro overview
+  // Full comprehensive utility macro overview (Compact & Visually Stunning)
   // ==========================================================================
   return (
-    <div className="space-y-6">
+    <div className="space-y-3.5">
       {/* Executive Analytics Header & Time Switcher */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20 flex-shrink-0">
-            <Activity className="w-5 h-5 text-white animate-pulse" />
+      <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm shadow-blue-500/20 flex-shrink-0">
+            <Activity className="w-4 h-4 text-white animate-pulse" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+              <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
                 Live Enterprise Grid Analytics & Telemetry
               </h2>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-xs">
+              <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-2xs">
                 Utility Wide
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-mono">
-              SCADA Peak Demand Curves • Network Asset Donut • IEEE 1366 Indices
+            <p className="text-[11px] text-slate-500 font-mono">
+              SCADA Demand Curves • Network Asset Donut • IEEE 1366 Indices
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-mono self-start sm:self-auto">
+        <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[10px] font-mono self-start sm:self-auto">
           {(['24h', '7d', '30d'] as const).map(range => (
             <button
               key={range}
               onClick={() => setActiveTimeRange(range)}
-              className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-0.5 rounded font-semibold transition-all cursor-pointer ${
                 activeTimeRange === range
-                  ? 'bg-slate-950 text-white shadow-xs'
+                  ? 'bg-slate-950 text-white shadow-2xs'
                   : 'text-slate-600 hover:text-slate-950'
               }`}
             >
@@ -644,33 +615,33 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
       </div>
 
       {/* Row 1: 24h Demand Curve + Asset Donut */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-3 border-b border-slate-100">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 mb-2 border-b border-slate-100">
             <div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-cyan-600" />
-                <h3 className="text-sm font-bold text-slate-950">24-Hour Grid Load Profile & Solar Injection</h3>
+              <div className="flex items-center space-x-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-cyan-600" />
+                <h3 className="text-xs font-bold text-slate-950">24-Hour Grid Load Profile & Solar Injection</h3>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-[10px] text-slate-500">
                 Composite MW Demand Curve Across 8 Primary Distribution Substations
               </p>
             </div>
-            <div className="flex items-center space-x-3 text-xs font-mono">
+            <div className="flex items-center space-x-2 text-[10px] font-mono">
               <span className="flex items-center space-x-1 text-cyan-700 font-semibold">
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block"></span>
+                <span className="w-2 h-2 rounded-full bg-cyan-500 inline-block"></span>
                 <span>Peak: 38.4 MW</span>
               </span>
               <span className="flex items-center space-x-1 text-emerald-700 font-semibold">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                 <span>Solar: 11.8 MW</span>
               </span>
             </div>
           </div>
 
-          <div className="h-72 w-full pt-2">
+          <div className="h-56 w-full pt-1">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={hourlyDemandData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={hourlyDemandData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorDemand" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.45} />
@@ -682,31 +653,31 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="time" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} unit="MW" />
+                <XAxis dataKey="time" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="MW" />
                 <Tooltip />
-                <Area type="monotone" dataKey="demandMW" name="Grid Demand (MW)" stroke="#0284C7" strokeWidth={2.5} fill="url(#colorDemand)" />
-                <Area type="monotone" dataKey="solarMW" name="Solar Feed (MW)" stroke="#059669" strokeWidth={2} fill="url(#colorSolar)" />
+                <Area type="monotone" dataKey="demandMW" name="Grid Demand (MW)" stroke="#0284C7" strokeWidth={2} fill="url(#colorDemand)" />
+                <Area type="monotone" dataKey="solarMW" name="Solar Feed (MW)" stroke="#059669" strokeWidth={1.5} fill="url(#colorSolar)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-          <div className="pb-3 mb-2 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <PieIcon className="w-4 h-4 text-purple-600" />
-              <h3 className="text-sm font-bold text-slate-950">Asset Class Distribution</h3>
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+          <div className="pb-2 mb-2 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center space-x-1.5">
+              <PieIcon className="w-3.5 h-3.5 text-purple-600" />
+              <h3 className="text-xs font-bold text-slate-950">Asset Class Mix</h3>
             </div>
-            <span className="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">
-              PostGIS Layer Mix
+            <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.2 rounded-full">
+              PostGIS
             </span>
           </div>
 
-          <div className="h-52 w-full relative flex items-center justify-center">
+          <div className="h-42 w-full relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={assetDistributionData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={3} dataKey="percentage">
+                <Pie data={assetDistributionData} cx="50%" cy="50%" innerRadius={44} outerRadius={66} paddingAngle={3} dataKey="percentage">
                   {assetDistributionData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} stroke="#FFFFFF" strokeWidth={2} />
                   ))}
@@ -715,18 +686,18 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-lg font-extrabold font-mono text-slate-950">1,420</span>
-              <span className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
-                Total Assets
+              <span className="text-base font-extrabold font-mono text-slate-950">1,420</span>
+              <span className="text-[8px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
+                Assets
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-1.5 pt-2">
+          <div className="grid grid-cols-2 gap-1 pt-1.5">
             {assetDistributionData.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-1.5 p-1.5 rounded-lg bg-slate-50 border border-slate-100 text-[10px] font-mono">
-                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="truncate text-slate-700 font-medium">{item.name.split(' ')[0]}</span>
+              <div key={idx} className="flex items-center space-x-1 p-1 rounded bg-slate-50 text-[9px] font-mono">
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                <span className="truncate text-slate-700">{item.name.split(' ')[0]}</span>
                 <span className="font-bold text-slate-900 ml-auto">{item.percentage}%</span>
               </div>
             ))}
@@ -735,29 +706,29 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
       </div>
 
       {/* Row 2: Reliability Bar Chart + Feeder Gauges */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-3 border-b border-slate-100">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 mb-2 border-b border-slate-100">
             <div>
-              <div className="flex items-center space-x-2">
-                <BarChart3 className="w-4 h-4 text-indigo-600" />
-                <h3 className="text-sm font-bold text-slate-950">Monthly IEEE 1366 Reliability Indices (SAIDI / SAIFI)</h3>
+              <div className="flex items-center space-x-1.5">
+                <BarChart3 className="w-3.5 h-3.5 text-indigo-600" />
+                <h3 className="text-xs font-bold text-slate-950">Monthly IEEE 1366 Indices (SAIDI / SAIFI)</h3>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">Average Outage Duration per Consumer (Minutes)</p>
+              <p className="text-[10px] text-slate-500">Average Outage Duration per Consumer (Minutes)</p>
             </div>
-            <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-mono font-bold">
+            <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-bold">
               JERC Compliant (&lt;45 min)
             </span>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-50 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyReliabilityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart data={monthlyReliabilityData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} unit="m" />
+                <XAxis dataKey="month" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="m" />
                 <Tooltip />
-                <Bar dataKey="saidiMin" name="SAIDI (Minutes)" fill="#6366F1" radius={[8, 8, 0, 0]}>
+                <Bar dataKey="saidiMin" name="SAIDI (Minutes)" fill="#6366F1" radius={[4, 4, 0, 0]}>
                   {monthlyReliabilityData.map((entry, index) => (
                     <Cell key={`bar-${index}`} fill={entry.saidiMin <= 45 ? '#4F46E5' : '#F43F5E'} />
                   ))}
@@ -767,29 +738,29 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-            <div className="flex items-center space-x-2">
-              <Gauge className="w-4 h-4 text-blue-600" />
-              <h3 className="text-sm font-bold text-slate-950">Feeder Capacity & Thermal Loading</h3>
+        <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+            <div className="flex items-center space-x-1.5">
+              <Gauge className="w-3.5 h-3.5 text-blue-600" />
+              <h3 className="text-xs font-bold text-slate-950">Feeder Capacity & Thermal Loading</h3>
             </div>
-            <span className="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">
+            <span className="text-[9px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.2 rounded-full">
               SCADA Feeds
             </span>
           </div>
 
-          <div className="space-y-4 my-auto">
+          <div className="space-y-3 my-auto">
             {feederUtilization.map((fdr, idx) => (
-              <div key={idx} className="space-y-1.5 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+              <div key={idx} className="space-y-1 p-2 rounded-xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-900 truncate">{fdr.name}</span>
-                  <div className="flex items-center space-x-2 font-mono text-[11px]">
-                    <span className="text-slate-500">{fdr.currentA}A / {fdr.maxA}A</span>
+                  <span className="font-semibold text-slate-900 truncate text-[11px]">{fdr.name}</span>
+                  <div className="flex items-center space-x-1.5 font-mono text-[10px]">
+                    <span className="text-slate-500">{fdr.currentA}A</span>
                     <span
-                      className={`font-bold px-1.5 py-0.2 rounded text-[10px] ${
+                      className={`font-bold px-1 py-0.1 rounded text-[9px] ${
                         fdr.loadPct > 80
-                          ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                          : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          ? 'bg-amber-100 text-amber-800'
+                          : 'bg-emerald-100 text-emerald-800'
                       }`}
                     >
                       {fdr.loadPct}%
@@ -797,7 +768,7 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                   </div>
                 </div>
 
-                <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full bg-gradient-to-r ${fdr.gradient} transition-all duration-500`}
                     style={{ width: `${fdr.loadPct}%` }}
@@ -807,36 +778,36 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
             ))}
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-            <span>Thermal Threshold Limit: 90%</span>
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>Thermal Limit: 90%</span>
             <span className="text-emerald-700 font-bold flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>All 8 Feeders Operating Within Safe Limits</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>All Feeders Normal</span>
             </span>
           </div>
         </div>
       </div>
 
       {/* Row 3: Consumer Category Breakdown Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
         {consumerCategories.map((cat, idx) => (
-          <div key={idx} className={`border rounded-2xl p-4 sm:p-5 transition-all shadow-xs hover:shadow-md ${cat.color}`}>
+          <div key={idx} className={`border rounded-xl p-3 transition-all shadow-2xs hover:shadow-xs ${cat.color}`}>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-slate-700">
-                {cat.label}
+              <span className="text-[9px] uppercase font-bold tracking-wider font-mono text-slate-700">
+                {cat.label.split(' ')[0]}
               </span>
-              <span className={`text-[10px] font-mono font-bold text-white px-2 py-0.5 rounded-full ${cat.badgeBg}`}>
+              <span className={`text-[9px] font-mono font-bold text-white px-1.5 py-0.2 rounded-full ${cat.badgeBg}`}>
                 {cat.share}
               </span>
             </div>
 
-            <div className="text-2xl font-black font-mono mt-2 tracking-tight text-slate-950">
+            <div className="text-xl font-black font-mono mt-1 tracking-tight text-slate-950">
               {cat.consumers}
             </div>
 
-            <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] font-mono">
-              <span className="text-slate-500">Active Meters</span>
-              <span className="font-semibold text-emerald-700">{cat.growth} YoY</span>
+            <div className="mt-2 pt-1 border-t border-slate-200/60 flex items-center justify-between text-[9px] font-mono">
+              <span className="text-slate-500">Meters</span>
+              <span className="font-semibold text-emerald-700">{cat.growth}</span>
             </div>
           </div>
         ))}
@@ -844,3 +815,4 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
     </div>
   );
 };
+
