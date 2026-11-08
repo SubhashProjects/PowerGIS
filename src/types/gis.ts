@@ -4,21 +4,21 @@
 // ============================================================================
 
 export type BasemapProviderId =
-  | 'carto_dark'
-  | 'carto_light'
+  | 'osm_standard'
   | 'google_roadmap'
   | 'google_satellite'
   | 'google_hybrid'
   | 'google_terrain'
-  | 'osm_standard'
   | 'osm_hot'
   | 'esri_imagery'
-  | 'esri_topo';
+  | 'esri_topo'
+  | 'carto_dark'
+  | 'carto_light';
 
 export interface BasemapConfig {
   id: BasemapProviderId;
   name: string;
-  category: 'Monochrome' | 'Google' | 'OpenStreetMap' | 'Esri';
+  category: 'Google' | 'OpenStreetMap' | 'Esri';
   url: string;
   subdomains?: string[];
   maxZoom: number;

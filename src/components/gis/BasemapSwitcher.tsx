@@ -30,7 +30,7 @@ export const BasemapSwitcher: React.FC = () => {
           <div className="absolute right-0 top-11 w-72 bg-white/95 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl p-2 z-50">
             <div className="text-[10px] uppercase font-bold text-neutral-500 px-2 py-1 mb-1 border-b border-neutral-200 flex justify-between">
               <span>Select Map Engine</span>
-              <span className="text-neutral-900 font-mono font-bold">10 Providers</span>
+              <span className="text-neutral-900 font-mono font-bold">{availableBasemaps.length} Color Providers</span>
             </div>
 
             <div className="space-y-1 max-h-72 overflow-y-auto">

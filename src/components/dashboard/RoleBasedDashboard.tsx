@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { notificationService, RoleAssignment, RoleNotification } from '../../services/notificationService';
 import { NavTabId } from '../layout/Sidebar';
+import { DashboardAnalyticsCharts } from './DashboardAnalyticsCharts';
 import {
   Shield,
   CheckCircle2,
@@ -185,7 +186,10 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
         ))}
       </div>
 
-      {/* 3. Main Operational Split: Pending Assignments & Role Notifications */}
+      {/* 3. Visual Analytics & Real-Time Telemetry Charts (Graphs, Pies, Bars & Gauges) */}
+      <DashboardAnalyticsCharts />
+
+      {/* 4. Main Operational Split: Pending Assignments & Role Notifications */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left (2 Cols): My Pending Tasks & Assignments */}
         <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-3xl p-6 shadow-xs flex flex-col">

@@ -7,24 +7,14 @@ import { BasemapConfig, GISLayerState } from '../types/gis';
 
 export const availableBasemaps: BasemapConfig[] = [
   {
-    id: 'carto_dark',
-    name: 'CartoDB Dark Matter (Monochrome Black)',
-    category: 'Monochrome',
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    subdomains: ['a', 'b', 'c', 'd'],
-    maxZoom: 20,
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    thumbnail: 'https://a.basemaps.cartocdn.com/dark_all/13/4093/2723.png',
-  },
-  {
-    id: 'carto_light',
-    name: 'CartoDB Positron (Monochrome White)',
-    category: 'Monochrome',
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    subdomains: ['a', 'b', 'c', 'd'],
-    maxZoom: 20,
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    thumbnail: 'https://a.basemaps.cartocdn.com/light_all/13/4093/2723.png',
+    id: 'osm_standard',
+    name: 'OpenStreetMap Standard (Color)',
+    category: 'OpenStreetMap',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    subdomains: ['a', 'b', 'c'],
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors',
+    thumbnail: 'https://a.tile.openstreetmap.org/13/4093/2723.png',
   },
   {
     id: 'google_roadmap',

@@ -584,7 +584,7 @@ class NotificationService {
           metrics: [
             { label: 'Spatial Layers', value: 17, subtext: 'Overlays in PostGIS', trend: 'Active' },
             { label: 'Geocoded Assets', value: '100%', subtext: 'GPS verified geometry', trend: 'WGS 84' },
-            { label: 'Basemap Providers', value: 10, subtext: 'Monochrome, Satellite, OSM', trend: 'Operational' },
+            { label: 'Basemap Providers', value: 8, subtext: 'Google, Esri & OSM Color', trend: 'Operational' },
             { label: 'Topology Errors', value: 0, subtext: 'Dangling nodes or loops', trend: 'Zero-Defect' },
           ],
           assignments: [
