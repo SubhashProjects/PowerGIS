@@ -55,7 +55,11 @@ const MainLayout: React.FC = () => {
         />
 
         {/* Primary Viewport Area */}
-        <main className="flex-1 relative overflow-y-auto flex flex-col bg-[#0b1220]">
+        <main
+          className={`flex-1 relative flex flex-col bg-[#0b1220] min-h-0 ${
+            activeTab === 'gis_map' ? 'overflow-hidden' : 'overflow-y-auto'
+          }`}
+        >
           {activeTab === 'gis_map' && <MasterMap />}
           {activeTab === 'assets' && <AssetTable />}
           {activeTab === 'smart_meters' && <SmartMeterDashboard />}
@@ -75,6 +79,7 @@ const MainLayout: React.FC = () => {
           {activeTab === 'asset_risk' && <AssetRiskMatrix />}
           {activeTab === 'backup_restore' && <AdminControlPanel />}
           {activeTab === 'admin_panel' && <AdminControlPanel />}
+          {activeTab === 'auth_login' && <LoginPage />}
 
           {/* Asset Detail Flyout Drawer (When selected on map or via search) */}
           {selectedAsset && (

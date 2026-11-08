@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
   Map, Zap, Gauge, ShieldCheck, AlertTriangle, CheckSquare,
   Smartphone, FileCheck, Cpu, Power, GitFork, Calendar,
-  BarChart2, Package, CloudRain, HardHat, Target, Database, Settings
+  BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound
 } from 'lucide-react';
 
 export type NavTabId =
@@ -30,7 +30,8 @@ export type NavTabId =
   | 'safety_ptw'
   | 'asset_risk'
   | 'backup_restore'
-  | 'admin_panel';
+  | 'admin_panel'
+  | 'auth_login';
 
 interface SidebarProps {
   activeTab: NavTabId;
@@ -62,6 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, collap
     { id: 'asset_risk', label: 'ISO 55000 Asset Risk', icon: Target },
     { id: 'backup_restore', label: 'Backup & Data Exchange', icon: Database },
     { id: 'admin_panel', label: 'Admin Control Panel', icon: Settings, roles: ['super_admin', 'se', 'gis_admin'] },
+    { id: 'auth_login', label: 'Staff Login & Personas', icon: KeyRound },
   ];
 
   return (

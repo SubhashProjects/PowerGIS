@@ -57,6 +57,11 @@ export const MasterMap: React.FC = () => {
     measureGroupRef.current = measureGroup;
     mapInstanceRef.current = map;
 
+    // Ensure map tiles recalculate container dimensions
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 150);
+
     // Measurement Click Handler
     map.on('click', (e: L.LeafletMouseEvent) => {
       if (measurement.mode !== 'none') {

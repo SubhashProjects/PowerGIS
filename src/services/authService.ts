@@ -20,7 +20,7 @@ export interface LoginResult {
 export class AuthService {
   private static instance: AuthService;
   private currentUser: UserProfile = initialUsers[4]; // Default persona: Er. M. Sivakumar, EE Urban
-  private authenticated: boolean = false;
+  private authenticated: boolean = true; // Default to true so workspace loads out of the box
   private failedAttempts: Record<string, number> = {};
 
   private constructor() {
