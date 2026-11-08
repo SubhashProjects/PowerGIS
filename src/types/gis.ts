@@ -4,16 +4,14 @@
 // ============================================================================
 
 export type BasemapProviderId =
-  | 'osm_standard'
   | 'google_roadmap'
   | 'google_satellite'
   | 'google_hybrid'
   | 'google_terrain'
+  | 'osm_standard'
   | 'osm_hot'
   | 'esri_imagery'
-  | 'esri_topo'
-  | 'carto_dark'
-  | 'carto_light';
+  | 'esri_topo';
 
 export interface BasemapConfig {
   id: BasemapProviderId;

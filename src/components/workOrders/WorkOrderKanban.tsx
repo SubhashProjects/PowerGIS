@@ -22,12 +22,12 @@ export const WorkOrderKanban: React.FC = () => {
   const [instructions, setInstructions] = useState('');
   const [assignedCrew, setAssignedCrew] = useState('Marapalam Breakdown Gang #1');
 
-  const columns: Array<{ id: WorkOrderStatus; title: string }> = [
-    { id: 'assigned', title: '1. Assigned to Crew' },
-    { id: 'in_progress', title: '2. In Progress / On Site' },
-    { id: 'completed', title: '3. Work Completed' },
-    { id: 'verified', title: '4. JE Verified' },
-    { id: 'closed', title: '5. AE Approved & Closed' },
+  const columns: Array<{ id: WorkOrderStatus; title: string; topBorder: string; badgeBg: string }> = [
+    { id: 'assigned', title: '1. Assigned to Crew', topBorder: 'border-t-4 border-t-blue-500', badgeBg: 'bg-blue-100 text-blue-800' },
+    { id: 'in_progress', title: '2. In Progress / On Site', topBorder: 'border-t-4 border-t-amber-500', badgeBg: 'bg-amber-100 text-amber-800' },
+    { id: 'completed', title: '3. Work Completed', topBorder: 'border-t-4 border-t-emerald-500', badgeBg: 'bg-emerald-100 text-emerald-800' },
+    { id: 'verified', title: '4. JE Verified', topBorder: 'border-t-4 border-t-purple-500', badgeBg: 'bg-purple-100 text-purple-800' },
+    { id: 'closed', title: '5. AE Approved & Closed', topBorder: 'border-t-4 border-t-teal-600', badgeBg: 'bg-teal-100 text-teal-800' },
   ];
 
   const handleAdvanceStatus = (orderId: string, currentStatus: WorkOrderStatus) => {
@@ -68,23 +68,23 @@ export const WorkOrderKanban: React.FC = () => {
   };
 
   return (
-    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-slate-900 select-none">
       {/* Top Banner */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
-            <CheckSquare className="w-5 h-5 text-emerald-400" />
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-emerald-500/20 flex-shrink-0">
+            <CheckSquare className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
                 Work Order & Maintenance Task Kanban
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                 FIELD WORKFLOW KANBAN
               </span>
             </div>
-            <p className="text-xs text-neutral-500 font-mono mt-0.5">
+            <p className="text-xs text-slate-500 font-mono mt-0.5">
               Field Gang Dispatch · Multi-Tier Verification (JE/AE) · Material Consumption Tracking
             </p>
           </div>
@@ -92,7 +92,7 @@ export const WorkOrderKanban: React.FC = () => {
 
         <button
           onClick={() => setShowNewModal(true)}
-          className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs self-start sm:self-auto cursor-pointer"
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-blue-500/20 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>New Work Order</span>
@@ -107,13 +107,13 @@ export const WorkOrderKanban: React.FC = () => {
           return (
             <div
               key={col.id}
-              className="bg-white border border-neutral-200 rounded-2xl p-3.5 flex flex-col space-y-3 min-h-[500px] shadow-2xs"
+              className={`bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col space-y-3 min-h-[500px] shadow-sm ${col.topBorder}`}
             >
-              <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
-                <span className="font-bold text-xs uppercase tracking-wider text-neutral-900 font-mono">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <span className="font-bold text-xs uppercase tracking-wider text-slate-900 font-mono">
                   {col.title}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-neutral-100 font-mono font-bold text-neutral-700 border border-neutral-200">
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold border border-slate-200 ${col.badgeBg}`}>
                   {colOrders.length}
                 </span>
               </div>
@@ -122,10 +122,10 @@ export const WorkOrderKanban: React.FC = () => {
                 {colOrders.map(order => (
                   <div
                     key={order.id}
-                    className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200 hover:border-neutral-300 shadow-2xs text-xs space-y-2 transition-all"
+                    className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-blue-300 hover:bg-blue-50/20 shadow-2xs text-xs space-y-2 transition-all"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-neutral-950 font-bold text-[10px]">{order.orderNumber}</span>
+                      <span className="font-mono text-slate-950 font-bold text-[10px]">{order.orderNumber}</span>
                       <span
                         className={`text-[9px] uppercase font-bold px-1.5 py-0.2 rounded border ${
                           order.priority === 'critical'
@@ -137,19 +137,19 @@ export const WorkOrderKanban: React.FC = () => {
                       </span>
                     </div>
 
-                    <h4 className="font-bold text-neutral-900 text-xs leading-snug">{order.title}</h4>
-                    <p className="text-[11px] text-neutral-600 line-clamp-2 leading-relaxed">{order.instructions}</p>
+                    <h4 className="font-bold text-slate-900 text-xs leading-snug">{order.title}</h4>
+                    <p className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">{order.instructions}</p>
 
-                    <div className="pt-2 border-t border-neutral-200 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
+                    <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500 font-mono">
                       <span className="flex items-center space-x-1 truncate max-w-[110px]">
-                        <User className="w-3 h-3 text-neutral-400 flex-shrink-0" />
+                        <User className="w-3 h-3 text-blue-500 flex-shrink-0" />
                         <span className="truncate">{order.assignedCrew}</span>
                       </span>
 
                       {col.id !== 'closed' && (
                         <button
                           onClick={() => handleAdvanceStatus(order.id, order.status)}
-                          className="px-2 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                          className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold flex items-center space-x-1 transition-all shadow-xs cursor-pointer"
                           title="Advance to next workflow stage"
                         >
                           <span>Next</span>

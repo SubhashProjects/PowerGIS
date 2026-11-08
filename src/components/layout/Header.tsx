@@ -107,27 +107,27 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           </button>
 
           {/* Logo Emblem */}
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-bold text-sm sm:text-base shadow-sm flex-shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-black text-sm sm:text-base shadow-md shadow-blue-500/25 flex-shrink-0">
             ⚡
           </div>
 
           {/* Title */}
           <div>
             <div className="flex items-center space-x-1.5 sm:space-x-2">
-              <span className="font-extrabold text-xs sm:text-sm text-neutral-950 tracking-wider">POWERGIS</span>
-              <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-800 font-semibold border border-neutral-200 uppercase tracking-wider">
+              <span className="font-black text-xs sm:text-sm text-slate-900 tracking-wider">POWERGIS</span>
+              <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-extrabold border border-blue-200 uppercase tracking-wider">
                 DISTRIBUTION
               </span>
             </div>
-            <p className="text-[9px] sm:text-[10px] text-neutral-500 font-medium hidden sm:block">
-              PowerGIS • Asset Management & O&M Platform
+            <p className="text-[9px] sm:text-[10px] text-slate-500 font-medium hidden sm:block">
+              PowerGIS • Utility Asset Management & Operations Portal
             </p>
           </div>
 
           {/* Dynamic Breadcrumbs (Desktop) */}
-          <div className="hidden xl:flex items-center space-x-1.5 text-[11px] font-mono text-neutral-500 pl-4 border-l border-neutral-200">
-            <span className="text-neutral-400 font-sans">Jurisdiction:</span>
-            <span className="font-semibold text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded border border-neutral-200">
+          <div className="hidden xl:flex items-center space-x-1.5 text-[11px] font-mono pl-4 border-l border-slate-200">
+            <span className="text-slate-400 font-sans">Jurisdiction:</span>
+            <span className="font-bold text-blue-900 bg-gradient-to-r from-blue-50 to-indigo-50 px-2.5 py-0.5 rounded-lg border border-blue-200 shadow-2xs">
               {getBreadcrumb()}
             </span>
           </div>
@@ -136,20 +136,20 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
         {/* Global Asset Search (Desktop) with Ctrl + K */}
         <div className="relative w-64 lg:w-80 hidden md:block">
           <div className="relative flex items-center">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-blue-500 absolute left-3 pointer-events-none" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search assets, feeders, poles... (Ctrl + K)"
-              className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-14 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition-all font-mono"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-14 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono"
             />
             <div className="absolute right-2 flex items-center space-x-0.5 pointer-events-none">
-              <kbd className="px-1 py-0.5 text-[9px] font-mono font-bold bg-neutral-200 text-neutral-600 rounded border border-neutral-300">
+              <kbd className="px-1 py-0.5 text-[9px] font-mono font-bold bg-slate-200 text-slate-700 rounded border border-slate-300">
                 Ctrl
               </kbd>
-              <kbd className="px-1 py-0.5 text-[9px] font-mono font-bold bg-neutral-200 text-neutral-600 rounded border border-neutral-300">
+              <kbd className="px-1 py-0.5 text-[9px] font-mono font-bold bg-slate-200 text-slate-700 rounded border border-slate-300">
                 K
               </kbd>
             </div>

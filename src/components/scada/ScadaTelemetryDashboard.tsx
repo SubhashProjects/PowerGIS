@@ -81,21 +81,21 @@ export const ScadaTelemetryDashboard: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Header Card */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
-            <Cpu className="w-5 h-5 text-sky-400" />
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-600 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-blue-500/20 flex-shrink-0">
+            <Cpu className="w-5 h-5 text-cyan-200" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
                 SCADA Telemetry & Substation Single Line Diagram (SLD)
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                 IEC 60870-5-104
               </span>
             </div>
-            <p className="text-xs text-neutral-500 font-mono mt-0.5">
+            <p className="text-xs text-slate-500 font-mono mt-0.5">
               Marapalam 110/22/11kV Primary Substation · Select-Before-Operate (SBO) Interlock Gateway
             </p>
           </div>
@@ -103,8 +103,8 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
         <div className="flex items-center space-x-2.5 font-mono text-xs self-start sm:self-auto">
           <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center space-x-2 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-bold">IEC-104 PROTOCOL ONLINE</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-extrabold">IEC-104 PROTOCOL ONLINE</span>
           </div>
         </div>
       </div>

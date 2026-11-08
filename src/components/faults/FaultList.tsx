@@ -172,21 +172,21 @@ export const FaultList: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Header Card */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-orange-500/20 flex-shrink-0">
             ⚡
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
                 8-Stage Ticket Management & Breakdown Engine
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                 SECTION 9 SPEC
               </span>
             </div>
-            <p className="text-xs text-neutral-500 font-mono mt-0.5">
+            <p className="text-xs text-slate-500 font-mono mt-0.5">
               Live IEEE/JERC SLA Deadlines · Proximity Geodesics · Lifecycle Progression
             </p>
           </div>
@@ -194,7 +194,7 @@ export const FaultList: React.FC = () => {
 
         <button
           onClick={() => setShowNewModal(true)}
-          className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs self-start sm:self-auto cursor-pointer"
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-blue-500/20 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Report New Breakdown</span>
@@ -203,28 +203,28 @@ export const FaultList: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column: Fault Tickets List */}
-        <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-2xl p-4 shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-800">
+        <div className="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
               Grid Fault Tickets ({filteredFaults.length})
             </h3>
             {/* Filter buttons */}
             <div className="flex items-center space-x-1 text-[10px] font-mono">
               <button
                 onClick={() => setStatusFilter('all')}
-                className={`px-1.5 py-0.5 rounded ${statusFilter === 'all' ? 'bg-neutral-900 text-white font-bold' : 'text-neutral-500 hover:text-neutral-900'}`}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-all ${statusFilter === 'all' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 All
               </button>
               <button
                 onClick={() => setStatusFilter('active')}
-                className={`px-1.5 py-0.5 rounded ${statusFilter === 'active' ? 'bg-neutral-900 text-white font-bold' : 'text-neutral-500 hover:text-neutral-900'}`}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-all ${statusFilter === 'active' ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Active
               </button>
               <button
                 onClick={() => setStatusFilter('resolved')}
-                className={`px-1.5 py-0.5 rounded ${statusFilter === 'resolved' ? 'bg-neutral-900 text-white font-bold' : 'text-neutral-500 hover:text-neutral-900'}`}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-all ${statusFilter === 'resolved' ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Resolved
               </button>
@@ -242,30 +242,30 @@ export const FaultList: React.FC = () => {
                   onClick={() => setSelectedFault(f)}
                   className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-neutral-50 border-neutral-900 shadow-xs'
-                      : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50'
+                      ? 'bg-blue-50/50 border-blue-500 shadow-sm ring-2 ring-blue-500/20'
+                      : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/60'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-neutral-950">{f.faultCode}</span>
+                    <span className="font-mono text-xs font-bold text-slate-950">{f.faultCode}</span>
                     <span
                       className={`px-1.5 py-0.5 rounded text-[9px] font-mono uppercase font-bold border ${
                         f.priority === 'critical'
                           ? 'bg-rose-50 text-rose-700 border-rose-200'
                           : f.priority === 'high'
                           ? 'bg-amber-50 text-amber-800 border-amber-200'
-                          : 'bg-neutral-100 text-neutral-700 border-neutral-200'
+                          : 'bg-blue-50 text-blue-700 border-blue-200'
                       }`}
                     >
                       {f.priority}
                     </span>
                   </div>
 
-                  <div className="font-semibold text-xs text-neutral-900 mt-1 truncate">{f.category}</div>
-                  <p className="text-[11px] text-neutral-500 mt-0.5 truncate">{f.description}</p>
+                  <div className="font-bold text-xs text-slate-900 mt-1 truncate">{f.category}</div>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate">{f.description}</p>
 
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100 text-[10px] font-mono">
-                    <span className="px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200 font-semibold">
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[10px] font-mono">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
                       {STAGES.find(s => s.key === f.status)?.label || f.status}
                     </span>
                     <span className={`px-1.5 py-0.5 rounded border ${sla.statusColor}`}>
@@ -323,10 +323,13 @@ export const FaultList: React.FC = () => {
               </div>
 
               {/* 8-STAGE LIFECYCLE PROGRESSION STEPPER (SECTION 9.1) */}
-              <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3.5 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-neutral-800 font-mono">
-                  <span>8-Stage Lifecycle Progress:</span>
-                  <span className="text-neutral-500 text-[11px]">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-800 font-mono">
+                  <span className="flex items-center space-x-1.5 text-blue-700">
+                    <CheckSquare className="w-3.5 h-3.5" />
+                    <span>8-Stage Lifecycle Progress:</span>
+                  </span>
+                  <span className="text-blue-700 bg-blue-100 font-bold px-2 py-0.5 rounded text-[11px]">
                     Stage {getStageIndex(selectedFault.status) + 1} of 8
                   </span>
                 </div>
@@ -343,10 +346,10 @@ export const FaultList: React.FC = () => {
                         onClick={() => handleUpdateStatus(stage.key)}
                         className={`p-1.5 rounded-lg border text-[10px] font-mono font-semibold transition-all cursor-pointer ${
                           isCurrent
-                            ? 'bg-neutral-900 text-white border-neutral-900 shadow-xs ring-2 ring-neutral-400'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-md shadow-blue-500/25 ring-2 ring-blue-400'
                             : isCompleted
-                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                            : 'bg-white text-neutral-400 border-neutral-200 hover:text-neutral-800'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold'
+                            : 'bg-white text-slate-400 border-slate-200 hover:text-slate-800 hover:border-slate-300'
                         }`}
                         title={`Advance to ${stage.label}`}
                       >
@@ -359,54 +362,54 @@ export const FaultList: React.FC = () => {
               </div>
 
               {/* Description */}
-              <div className="text-xs text-neutral-700 bg-neutral-50/50 p-3 rounded-xl border border-neutral-200 leading-relaxed">
-                <span className="font-bold text-neutral-900">Incident Report: </span>
+              <div className="text-xs text-slate-700 bg-slate-50/70 p-3 rounded-xl border border-slate-200 leading-relaxed">
+                <span className="font-bold text-slate-900">Incident Report: </span>
                 {selectedFault.description}
               </div>
 
               {/* SPATIAL DISTANCE METRICS (POSTGIS SPHERICAL GEODESICS) */}
-              <div className="p-4 rounded-xl bg-white border border-neutral-200 space-y-3">
+              <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs text-neutral-900 uppercase tracking-wider flex items-center space-x-1.5">
-                    <Compass className="w-4 h-4 text-neutral-700" />
+                  <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
+                    <Compass className="w-4 h-4 text-blue-600" />
                     <span>Calculated Spatial Proximity & Network Distances</span>
                   </h4>
-                  <span className="text-[10px] text-neutral-500 font-mono bg-neutral-100 px-2 py-0.5 rounded border border-neutral-200">
+                  <span className="text-[10px] text-blue-700 font-bold font-mono bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                     PostGIS Geodesic
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                    <div className="text-[10px] text-neutral-500 font-mono">Nearest Pole</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-neutral-900 mt-0.5">
+                  <div className="p-2.5 rounded-xl bg-purple-50/50 border border-purple-200">
+                    <div className="text-[10px] text-purple-700 font-bold font-mono">Nearest Pole</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-purple-950 mt-0.5">
                       {selectedFault.distanceFromPoleM ? `${selectedFault.distanceFromPoleM} m` : 'Calculating...'}
                     </div>
-                    <div className="text-[9px] text-neutral-400 font-mono">Straight-line</div>
+                    <div className="text-[9px] text-purple-500 font-mono">Straight-line</div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                    <div className="text-[10px] text-neutral-500 font-mono">Nearest Transformer</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-neutral-900 mt-0.5">
+                  <div className="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-200">
+                    <div className="text-[10px] text-emerald-700 font-bold font-mono">Nearest Transformer</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-emerald-950 mt-0.5">
                       {selectedFault.distanceFromDtM ? `${selectedFault.distanceFromDtM} m` : 'Calculating...'}
                     </div>
-                    <div className="text-[9px] text-neutral-400 font-mono">Straight-line</div>
+                    <div className="text-[9px] text-emerald-500 font-mono">Straight-line</div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                    <div className="text-[10px] text-neutral-500 font-mono">Along Feeder Route</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-neutral-900 mt-0.5">
+                  <div className="p-2.5 rounded-xl bg-cyan-50/50 border border-cyan-200">
+                    <div className="text-[10px] text-cyan-700 font-bold font-mono">Along Feeder Route</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-cyan-950 mt-0.5">
                       {selectedFault.distanceAlongFeederM ? `${selectedFault.distanceAlongFeederM} m` : '1850 m'}
                     </div>
-                    <div className="text-[9px] text-neutral-400 font-mono">LineString Route</div>
+                    <div className="text-[9px] text-cyan-500 font-mono">LineString Route</div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                    <div className="text-[10px] text-neutral-500 font-mono">From Section Office</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-neutral-900 mt-0.5">
+                  <div className="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-200">
+                    <div className="text-[10px] text-indigo-700 font-bold font-mono">From Section Office</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-indigo-950 mt-0.5">
                       {selectedFault.distanceFromOfficeKm ? `${selectedFault.distanceFromOfficeKm} km` : '0.8 km'}
                     </div>
-                    <div className="text-[9px] text-neutral-400 font-mono">Marapalam Section</div>
+                    <div className="text-[9px] text-indigo-500 font-mono">Marapalam Section</div>
                   </div>
                 </div>
               </div>

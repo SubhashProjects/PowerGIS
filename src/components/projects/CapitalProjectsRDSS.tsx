@@ -159,29 +159,29 @@ export const CapitalProjectsRDSS: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Header Card */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
-            <Building2 className="w-5 h-5 text-emerald-400" />
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-teal-500 via-emerald-600 to-cyan-600 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-teal-500/20 flex-shrink-0">
+            <Building2 className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
                 Capital Schemes & RDSS Reforms Tracker
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200">
                 REVAMPED DISTRIBUTION SECTOR SCHEME
               </span>
             </div>
-            <p className="text-xs text-neutral-500 font-mono mt-0.5">
+            <p className="text-xs text-slate-500 font-mono mt-0.5">
               Government Infrastructure Modernization · Physical Progress (%) vs Financial Expenditure (₹ Cr)
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2 text-xs font-mono self-start sm:self-auto">
-          <span className="px-2.5 py-1 rounded-xl bg-neutral-100 border border-neutral-200 text-neutral-700">
-            Active Packages: <strong className="text-neutral-950">{schemes.length} Schemes</strong>
+          <span className="px-3 py-1 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 font-bold">
+            Active Packages: <strong className="text-teal-700">{schemes.length} Schemes</strong>
           </span>
         </div>
       </div>

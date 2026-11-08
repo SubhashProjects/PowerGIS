@@ -39,10 +39,10 @@ export const MapRotationControl: React.FC = () => {
               setIsExpanded(!isExpanded);
             }
           }}
-          className={`group flex items-center space-x-2 px-2.5 py-2 rounded-xl border backdrop-blur-md transition-all shadow-md ${
+          className={`group flex items-center space-x-2 px-3 py-2 rounded-xl border backdrop-blur-md transition-all shadow-md cursor-pointer ${
             isRotated
-              ? 'bg-neutral-900 text-white border-neutral-900 ring-2 ring-neutral-400 font-bold'
-              : 'bg-white/95 text-neutral-900 border-neutral-300 hover:bg-neutral-100'
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500 ring-2 ring-blue-400 font-bold shadow-md shadow-blue-500/25'
+              : 'bg-white/95 text-slate-900 border-slate-200 hover:border-blue-400 hover:shadow-blue-500/10'
           }`}
           title={isRotated ? `Bearing: ${bearing}° (${cardinal}) - Click to Reset North, or expand` : 'Map Rotation & Compass'}
         >
@@ -69,7 +69,7 @@ export const MapRotationControl: React.FC = () => {
             >
               <Navigation2
                 className={`w-4 h-4 fill-current ${
-                  isRotated ? 'text-white' : 'text-neutral-900'
+                  isRotated ? 'text-cyan-300' : 'text-blue-600'
                 }`}
               />
             </div>
@@ -183,10 +183,10 @@ export const MapRotationControl: React.FC = () => {
               <button
                 key={card.deg}
                 onClick={() => setBearing(card.deg)}
-                className={`py-1.5 rounded-lg border text-center transition-all ${
+                className={`py-1.5 rounded-lg border text-center transition-all cursor-pointer ${
                   bearing === card.deg
-                    ? 'bg-neutral-900 text-white font-bold border-neutral-900 shadow-2xs'
-                    : 'bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold border-blue-600 shadow-xs'
+                    : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-blue-50 hover:text-blue-700'
                 }`}
               >
                 {card.label[0]} ({card.deg}°)
@@ -201,10 +201,10 @@ export const MapRotationControl: React.FC = () => {
               setIsExpanded(false);
             }}
             disabled={bearing === 0}
-            className={`w-full py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
+            className={`w-full py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
               bearing !== 0
-                ? 'bg-neutral-900 text-white hover:bg-black shadow-sm'
-                : 'bg-neutral-100 text-neutral-400 border border-neutral-200 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/25'
+                : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
             }`}
           >
             <ArrowUp className="w-3.5 h-3.5" />

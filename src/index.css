@@ -79,12 +79,8 @@ body {
 }
 
 /* ==========================================================================
-   Pure White Theme Direct Overrides (For Any Residual Dark Container Classes)
+   Clean Utility Theme Direct Overrides (For Any Residual Dark Containers)
    ========================================================================== */
-.bg-black {
-  background-color: #f8f9fa !important;
-}
-
 .bg-\[\#0a0a0a\],
 .bg-\[\#0b1320\],
 .bg-\[\#0d0d0d\],

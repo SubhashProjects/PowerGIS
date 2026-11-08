@@ -7,18 +7,8 @@ import { BasemapConfig, GISLayerState } from '../types/gis';
 
 export const availableBasemaps: BasemapConfig[] = [
   {
-    id: 'osm_standard',
-    name: 'OpenStreetMap Standard (Color)',
-    category: 'OpenStreetMap',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    subdomains: ['a', 'b', 'c'],
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors',
-    thumbnail: 'https://a.tile.openstreetmap.org/13/4093/2723.png',
-  },
-  {
     id: 'google_roadmap',
-    name: 'Google Maps Roadmap',
+    name: 'Google Maps Roadmap (Full Color)',
     category: 'Google',
     url: 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
     subdomains: ['0', '1', '2', '3'],
@@ -58,7 +48,7 @@ export const availableBasemaps: BasemapConfig[] = [
   },
   {
     id: 'osm_standard',
-    name: 'OpenStreetMap Standard',
+    name: 'OpenStreetMap Standard (Color)',
     category: 'OpenStreetMap',
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     subdomains: ['a', 'b', 'c'],
@@ -68,7 +58,7 @@ export const availableBasemaps: BasemapConfig[] = [
   },
   {
     id: 'osm_hot',
-    name: 'OSM Humanitarian (HOT)',
+    name: 'OSM Humanitarian HOT (Color)',
     category: 'OpenStreetMap',
     url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
     subdomains: ['a', 'b', 'c'],

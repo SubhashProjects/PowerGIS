@@ -33,7 +33,7 @@ interface GISContextType {
 const GISContext = createContext<GISContextType | undefined>(undefined);
 
 export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('osm_standard');
+  const [currentBasemap, setBasemap] = useState<BasemapProviderId>('google_roadmap');
   const [layers, setLayers] = useState<GISLayerState[]>(initialGISLayers);
   const [activeRegion, setActiveRegion] = useState<string>('reg-pdy');
   const [selectedAsset, setSelectedAsset] = useState<any | null>(null);
@@ -62,7 +62,7 @@ export const GISProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setThemeMode = (mode: 'black' | 'white') => {
     setThemeModeState('white');
-    setBasemap('osm_standard');
+    setBasemap('google_roadmap');
     document.documentElement.classList.add('theme-white');
   };
 

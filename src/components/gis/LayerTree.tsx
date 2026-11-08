@@ -19,23 +19,25 @@ export const LayerTree: React.FC = () => {
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-white/95 backdrop-blur-md border border-neutral-300 text-neutral-900 shadow-md hover:bg-neutral-100 transition-all text-xs font-semibold"
+          className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-md border border-emerald-200/80 text-slate-900 shadow-lg hover:border-emerald-400 hover:shadow-emerald-500/10 transition-all text-xs font-semibold cursor-pointer"
         >
-          <Sliders className="w-4 h-4 text-neutral-800" />
-          <span className="hidden sm:inline">GIS Layers</span>
-          <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-300 font-bold">
+          <div className="w-5 h-5 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-2xs">
+            <Sliders className="w-3 h-3" />
+          </div>
+          <span className="hidden sm:inline font-bold text-slate-900">GIS Layers</span>
+          <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold">
             {activeCount}/{layers.length}
           </span>
-          <ChevronDown className="w-3.5 h-3.5 text-neutral-500" />
+          <ChevronDown className="w-3.5 h-3.5 text-emerald-600" />
         </button>
 
         {isOpen && (
-          <div className="absolute left-0 top-11 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl p-3 z-50 max-h-[75vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-200 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
-              <span className="text-neutral-950 font-extrabold">Electrical GIS Overlays</span>
+          <div className="absolute left-0 top-11 w-80 max-w-[calc(100vw-2rem)] bg-white/98 backdrop-blur-md border border-slate-200 rounded-2xl shadow-2xl p-3.5 z-50 max-h-[75vh] overflow-y-auto animate-fadeIn">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              <span className="text-emerald-700 font-extrabold font-mono">Electrical GIS Overlays</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 rounded text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors sm:hidden"
+                className="p-1 rounded text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors sm:hidden"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
