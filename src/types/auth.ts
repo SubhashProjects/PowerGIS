@@ -73,6 +73,7 @@ export interface UserProfile {
   subdivisionId?: string;
   sectionId?: string;
   jeJurisdictionId?: string;
+  contractorId?: string;
   contractorCompany?: string;
   isActive: boolean;
 }

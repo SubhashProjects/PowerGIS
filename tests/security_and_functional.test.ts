@@ -10,7 +10,10 @@ import { surveyService } from '../src/services/surveyService';
 import { reliabilityService } from '../src/services/reliabilityService';
 import { riskService } from '../src/services/riskService';
 import { notificationService } from '../src/services/notificationService';
-import { initialUsers, initialTransformers, initialFeeders } from '../src/services/mockData';
+import { scadaSimulatorService } from '../src/services/scadaSimulatorService';
+import { scadaGatewayService } from '../src/services/scadaGatewayService';
+import { scadaService } from '../src/services/scadaService';
+import { initialUsers, initialTransformers, initialFeeders, initialScadaPoints } from '../src/services/mockData';
 
 let passed = 0;
 let failed = 0;
@@ -472,6 +475,180 @@ async function runTestSuite() {
     const aeData = notificationService.getDashboardData(aeUser);
     assert(aeData.roleTitle.includes('Assistant Engineer'), 'AE dashboard title is strictly AE-scoped');
     assert(aeData.assignments.some(a => a.category === 'Safety PTW' || a.category === 'AE Approval'), 'AE has PTW and approval tasks');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 14: SCADA DYNAMIC SIMULATOR & 3-PHASE ELECTRICAL CALCULATIONS
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 14: SCADA Dynamic Simulator & 3-Phase Physics ---');
+  {
+    // 1. Balanced 3-Phase Power Calculation Verification
+    // Equation: P = sqrt(3) * V_LL * I_L * cos(phi) * 1e-3 (MW)
+    const vKV = 11.0;
+    const iAmp = 250.0;
+    const pf = 0.95;
+    const calc = scadaSimulatorService.calculateThreePhaseElectricals(vKV, iAmp, pf, 2.0);
+
+    const expectedActiveMW = Math.round(Math.sqrt(3) * 11.0 * 250.0 * 0.95 * 1e-3 * 100) / 100;
+    assert(calc.activePowerMW === expectedActiveMW, `Active Power obeys P = √3·V·I·cosφ (${calc.activePowerMW} MW)`);
+
+    const sinPhi = Math.sqrt(1 - pf * pf);
+    const expectedReactiveMVAR = Math.round(Math.sqrt(3) * 11.0 * 250.0 * sinPhi * 1e-3 * 100) / 100;
+    assert(calc.reactivePowerMVAR === expectedReactiveMVAR, `Reactive Power obeys Q = √3·V·I·sinφ (${calc.reactivePowerMVAR} MVAr)`);
+
+    const expectedApparentMVA = Math.round(Math.sqrt(3) * 11.0 * 250.0 * 1e-3 * 100) / 100;
+    assert(calc.apparentPowerMVA === expectedApparentMVA, `Apparent Power obeys S = √3·V·I (${calc.apparentPowerMVA} MVA)`);
+
+    // 2. Neutral Current Phasor Summation
+    assert(calc.neutralCurrentAmps > 0, `Neutral current is calculated via phasor vector summation (${calc.neutralCurrentAmps} A)`);
+    assert(calc.phaseACurrentAmps > calc.phaseBCurrentAmps, 'Phase imbalance properly scales phase A over B and C');
+
+    // 3. Thermal Rise Model
+    const therm = scadaSimulatorService.calculateThermalRise(250.0, 320.0, 45.0, 32.0, 2);
+    assert(therm.oilTempC >= 45.0 && therm.oilTempC < 75.0, `Transformer oil temperature responds to thermal rise (${therm.oilTempC}°C)`);
+    assert(therm.windingTempC > therm.oilTempC, `Winding hot-spot temperature exceeds top-oil temperature (${therm.windingTempC}°C > ${therm.oilTempC}°C)`);
+
+    // 4. Simulator State & Data Isolation
+    const simPoints = scadaSimulatorService.getPoints();
+    assert(simPoints.length >= 6, `Simulator initializes 6 grid telemetry points across 110kV/22kV/11kV network`);
+    assert(simPoints.every(p => p.sourceType === 'SIMULATOR'), 'SECURITY: Every simulated telemetry point strictly carries source_type = SIMULATOR');
+    assert(simPoints.every(p => p.simulationSessionId !== undefined), 'SECURITY: Every simulated point is stamped with simulation_session_id');
+
+    // 5. Operating Modes & Controls
+    scadaSimulatorService.setSpeed(5);
+    assert(scadaSimulatorService.getConfig().speed === 5, 'Simulator speed configurable to 5x');
+
+    scadaSimulatorService.setIntervalSeconds(5);
+    assert(scadaSimulatorService.getConfig().intervalSeconds === 5, 'Simulator interval configurable to 5s');
+
+    scadaSimulatorService.setMode('preset_playback');
+    assert(scadaSimulatorService.getConfig().mode === 'preset_playback', 'Operating mode switched to preset_playback');
+
+    // 6. Scenario Presets
+    scadaSimulatorService.setScenario('OVERLOAD');
+    const overloadedFdr = scadaSimulatorService.getPointByTag('SIM_FDR_MARA_01');
+    assert(overloadedFdr?.currentAmps === 345.0, 'OVERLOAD scenario forces feeder current to 345A');
+    assert(scadaSimulatorService.getAlarms().some(a => a.tag === 'SIM_FDR_MARA_01'), 'OVERLOAD scenario generates high-priority alarm');
+
+    scadaSimulatorService.setScenario('NORMAL');
+    const restoredFdr = scadaSimulatorService.getPointByTag('SIM_FDR_MARA_01');
+    assert(restoredFdr?.currentAmps === 220.0, 'NORMAL scenario restores feeder current to nominal 220A');
+
+    // 7. Manual Telemetry Injection
+    const injected = scadaSimulatorService.injectManualTelemetry('SIM_FDR_MARA_01', {
+      voltageKV: 11.45,
+      currentAmps: 260.0,
+      powerFactor: 0.98,
+    });
+    assert(injected === true, 'Manual telemetry injection into simulated tag succeeds');
+    const updatedFdr = scadaSimulatorService.getPointByTag('SIM_FDR_MARA_01');
+    assert(updatedFdr?.voltageKV === 11.45 && updatedFdr?.currentAmps === 260.0, 'Tag state reflects manually injected values');
+
+    // 8. CSV Snapshot Export & Historical Playback Import
+    const csvExport = scadaSimulatorService.exportTelemetrySnapshotCSV();
+    assert(csvExport.includes('source_type') && csvExport.includes('SIMULATOR'), 'CSV export carries mandatory source_type = SIMULATOR column');
+    assert(csvExport.includes('voltage_kv') && csvExport.includes('current_amps'), 'CSV export carries complete telemetry parameters');
+
+    const sampleCsv = `tag,voltage_kv,current_amps\nSIM_FDR_MARA_01,11.35,215.0\n`;
+    const importRes = scadaSimulatorService.importHistoricalCSVPlayback(sampleCsv);
+    assert(importRes.success === true && importRes.rowsProcessed === 1, 'Historical CSV playback import processed 1 frame');
+    assert(scadaSimulatorService.getPointByTag('SIM_FDR_MARA_01')?.currentAmps === 215.0, 'Playback frame applied to simulated point');
+
+    // 9. Operational vs Simulator Isolation in ScadaService
+    const opPoints = scadaService.getPoints('OPERATIONAL');
+    assert(opPoints.every(p => p.sourceType === 'OPERATIONAL'), 'ScadaService.getPoints("OPERATIONAL") returns ONLY operational grid points');
+    const onlySimPoints = scadaService.getPoints('SIMULATOR');
+    assert(onlySimPoints.every(p => p.sourceType === 'SIMULATOR'), 'ScadaService.getPoints("SIMULATOR") returns ONLY simulated points');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 15: INDUSTRIAL SCADA GATEWAYS & SELECT-BEFORE-OPERATE (SBO)
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 15: SCADA Gateways & SBO Safety Interlocks ---');
+  {
+    // 1. IEC 60870-5-104 ASDU Encoding & Decoding
+    const testPt = scadaSimulatorService.getPointByTag('SIM_FDR_MARA_01')!;
+    const iecFrame = scadaGatewayService.encodeIec104TelemetryFrame(testPt);
+    assert(iecFrame.typeId === 13, 'IEC 60870-5-104 encodes ASDU Type 13 (Short Floating Point)');
+    assert(iecFrame.ioa === 2001, 'IEC-104 Information Object Address (IOA) correctly mapped to 2001');
+    assert(iecFrame.cot === 3, 'Cause of Transmission is 3 (Spontaneous event)');
+
+    const decodedCmd = scadaGatewayService.decodeIec104CommandFrame({
+      typeId: 45,
+      isSequence: false,
+      numObjects: 1,
+      cot: 6,
+      coa: 101,
+      ioa: 2001,
+      value: 0,
+      quality: 0,
+    });
+    assert(decodedCmd.targetState === 'OPEN', 'IEC-104 ASDU Type 45 single command value 0 decodes to OPEN');
+    assert(decodedCmd.tag === 'SIM_FDR_MARA_01', 'IEC-104 IOA 2001 decodes to SIM_FDR_MARA_01');
+
+    // 2. Modbus TCP Holding Register Mapping
+    const modbusPacket = scadaGatewayService.generateModbusRegisters([testPt]);
+    assert(modbusPacket.functionCode === 3, 'Modbus TCP packet uses Function Code 03 (Read Holding Registers)');
+    assert(modbusPacket.registerAddress === 40001, 'Modbus registers map to base address 40001');
+    assert(modbusPacket.values?.length === 4, 'Modbus packet encapsulates 4 holding registers per point');
+
+    // 3. MQTT JSON Telemetry Publishing
+    scadaGatewayService.publishMqttTelemetry('ss-mara', testPt);
+    const mqttMsgs = scadaGatewayService.getMqttMessages();
+    assert(mqttMsgs.length > 0, 'MQTT telemetry message published successfully');
+    assert(mqttMsgs[0].topic.includes('powergis/substation/ss-mara'), 'MQTT topic adheres to powergis/substation/{id} schema');
+    assert(mqttMsgs[0].payload.includes('SIMULATOR'), 'MQTT payload carries source_type = SIMULATOR');
+
+    // 4. Select-Before-Operate (SBO) Interlock 1: Role Authorization Gate
+    const contractorUser = initialUsers.find(u => u.role === 'contractor')!;
+    const blockedRoleResult = scadaGatewayService.executeSecuredSboCommand({
+      tag: 'SIM_FDR_MARA_01',
+      substationId: 'ss-mara',
+      targetState: 'OPEN',
+      supervisoryReason: 'Test unauthorized breaker operation',
+      ptwClearanceChecked: true,
+      operator: contractorUser,
+      protocol: 'IEC-60870-5-104',
+    });
+    assert(blockedRoleResult.success === false, 'SECURITY: Contractor is strictly blocked from SBO breaker operation');
+    assert(blockedRoleResult.auditRecord?.status === 'INTERLOCK_BLOCKED', 'Blocked operation is logged as INTERLOCK_BLOCKED');
+
+    // 5. Select-Before-Operate (SBO) Interlock 2: PTW Clearance Gate
+    const eeUser = initialUsers.find(u => u.role === 'ee')!;
+    const blockedPtwResult = scadaGatewayService.executeSecuredSboCommand({
+      tag: 'SIM_FDR_MARA_01',
+      substationId: 'ss-mara',
+      targetState: 'OPEN',
+      supervisoryReason: 'Test unconfirmed PTW operation',
+      ptwClearanceChecked: false, // NOT checked
+      operator: eeUser,
+      protocol: 'IEC-60870-5-104',
+    });
+    assert(blockedPtwResult.success === false, 'SECURITY: Breaker command blocked when PTW safety clearance is unconfirmed');
+
+    // 6. Select-Before-Operate (SBO) Interlock 3: Successful Authorized Command
+    const authorizedResult = scadaGatewayService.executeSecuredSboCommand({
+      tag: 'SIM_FDR_MARA_01',
+      substationId: 'ss-mara',
+      targetState: 'OPEN',
+      supervisoryReason: 'Emergency Line Breakdown repair',
+      ptwClearanceChecked: true,
+      operator: eeUser,
+      protocol: 'IEC-60870-5-104',
+    });
+    assert(authorizedResult.success === true, 'Authorized EE with PTW clearance successfully executes SBO command');
+    assert(authorizedResult.auditRecord?.status === 'SUCCESS', 'Successful SBO command logged with status SUCCESS');
+
+    // 7. Safety Boundary: Simulated Breaker Trip does NOT pollute live faultService
+    const faultsBefore = faultService.getFaults().length;
+    scadaSimulatorService.operateSimulatedBreaker(
+      'SIM_FDR_MARA_01',
+      'OPEN',
+      'Er. M. Sivakumar',
+      'Simulated emergency trip test'
+    );
+    const faultsAfter = faultService.getFaults().length;
+    assert(faultsAfter === faultsBefore, 'SAFETY BOUNDARY: Simulator breaker trip does NOT inject spurious tickets into production faultService');
   }
 
   // --------------------------------------------------------------------------

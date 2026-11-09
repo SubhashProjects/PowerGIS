@@ -113,29 +113,122 @@ export interface SafetyPermit {
   sectionId: string;
 }
 
+export type ScadaSourceType = 'OPERATIONAL' | 'SIMULATOR';
+
+export type ScadaTelemetryQuality = 'GOOD' | 'QUESTIONABLE' | 'COMM_FAILURE' | 'INVALID';
+
 export interface ScadaTelemetryPoint {
   id: string;
   tag: string;
   description: string;
   substationId: string;
   feederId?: string;
+  assetId?: string;
+  sourceType: ScadaSourceType;
+  simulationSessionId?: string;
+  scenarioId?: string;
   voltageKV: number;
   currentAmps: number;
   activePowerMW: number;
   reactivePowerMVAR: number;
+  powerFactor: number;
   frequencyHz: number;
+  phaseACurrentAmps?: number;
+  phaseBCurrentAmps?: number;
+  phaseCCurrentAmps?: number;
+  neutralCurrentAmps?: number;
+  transformerLoadPct?: number;
+  windingTempC?: number;
+  oilTempC?: number;
+  tapPosition?: number;
   breakerStatus: 'CLOSED' | 'OPEN' | 'TRIPPED';
-  quality: 'GOOD' | 'WARN' | 'FAULT';
+  quality: ScadaTelemetryQuality;
   lastUpdated: string;
+  eventTimestamp?: string;
+  ingestionTimestamp?: string;
 }
 
 export interface ScadaAlarm {
   id: string;
   tag: string;
   alarmCode: string;
+  sourceType?: ScadaSourceType;
+  simulationSessionId?: string;
   severity: 'critical' | 'high' | 'medium';
   message: string;
   status: 'active' | 'acknowledged' | 'cleared';
+  timestamp: string;
+}
+
+export type ScadaSimulationMode =
+  | 'continuous'
+  | 'manual'
+  | 'fluctuation'
+  | 'preset_playback'
+  | 'time_based'
+  | 'csv_playback'
+  | 'multi_substation'
+  | 'multi_feeder'
+  | 'fault_injection'
+  | 'restoration';
+
+export type ScadaScenarioPreset =
+  | 'NORMAL'
+  | 'PEAK_DEMAND'
+  | 'OVERLOAD'
+  | 'FAULT_EARTH'
+  | 'FAULT_3PHASE'
+  | 'CONDUCTOR_SNAP'
+  | 'RESTORATION';
+
+export interface ScadaSimulationConfig {
+  sessionId: string;
+  mode: ScadaSimulationMode;
+  scenario: ScadaScenarioPreset;
+  speed: 1 | 2 | 5 | 10;
+  intervalSeconds: number;
+  selectedSubstationId: string;
+  selectedFeederId?: string;
+  selectedAssetId?: string;
+  fluctuationPct: number;
+  frequencyNominalHz: number;
+  powerFactorNominal: number;
+  ambientTempC: number;
+  isRunning: boolean;
+  isPaused: boolean;
+  voltageMinKV: number;
+  voltageMaxKV: number;
+  currentMaxAmps: number;
+  oilTempAlarmThresholdC: number;
+  windingTempAlarmThresholdC: number;
+}
+
+export type ScadaGatewayProtocol =
+  | 'IEC-60870-5-104'
+  | 'MODBUS-TCP'
+  | 'MQTT'
+  | 'WEBSOCKET'
+  | 'REST'
+  | 'SIMULATOR';
+
+export interface ScadaBreakerCommand {
+  id: string;
+  tag: string;
+  substationId: string;
+  feederId?: string;
+  targetState: 'OPEN' | 'CLOSED';
+  previousState: 'OPEN' | 'CLOSED';
+  supervisoryReason: string;
+  operatorId: string;
+  operatorName: string;
+  operatorRole: string;
+  interlocksVerified: {
+    ptwClearanceChecked: boolean;
+    synchroCheckPassed: boolean;
+    operatorAuthorized: boolean;
+  };
+  dispatchedVia: ScadaGatewayProtocol;
+  status: 'SUCCESS' | 'INTERLOCK_BLOCKED' | 'FAILED';
   timestamp: string;
 }
 

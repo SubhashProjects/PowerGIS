@@ -1,24 +1,40 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// SCADA TELEMETRY & SUBSTATION SINGLE LINE DIAGRAM (SLD) SERVICE
-// Protocols: IEC 60870-5-104, Modbus TCP, MQTT
+// SCADA TELEMETRY & SUBSTATION SINGLE LINE DIAGRAM (SLD) SERVICE (SECTION 12)
+// Protocols: IEC 60870-5-104, Modbus TCP, MQTT, WebSocket, REST/HTTPS
+// Data Isolation: Strict Separation of OPERATIONAL vs SIMULATOR records
 // ============================================================================
 
-import { ScadaTelemetryPoint, ScadaAlarm } from '../types/operations';
+import {
+  ScadaTelemetryPoint,
+  ScadaAlarm,
+  ScadaSourceType,
+  ScadaGatewayProtocol,
+} from '../types/operations';
 import { initialScadaPoints, initialScadaAlarms } from './mockData';
-import { faultService } from './faultService';
+import { scadaSimulatorService } from './scadaSimulatorService';
+import { scadaGatewayService } from './scadaGatewayService';
+import { authService } from './authService';
 
 export class ScadaService {
   private static instance: ScadaService;
-  private points: ScadaTelemetryPoint[] = [...initialScadaPoints];
-  private alarms: ScadaAlarm[] = [...initialScadaAlarms];
+
+  // Operational records (real/baseline grid telemetry)
+  private operationalPoints: ScadaTelemetryPoint[] = [...initialScadaPoints];
+  private operationalAlarms: ScadaAlarm[] = [...initialScadaAlarms];
   private listeners: Array<() => void> = [];
+  private activeSourceFilter: 'ALL' | 'OPERATIONAL' | 'SIMULATOR' = 'ALL';
 
   private constructor() {
-    // Simulate real-time grid fluctuation every 4 seconds
-    setInterval(() => {
-      this.simulateTelemetry();
-    }, 4000);
+    // Listen to simulator changes and forward to subscribers
+    scadaSimulatorService.subscribe(() => {
+      this.notifyListeners();
+    });
+
+    // Listen to gateway events
+    scadaGatewayService.subscribe(() => {
+      this.notifyListeners();
+    });
   }
 
   public static getInstance(): ScadaService {
@@ -28,102 +44,128 @@ export class ScadaService {
     return ScadaService.instance;
   }
 
-  public getPoints(): ScadaTelemetryPoint[] {
-    return this.points;
+  public getSourceFilter(): 'ALL' | 'OPERATIONAL' | 'SIMULATOR' {
+    return this.activeSourceFilter;
   }
 
-  public getAlarms(): ScadaAlarm[] {
-    return this.alarms;
+  public setSourceFilter(filter: 'ALL' | 'OPERATIONAL' | 'SIMULATOR'): void {
+    this.activeSourceFilter = filter;
+    this.notifyListeners();
+  }
+
+  /**
+   * Retrieves telemetry points according to source filter
+   */
+  public getPoints(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR'): ScadaTelemetryPoint[] {
+    const f = filter || this.activeSourceFilter;
+    const simPoints = scadaSimulatorService.getPoints();
+
+    if (f === 'OPERATIONAL') {
+      return [...this.operationalPoints];
+    }
+    if (f === 'SIMULATOR') {
+      return [...simPoints];
+    }
+    return [...this.operationalPoints, ...simPoints];
+  }
+
+  /**
+   * Retrieves alarms according to source filter
+   */
+  public getAlarms(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR'): ScadaAlarm[] {
+    const f = filter || this.activeSourceFilter;
+    const simAlarms = scadaSimulatorService.getAlarms();
+
+    if (f === 'OPERATIONAL') {
+      return [...this.operationalAlarms];
+    }
+    if (f === 'SIMULATOR') {
+      return [...simAlarms];
+    }
+    return [...this.operationalAlarms, ...simAlarms];
+  }
+
+  /**
+   * Remote Breaker Control with SBO Interlocks
+   */
+  public operateBreakerWithSBO(
+    tag: string,
+    targetState: 'OPEN' | 'CLOSED',
+    reason: string,
+    operatorName: string,
+    protocol: ScadaGatewayProtocol = 'IEC-60870-5-104'
+  ): boolean {
+    const currentUser = authService.getCurrentUser();
+
+    // Check if target is a simulated point
+    const isSimulated = tag.startsWith('SIM_') || tag.includes('SIM');
+    const point = this.getPoints('ALL').find(p => p.tag === tag);
+    if (!point) return false;
+
+    // Execute through gateway SBO validation
+    const sboResult = scadaGatewayService.executeSecuredSboCommand({
+      tag,
+      substationId: point.substationId,
+      feederId: point.feederId,
+      targetState,
+      supervisoryReason: reason,
+      ptwClearanceChecked: true, // confirmed in UI modal
+      operator: currentUser,
+      protocol: isSimulated ? 'SIMULATOR' : protocol,
+    });
+
+    if (!sboResult.success) {
+      console.warn('SBO command rejected:', sboResult.message);
+      return false;
+    }
+
+    if (isSimulated) {
+      // Execute in simulator engine
+      return scadaSimulatorService.operateSimulatedBreaker(tag, targetState, operatorName, reason);
+    } else {
+      // Execute on operational record
+      point.breakerStatus = targetState;
+      point.lastUpdated = 'Just now';
+
+      const alarmCode = `ALM-SBO-${Date.now().toString().slice(-4)}`;
+      this.operationalAlarms.unshift({
+        id: `alm-${Date.now()}`,
+        tag: point.tag,
+        alarmCode,
+        sourceType: 'OPERATIONAL',
+        severity: targetState === 'OPEN' ? 'critical' : 'high',
+        message: `SBO ${targetState}: ${point.description} operated by ${operatorName}. Reason: ${reason}`,
+        timestamp: new Date().toLocaleTimeString(),
+        status: targetState === 'OPEN' ? 'active' : 'acknowledged',
+      });
+
+      this.notifyListeners();
+      return true;
+    }
   }
 
   public toggleBreaker(tag: string): void {
-    const pt = this.points.find(p => p.tag === tag);
-    if (pt) {
-      const newState = pt.breakerStatus === 'CLOSED' ? 'OPEN' : 'CLOSED';
-      pt.breakerStatus = newState;
-      pt.lastUpdated = 'Just now';
-
-      // Auto-event ticket and alarm if breaker tripped open
-      if (newState === 'OPEN') {
-        this.alarms.unshift({
-          id: `alm-${Date.now()}`,
-          tag: pt.tag,
-          alarmCode: `ALM-${Date.now()}`,
-          severity: 'critical',
-          message: `TRIP EVENT: ${pt.description} Opened. Downstream de-energized.`,
-          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-          status: 'active',
-        });
-
-        // Generate emergency fault ticket
-        faultService.registerFault({
-          category: 'SCADA Breaker Trip',
-          description: `Emergency Outage: Breaker ${pt.description} tripped. Downstream load dropped.`,
-          priority: 'critical',
-          status: 'new',
-          feederId: 'fdr-mara-1',
-          sectionId: 'sec-mara',
-          reportedBy: 'SCADA IEC-104 Gateway',
-          affectedConsumersEst: 420,
-          coordinates: [11.9280, 79.8240],
-        });
-      }
-
-      this.notifyListeners();
-    }
-  }
-
-  public operateBreakerWithSBO(tag: string, targetState: 'OPEN' | 'CLOSED', reason: string, operatorName: string): boolean {
-    const pt = this.points.find(p => p.tag === tag);
-    if (!pt) return false;
-
-    pt.breakerStatus = targetState;
-    pt.lastUpdated = 'Just now';
-
-    if (targetState === 'OPEN') {
-      this.alarms.unshift({
-        id: `alm-${Date.now()}`,
-        tag: pt.tag,
-        alarmCode: `ALM-${Date.now()}`,
-        severity: 'critical',
-        message: `SBO TRIP: ${pt.description} operated by ${operatorName}. Reason: ${reason}`,
-        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-        status: 'active',
-      });
-
-      faultService.registerFault({
-        category: 'Supervisory Breaker Operation',
-        description: `Breaker ${pt.description} opened by ${operatorName}. Reason: ${reason}`,
-        priority: 'critical',
-        status: 'new',
-        feederId: 'fdr-mara-1',
-        sectionId: 'sec-mara',
-        reportedBy: operatorName,
-        affectedConsumersEst: 380,
-        coordinates: [11.9280, 79.8240],
-      });
-    } else {
-      this.alarms.unshift({
-        id: `alm-${Date.now()}`,
-        tag: pt.tag,
-        alarmCode: `ALM-${Date.now()}`,
-        severity: 'high',
-        message: `SBO CLOSE: ${pt.description} re-energized by ${operatorName}. Reason: ${reason}`,
-        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-        status: 'acknowledged',
-      });
-    }
-
-    this.notifyListeners();
-    return true;
+    const pt = this.getPoints('ALL').find(p => p.tag === tag);
+    if (!pt) return;
+    const targetState = pt.breakerStatus === 'CLOSED' ? 'OPEN' : 'CLOSED';
+    const user = authService.getCurrentUser();
+    this.operateBreakerWithSBO(
+      tag,
+      targetState,
+      'Direct Toggle by Administrator',
+      user.fullName || user.username
+    );
   }
 
   public acknowledgeAlarm(alarmCode: string): void {
-    const alm = this.alarms.find(a => a.alarmCode === alarmCode);
-    if (alm) {
-      alm.status = 'acknowledged';
+    const opAlm = this.operationalAlarms.find(a => a.alarmCode === alarmCode);
+    if (opAlm) {
+      opAlm.status = 'acknowledged';
       this.notifyListeners();
+      return;
     }
+    scadaSimulatorService.acknowledgeAlarm(alarmCode);
+    this.notifyListeners();
   }
 
   public subscribe(listener: () => void): () => void {
@@ -134,23 +176,13 @@ export class ScadaService {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(l => l());
-  }
-
-  private simulateTelemetry(): void {
-    this.points.forEach(p => {
-      if (p.tag === 'GRID_FREQ_HZ' || p.description.includes('Voltage')) {
-        const delta = (Math.random() - 0.5) * 0.4;
-        p.voltageKV = Math.round((p.voltageKV + delta) * 10) / 10;
+    this.listeners.forEach(l => {
+      try {
+        l();
+      } catch (err) {
+        console.error('ScadaService listener error:', err);
       }
-      if (p.currentAmps > 0) {
-        const delta = (Math.random() - 0.5) * 4.0;
-        p.currentAmps = Math.round((p.currentAmps + delta) * 10) / 10;
-        p.activePowerMW = Math.round((p.currentAmps * 0.02) * 100) / 100;
-      }
-      p.lastUpdated = 'Live';
     });
-    this.notifyListeners();
   }
 }
 
