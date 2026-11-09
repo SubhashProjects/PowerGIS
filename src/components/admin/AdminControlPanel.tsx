@@ -648,7 +648,7 @@ export const AdminControlPanel: React.FC = () => {
                     <span>Import Spatial Dataset</span>
                   </div>
                   <p className="text-slate-600 text-xs leading-relaxed">
-                    Upload GeoJSON (<code className="text-slate-900 font-bold">.geojson</code>), CSV (<code className="text-slate-900 font-bold">.csv</code>), or System Snapshot (<code className="text-slate-900 font-bold">.json</code>). Assets are parsed, validated, and immediately rendered onto the live GIS Master Map.
+                    Upload KML (<code className="text-slate-900 font-bold">.kml</code>), GeoJSON (<code className="text-slate-900 font-bold">.geojson</code>), CSV / Excel (<code className="text-slate-900 font-bold">.csv</code>), or System Snapshot (<code className="text-slate-900 font-bold">.json</code>). Feeders (lines), DTs, and poles are parsed and immediately rendered onto the live GIS Master Map.
                   </p>
                 </div>
 
@@ -656,7 +656,7 @@ export const AdminControlPanel: React.FC = () => {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".geojson,.json,.csv"
+                    accept=".kml,.geojson,.json,.csv"
                     onChange={handleFileUpload}
                     className="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-black cursor-pointer transition-all"
                   />

@@ -3,16 +3,47 @@
 // GIS LAYER TREE CONTROLLER & OPACITY - PURE WHITE THEME
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useGIS } from '../../context/GISContext';
-import { Sliders, Eye, EyeOff, ChevronDown, X } from 'lucide-react';
+import { dataExchangeService } from '../../services/dataExchangeService';
+import { Sliders, Eye, EyeOff, ChevronDown, X, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const LayerTree: React.FC = () => {
   const { layers, toggleLayer } = useGIS();
   const [isOpen, setIsOpen] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<{ message: string; isError?: boolean } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const categories = ['Assets', 'Network', 'Customers', 'Operations'];
   const activeCount = layers.filter(l => l.visible).length;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const result = await dataExchangeService.importSpatialFile(file);
+      if (result.success) {
+        setUploadStatus({
+          message: `✓ ${result.message} (${result.importedCount} assets added to map)`,
+          isError: false,
+        });
+      } else {
+        setUploadStatus({
+          message: `✗ Import error: ${result.message}`,
+          isError: true,
+        });
+      }
+    } catch (err: any) {
+      setUploadStatus({
+        message: `✗ Error: ${err.message}`,
+        isError: true,
+      });
+    }
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    setTimeout(() => setUploadStatus(null), 8000);
+  };
 
   return (
     <div className="absolute top-4 left-4 z-[1000] select-none">
@@ -42,6 +73,23 @@ export const LayerTree: React.FC = () => {
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
+
+            {uploadStatus && (
+              <div
+                className={`mb-2.5 p-2 rounded-xl border text-[11px] font-mono leading-tight flex items-start space-x-1.5 ${
+                  uploadStatus.isError
+                    ? 'bg-rose-50 text-rose-800 border-rose-200'
+                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                }`}
+              >
+                {uploadStatus.isError ? (
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-600 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                )}
+                <span>{uploadStatus.message}</span>
+              </div>
+            )}
 
             <div className="space-y-3">
               {categories.map(cat => {
@@ -90,6 +138,28 @@ export const LayerTree: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+
+            {/* Quick Upload Map Layer Button */}
+            <div className="mt-3 pt-2.5 border-t border-slate-100">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".kml,.geojson,.json,.csv"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+              >
+                <Upload className="w-3.5 h-3.5 text-cyan-300" />
+                <span>Upload Layer (KML, GeoJSON, CSV)</span>
+              </button>
+              <span className="block text-[9.5px] text-slate-400 font-mono text-center mt-1">
+                Supports Feeders (Lines), DTs & Poles (Points)
+              </span>
             </div>
           </div>
         )}

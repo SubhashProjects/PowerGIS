@@ -365,6 +365,39 @@ async function runTestSuite() {
     const csvRes = await dataExchangeService.importSpatialFile(csvFile);
     assert(csvRes.success === true, 'CSV file processing succeeds');
     assert(csvRes.importedCount === 2, 'Imports 2 records from CSV file');
+
+    // 4. KML LineString (Feeder) & Point (DT) Parsing
+    const kmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Placemark>
+      <name>KML 11kV Feeder Line</name>
+      <description>11kV Distribution Line</description>
+      <LineString>
+        <coordinates>
+          79.8240,11.9340,0 79.8250,11.9350,0 79.8260,11.9360,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+    <Placemark>
+      <name>KML 250kVA Distribution Transformer</name>
+      <description>Distribution Transformer DT-99</description>
+      <Point>
+        <coordinates>79.8255,11.9355,0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>`;
+    const kmlFile = {
+      name: 'network_feeders_dt.kml',
+      text: async () => kmlContent,
+    } as unknown as File;
+
+    const kmlRes = await dataExchangeService.importSpatialFile(kmlFile);
+    assert(kmlRes.success === true, 'KML file processing succeeds');
+    assert(kmlRes.importedCount === 2, 'Imports 2 spatial assets (1 Feeder Line + 1 DT) from KML');
+    assert(assetService.getFeeders().some(f => f.name === 'KML 11kV Feeder Line'), 'Imported KML Feeder LineString is present in feeder registry');
+    assert(assetService.getTransformers().some(t => t.name === 'KML 250kVA Distribution Transformer'), 'Imported KML DT Point is present in transformer registry');
   }
 
   // --------------------------------------------------------------------------

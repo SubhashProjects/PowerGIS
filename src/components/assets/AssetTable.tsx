@@ -63,7 +63,7 @@ export const AssetTable: React.FC = () => {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".geojson,.json,.csv"
+            accept=".kml,.geojson,.json,.csv"
             onChange={handleImportFile}
             className="hidden"
           />
@@ -72,10 +72,10 @@ export const AssetTable: React.FC = () => {
           <button
             onClick={() => fileInputRef.current?.click()}
             className="px-3.5 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-xs font-semibold text-neutral-800 flex items-center space-x-1.5 transition-all"
-            title="Import GeoJSON or CSV directly into asset registry"
+            title="Import KML, GeoJSON or CSV directly into asset registry"
           >
             <Upload className="w-3.5 h-3.5 text-neutral-700" />
-            <span>Import Dataset</span>
+            <span>Import Spatial Dataset</span>
           </button>
 
           {/* Export GeoJSON Button */}

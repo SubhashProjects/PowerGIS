@@ -38,6 +38,10 @@ export class AssetService {
     return this.substations.filter(s => authService.isWithinJurisdiction(s));
   }
 
+  public addSubstation(substation: Substation): void {
+    this.substations.push(substation);
+  }
+
   // --- Feeders ---
   public getFeeders(): Feeder[] {
     return this.feeders.filter(f => authService.isWithinJurisdiction(f));
@@ -47,9 +51,17 @@ export class AssetService {
     return this.feeders.find(f => f.id === id);
   }
 
+  public addFeeder(feeder: Feeder): void {
+    this.feeders.push(feeder);
+  }
+
   // --- Transformers ---
   public getTransformers(): Transformer[] {
     return this.transformers.filter(t => authService.isWithinJurisdiction(t));
+  }
+
+  public addTransformer(transformer: Transformer): void {
+    this.transformers.push(transformer);
   }
 
   public getTransformerById(id: string): Transformer | undefined {

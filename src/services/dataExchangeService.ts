@@ -587,12 +587,264 @@ export class DataExchangeService {
         };
       }
 
+      // D. If it's a KML file (.kml)
+      if (fileName.endsWith('.kml')) {
+        interface KmlItem {
+          name: string;
+          desc: string;
+          pointCoords?: [number, number]; // [lat, lng]
+          lineCoords?: [number, number][]; // LineString [lat, lng]
+        }
+
+        const items: KmlItem[] = [];
+
+        if (typeof DOMParser !== 'undefined') {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(content, 'text/xml');
+          const placemarks = Array.from(xmlDoc.getElementsByTagName('Placemark'));
+
+          placemarks.forEach((pm, idx) => {
+            const name = pm.getElementsByTagName('name')[0]?.textContent?.trim() || `Asset-${idx + 1}`;
+            const desc = pm.getElementsByTagName('description')[0]?.textContent?.trim() || '';
+
+            const lineEl = pm.getElementsByTagName('LineString')[0];
+            let lineCoords: [number, number][] | undefined;
+            if (lineEl) {
+              const rawCoords = lineEl.getElementsByTagName('coordinates')[0]?.textContent?.trim();
+              if (rawCoords) {
+                const coordTokens = rawCoords.split(/\s+/).filter(Boolean);
+                const coords: [number, number][] = [];
+                coordTokens.forEach(t => {
+                  const parts = t.split(',').map(parseFloat);
+                  if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    coords.push([parts[1], parts[0]]);
+                  }
+                });
+                if (coords.length >= 2) lineCoords = coords;
+              }
+            }
+
+            const pointEl = pm.getElementsByTagName('Point')[0];
+            let pointCoords: [number, number] | undefined;
+            if (pointEl) {
+              const rawCoords = pointEl.getElementsByTagName('coordinates')[0]?.textContent?.trim();
+              if (rawCoords) {
+                const parts = rawCoords.split(/[\s,]+/).map(parseFloat);
+                if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                  pointCoords = [parts[1], parts[0]];
+                }
+              }
+            }
+
+            if (pointCoords || lineCoords) {
+              items.push({ name, desc, pointCoords, lineCoords });
+            }
+          });
+        } else {
+          // Robust regex fallback for Node.js / test environments
+          const placemarkRegex = /<Placemark[\s\S]*?<\/Placemark>/gi;
+          const pmBlocks = content.match(placemarkRegex) || [];
+
+          pmBlocks.forEach((block, idx) => {
+            const nameMatch = block.match(/<name>(.*?)<\/name>/i);
+            const name = nameMatch ? nameMatch[1].trim() : `Asset-${idx + 1}`;
+            const descMatch = block.match(/<description>(.*?)<\/description>/i);
+            const desc = descMatch ? descMatch[1].trim() : '';
+
+            // LineString
+            let lineCoords: [number, number][] | undefined;
+            if (block.includes('<LineString>')) {
+              const coordMatch = block.match(/<LineString>[\s\S]*?<coordinates>([\s\S]*?)<\/coordinates>/i);
+              if (coordMatch) {
+                const tokens = coordMatch[1].trim().split(/\s+/).filter(Boolean);
+                const coords: [number, number][] = [];
+                tokens.forEach(t => {
+                  const parts = t.split(',').map(parseFloat);
+                  if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    coords.push([parts[1], parts[0]]);
+                  }
+                });
+                if (coords.length >= 2) lineCoords = coords;
+              }
+            }
+
+            // Point
+            let pointCoords: [number, number] | undefined;
+            if (block.includes('<Point>')) {
+              const coordMatch = block.match(/<Point>[\s\S]*?<coordinates>([\s\S]*?)<\/coordinates>/i);
+              if (coordMatch) {
+                const parts = coordMatch[1].trim().split(/[\s,]+/).map(parseFloat);
+                if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                  pointCoords = [parts[1], parts[0]];
+                }
+              }
+            }
+
+            if (pointCoords || lineCoords) {
+              items.push({ name, desc, pointCoords, lineCoords });
+            }
+          });
+        }
+
+        if (items.length === 0) {
+          return {
+            success: false,
+            importedCount: 0,
+            duplicateCount: 0,
+            errorCount: 1,
+            message: 'No Placemarks found in KML file.',
+            details: ['Ensure KML file contains <Placemark> with <Point> or <LineString> geometries.'],
+          };
+        }
+
+        items.forEach((item, idx) => {
+          try {
+            const { name, desc, pointCoords, lineCoords } = item;
+
+            // 1. LineString Geometry -> Feeder Line / Cable Route
+            if (lineCoords && lineCoords.length >= 2) {
+              if (assetService.getFeeders().some(f => f.name.toLowerCase() === name.toLowerCase())) {
+                duplicateCount++;
+                return;
+              }
+
+              const isHT = /22kv|33kv|ht/i.test(name) || /22kv|33kv|ht/i.test(desc);
+              const newFeeder: Feeder = {
+                id: `fdr-kml-${Date.now()}-${idx}`,
+                code: `FDR-KML-${idx + 1}`,
+                name,
+                substationId: 'ss-mara',
+                voltageClass: isHT ? '22kV' : '11kV',
+                conductorType: 'Dog ACSR (100 sq mm)',
+                lengthKm: Math.round((lineCoords.length * 0.12) * 10) / 10,
+                peakLoadAmps: 185,
+                ratedCapacityAmps: 350,
+                isEnergized: true,
+                status: 'operational',
+                regionId: 'reg-pdy',
+                divisionId: 'div-urban',
+                sectionId: 'sec-mara',
+                coordinates: lineCoords,
+              };
+
+              assetService.addFeeder(newFeeder);
+              importedCount++;
+              details.push(`Imported Feeder Line: ${name} (${lineCoords.length} vertices)`);
+              return;
+            }
+
+            // 2. Point Geometry -> Transformer (DT), Substation, or Utility Pole
+            if (pointCoords) {
+              const lat = pointCoords[0];
+              const lng = pointCoords[1];
+
+              const isDT = /transformer|dtr|dt\b|kva|distribution/i.test(name) || /transformer|dtr|kva/i.test(desc);
+              const isSS = /substation|switchyard|110kv|230kv|66kv/i.test(name) || /substation/i.test(desc);
+
+              if (isDT) {
+                if (assetService.getTransformers().some(t => t.name.toLowerCase() === name.toLowerCase())) {
+                  duplicateCount++;
+                  return;
+                }
+                const newDT: Transformer = {
+                  id: `dt-kml-${Date.now()}-${idx}`,
+                  code: `DT-KML-${idx + 1}`,
+                  name,
+                  capacityKVA: 250,
+                  voltageRatio: '11/0.433kV',
+                  loadPercentage: 68,
+                  coordinates: [lat, lng],
+                  serialNumber: `SN-KML-${Date.now().toString().slice(-6)}-${idx}`,
+                  installationDate: new Date().toISOString().split('T')[0],
+                  make: 'Voltamp Transformers',
+                  phaseImbalancePct: 3.2,
+                  oilLevelPct: 94,
+                  hasOilLeakage: false,
+                  feederId: 'fdr-mara-1',
+                  regionId: 'reg-pdy',
+                  divisionId: 'div-urban',
+                  sectionId: 'sec-mara',
+                  jeJurisdictionId: 'jur-mara-1',
+                  status: 'operational',
+                };
+                assetService.addTransformer(newDT);
+                importedCount++;
+                details.push(`Imported Distribution Transformer (DT): ${name} at [${lat.toFixed(4)}, ${lng.toFixed(4)}]`);
+              } else if (isSS) {
+                if (assetService.getSubstations().some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                  duplicateCount++;
+                  return;
+                }
+                const newSS: Substation = {
+                  id: `ss-kml-${Date.now()}-${idx}`,
+                  code: `SS-KML-${idx + 1}`,
+                  name,
+                  voltageClass: '110kV',
+                  capacityMVA: 80,
+                  numFeeders: 8,
+                  coordinates: [lat, lng],
+                  commissionDate: new Date().toISOString().split('T')[0],
+                  status: 'operational',
+                  regionId: 'reg-pdy',
+                  divisionId: 'div-urban',
+                  sectionId: 'sec-mara',
+                };
+                assetService.addSubstation(newSS);
+                importedCount++;
+                details.push(`Imported Substation: ${name} at [${lat.toFixed(4)}, ${lng.toFixed(4)}]`);
+              } else {
+                // Default to Utility Pole
+                if (assetService.getPoles().some(p => p.poleNumber.toLowerCase() === name.toLowerCase())) {
+                  duplicateCount++;
+                  return;
+                }
+                const newPole: Pole = {
+                  id: `pole-kml-${Date.now()}-${idx}`,
+                  code: `POL-KML-${idx + 1}`,
+                  poleNumber: name,
+                  poleType: 'PSCC 9m',
+                  material: 'PSCC',
+                  heightMeters: 9,
+                  coordinates: [lat, lng],
+                  installationDate: new Date().toISOString().split('T')[0],
+                  condition: 'Good',
+                  numInsulators: 3,
+                  hasStreetlight: false,
+                  feederId: 'fdr-mara-1',
+                  status: 'operational',
+                  regionId: 'reg-pdy',
+                  divisionId: 'div-urban',
+                  sectionId: 'sec-mara',
+                  jeJurisdictionId: 'jur-mara-1',
+                };
+                assetService.addPole(newPole);
+                importedCount++;
+                details.push(`Imported Utility Pole: ${name} at [${lat.toFixed(4)}, ${lng.toFixed(4)}]`);
+              }
+              return;
+            }
+          } catch (pmErr: any) {
+            errorCount++;
+            details.push(`Error parsing Placemark #${idx + 1}: ${pmErr.message}`);
+          }
+        });
+
+        return {
+          success: true,
+          importedCount,
+          duplicateCount,
+          errorCount,
+          message: `KML Import Complete: ${importedCount} spatial assets created, ${duplicateCount} duplicates skipped.`,
+          details,
+        };
+      }
+
       return {
         success: false,
         importedCount: 0,
         duplicateCount: 0,
         errorCount: 1,
-        message: 'Unsupported file format. Please upload a GeoJSON (.geojson), CSV (.csv), or PowerGIS JSON snapshot (.json).',
+        message: 'Unsupported file format. Please upload a KML (.kml), GeoJSON (.geojson), CSV (.csv), or PowerGIS JSON snapshot (.json).',
         details: [`Detected file: ${file.name}`],
       };
     } catch (err: any) {
