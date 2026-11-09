@@ -4,7 +4,7 @@
 // PURE WHITE THEME • FUNCTIONAL CSV/GEOJSON EXPORT & SPATIAL IMPORT
 // ============================================================================
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
 import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
 import { useAuth } from '../../context/AuthContext';
@@ -19,6 +19,14 @@ export const AssetTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Subscribe to AssetService updates (e.g. uploads or simulator mode toggles)
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setRefreshKey(prev => prev + 1);
+    });
+    return unsub;
+  }, []);
 
   const transformers = assetService.getTransformers();
   const feeders = assetService.getFeeders();
@@ -333,6 +341,27 @@ export const AssetTable: React.FC = () => {
                     </td>
                   </tr>
                 ))}
+
+              {/* Clean Mode Empty State */}
+              {((activeTab === 'transformers' && transformers.length === 0) ||
+                (activeTab === 'feeders' && feeders.length === 0) ||
+                (activeTab === 'poles' && poles.length === 0) ||
+                (activeTab === 'consumers' && consumers.length === 0) ||
+                (activeTab === 'substations' && substations.length === 0)) && (
+                <tr>
+                  <td colSpan={8} className="p-8 text-center text-slate-500 font-sans">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <Zap className="w-5 h-5" />
+                      </div>
+                      <p className="font-semibold text-sm text-slate-700">No {activeTab} loaded in current view</p>
+                      <p className="text-xs text-slate-400 max-w-md">
+                        Operating in clean operational mode (test/dummy grid data is hidden). Upload a KML, GeoJSON, or CSV layer above, or turn ON the Simulator to stream test assets.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

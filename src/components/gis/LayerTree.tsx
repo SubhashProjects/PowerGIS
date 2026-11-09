@@ -3,16 +3,25 @@
 // GIS LAYER TREE CONTROLLER & OPACITY - PURE WHITE THEME
 // ============================================================================
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGIS } from '../../context/GISContext';
+import { assetService } from '../../services/assetService';
 import { dataExchangeService } from '../../services/dataExchangeService';
-import { Sliders, Eye, EyeOff, ChevronDown, X, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Sliders, Eye, EyeOff, ChevronDown, X, Upload, CheckCircle2, AlertCircle, Zap, Trash2 } from 'lucide-react';
 
 export const LayerTree: React.FC = () => {
   const { layers, toggleLayer } = useGIS();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
   const [uploadStatus, setUploadStatus] = useState<{ message: string; isError?: boolean } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimulatorActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
 
   const categories = ['Assets', 'Network', 'Customers', 'Operations'];
   const activeCount = layers.filter(l => l.visible).length;
@@ -24,6 +33,13 @@ export const LayerTree: React.FC = () => {
     try {
       const result = await dataExchangeService.importSpatialFile(file);
       if (result.success) {
+        // Ensure relevant asset layers are visible so uploaded features render immediately
+        layers.forEach(l => {
+          if (!l.visible && (l.id.includes('feeder') || l.id.includes('transformer') || l.id.includes('pole') || l.id.includes('substation'))) {
+            toggleLayer(l.id);
+          }
+        });
+
         setUploadStatus({
           message: `✓ ${result.message} (${result.importedCount} assets added to map)`,
           isError: false,
@@ -43,6 +59,22 @@ export const LayerTree: React.FC = () => {
 
     if (fileInputRef.current) fileInputRef.current.value = '';
     setTimeout(() => setUploadStatus(null), 8000);
+  };
+
+  const handleToggleSimulator = () => {
+    const next = assetService.toggleSimulatorMode();
+    setIsSimulatorActive(next);
+  };
+
+  const handleClearUserLayers = () => {
+    if (confirm('Are you sure you want to clear all uploaded spatial layers from the map?')) {
+      assetService.clearUserAssets();
+      setUploadStatus({
+        message: '✓ All uploaded map layers cleared.',
+        isError: false,
+      });
+      setTimeout(() => setUploadStatus(null), 4000);
+    }
   };
 
   return (
@@ -140,8 +172,8 @@ export const LayerTree: React.FC = () => {
               })}
             </div>
 
-            {/* Quick Upload Map Layer Button */}
-            <div className="mt-3 pt-2.5 border-t border-slate-100">
+            {/* Quick Upload Map Layer Button & Simulator Toggle */}
+            <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-2">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -157,9 +189,38 @@ export const LayerTree: React.FC = () => {
                 <Upload className="w-3.5 h-3.5 text-cyan-300" />
                 <span>Upload Layer (KML, GeoJSON, CSV)</span>
               </button>
-              <span className="block text-[9.5px] text-slate-400 font-mono text-center mt-1">
+              <span className="block text-[9.5px] text-slate-400 font-mono text-center">
                 Supports Feeders (Lines), DTs & Poles (Points)
               </span>
+
+              {/* In-Map Simulator Toggle Pill ("Where to ON it") */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span className="text-[11px] font-semibold text-slate-700 flex items-center space-x-1">
+                  <Zap className="w-3 h-3 text-amber-500" />
+                  <span>Test Grid Dummy Data:</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleToggleSimulator}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold border transition-all cursor-pointer ${
+                    isSimulatorActive
+                      ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-2xs'
+                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                  }`}
+                >
+                  {isSimulatorActive ? '⚡ SIMULATOR: ON' : 'SIMULATOR: OFF'}
+                </button>
+              </div>
+
+              {/* Clear Uploaded Layers Button */}
+              <button
+                type="button"
+                onClick={handleClearUserLayers}
+                className="w-full py-1.5 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10.5px] font-semibold flex items-center justify-center space-x-1 transition-all cursor-pointer"
+              >
+                <Trash2 className="w-3 h-3 text-rose-600" />
+                <span>Clear Uploaded Map Layers</span>
+              </button>
             </div>
           </div>
         )}

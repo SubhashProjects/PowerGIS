@@ -4,8 +4,9 @@
 // PURE WHITE THEME • FULL USER CRUD • PERSONA IMPERSONATION • SPATIAL IMPORT/EXPORT
 // ============================================================================
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { assetService } from '../../services/assetService';
 import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
 import { ROLES_REGISTRY } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
@@ -14,7 +15,7 @@ import { initialRegions, initialDivisions, initialSections } from '../../service
 import {
   Settings, Database, Download, Upload, CheckCircle2, AlertTriangle,
   RotateCcw, Shield, HardDrive, FileUp, FileCode, FileSpreadsheet, Map, X, Check,
-  Users, UserPlus, Pencil, Trash2, LogIn, Search, Filter, RefreshCw, UserCheck, Key, Phone, Mail, Building
+  Users, UserPlus, Pencil, Trash2, LogIn, Search, Filter, RefreshCw, UserCheck, Key, Phone, Mail, Building, Zap
 } from 'lucide-react';
 
 export const AdminControlPanel: React.FC = () => {
@@ -32,6 +33,19 @@ export const AdminControlPanel: React.FC = () => {
 
   // Active Main Sub-Tab in Admin Panel
   const [activeTab, setActiveTab] = useState<'users' | 'migration' | 'features'>('users');
+  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimulatorActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
+
+  const handleToggleSimulator = () => {
+    const next = assetService.toggleSimulatorMode();
+    setIsSimulatorActive(next);
+  };
 
   // Search & Filters for User Management
   const [userSearchQuery, setUserSearchQuery] = useState('');
@@ -856,6 +870,48 @@ export const AdminControlPanel: React.FC = () => {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Master Grid & SCADA Simulator Mode Card ("Where to ON it") */}
+          <div className="lg:col-span-2 bg-gradient-to-r from-amber-50/70 via-white to-amber-50/70 border border-amber-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center space-x-3.5">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white shadow-md flex-shrink-0 ${
+                isSimulatorActive ? 'bg-amber-500 shadow-amber-500/20 animate-pulse' : 'bg-slate-400 shadow-slate-400/20'
+              }`}>
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Master Grid & SCADA Simulator Engine
+                  </h3>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase border ${
+                    isSimulatorActive
+                      ? 'bg-amber-100 text-amber-800 border-amber-300'
+                      : 'bg-slate-200 text-slate-600 border-slate-300'
+                  }`}>
+                    {isSimulatorActive ? 'ACTIVE (ON)' : 'INACTIVE (OFF)'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                  Controls whether pre-seeded test electrical grid assets (Substations, 11kV/22kV Feeders, DTs, Poles) and SCADA dynamic telemetry appear on the GIS Map and Dashboards.
+                  When <b>OFF</b>, PowerGIS operates in clean operational mode showing <b>only</b> user-uploaded/imported assets.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleToggleSimulator}
+              className={`px-5 py-2.5 rounded-2xl text-xs font-mono font-bold transition-all flex items-center space-x-2 flex-shrink-0 cursor-pointer shadow-md ${
+                isSimulatorActive
+                  ? 'bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 shadow-rose-500/10'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/25 ring-1 ring-blue-400/30'
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              <span>{isSimulatorActive ? 'Turn OFF Simulator' : '⚡ Turn ON Simulator'}</span>
+            </button>
           </div>
         </div>
       )}

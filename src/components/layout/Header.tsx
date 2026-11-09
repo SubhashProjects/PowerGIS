@@ -28,7 +28,21 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Subscribe to simulator mode changes
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimulatorActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
+
+  const handleToggleSimulator = () => {
+    const next = assetService.toggleSimulatorMode();
+    setIsSimulatorActive(next);
+  };
 
   // Global Ctrl + K Keyboard Shortcut listener
   useEffect(() => {
@@ -213,6 +227,31 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
               </div>
             )}
           </div>
+
+          {/* Master Grid & SCADA Simulator Mode Toggle ("Where to ON it") */}
+          <button
+            onClick={handleToggleSimulator}
+            title={
+              isSimulatorActive
+                ? 'Simulator ACTIVE: Streaming simulated test grid & SCADA telemetry. Click to turn OFF (Clean Real Mode).'
+                : 'Simulator OFF: Clean real operational mode. Click to turn ON simulated test grid & telemetry.'
+            }
+            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all shadow-2xs cursor-pointer ${
+              isSimulatorActive
+                ? 'bg-amber-500/10 text-amber-800 border-amber-300 hover:bg-amber-500/20 shadow-amber-500/10'
+                : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200 hover:text-slate-800'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                isSimulatorActive ? 'bg-amber-500 animate-pulse' : 'bg-slate-400'
+              }`}
+            />
+            <span className="hidden sm:inline">⚡ SIMULATOR:</span>
+            <span className={isSimulatorActive ? 'text-amber-800 font-extrabold' : 'text-slate-500'}>
+              {isSimulatorActive ? 'ON' : 'OFF'}
+            </span>
+          </button>
 
           {/* Region Switcher */}
           <div className="relative">

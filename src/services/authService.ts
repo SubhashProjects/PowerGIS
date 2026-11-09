@@ -491,6 +491,9 @@ export class AuthService {
     jeJurisdictionId?: string;
     contractorId?: string;
   }): boolean {
+    if ((entity as any).isUserUploaded || (entity as any).isImported) {
+      return true;
+    }
     const user = this.currentUser;
     if (user.role === 'super_admin' || user.role === 'gis_admin' || user.role === 'auditor') {
       return true;

@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { assetService } from '../../services/assetService';
 import { scadaService } from '../../services/scadaService';
 import { scadaGatewayService } from '../../services/scadaGatewayService';
 import { ScadaTelemetryPoint, ScadaAlarm, ScadaGatewayProtocol, ScadaConnectionStatus } from '../../types/operations';
@@ -36,6 +37,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
   );
   const [gatewayStats, setGatewayStats] = useState(scadaGatewayService.getStats());
   const [showStatusMenu, setShowStatusMenu] = useState<boolean>(false);
+  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
 
   useEffect(() => {
     const unsubScada = scadaService.subscribe(() => {
@@ -46,11 +48,20 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       setConnectionStatus(scadaGatewayService.getConnectionStatus());
       setGatewayStats(scadaGatewayService.getStats());
     });
+    const unsubAsset = assetService.subscribe(() => {
+      setIsSimulatorActive(assetService.isSimulatorMode());
+    });
     return () => {
       unsubScada();
       unsubGw();
+      unsubAsset();
     };
   }, [sourceFilter]);
+
+  const handleToggleSimulator = () => {
+    const next = assetService.toggleSimulatorMode();
+    setIsSimulatorActive(next);
+  };
 
   const handleSourceFilterChange = (filter: 'ALL' | 'OPERATIONAL' | 'SIMULATOR') => {
     setSourceFilter(filter);
@@ -300,6 +311,57 @@ export const ScadaTelemetryDashboard: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Master Simulator Mode Banner ("Where to ON it") */}
+      <div
+        className={`p-3.5 sm:p-4 rounded-2xl border text-xs font-mono flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+          isSimulatorActive
+            ? 'bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-amber-300 text-amber-950 shadow-2xs'
+            : 'bg-slate-50 border-slate-200 text-slate-700'
+        }`}
+      >
+        <div className="flex items-center space-x-3">
+          <div
+            className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-white flex-shrink-0 ${
+              isSimulatorActive ? 'bg-amber-500 shadow-xs animate-pulse' : 'bg-slate-400'
+            }`}
+          >
+            <Zap className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <div className="font-bold text-slate-900 flex items-center space-x-2">
+              <span className="text-sm">SCADA Dynamic Telemetry Simulator:</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase border ${
+                  isSimulatorActive
+                    ? 'bg-amber-100 text-amber-800 border-amber-300'
+                    : 'bg-slate-200 text-slate-600 border-slate-300'
+                }`}
+              >
+                {isSimulatorActive ? 'ACTIVE (STREAMING)' : 'OFF (CLEAN MODE)'}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 font-sans mt-0.5 leading-snug">
+              {isSimulatorActive
+                ? 'Dynamic 3-phase physics simulation running. Telemetry streams into SLD, live gauges, and protocols (IEC-104 / Modbus / MQTT).'
+                : 'Operating in pure real mode (test/dummy grid data is hidden). Turn ON the simulator to stream dynamic telemetry & test scenarios.'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleToggleSimulator}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold font-mono transition-all flex items-center space-x-1.5 flex-shrink-0 cursor-pointer shadow-xs ${
+            isSimulatorActive
+              ? 'bg-white hover:bg-rose-50 text-rose-700 border border-rose-300'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          <Zap className="w-3.5 h-3.5" />
+          <span>{isSimulatorActive ? 'Turn OFF Simulator' : '⚡ Turn ON Simulator'}</span>
+        </button>
       </div>
 
       {/* SBO Execution Notice Banner */}

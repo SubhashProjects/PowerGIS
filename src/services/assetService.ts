@@ -15,16 +15,38 @@ import { authService } from './authService';
 
 export class AssetService {
   private static instance: AssetService;
-  private substations: Substation[] = [...initialSubstations];
-  private feeders: Feeder[] = [...initialFeeders];
-  private transformers: Transformer[] = [...initialTransformers];
-  private poles: Pole[] = [...initialPoles];
-  private conductors: Conductor[] = [...initialConductors];
-  private consumers: Consumer[] = [...initialConsumers];
+
+  // Simulated / Test dummy grid assets (active ONLY when simulator is ON)
+  private simulatedSubstations: Substation[] = [...initialSubstations];
+  private simulatedFeeders: Feeder[] = [...initialFeeders];
+  private simulatedTransformers: Transformer[] = [...initialTransformers];
+  private simulatedPoles: Pole[] = [...initialPoles];
+  private simulatedConductors: Conductor[] = [...initialConductors];
+  private simulatedConsumers: Consumer[] = [...initialConsumers];
+
+  // User-uploaded / Real operational assets (starts clean)
+  private userSubstations: Substation[] = [];
+  private userFeeders: Feeder[] = [];
+  private userTransformers: Transformer[] = [];
+  private userPoles: Pole[] = [];
+  private userConductors: Conductor[] = [];
+  private userConsumers: Consumer[] = [];
+
   private warranties: WarrantyRecord[] = [...initialWarranties];
   private lifecycles: EquipmentLifecycleRecord[] = [...initialLifecycles];
 
-  private constructor() {}
+  // Simulator Toggle: default FALSE (Clean Real Mode). Dummy data only appears when turned ON.
+  private isSimulatorActive: boolean = false;
+  private listeners: Array<() => void> = [];
+
+  private constructor() {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('powergis_simulator_mode');
+      if (stored === 'true') {
+        this.isSimulatorActive = true;
+      }
+    }
+  }
 
   public static getInstance(): AssetService {
     if (!AssetService.instance) {
@@ -33,74 +55,149 @@ export class AssetService {
     return AssetService.instance;
   }
 
+  // --- Simulator Mode Controls ---
+  public isSimulatorMode(): boolean {
+    return this.isSimulatorActive;
+  }
+
+  public setSimulatorMode(active: boolean): void {
+    this.isSimulatorActive = active;
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.setItem('powergis_simulator_mode', active ? 'true' : 'false');
+      window.dispatchEvent(new CustomEvent('powergis:simulator-toggled', { detail: { active } }));
+    }
+    this.notifyListeners();
+  }
+
+  public toggleSimulatorMode(): boolean {
+    const next = !this.isSimulatorActive;
+    this.setSimulatorMode(next);
+    return next;
+  }
+
+  public clearUserAssets(): void {
+    this.userSubstations = [];
+    this.userFeeders = [];
+    this.userTransformers = [];
+    this.userPoles = [];
+    this.userConductors = [];
+    this.userConsumers = [];
+    this.notifyListeners();
+  }
+
+  public subscribe(listener: () => void): () => void {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(l => {
+      try {
+        l();
+      } catch (err) {
+        console.error('AssetService listener error:', err);
+      }
+    });
+  }
+
   // --- Substations ---
-  public getSubstations(): Substation[] {
-    return this.substations.filter(s => authService.isWithinJurisdiction(s));
+  public getSubstations(includeSimulated = false): Substation[] {
+    const list = (this.isSimulatorActive || includeSimulated)
+      ? [...this.userSubstations, ...this.simulatedSubstations]
+      : [...this.userSubstations];
+    return list.filter(s => (s as any).isUserUploaded || authService.isWithinJurisdiction(s));
   }
 
   public addSubstation(substation: Substation): void {
-    this.substations.push(substation);
+    (substation as any).isUserUploaded = true;
+    this.userSubstations.push(substation);
+    this.notifyListeners();
   }
 
   // --- Feeders ---
-  public getFeeders(): Feeder[] {
-    return this.feeders.filter(f => authService.isWithinJurisdiction(f));
+  public getFeeders(includeSimulated = false): Feeder[] {
+    const list = (this.isSimulatorActive || includeSimulated)
+      ? [...this.userFeeders, ...this.simulatedFeeders]
+      : [...this.userFeeders];
+    return list.filter(f => (f as any).isUserUploaded || authService.isWithinJurisdiction(f));
   }
 
   public getFeederById(id: string): Feeder | undefined {
-    return this.feeders.find(f => f.id === id);
+    return this.userFeeders.find(f => f.id === id) || this.simulatedFeeders.find(f => f.id === id);
   }
 
   public addFeeder(feeder: Feeder): void {
-    this.feeders.push(feeder);
+    (feeder as any).isUserUploaded = true;
+    this.userFeeders.push(feeder);
+    this.notifyListeners();
   }
 
   // --- Transformers ---
-  public getTransformers(): Transformer[] {
-    return this.transformers.filter(t => authService.isWithinJurisdiction(t));
-  }
-
-  public addTransformer(transformer: Transformer): void {
-    this.transformers.push(transformer);
+  public getTransformers(includeSimulated = false): Transformer[] {
+    const list = (this.isSimulatorActive || includeSimulated)
+      ? [...this.userTransformers, ...this.simulatedTransformers]
+      : [...this.userTransformers];
+    return list.filter(t => (t as any).isUserUploaded || authService.isWithinJurisdiction(t));
   }
 
   public getTransformerById(id: string): Transformer | undefined {
-    return this.transformers.find(t => t.id === id);
+    return this.userTransformers.find(t => t.id === id) || this.simulatedTransformers.find(t => t.id === id);
+  }
+
+  public addTransformer(transformer: Transformer): void {
+    (transformer as any).isUserUploaded = true;
+    this.userTransformers.push(transformer);
+    this.notifyListeners();
   }
 
   public updateTransformerLoad(id: string, loadPct: number, oilLevelPct: number): void {
-    const t = this.transformers.find(tr => tr.id === id);
+    const t = this.getTransformerById(id);
     if (t) {
       t.loadPercentage = loadPct;
       t.oilLevelPct = oilLevelPct;
+      this.notifyListeners();
     }
   }
 
   // --- Poles ---
-  public getPoles(): Pole[] {
-    return this.poles.filter(p => authService.isWithinJurisdiction(p));
+  public getPoles(includeSimulated = false): Pole[] {
+    const list = (this.isSimulatorActive || includeSimulated)
+      ? [...this.userPoles, ...this.simulatedPoles]
+      : [...this.userPoles];
+    return list.filter(p => (p as any).isUserUploaded || authService.isWithinJurisdiction(p));
   }
 
   public getPoleById(id: string): Pole | undefined {
-    return this.poles.find(p => p.id === id);
+    return this.userPoles.find(p => p.id === id) || this.simulatedPoles.find(p => p.id === id);
   }
 
   public addPole(pole: Pole): void {
-    this.poles.push(pole);
+    (pole as any).isUserUploaded = true;
+    this.userPoles.push(pole);
+    this.notifyListeners();
   }
 
   // --- Conductors ---
-  public getConductors(): Conductor[] {
-    return this.conductors;
+  public getConductors(includeSimulated = false): Conductor[] {
+    return (this.isSimulatorActive || includeSimulated)
+      ? [...this.userConductors, ...this.simulatedConductors]
+      : [...this.userConductors];
   }
 
   // --- Consumers ---
-  public getConsumers(): Consumer[] {
-    return this.consumers.filter(c => authService.isWithinJurisdiction(c));
+  public getConsumers(includeSimulated = false): Consumer[] {
+    const list = (this.isSimulatorActive || includeSimulated)
+      ? [...this.userConsumers, ...this.simulatedConsumers]
+      : [...this.userConsumers];
+    return list.filter(c => (c as any).isUserUploaded || authService.isWithinJurisdiction(c));
   }
 
   public addConsumer(consumer: Consumer): void {
-    this.consumers.push(consumer);
+    (consumer as any).isUserUploaded = true;
+    this.userConsumers.push(consumer);
+    this.notifyListeners();
   }
 
   public getSmartMeters(): Consumer[] {

@@ -40,7 +40,11 @@ export class FaultService {
     let nearestPoleCode: string | undefined;
     let minPoleDist = Infinity;
 
-    assetService.getPoles().forEach(p => {
+    const poles = assetService.getPoles().length > 0
+      ? assetService.getPoles()
+      : assetService.getPoles(true);
+
+    poles.forEach(p => {
       const d = calculateHaversineDistance(point[0], point[1], p.coordinates[0], p.coordinates[1]);
       if (d < minPoleDist) {
         minPoleDist = d;
@@ -54,7 +58,11 @@ export class FaultService {
     let nearestDtCode: string | undefined;
     let minDtDist = Infinity;
 
-    assetService.getTransformers().forEach(t => {
+    const transformers = assetService.getTransformers().length > 0
+      ? assetService.getTransformers()
+      : assetService.getTransformers(true);
+
+    transformers.forEach(t => {
       const d = calculateHaversineDistance(point[0], point[1], t.coordinates[0], t.coordinates[1]);
       if (d < minDtDist) {
         minDtDist = d;

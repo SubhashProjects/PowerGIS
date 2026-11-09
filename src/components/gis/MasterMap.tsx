@@ -64,6 +64,7 @@ export const MasterMap: React.FC = () => {
   const featureGroupRef = useRef<L.FeatureGroup | null>(null);
   const measureGroupRef = useRef<L.FeatureGroup | null>(null);
   const [currentZoom, setCurrentZoom] = useState<number>(13);
+  const [assetVersion, setAssetVersion] = useState<number>(0);
 
   const {
     currentBasemap,
@@ -82,6 +83,37 @@ export const MasterMap: React.FC = () => {
   useEffect(() => {
     bearingRef.current = bearing;
   }, [bearing]);
+
+  // Subscribe to AssetService updates (e.g. user spatial uploads or simulator toggles)
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setAssetVersion(v => v + 1);
+    });
+    return unsub;
+  }, []);
+
+  // Listen for Spatial Dataset Import Events and Auto-Zoom (fitBounds)
+  useEffect(() => {
+    const handleSpatialImported = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && customEvent.detail.bounds && mapInstanceRef.current) {
+        const bounds = customEvent.detail.bounds;
+        try {
+          mapInstanceRef.current.fitBounds(bounds, {
+            padding: [60, 60],
+            maxZoom: 16,
+          });
+        } catch (err) {
+          console.warn('Map fitBounds error:', err);
+        }
+      }
+    };
+
+    window.addEventListener('powergis:spatial-imported', handleSpatialImported);
+    return () => {
+      window.removeEventListener('powergis:spatial-imported', handleSpatialImported);
+    };
+  }, []);
 
   // Initialize Map
   useEffect(() => {
@@ -559,7 +591,7 @@ export const MasterMap: React.FC = () => {
       `);
       fg.addLayer(polygon);
     }
-  }, [layers, user, currentZoom]);
+  }, [layers, user, currentZoom, assetVersion]);
 
   // Handle Measurement Drawing
   useEffect(() => {
