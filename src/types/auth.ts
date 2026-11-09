@@ -63,7 +63,6 @@ export interface UserProfile {
   id: string;
   username: string;
   email: string;
-  password?: string;
   fullName: string;
   role: OfficialRole;
   designation: string;

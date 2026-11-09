@@ -203,6 +203,13 @@ export interface ScadaSimulationConfig {
   windingTempAlarmThresholdC: number;
 }
 
+export type ScadaConnectionStatus =
+  | 'LIVE_CONNECTED'
+  | 'SIMULATOR_CONNECTED'
+  | 'DISCONNECTED'
+  | 'STALE_TELEMETRY'
+  | 'COMM_FAILURE';
+
 export type ScadaGatewayProtocol =
   | 'IEC-60870-5-104'
   | 'MODBUS-TCP'

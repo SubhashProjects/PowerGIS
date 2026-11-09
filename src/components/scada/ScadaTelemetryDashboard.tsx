@@ -9,12 +9,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { scadaService } from '../../services/scadaService';
 import { scadaGatewayService } from '../../services/scadaGatewayService';
-import { ScadaTelemetryPoint, ScadaAlarm, ScadaGatewayProtocol } from '../../types/operations';
+import { ScadaTelemetryPoint, ScadaAlarm, ScadaGatewayProtocol, ScadaConnectionStatus } from '../../types/operations';
 import { ScadaSimulatorControl } from './ScadaSimulatorControl';
 import {
   Cpu, Activity, Zap, AlertTriangle, ShieldCheck, RefreshCw, Power, Radio,
   Lock, CheckCircle2, AlertOctagon, X, Clock, HelpCircle, Sliders, Layers,
-  Wifi, Server, Filter
+  Wifi, Server, Filter, ChevronDown, Check, WifiOff
 } from 'lucide-react';
 
 export const ScadaTelemetryDashboard: React.FC = () => {
@@ -30,12 +30,26 @@ export const ScadaTelemetryDashboard: React.FC = () => {
   const [sboProtocol, setSboProtocol] = useState<ScadaGatewayProtocol>('IEC-60870-5-104');
   const [activeTab, setActiveTab] = useState<'sld' | 'simulator' | 'protocols' | 'alarms'>('sld');
 
+  // Dynamic SCADA Gateway Connection State
+  const [connectionStatus, setConnectionStatus] = useState<ScadaConnectionStatus>(
+    scadaGatewayService.getConnectionStatus()
+  );
+  const [gatewayStats, setGatewayStats] = useState(scadaGatewayService.getStats());
+  const [showStatusMenu, setShowStatusMenu] = useState<boolean>(false);
+
   useEffect(() => {
-    const unsub = scadaService.subscribe(() => {
+    const unsubScada = scadaService.subscribe(() => {
       setPoints(scadaService.getPoints(sourceFilter));
       setAlarms(scadaService.getAlarms(sourceFilter));
     });
-    return unsub;
+    const unsubGw = scadaGatewayService.subscribe(() => {
+      setConnectionStatus(scadaGatewayService.getConnectionStatus());
+      setGatewayStats(scadaGatewayService.getStats());
+    });
+    return () => {
+      unsubScada();
+      unsubGw();
+    };
   }, [sourceFilter]);
 
   const handleSourceFilterChange = (filter: 'ALL' | 'OPERATIONAL' | 'SIMULATOR') => {
@@ -146,9 +160,144 @@ export const ScadaTelemetryDashboard: React.FC = () => {
             ))}
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center space-x-2 shadow-2xs font-mono text-xs">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-extrabold">GATEWAY ONLINE</span>
+          {/* Dynamic SCADA Gateway Connection Status Indicator & Test Controls */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowStatusMenu(!showStatusMenu)}
+              className={`px-3 py-1.5 rounded-xl border flex items-center space-x-2 shadow-2xs font-mono text-xs cursor-pointer transition-all ${
+                connectionStatus === 'SIMULATOR_CONNECTED'
+                  ? 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100'
+                  : connectionStatus === 'LIVE_CONNECTED'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+                  : connectionStatus === 'STALE_TELEMETRY'
+                  ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                  : connectionStatus === 'COMM_FAILURE'
+                  ? 'bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100 animate-pulse'
+                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
+              }`}
+            >
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${
+                  connectionStatus === 'SIMULATOR_CONNECTED'
+                    ? 'bg-blue-500 animate-pulse'
+                    : connectionStatus === 'LIVE_CONNECTED'
+                    ? 'bg-emerald-500 animate-pulse'
+                    : connectionStatus === 'STALE_TELEMETRY'
+                    ? 'bg-amber-500'
+                    : connectionStatus === 'COMM_FAILURE'
+                    ? 'bg-rose-600 animate-ping'
+                    : 'bg-slate-400'
+                }`}
+              />
+              <span className="font-extrabold">
+                {connectionStatus === 'SIMULATOR_CONNECTED' && 'SIMULATOR CONNECTED'}
+                {connectionStatus === 'LIVE_CONNECTED' && 'LIVE SCADA CONNECTED'}
+                {connectionStatus === 'STALE_TELEMETRY' && 'STALE TELEMETRY (>30s)'}
+                {connectionStatus === 'COMM_FAILURE' && 'COMMUNICATION FAILURE'}
+                {connectionStatus === 'DISCONNECTED' && 'GATEWAY DISCONNECTED'}
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono pl-1">▼</span>
+            </button>
+
+            {/* Quick Connection State Dropdown for Operators / Reviewers */}
+            {showStatusMenu && (
+              <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-xs font-mono space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                  <span className="font-bold text-slate-900">SCADA Gateway Link State</span>
+                  <button onClick={() => setShowStatusMenu(false)} className="text-slate-400 hover:text-slate-600">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <button
+                    onClick={() => {
+                      scadaGatewayService.setConnectionStatus('SIMULATOR_CONNECTED');
+                      setShowStatusMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
+                      connectionStatus === 'SIMULATOR_CONNECTED' ? 'bg-blue-50 text-blue-800 font-bold' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span>Simulator Connected</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">10ms</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      scadaGatewayService.setConnectionStatus('LIVE_CONNECTED');
+                      setShowStatusMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
+                      connectionStatus === 'LIVE_CONNECTED' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span>Live SCADA Connected</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">IEC-104</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      scadaGatewayService.setConnectionStatus('STALE_TELEMETRY');
+                      setShowStatusMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
+                      connectionStatus === 'STALE_TELEMETRY' ? 'bg-amber-50 text-amber-800 font-bold' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span>Stale Telemetry</span>
+                    </span>
+                    <span className="text-[10px] text-amber-600">&gt;30s</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      scadaGatewayService.simulateCommFailure();
+                      setShowStatusMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
+                      connectionStatus === 'COMM_FAILURE' ? 'bg-rose-50 text-rose-800 font-bold' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-rose-600" />
+                      <span>Communication Failure</span>
+                    </span>
+                    <span className="text-[10px] text-rose-600">Alarm</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      scadaGatewayService.setConnectionStatus('DISCONNECTED');
+                      setShowStatusMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
+                      connectionStatus === 'DISCONNECTED' ? 'bg-slate-100 text-slate-800 font-bold' : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-slate-400" />
+                      <span>Disconnected</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">Off</span>
+                  </button>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 text-[10px] text-slate-500 space-y-0.5">
+                  <div>Heartbeat: <span className="font-bold text-slate-800">{gatewayStats.heartbeat}</span></div>
+                  <div>Frames: <span className="font-bold text-slate-800">{gatewayStats.frames}</span> | Errors: <span className="font-bold text-rose-600">{gatewayStats.errors}</span></div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -258,130 +407,336 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       </div>
 
       {/* TAB 1: INTERACTIVE SINGLE LINE DIAGRAM (SLD) CANVAS */}
-      {activeTab === 'sld' && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs relative overflow-hidden space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div className="flex items-center space-x-2">
-              <Zap className="w-4 h-4 text-amber-500" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">
-                Substation Single Line Diagram (SLD Schematic)
-              </h3>
+      {activeTab === 'sld' && (() => {
+        const ptrPoint = points.find(p => p.tag.includes('PTR1') || p.tag.includes('PTR')) || points[0];
+        const incomerPoint = points.find(p => p.tag.includes('110') || p.tag.includes('INCOMER')) || points[0];
+        const isBusEnergized =
+          incomerPoint?.breakerStatus !== 'OPEN' &&
+          connectionStatus !== 'COMM_FAILURE' &&
+          connectionStatus !== 'DISCONNECTED';
+
+        return (
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs relative overflow-hidden space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <Zap className="w-4 h-4 text-amber-500" />
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">
+                  Substation Single Line Diagram (SLD Dynamic Schematic)
+                </h3>
+              </div>
+              <div className="flex items-center space-x-3 text-[11px] font-mono text-slate-500">
+                <span className="flex items-center space-x-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-xs shadow-emerald-500/50" />
+                  <span className="font-semibold text-emerald-800">Closed (Energized)</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
+                  <span className="font-semibold text-rose-800">Open (Tripped)</span>
+                </span>
+                <span className="text-slate-400 hidden sm:inline">| Click any Breaker for SBO Remote Control</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-3 text-[11px] font-mono text-slate-500">
-              <span className="flex items-center space-x-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
-                <span>Closed (Energized)</span>
-              </span>
-              <span className="flex items-center space-x-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
-                <span>Open (Tripped)</span>
-              </span>
-              <span className="text-slate-400 hidden sm:inline">| Click breaker for SBO Remote Control</span>
+
+            {/* Comm Failure / Stale Telemetry Alert Overlays */}
+            {connectionStatus === 'COMM_FAILURE' && (
+              <div className="bg-rose-50 border border-rose-300 text-rose-800 px-3.5 py-2.5 rounded-xl flex items-center justify-between text-xs font-mono shadow-xs animate-pulse">
+                <div className="flex items-center space-x-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                  <span className="font-bold">
+                    COMMUNICATION LINK FAILURE: SCADA Gateway protocol timed out. Telemetry state frozen.
+                  </span>
+                </div>
+                <button
+                  onClick={() => scadaGatewayService.restoreConnection()}
+                  className="px-3 py-1 rounded-lg bg-rose-600 text-white font-bold hover:bg-rose-700 cursor-pointer shadow-xs"
+                >
+                  Restore Gateway Link
+                </button>
+              </div>
+            )}
+
+            {connectionStatus === 'STALE_TELEMETRY' && (
+              <div className="bg-amber-50 border border-amber-300 text-amber-800 px-3.5 py-2.5 rounded-xl flex items-center justify-between text-xs font-mono shadow-xs">
+                <div className="flex items-center space-x-2">
+                  <Clock className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  <span className="font-bold">
+                    STALE TELEMETRY ALERT: Telemetry age &gt; 30 seconds without spontaneous ASDU update.
+                  </span>
+                </div>
+                <button
+                  onClick={() => scadaGatewayService.recordHeartbeat()}
+                  className="px-3 py-1 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700 cursor-pointer shadow-xs"
+                >
+                  Poll RTU Heartbeat
+                </button>
+              </div>
+            )}
+
+            {/* SVG SLD Vector Schematic */}
+            <div className="w-full flex justify-center py-4 bg-slate-50/70 border border-slate-200 rounded-xl overflow-x-auto">
+              <svg className="w-full max-w-3xl h-84 select-none" viewBox="0 0 700 330">
+                <defs>
+                  <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#10B981" floodOpacity="0.4" />
+                  </filter>
+                  <filter id="glow-rose" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#EF4444" floodOpacity="0.4" />
+                  </filter>
+                </defs>
+
+                {/* 110kV Incomer Busbar */}
+                <line x1="80" y1="35" x2="620" y2="35" stroke="#DC2626" strokeWidth="4.5" strokeLinecap="round" />
+                <rect x="625" y="24" width="65" height="22" rx="4" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1" />
+                <text x="632" y="39" fill="#DC2626" fontSize="10" fontFamily="monospace" fontWeight="bold">110kV BUS</text>
+
+                {/* Incomer Drop line to Transformer */}
+                <line x1="350" y1="35" x2="350" y2="72" stroke="#DC2626" strokeWidth="2.5" />
+
+                {/* Power Transformer PTR-1 80MVA (Two Interlocking Circles) */}
+                <circle cx="350" cy="88" r="17" fill="#FEF3C7" stroke="#D97706" strokeWidth="2.5" />
+                <circle cx="350" cy="112" r="17" fill="#FEF3C7" stroke="#D97706" strokeWidth="2.5" />
+                
+                {/* PTR-1 Live Telemetry Metadata Box */}
+                <rect x="382" y="76" width="170" height="48" rx="6" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
+                <text x="390" y="91" fill="#B45309" fontSize="10" fontFamily="monospace" fontWeight="bold">PTR-1 80MVA (110/11kV)</text>
+                <text x="390" y="105" fill="#475569" fontSize="9" fontFamily="monospace">
+                  Top-Oil: <tspan fill="#0F172A" fontWeight="bold">{ptrPoint?.oilTempC ?? 46.2}°C</tspan> | Winding: <tspan fill="#0F172A" fontWeight="bold">{ptrPoint?.windingTempC ?? 55.4}°C</tspan>
+                </text>
+                <text x="390" y="118" fill="#475569" fontSize="9" fontFamily="monospace">
+                  Loading: <tspan fill={ptrPoint?.transformerLoadPct && ptrPoint.transformerLoadPct > 80 ? '#B91C1C' : '#047857'} fontWeight="bold">{ptrPoint?.transformerLoadPct ?? 68}%</tspan> | Freq: {ptrPoint?.frequencyHz ?? 50.02} Hz
+                </text>
+
+                {/* Transformer Secondary line to 11kV Bus */}
+                <line
+                  x1="350"
+                  y1="129"
+                  x2="350"
+                  y2="160"
+                  stroke={isBusEnergized ? '#0284C7' : '#94A3B8'}
+                  strokeWidth="2.5"
+                  strokeDasharray={isBusEnergized ? undefined : '4,3'}
+                />
+
+                {/* 11kV Secondary Busbar */}
+                <line
+                  x1="80"
+                  y1="160"
+                  x2="620"
+                  y2="160"
+                  stroke={isBusEnergized ? '#0284C7' : '#94A3B8'}
+                  strokeWidth="4.5"
+                  strokeLinecap="round"
+                  strokeDasharray={isBusEnergized ? undefined : '6,4'}
+                />
+                <rect
+                  x="625"
+                  y="149"
+                  width="65"
+                  height="22"
+                  rx="4"
+                  fill={isBusEnergized ? '#E0F2FE' : '#F1F5F9'}
+                  stroke={isBusEnergized ? '#0284C7' : '#94A3B8'}
+                  strokeWidth="1"
+                />
+                <text
+                  x="632"
+                  y="164"
+                  fill={isBusEnergized ? '#0284C7' : '#64748B'}
+                  fontSize="10"
+                  fontFamily="monospace"
+                  fontWeight="bold"
+                >
+                  11kV BUS
+                </text>
+
+                {/* 4 Feeder Bays (CB-01 to CB-04) */}
+                {points.slice(0, 4).map((pt, index) => {
+                  const xPos = 140 + index * 140;
+                  const isClosed = pt.breakerStatus === 'CLOSED';
+                  const isFeederEnergized = isClosed && isBusEnergized;
+
+                  return (
+                    <g key={pt.tag} className="cursor-pointer group" onClick={() => handleOpenSBOModal(pt.tag)}>
+                      {/* Drop line from 11kV Bus to Breaker */}
+                      <line
+                        x1={xPos}
+                        y1="160"
+                        x2={xPos}
+                        y2="190"
+                        stroke={isBusEnergized ? '#0284C7' : '#94A3B8'}
+                        strokeWidth="2.5"
+                      />
+
+                      {/* Circuit Breaker Box with SBO status */}
+                      <rect
+                        x={xPos - 18}
+                        y="190"
+                        width="36"
+                        height="34"
+                        rx="7"
+                        fill={isClosed ? '#10B981' : '#EF4444'}
+                        stroke="#0F172A"
+                        strokeWidth="2"
+                        filter={isClosed ? 'url(#glow-emerald)' : 'url(#glow-rose)'}
+                        className="transition-transform group-hover:scale-110"
+                      />
+                      <text
+                        x={xPos}
+                        y="211"
+                        textAnchor="middle"
+                        fill="#FFFFFF"
+                        fontSize="10"
+                        fontFamily="monospace"
+                        fontWeight="extrabold"
+                      >
+                        {isClosed ? 'CLOSED' : 'TRIP'}
+                      </text>
+
+                      {/* Outgoing Feeder Cable line */}
+                      <line
+                        x1={xPos}
+                        y1="224"
+                        x2={xPos}
+                        y2="252"
+                        stroke={isFeederEnergized ? '#0284C7' : '#94A3B8'}
+                        strokeWidth={isFeederEnergized ? '3' : '2'}
+                        strokeDasharray={isFeederEnergized ? undefined : '4,4'}
+                      />
+
+                      {/* Feeder Label Pill */}
+                      <rect
+                        x={xPos - 58}
+                        y="252"
+                        width="116"
+                        height="20"
+                        rx="5"
+                        fill="#FFFFFF"
+                        stroke={isFeederEnergized ? '#0284C7' : '#CBD5E1'}
+                        strokeWidth="1.2"
+                      />
+                      <text
+                        x={xPos}
+                        y="266"
+                        textAnchor="middle"
+                        fill={isFeederEnergized ? '#0369A1' : '#475569'}
+                        fontSize="9"
+                        fontFamily="monospace"
+                        fontWeight="bold"
+                      >
+                        {pt.tag}
+                      </text>
+
+                      {/* Live Electrical Measurements under Feeder */}
+                      <text
+                        x={xPos}
+                        y="284"
+                        textAnchor="middle"
+                        fill={isFeederEnergized ? '#047857' : '#DC2626'}
+                        fontSize="9.5"
+                        fontFamily="monospace"
+                        fontWeight="bold"
+                      >
+                        {isFeederEnergized
+                          ? `${pt.currentAmps || 215}A · ${(pt.activePowerMW || 4.2).toFixed(2)}MW`
+                          : '0.0 A · DE-ENERGIZED'}
+                      </text>
+                      <text
+                        x={xPos}
+                        y="297"
+                        textAnchor="middle"
+                        fill="#64748B"
+                        fontSize="8.5"
+                        fontFamily="monospace"
+                      >
+                        {isFeederEnergized
+                          ? `${(pt.voltageKV || 11.0).toFixed(2)}kV · PF ${(pt.powerFactor || 0.95).toFixed(2)}`
+                          : 'LOCKOUT / DISCONNECTED'}
+                      </text>
+
+                      {/* SBO Action Prompt */}
+                      <rect
+                        x={xPos - 44}
+                        y="304"
+                        width="88"
+                        height="18"
+                        rx="4"
+                        fill={isClosed ? '#FEF2F2' : '#ECFDF5'}
+                        stroke={isClosed ? '#FCA5A5' : '#6EE7B7'}
+                        strokeWidth="1"
+                        className="group-hover:opacity-100 opacity-90"
+                      />
+                      <text
+                        x={xPos}
+                        y="316"
+                        textAnchor="middle"
+                        fill={isClosed ? '#B91C1C' : '#047857'}
+                        fontSize="8.5"
+                        fontFamily="monospace"
+                        fontWeight="bold"
+                      >
+                        {isClosed ? '⚡ SBO TRIP' : '✓ SBO CLOSE'}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
             </div>
-          </div>
 
-          {/* SVG SLD Vector Schematic */}
-          <div className="w-full flex justify-center py-4 bg-slate-50/70 border border-slate-200 rounded-xl overflow-x-auto">
-            <svg className="w-full max-w-3xl h-72 select-none" viewBox="0 0 700 280">
-              {/* 110kV Incomer Busbar */}
-              <line x1="80" y1="35" x2="620" y2="35" stroke="#DC2626" strokeWidth="4" strokeLinecap="round" />
-              <rect x="625" y="24" width="65" height="20" rx="4" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1" />
-              <text x="632" y="38" fill="#DC2626" fontSize="10" fontFamily="monospace" fontWeight="bold">110kV BUS</text>
-
-              {/* Incomer Drop line to Transformer */}
-              <line x1="350" y1="35" x2="350" y2="75" stroke="#DC2626" strokeWidth="2.5" />
-
-              {/* Power Transformer PTR-1 80MVA (Two Interlocking Circles) */}
-              <circle cx="350" cy="92" r="18" fill="#FEF3C7" stroke="#D97706" strokeWidth="2.5" />
-              <circle cx="350" cy="116" r="18" fill="#FEF3C7" stroke="#D97706" strokeWidth="2.5" />
-              <rect x="380" y="94" width="85" height="20" rx="4" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1" />
-              <text x="386" y="108" fill="#B45309" fontSize="10" fontFamily="monospace" fontWeight="bold">PTR-1 80MVA</text>
-
-              {/* 11kV Secondary Busbar */}
-              <line x1="350" y1="134" x2="350" y2="165" stroke="#0284C7" strokeWidth="2.5" />
-              <line x1="80" y1="165" x2="620" y2="165" stroke="#0284C7" strokeWidth="4" strokeLinecap="round" />
-              <rect x="625" y="154" width="60" height="20" rx="4" fill="#E0F2FE" stroke="#0284C7" strokeWidth="1" />
-              <text x="632" y="168" fill="#0284C7" fontSize="10" fontFamily="monospace" fontWeight="bold">11kV BUS</text>
-
-              {/* 4 Feeder Bays (CB-01 to CB-04) */}
-              {points.slice(0, 4).map((pt, index) => {
-                const xPos = 140 + index * 140;
+            {/* Feeder Bay Quick SBO Control Strip */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+              {points.slice(0, 4).map(pt => {
                 const isClosed = pt.breakerStatus === 'CLOSED';
-
                 return (
-                  <g key={pt.tag} className="cursor-pointer group" onClick={() => handleOpenSBOModal(pt.tag)}>
-                    {/* Drop line from 11kV Bus */}
-                    <line x1={xPos} y1="165" x2={xPos} y2="195" stroke="#0284C7" strokeWidth="2" />
+                  <div
+                    key={pt.tag}
+                    className="p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-300 transition-all shadow-xs space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold text-slate-900 truncate">{pt.description}</span>
+                      <span
+                        className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                          isClosed
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}
+                      >
+                        {isClosed ? 'ENERGIZED' : 'TRIPPED'}
+                      </span>
+                    </div>
 
-                    {/* Circuit Breaker Box */}
-                    <rect
-                      x={xPos - 16}
-                      y="195"
-                      width="32"
-                      height="32"
-                      rx="6"
-                      fill={isClosed ? '#10B981' : '#EF4444'}
-                      stroke="#0F172A"
-                      strokeWidth="2"
-                      className="transition-transform group-hover:scale-110 shadow-sm"
-                    />
-                    <text
-                      x={xPos}
-                      y="215"
-                      textAnchor="middle"
-                      fill="#FFFFFF"
-                      fontSize="11"
-                      fontFamily="monospace"
-                      fontWeight="bold"
+                    <div className="grid grid-cols-2 gap-1 text-[11px] font-mono text-slate-600">
+                      <div>Current: <b className="text-slate-900">{pt.currentAmps} A</b></div>
+                      <div>Voltage: <b className="text-slate-900">{pt.voltageKV} kV</b></div>
+                      <div>Active P: <b className="text-slate-900">{pt.activePowerMW} MW</b></div>
+                      <div>PF: <b className="text-slate-900">{pt.powerFactor ?? 0.95}</b></div>
+                    </div>
+
+                    <button
+                      onClick={() => handleOpenSBOModal(pt.tag)}
+                      disabled={!canOperateSCADA}
+                      className={`w-full py-1.5 rounded-lg text-xs font-mono font-bold cursor-pointer transition-all flex items-center justify-center space-x-1.5 ${
+                        !canOperateSCADA
+                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                          : isClosed
+                          ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200'
+                          : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                      }`}
                     >
-                      {isClosed ? 'ON' : 'TRIP'}
-                    </text>
-
-                    {/* Outgoing Feeder Cable line */}
-                    <line
-                      x1={xPos}
-                      y1="227"
-                      x2={xPos}
-                      y2="255"
-                      stroke={isClosed ? '#0284C7' : '#94A3B8'}
-                      strokeWidth="2"
-                      strokeDasharray={isClosed ? undefined : '3,3'}
-                    />
-
-                    {/* Feeder Label Pill */}
-                    <rect
-                      x={xPos - 55}
-                      y="255"
-                      width="110"
-                      height="18"
-                      rx="4"
-                      fill="#FFFFFF"
-                      stroke="#CBD5E1"
-                      strokeWidth="1"
-                    />
-                    <text
-                      x={xPos}
-                      y="268"
-                      textAnchor="middle"
-                      fill="#334155"
-                      fontSize="9"
-                      fontFamily="monospace"
-                      fontWeight="600"
-                    >
-                      {pt.tag}
-                    </text>
-                  </g>
+                      <Power className="w-3.5 h-3.5" />
+                      <span>{isClosed ? 'SBO Trip Breaker' : 'SBO Close Breaker'}</span>
+                    </button>
+                  </div>
                 );
               })}
-            </svg>
-          </div>
+            </div>
 
-          <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1">
-            <span>* Operator Safety Note: Remote breaker toggling enforces supervisory audit logging.</span>
-            <span className="font-semibold text-slate-700">Substation Bay: 110/22kV Marapalam Switchyard</span>
+            <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1">
+              <span>* Operator Safety Note: Remote breaker toggling enforces statutory 3-tier SBO audit logging.</span>
+              <span className="font-semibold text-slate-700">Substation Bay: 110/22kV Marapalam Switchyard</span>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* TAB 2: SCADA DYNAMIC TELEMETRY SIMULATOR */}
       {activeTab === 'simulator' && <ScadaSimulatorControl />}

@@ -145,7 +145,7 @@ export const AdminControlPanel: React.FC = () => {
       fullName: targetUser.fullName,
       username: targetUser.username,
       email: targetUser.email,
-      password: targetUser.password || 'PowerGIS@2026',
+      password: 'PowerGIS@2026',
       role: targetUser.role,
       designation: targetUser.designation,
       phone: targetUser.phone,

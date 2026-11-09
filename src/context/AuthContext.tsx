@@ -17,8 +17,8 @@ interface AuthContextType {
   login: (identifier: string, password: string) => LoginResult;
   loginAsPersona: (userId: string) => LoginResult;
   switchUser: (userId: string) => void;
-  addUser: (userData: Omit<UserProfile, 'id'> & { id?: string }) => UserProfile;
-  updateUser: (id: string, updates: Partial<UserProfile>) => boolean;
+  addUser: (userData: Omit<UserProfile, 'id'> & { id?: string; password?: string }) => UserProfile;
+  updateUser: (id: string, updates: Partial<UserProfile> & { password?: string }) => boolean;
   deleteUser: (id: string) => { success: boolean; message: string };
   resetUsersToDefault: () => void;
   logout: () => void;
@@ -68,13 +68,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const addUser = (userData: Omit<UserProfile, 'id'> & { id?: string }): UserProfile => {
+  const addUser = (userData: Omit<UserProfile, 'id'> & { id?: string; password?: string }): UserProfile => {
     const created = authService.addUser(userData);
     setUsers(authService.getAllUsers());
     return created;
   };
 
-  const updateUser = (id: string, updates: Partial<UserProfile>): boolean => {
+  const updateUser = (id: string, updates: Partial<UserProfile> & { password?: string }): boolean => {
     const updated = authService.updateUser(id, updates);
     if (updated) {
       setUsers(authService.getAllUsers());

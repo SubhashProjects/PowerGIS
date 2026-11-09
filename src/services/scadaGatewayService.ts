@@ -11,6 +11,7 @@ import {
   ScadaBreakerCommand,
   ScadaGatewayProtocol,
   ScadaTelemetryQuality,
+  ScadaConnectionStatus,
 } from '../types/operations';
 import { UserProfile } from '../types/auth';
 
@@ -80,6 +81,12 @@ export class ScadaGatewayService {
   private activeIecSessions = 3; // Marapalam RTU, Villianur RTU, Bahour RTU
   private listeners: Array<() => void> = [];
 
+  // Live Dynamic Connection State Monitor
+  private connectionStatus: ScadaConnectionStatus = 'SIMULATOR_CONNECTED';
+  private lastHeartbeat: string = new Date().toLocaleTimeString();
+  private totalFramesReceived = 1420;
+  private totalCommErrors = 0;
+
   private constructor() {
     this.initializeDefaultLogs();
   }
@@ -117,6 +124,48 @@ export class ScadaGatewayService {
   // --------------------------------------------------------------------------
   // PROTOCOL STATUS & DIAGNOSTICS
   // --------------------------------------------------------------------------
+
+  public getConnectionStatus(): ScadaConnectionStatus {
+    return this.connectionStatus;
+  }
+
+  public setConnectionStatus(status: ScadaConnectionStatus): void {
+    this.connectionStatus = status;
+    if (status === 'COMM_FAILURE') {
+      this.totalCommErrors += 1;
+    }
+    this.notifyListeners();
+  }
+
+  public getLastHeartbeat(): string {
+    return this.lastHeartbeat;
+  }
+
+  public recordHeartbeat(): void {
+    this.lastHeartbeat = new Date().toLocaleTimeString();
+    this.totalFramesReceived += 1;
+    this.notifyListeners();
+  }
+
+  public simulateCommFailure(): void {
+    this.connectionStatus = 'COMM_FAILURE';
+    this.totalCommErrors += 1;
+    this.notifyListeners();
+  }
+
+  public restoreConnection(): void {
+    this.connectionStatus = 'SIMULATOR_CONNECTED';
+    this.recordHeartbeat();
+  }
+
+  public getStats(): { frames: number; errors: number; heartbeat: string; status: ScadaConnectionStatus } {
+    return {
+      frames: this.totalFramesReceived,
+      errors: this.totalCommErrors,
+      heartbeat: this.lastHeartbeat,
+      status: this.connectionStatus,
+    };
+  }
 
   public getProtocolStatus(): Record<ScadaGatewayProtocol, boolean> {
     return { ...this.connectedProtocols };

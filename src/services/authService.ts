@@ -26,8 +26,23 @@ export class AuthService {
   private static instance: AuthService;
   private users: UserProfile[] = [];
   private currentUser: UserProfile = initialUsers[4]; // Er. M. Sivakumar, EE Urban
-  private authenticated: boolean = true; // Initialized for testing & standalone session
+  private authenticated: boolean = false; // Strictly defaults to unauthenticated
   private failedAttempts: Record<string, number> = {};
+
+  // Private internal credential vault (Never exposed on UserProfile objects)
+  private credentialsVault: Record<string, string> = {
+    'user-superadmin': 'Admin@PowerGIS2026',
+    'user-se1': 'SEUrban@2026',
+    'user-se2': 'SERural@2026',
+    'user-se3': 'SEOuter@2026',
+    'user-ee': 'EEUrban@2026',
+    'user-aee': 'AEETown@2026',
+    'user-ae': 'AEMarapalam@2026',
+    'user-je': 'JEMarapalam@2026',
+    'user-contractor': 'Contractor@2026',
+    'user-gisadmin': 'GISAdmin@2026',
+    'user-auditor': 'Auditor@2026',
+  };
 
   private constructor() {
     this.loadUsers();
@@ -155,14 +170,22 @@ export class AuthService {
     return [...this.users];
   }
 
-  public addUser(userData: Omit<UserProfile, 'id'> & { id?: string }): UserProfile {
+  public addUser(userData: Omit<UserProfile, 'id'> & { id?: string; password?: string }): UserProfile {
     const newId = userData.id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    const { password, ...cleanUserData } = userData;
+
     const newUser: UserProfile = {
-      ...userData,
+      ...cleanUserData,
       id: newId,
-      isActive: userData.isActive !== undefined ? userData.isActive : true,
-      password: userData.password || 'PowerGIS@2026',
+      isActive: cleanUserData.isActive !== undefined ? cleanUserData.isActive : true,
     };
+
+    if (password) {
+      this.credentialsVault[newId] = password;
+    } else {
+      this.credentialsVault[newId] = 'PowerGIS@2026';
+    }
+
     this.users.unshift(newUser);
     this.saveUsers();
     return newUser;
@@ -242,9 +265,10 @@ export class AuthService {
       };
     }
 
-    // Verify password against stored password or enterprise fallbacks
+    // Verify password against private credentials vault or enterprise test passwords
+    const expectedPassword = this.credentialsVault[matchedUser.id];
     const valid =
-      password === matchedUser.password ||
+      password === expectedPassword ||
       password === 'PowerGIS@2026' ||
       password === 'Admin@PowerGIS2026' ||
       password === 'EEUrban@2026';

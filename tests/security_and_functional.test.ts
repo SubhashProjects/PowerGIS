@@ -652,6 +652,53 @@ async function runTestSuite() {
   }
 
   // --------------------------------------------------------------------------
+  // TEST GROUP 16: DYNAMIC CONNECTION STATES & STATUTORY OUTAGE RELIABILITY
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 16: Dynamic Connection States & Outage Reliability ---');
+  {
+    // 1. SCADA Gateway Connection Status Transitions
+    assert(scadaGatewayService.getConnectionStatus() === 'SIMULATOR_CONNECTED', 'Default gateway status is SIMULATOR_CONNECTED');
+    
+    scadaGatewayService.setConnectionStatus('LIVE_CONNECTED');
+    assert(scadaGatewayService.getConnectionStatus() === 'LIVE_CONNECTED', 'Gateway status transitions to LIVE_CONNECTED');
+
+    scadaGatewayService.setConnectionStatus('STALE_TELEMETRY');
+    assert(scadaGatewayService.getConnectionStatus() === 'STALE_TELEMETRY', 'Gateway status transitions to STALE_TELEMETRY');
+
+    scadaGatewayService.simulateCommFailure();
+    assert(scadaGatewayService.getConnectionStatus() === 'COMM_FAILURE', 'simulateCommFailure sets status to COMM_FAILURE');
+    assert(scadaGatewayService.getStats().errors > 0, 'Comm failure increments gateway error counter');
+
+    scadaGatewayService.restoreConnection();
+    assert(scadaGatewayService.getConnectionStatus() === 'SIMULATOR_CONNECTED', 'restoreConnection recovers link to SIMULATOR_CONNECTED');
+
+    // 2. Dynamic Outage Filtering & JERC Statutory Verification
+    const dynamicAll = reliabilityService.calculateDynamicIndices({
+      totalConsumers: 4850,
+      outageType: 'ALL',
+    });
+    assert(dynamicAll.totalOutages > 0, 'Dynamic reliability engine computes indices for all outages');
+    assert(typeof dynamicAll.saifi === 'number' && dynamicAll.saifi >= 0, 'Dynamic SAIFI index is a non-negative number');
+    assert(typeof dynamicAll.saidi === 'number' && dynamicAll.saidi >= 0, 'Dynamic SAIDI index is a non-negative number');
+    assert(dynamicAll.jercCompliance !== undefined, 'Dynamic calculation produces statutory JERC compliance evaluation');
+    assert(dynamicAll.jercCompliance.status === 'COMPLIANT' || dynamicAll.jercCompliance.status === 'BREACH', 'JERC compliance status is valid enum');
+
+    // 3. Dynamic Section Filtering
+    const sectionResult = reliabilityService.calculateDynamicIndices({
+      sectionId: 'sec-mara',
+      totalConsumers: 4850,
+    });
+    assert(sectionResult.sectionId === 'sec-mara', 'Dynamic calculation correctly scopes to target section sec-mara');
+
+    // 4. Dynamic Outage Classification Filtering
+    const emergencyOnly = reliabilityService.calculateDynamicIndices({
+      outageType: 'Emergency',
+      totalConsumers: 4850,
+    });
+    assert(emergencyOnly.totalOutages <= dynamicAll.totalOutages, 'Emergency-only outages count is subset of all outages');
+  }
+
+  // --------------------------------------------------------------------------
   // TEST SUMMARY
   // --------------------------------------------------------------------------
   console.log('\n============================================================');

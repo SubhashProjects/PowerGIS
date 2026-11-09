@@ -57,7 +57,7 @@ export const LoginPage: React.FC = () => {
   const handleSelectPersona = (u: UserProfile) => {
     setSelectedPersona(u);
     setIdentifier(u.email);
-    setPassword(u.password || 'PowerGIS@2026');
+    setPassword('••••••••');
     setError(null);
   };
 
@@ -294,7 +294,7 @@ export const LoginPage: React.FC = () => {
 
                     <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
                       <span className="truncate max-w-[140px]">{u.email}</span>
-                      <span className="text-neutral-900 font-semibold">{u.password}</span>
+                      <span className="text-neutral-900 font-semibold">PowerGIS@2026</span>
                     </div>
                   </div>
                 );

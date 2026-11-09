@@ -3,7 +3,7 @@
 // MASTER GIS MAP ENGINE: LEAFLET + MULTI-BASEMAP + ROTATION + POSTGIS OVERLAYS
 // ============================================================================
 
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { useGIS } from '../../context/GISContext';
 import { useAuth } from '../../context/AuthContext';
@@ -18,12 +18,52 @@ import { MapRotationControl } from './MapRotationControl';
 import { MapAttributeDrawer } from './MapAttributeDrawer';
 import { calculateHaversineDistance, calculatePolygonArea } from '../../lib/geoUtils';
 
+// Spatial Grid Clustering for High-Density Point Layers (Poles & Transformers)
+function clusterSpatialItems<T extends { coordinates: [number, number] }>(
+  items: T[],
+  map: L.Map,
+  radiusPx = 50
+): Array<{ centroid: [number, number]; items: T[] }> {
+  const zoom = map.getZoom();
+  const clusters: Array<{ centroid: [number, number]; pixelPos: L.Point; items: T[] }> = [];
+
+  for (const item of items) {
+    const latLng = L.latLng(item.coordinates[0], item.coordinates[1]);
+    const pt = map.project(latLng, zoom);
+
+    let assigned = false;
+    for (const c of clusters) {
+      const dist = Math.hypot(c.pixelPos.x - pt.x, c.pixelPos.y - pt.y);
+      if (dist <= radiusPx) {
+        c.items.push(item);
+        const avgLat = c.items.reduce((s, i) => s + i.coordinates[0], 0) / c.items.length;
+        const avgLng = c.items.reduce((s, i) => s + i.coordinates[1], 0) / c.items.length;
+        c.centroid = [avgLat, avgLng];
+        c.pixelPos = map.project(L.latLng(avgLat, avgLng), zoom);
+        assigned = true;
+        break;
+      }
+    }
+
+    if (!assigned) {
+      clusters.push({
+        centroid: item.coordinates,
+        pixelPos: pt,
+        items: [item],
+      });
+    }
+  }
+
+  return clusters.map(c => ({ centroid: c.centroid, items: c.items }));
+}
+
 export const MasterMap: React.FC = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const featureGroupRef = useRef<L.FeatureGroup | null>(null);
   const measureGroupRef = useRef<L.FeatureGroup | null>(null);
+  const [currentZoom, setCurrentZoom] = useState<number>(13);
 
   const {
     currentBasemap,
@@ -94,6 +134,11 @@ export const MasterMap: React.FC = () => {
       if (measurement.mode !== 'none') {
         addMeasurementPoint([e.latlng.lat, e.latlng.lng]);
       }
+    });
+
+    // Dynamic Zoom Tracking for Spatial Clustering
+    map.on('zoomend', () => {
+      setCurrentZoom(map.getZoom());
     });
 
     return () => {
@@ -232,10 +277,12 @@ export const MasterMap: React.FC = () => {
       });
     }
 
-    // 3. Transformers (DTs)
+    // 3. Transformers (DTs) with Spatial Clustering at Low Zooms
     if (isLayerVisible('transformers')) {
       const transformers = assetService.getTransformers();
-      transformers.forEach(t => {
+      const shouldClusterDTR = currentZoom < 13;
+
+      const renderSingleTransformer = (t: typeof transformers[0]) => {
         const marker = L.circleMarker(t.coordinates, {
           radius: 7.5,
           fillColor: '#10B981',
@@ -263,17 +310,52 @@ export const MasterMap: React.FC = () => {
 
         marker.on('click', () => setSelectedAsset(t));
         fg.addLayer(marker);
-      });
+      };
+
+      if (shouldClusterDTR) {
+        const clusters = clusterSpatialItems(transformers, map, 50);
+        clusters.forEach(c => {
+          if (c.items.length > 1) {
+            const clusterMarker = L.marker(c.centroid, {
+              icon: L.divIcon({
+                html: `
+                  <div style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#10B981;color:#ffffff;font-family:monospace;font-weight:800;font-size:11px;border:2.5px solid #ffffff;box-shadow:0 3px 6px rgba(0,0,0,0.25);cursor:pointer;">
+                    ${c.items.length}
+                  </div>
+                `,
+                className: 'gis-dtr-cluster',
+                iconSize: [34, 34],
+                iconAnchor: [17, 17],
+              }),
+            });
+            clusterMarker.bindTooltip(`Cluster: ${c.items.length} Transformers (Click to zoom)`, { direction: 'top' });
+            clusterMarker.on('click', () => {
+              map.setView(c.centroid, Math.min(map.getZoom() + 2, 18));
+            });
+            fg.addLayer(clusterMarker);
+          } else {
+            renderSingleTransformer(c.items[0]);
+          }
+        });
+      } else {
+        transformers.forEach(renderSingleTransformer);
+      }
     }
 
-    // 4. Utility Poles
+    // 4. Utility Poles with Spatial Clustering at Low/Mid Zooms
     if (isLayerVisible('poles_ht') || isLayerVisible('poles_lt')) {
-      const poles = assetService.getPoles();
-      poles.forEach(p => {
+      const allPoles = assetService.getPoles();
+      const visiblePoles = allPoles.filter(p => {
         const isHT = p.poleType.includes('11m');
-        if (isHT && !isLayerVisible('poles_ht')) return;
-        if (!isHT && !isLayerVisible('poles_lt')) return;
+        if (isHT && !isLayerVisible('poles_ht')) return false;
+        if (!isHT && !isLayerVisible('poles_lt')) return false;
+        return true;
+      });
 
+      const shouldClusterPoles = currentZoom < 15;
+
+      const renderSinglePole = (p: typeof visiblePoles[0]) => {
+        const isHT = p.poleType.includes('11m');
         const marker = L.circleMarker(p.coordinates, {
           radius: isHT ? 5.5 : 4.5,
           fillColor: isHT ? '#8B5CF6' : '#4F46E5',
@@ -303,7 +385,36 @@ export const MasterMap: React.FC = () => {
 
         marker.on('click', () => setSelectedAsset(p));
         fg.addLayer(marker);
-      });
+      };
+
+      if (shouldClusterPoles) {
+        const clusters = clusterSpatialItems(visiblePoles, map, 50);
+        clusters.forEach(c => {
+          if (c.items.length > 1) {
+            const clusterMarker = L.marker(c.centroid, {
+              icon: L.divIcon({
+                html: `
+                  <div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#8B5CF6;color:#ffffff;font-family:monospace;font-weight:800;font-size:11px;border:2px solid #ffffff;box-shadow:0 3px 6px rgba(0,0,0,0.25);cursor:pointer;">
+                    ${c.items.length}
+                  </div>
+                `,
+                className: 'gis-pole-cluster',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+              }),
+            });
+            clusterMarker.bindTooltip(`Cluster: ${c.items.length} Utility Poles (Click to zoom)`, { direction: 'top' });
+            clusterMarker.on('click', () => {
+              map.setView(c.centroid, Math.min(map.getZoom() + 2, 18));
+            });
+            fg.addLayer(clusterMarker);
+          } else {
+            renderSinglePole(c.items[0]);
+          }
+        });
+      } else {
+        visiblePoles.forEach(renderSinglePole);
+      }
     }
 
     // 5. Conductors
@@ -448,7 +559,7 @@ export const MasterMap: React.FC = () => {
       `);
       fg.addLayer(polygon);
     }
-  }, [layers, user]);
+  }, [layers, user, currentZoom]);
 
   // Handle Measurement Drawing
   useEffect(() => {
