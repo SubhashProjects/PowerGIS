@@ -156,7 +156,7 @@ export const LoginPage: React.FC = () => {
     if (err) return;
 
     setForgotFeedback(
-      `a reset link will be sent to '${forgotInput.trim()}'. check your registered email address.`
+      `A reset link will be sent to '${forgotInput.trim()}'.\nCheck your registered email address.`
     );
     setTimeout(() => {
       handleCloseForgotModal();
@@ -458,9 +458,13 @@ export const LoginPage: React.FC = () => {
             </p>
 
             {forgotFeedback ? (
-              <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
-                <span>{forgotFeedback}</span>
+              <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-start space-x-2">
+                <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600 mt-0.5" />
+                <div className="leading-relaxed">
+                  {forgotFeedback.split('\n').map((line, idx) => (
+                    <div key={idx}>{line}</div>
+                  ))}
+                </div>
               </div>
             ) : (
               <form onSubmit={handleForgotPassword} noValidate className="space-y-4">
