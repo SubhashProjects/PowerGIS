@@ -67,6 +67,13 @@ export const LABELS = {
     simulatorNoticeBody: 'Simulated utility personas and test data are available for immediate one-click testing.',
     cleanModeNoticeTitle: 'Clean Real Operational Mode',
     cleanModeNoticeBody: 'Simulated accounts hidden. Enter your official registered utility credentials to log in.',
+    demoButton: 'Explore Demo Personas',
+    demoNotice: 'Looking for test accounts & simulation sandbox?',
+    demoPageTitle: 'Engineering Personas & Simulation Sandbox',
+    demoPageSubtitle: '11 pre-seeded statutory utility engineering roles across Puducherry UT. Select any persona for instant 1-click login or to inspect role-scoped credentials.',
+    backToLogin: 'Back to Official Sign In',
+    useCredentials: 'Use Credentials',
+    oneClickLogin: '1-Click Sign In',
   },
 
   // 3. Application Header
