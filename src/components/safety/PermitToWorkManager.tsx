@@ -4,15 +4,27 @@
 // PURE WHITE THEME & STATUTORY CEA LOTO PROTOCOLS
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initialPTWs, initialFeeders } from '../../services/mockData';
+import { assetService } from '../../services/assetService';
 import { SafetyPermit } from '../../types/operations';
 import {
-  HardHat, ShieldAlert, CheckCircle2, AlertTriangle, FileText, Plus, Lock, CheckSquare, X
+  HardHat, ShieldAlert, CheckCircle2, AlertTriangle, FileText, Plus, Lock, CheckSquare, X, Zap
 } from 'lucide-react';
 
 export const PermitToWorkManager: React.FC = () => {
-  const [permits, setPermits] = useState<SafetyPermit[]>(initialPTWs);
+  const [userPermits, setUserPermits] = useState<SafetyPermit[]>([]);
+  const [simPermits, setSimPermits] = useState<SafetyPermit[]>(initialPTWs);
+  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
+
+  const permits = isSimActive ? [...userPermits, ...simPermits] : userPermits;
   const [selectedPermit, setSelectedPermit] = useState<SafetyPermit | null>(permits[0] || null);
   const [showNewModal, setShowNewModal] = useState<boolean>(false);
 
@@ -49,16 +61,22 @@ export const PermitToWorkManager: React.FC = () => {
       sectionId: 'sec-mara',
     };
 
-    setPermits([newPTW, ...permits]);
+    setUserPermits(prev => [newPTW, ...prev]);
     setSelectedPermit(newPTW);
     setShowNewModal(false);
     setWorkDesc('');
   };
 
   const handleClearPTW = (id: string) => {
-    setPermits(prev =>
-      prev.map(p => (p.id === id ? { ...p, status: 'restored', clearanceTime: new Date().toISOString() } : p))
-    );
+    if (userPermits.some(p => p.id === id)) {
+      setUserPermits(prev =>
+        prev.map(p => (p.id === id ? { ...p, status: 'restored', clearanceTime: new Date().toISOString() } : p))
+      );
+    } else {
+      setSimPermits(prev =>
+        prev.map(p => (p.id === id ? { ...p, status: 'restored', clearanceTime: new Date().toISOString() } : p))
+      );
+    }
     if (selectedPermit?.id === id) {
       setSelectedPermit({ ...selectedPermit, status: 'restored', clearanceTime: new Date().toISOString() });
     }

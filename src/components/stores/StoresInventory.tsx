@@ -4,15 +4,27 @@
 // PURE WHITE THEME & INVENTORY RECONCILIATION
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initialStores } from '../../services/mockData';
+import { assetService } from '../../services/assetService';
 import { StoresItem } from '../../types/operations';
 import {
-  Package, Plus, ArrowUpRight, ArrowDownLeft, AlertCircle, CheckCircle2, History
+  Package, Plus, ArrowUpRight, ArrowDownLeft, AlertCircle, CheckCircle2, History, Zap
 } from 'lucide-react';
 
 export const StoresInventory: React.FC = () => {
-  const [items, setItems] = useState<StoresItem[]>(initialStores);
+  const [userItems, setUserItems] = useState<StoresItem[]>([]);
+  const [simItems, setSimItems] = useState<StoresItem[]>(initialStores);
+  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
+
+  const items = isSimActive ? [...userItems, ...simItems] : userItems;
   const [selectedItem, setSelectedItem] = useState<StoresItem | null>(items[0] || null);
 
   // Issue Form
@@ -28,11 +40,19 @@ export const StoresInventory: React.FC = () => {
       return;
     }
 
-    setItems(prev =>
-      prev.map(i =>
-        i.id === selectedItem.id ? { ...i, currentStock: i.currentStock - issueQty } : i
-      )
-    );
+    if (userItems.some(i => i.id === selectedItem.id)) {
+      setUserItems(prev =>
+        prev.map(i =>
+          i.id === selectedItem.id ? { ...i, currentStock: i.currentStock - issueQty } : i
+        )
+      );
+    } else {
+      setSimItems(prev =>
+        prev.map(i =>
+          i.id === selectedItem.id ? { ...i, currentStock: i.currentStock - issueQty } : i
+        )
+      );
+    }
 
     setSuccessMsg(`Issued ${issueQty} ${selectedItem.unitOfMeasure} of ${selectedItem.name} against ${workOrderRef}`);
     setTimeout(() => setSuccessMsg(null), 4000);

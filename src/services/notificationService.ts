@@ -5,6 +5,9 @@
 
 import { UserProfile, OfficialRole } from '../types/auth';
 import { NavTabId } from '../components/layout/Sidebar';
+import { assetService } from './assetService';
+import { surveyService } from './surveyService';
+import { faultService } from './faultService';
 
 export interface RoleNotification {
   id: string;
@@ -73,6 +76,237 @@ class NotificationService {
   }
 
   public getDashboardData(user: UserProfile): RoleDashboardData {
+    if (!assetService.isSimulatorMode()) {
+      return this.getCleanDashboardData(user);
+    }
+    return this.getSimulatedDashboardData(user);
+  }
+
+  private getCleanDashboardData(user: UserProfile): RoleDashboardData {
+    const userSurveys = surveyService.getSubmissions();
+    const userFaults = faultService.getFaults();
+    const userPoles = assetService.getPoles();
+    const userDTRs = assetService.getTransformers();
+    const userFeeders = assetService.getFeeders();
+    const userSubstations = assetService.getSubstations();
+
+    const pendingVerifications = userSurveys.filter(s => s.status === 'submitted');
+    const pendingApprovals = userSurveys.filter(s => s.status === 'je_verified');
+    const activeFaults = userFaults.filter(f => f.status === 'new' || f.status === 'assigned' || f.status === 'in_progress');
+
+    const cleanNotification: RoleNotification = {
+      id: 'clean-mode-standby',
+      title: 'Clean Operational Mode Active',
+      message: 'System is running in clean production state. Test/dummy telemetry is isolated. Turn ON the Simulator to view simulated operational scenarios.',
+      timestamp: 'Active',
+      priority: 'info',
+      targetTab: 'scada',
+      read: this.readNotificationIds.has('clean-mode-standby'),
+      actionLabel: 'SCADA Simulator',
+    };
+
+    const realAssignments: RoleAssignment[] = [];
+    if (user.role === 'je' || user.role === 'gis_admin') {
+      pendingVerifications.forEach(s => {
+        const count = Object.values(s.assetCounts || {}).reduce((a, b) => a + (b || 0), 0);
+        realAssignments.push({
+          id: `asg-srv-${s.id}`,
+          taskCode: s.submissionCode,
+          title: `Verify ${count} Staged Assets submitted by ${s.contractorName}`,
+          category: 'Survey Verification',
+          priority: 'Immediate',
+          dueDate: 'Today',
+          assignedJurisdiction: s.sectionName || s.jeJurisdictionId || 'Section Scope',
+          targetTab: 'survey_approvals',
+          actionLabel: 'Verify Staged Assets',
+        });
+      });
+      activeFaults.forEach(f => {
+        realAssignments.push({
+          id: `asg-flt-${f.id}`,
+          taskCode: f.faultCode,
+          title: `Investigate Breakdown: ${f.category}`,
+          category: 'Fault Restoration',
+          priority: 'Immediate',
+          dueDate: 'Urgent',
+          assignedJurisdiction: f.description || f.sectionId,
+          targetTab: 'faults',
+          actionLabel: 'Update Restoration',
+        });
+      });
+    } else if (user.role === 'ae') {
+      pendingApprovals.forEach(s => {
+        realAssignments.push({
+          id: `asg-ae-${s.id}`,
+          taskCode: s.submissionCode,
+          title: `Promote Verified Survey ${s.submissionCode} to Production GIS`,
+          category: 'AE Approval',
+          priority: 'Immediate',
+          dueDate: 'Today',
+          assignedJurisdiction: s.sectionName || s.jeJurisdictionId || 'Section Scope',
+          targetTab: 'survey_approvals',
+          actionLabel: 'Approve & Publish',
+        });
+      });
+    }
+
+    switch (user.role) {
+      case 'je':
+        return {
+          roleTitle: 'Junior Engineer Jurisdiction Command',
+          jurisdictionScope: 'Marapalam Commercial Ward (JE-JUR-MARA-01) • Section: Marapalam O&M',
+          metrics: [
+            { label: 'Pending Verifications', value: pendingVerifications.length, subtext: 'Contractor field surveys awaiting physical check', trend: pendingVerifications.length > 0 ? 'Action Required' : 'All Clear' },
+            { label: 'Active Ward Breakdowns', value: activeFaults.length, subtext: 'Reported feeder/conductor faults', trend: activeFaults.length > 0 ? 'Restoration Active' : '0 Breakdowns' },
+            { label: 'Ward Utility Poles', value: userPoles.length, subtext: 'HT & LT poles in jurisdiction', trend: userPoles.length > 0 ? 'Imported' : 'Clean Mode' },
+            { label: 'Ward Transformers', value: userDTRs.length, subtext: 'DTR units mapped in GIS', trend: userDTRs.length > 0 ? 'Operational' : 'Clean Mode' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Verify Contractor Surveys', targetTab: 'survey_approvals', description: 'Review GPS coordinates and approve stage 1' },
+            { label: 'Register New Breakdown Fault', targetTab: 'faults', description: 'Pin fault on map and calculate distance' },
+            { label: 'Inspect Ward Distribution Assets', targetTab: 'assets', description: 'View poles, DTs and meters in Marapalam' },
+            { label: 'Open GIS Master Map', targetTab: 'gis_map', description: 'Full-screen spatial network inspection' },
+          ],
+        };
+      case 'ae':
+        return {
+          roleTitle: 'Assistant Engineer Section Operations',
+          jurisdictionScope: 'Marapalam O&M Section (SEC-MARAPALAM) • Sub-Division: Town',
+          metrics: [
+            { label: 'Pending Final Approvals', value: pendingApprovals.length, subtext: 'JE-verified surveys awaiting AE sign-off', trend: pendingApprovals.length > 0 ? 'Pending' : 'All Approved' },
+            { label: 'Active Safety PTWs', value: 0, subtext: 'Feeder isolation permits issued', trend: 'Standby' },
+            { label: 'Section Feeders', value: userFeeders.length, subtext: 'Energized 11kV/22kV distribution feeders', trend: userFeeders.length > 0 ? 'Active' : 'Clean Mode' },
+            { label: 'Section Outages (30d)', value: userFaults.length, subtext: 'Logged customer interruptions', trend: userFaults.length === 0 ? 'Zero Outages' : 'Active' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Final Survey Approvals (Live GIS)', targetTab: 'survey_approvals', description: 'Promote verified staging data into PostGIS' },
+            { label: 'Issue Safety Permit to Work (PTW)', targetTab: 'safety_ptw', description: 'Manage isolation, earthing & line clear' },
+            { label: 'Section Feeder Outages & SAIDI', targetTab: 'outages', description: 'Review IEEE 1366 reliability indices' },
+            { label: 'Preventive Maintenance Schedules', targetTab: 'preventive', description: 'Thermography and transformer BDV logs' },
+          ],
+        };
+      case 'aee':
+        return {
+          roleTitle: 'Assistant Executive Engineer Sub-Division Overview',
+          jurisdictionScope: 'Town Sub-Division (SUBDIV-TOWN) • Sections: Marapalam & Lawspet',
+          metrics: [
+            { label: 'Sub-Division Feeders', value: userFeeders.length, subtext: 'Distribution feeder network', trend: userFeeders.length > 0 ? 'Mapped' : 'Clean Mode' },
+            { label: 'Sub-Division Transformers', value: userDTRs.length, subtext: 'Step-down distribution transformers', trend: userDTRs.length > 0 ? 'Mapped' : 'Clean Mode' },
+            { label: 'Active Faults', value: userFaults.length, subtext: 'Open breakdown tickets', trend: userFaults.length === 0 ? 'Normal' : 'Active' },
+            { label: 'Queued Surveys', value: userSurveys.length, subtext: 'Contractor GPS submissions', trend: userSurveys.length === 0 ? 'All Clear' : 'Under Review' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Sub-Division Work Orders', targetTab: 'work_orders', description: 'Monitor field gang restoration tasks' },
+            { label: 'DT Loading & Imbalance', targetTab: 'dt_loading', description: 'Phase current & thermal load analytics' },
+            { label: 'Network Topology Viewer', targetTab: 'topology', description: 'Trace upstream to substation and downstream to meters' },
+            { label: 'Open Master Map', targetTab: 'gis_map', description: 'Full spatial network view' },
+          ],
+        };
+      case 'ee':
+        return {
+          roleTitle: 'Executive Engineer Divisional Command',
+          jurisdictionScope: 'Urban Operations Division (DIV-URBAN) • Region: Puducherry',
+          metrics: [
+            { label: 'Division Substations', value: userSubstations.length, subtext: 'Grid primary substations', trend: userSubstations.length > 0 ? 'Energized' : 'Clean Mode' },
+            { label: 'Division Feeders', value: userFeeders.length, subtext: 'Total 11kV & 22kV feeders', trend: userFeeders.length > 0 ? 'Operational' : 'Clean Mode' },
+            { label: 'Distribution Transformers', value: userDTRs.length, subtext: 'DTR capacity points', trend: userDTRs.length > 0 ? 'Mapped' : 'Clean Mode' },
+            { label: 'Active Division Faults', value: userFaults.length, subtext: 'Unresolved network breakdowns', trend: userFaults.length === 0 ? 'Zero Faults' : 'Active' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Division Outages & IEEE 1366', targetTab: 'outages', description: 'SAIFI, SAIDI, CAIDI and Energy Not Served' },
+            { label: 'SCADA Telemetry & Interactive SLD', targetTab: 'scada', description: 'Monitor substation breakers and active alarms' },
+            { label: 'ISO 55000 Asset Risk Matrix', targetTab: 'asset_risk', description: 'Equipment failure probability & financial exposure' },
+            { label: 'Tasks & Work Orders Kanban', targetTab: 'work_orders', description: 'Manage division-wide gang dispatches' },
+          ],
+        };
+      case 'se':
+        return {
+          roleTitle: 'Superintending Engineer Circle Executive Oversight',
+          jurisdictionScope: `${user.regionId === 'reg-pdy' ? 'Circle I (Urban Puducherry)' : 'Circle II / Outer Regions'} • Superintending Authority`,
+          metrics: [
+            { label: 'Circle Substations', value: userSubstations.length, subtext: 'Total 110kV/66kV grid substations', trend: userSubstations.length > 0 ? 'Online' : 'Clean Mode' },
+            { label: 'Circle Feeders', value: userFeeders.length, subtext: 'Distribution feeder network', trend: userFeeders.length > 0 ? 'Online' : 'Clean Mode' },
+            { label: 'Circle Transformers', value: userDTRs.length, subtext: 'Distribution transformers', trend: userDTRs.length > 0 ? 'Operational' : 'Clean Mode' },
+            { label: 'Disaster Cell Status', value: 'Standby', subtext: 'Emergency restoration reserves', trend: 'Standby' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Disaster Management & Cyclone Cell', targetTab: 'disaster', description: 'Emergency restoration systems, reserve stock' },
+            { label: 'ISO 55000 Asset Risk Scoring', targetTab: 'asset_risk', description: 'Multi-criteria asset criticality & health' },
+            { label: 'Equipment Warranty Register', targetTab: 'warranties', description: 'Batch warranties & OEM contract claims' },
+            { label: 'Stores & Material Inventory', targetTab: 'stores', description: 'Regional warehouse inventory & reorder limits' },
+          ],
+        };
+      case 'contractor':
+        return {
+          roleTitle: 'EPC Field Survey Contractor Portal',
+          jurisdictionScope: `${user.contractorCompany || 'Larsen Power Infrastructure Ltd'} • Offline GPS Staging`,
+          metrics: [
+            { label: 'Draft Field Surveys', value: userSurveys.filter(s => s.status === 'draft').length, subtext: 'Local memory / draft submissions', trend: 'Offline Ready' },
+            { label: 'Submitted for Verification', value: pendingVerifications.length, subtext: 'Awaiting JE verification', trend: pendingVerifications.length > 0 ? 'Under Review' : 'None' },
+            { label: 'Imported GIS Poles', value: userPoles.length, subtext: 'Poles mapped in assigned package', trend: userPoles.length > 0 ? 'Mapped' : 'Clean Mode' },
+            { label: 'Live GIS Write Access', value: 'Locked', subtext: 'Staging queue promotion workflow enforced', trend: 'Zero-Trust' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Launch Mobile GPS Field Survey (PWA)', targetTab: 'contractor_pwa', description: 'Map poles, DTs, conductors with live GPS & camera' },
+            { label: 'View Submitted Survey Status', targetTab: 'survey_approvals', description: 'Track JE verification & AE approval progress' },
+            { label: 'Browse Permitted Ward Assets', targetTab: 'assets', description: 'Read-only view of assets in assigned package' },
+          ],
+        };
+      case 'auditor':
+        return {
+          roleTitle: 'Regulatory Compliance & Statutory Audit Oversight',
+          jurisdictionScope: 'Read-Only Regulatory Compliance Inspection • All Territories',
+          metrics: [
+            { label: 'Regulatory Compliance', value: '100%', subtext: 'JERC Grid Standards', trend: 'Certified' },
+            { label: 'Active Operational Assets', value: userPoles.length + userDTRs.length + userFeeders.length + userSubstations.length, subtext: 'Total spatial objects in PostGIS', trend: 'Synchronized' },
+            { label: 'System Mode', value: 'Clean Mode', subtext: 'Simulated dummy telemetry inactive', trend: 'Isolated' },
+            { label: 'Asset Write Access', value: 'Zero', subtext: 'Read-Only enforcement', trend: 'Enforced' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Asset Register & Table', targetTab: 'assets', description: 'Browse electrical assets across all 4 regions' },
+            { label: 'IEEE 1366 Reliability Metrics', targetTab: 'outages', description: 'SAIFI, SAIDI, CAIDI, and ENS computations' },
+            { label: 'Audit Logs & Backup Records', targetTab: 'backup_restore', description: 'Verify tamper-evident change records' },
+            { label: 'GIS Master Map Inspection', targetTab: 'gis_map', description: 'Read-only territorial GIS inspection' },
+          ],
+        };
+      case 'gis_admin':
+      default:
+        return {
+          roleTitle: 'GIS Spatial Data Administrator',
+          jurisdictionScope: 'Spatial Database Master Topology & Geocoding • PostGIS Engine',
+          metrics: [
+            { label: 'Spatial Layers', value: 17, subtext: 'Overlays in PostGIS', trend: 'Active' },
+            { label: 'Operational Assets', value: userPoles.length + userDTRs.length + userFeeders.length + userSubstations.length, subtext: 'Imported GPS features', trend: userPoles.length > 0 ? 'Mapped' : 'Clean Mode' },
+            { label: 'Basemap Providers', value: 8, subtext: 'Google, Esri & OSM Color', trend: 'Operational' },
+            { label: 'Topology Errors', value: 0, subtext: 'Dangling nodes or loops', trend: 'Zero-Defect' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'Import GIS Spatial Data (KML / GeoJSON / CSV)', targetTab: 'backup_restore', description: 'Upload spatial layers into active PostGIS memory' },
+            { label: 'Layer Visibility & Hierarchy Tree', targetTab: 'gis_map', description: 'Toggle distribution network overlays and styles' },
+            { label: 'Network Topology & Connectivity Tracing', targetTab: 'topology', description: 'Geometric snapping and connectivity validation' },
+            { label: 'System Administration & RLS Controls', targetTab: 'admin_panel', description: 'Inspect PostgreSQL row-level security and audit logs' },
+          ],
+        };
+    }
+  }
+
+  private getSimulatedDashboardData(user: UserProfile): RoleDashboardData {
     switch (user.role) {
       // ------------------------------------------------------------------------
       // 1. JUNIOR ENGINEER (JE)

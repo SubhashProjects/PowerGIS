@@ -4,14 +4,24 @@
 // DYNAMIC FILTERING & STATUTORY JERC COMPLIANCE VERIFICATION
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { reliabilityService } from '../../services/reliabilityService';
-import { initialOutages, initialSections } from '../../services/mockData';
+import { assetService } from '../../services/assetService';
+import { initialSections } from '../../services/mockData';
 import { Outage } from '../../types/operations';
-import { Power, BarChart2, AlertOctagon, CheckCircle2, AlertTriangle, Plus, Filter, Calendar, X } from 'lucide-react';
+import { Power, BarChart2, AlertOctagon, CheckCircle2, AlertTriangle, Plus, Filter, Calendar, X, Zap } from 'lucide-react';
 
 export const OutageManager: React.FC = () => {
-  const [outages, setOutages] = useState<Outage[]>(initialOutages);
+  const [outages, setOutages] = useState<Outage[]>(reliabilityService.getOutages());
+  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimActive(assetService.isSimulatorMode());
+      setOutages(reliabilityService.getOutages());
+    });
+    return unsub;
+  }, []);
 
   // Dynamic Reliability Filter State
   const [selectedSection, setSelectedSection] = useState<string>('sec-mara');
@@ -290,6 +300,22 @@ export const OutageManager: React.FC = () => {
                     </td>
                   </tr>
                 ))}
+
+                {filteredOutages.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="p-8 text-center text-slate-500 font-sans">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                          <Power className="w-5 h-5 text-slate-400" />
+                        </div>
+                        <p className="font-semibold text-sm text-slate-700">No active outage incidents in view</p>
+                        <p className="text-xs text-slate-400 max-w-md">
+                          Operating in clean operational mode (0 simulated outages). Turn ON the Simulator in the header to view simulated outage records and reliability metrics.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

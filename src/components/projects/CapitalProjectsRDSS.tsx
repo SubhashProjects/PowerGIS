@@ -4,11 +4,12 @@
 // PURE WHITE THEME & FINANCIAL VS PHYSICAL PROGRESS METRICS
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { assetService } from '../../services/assetService';
 import {
   Building2, CheckCircle2, Clock, AlertTriangle, TrendingUp, Layers,
-  DollarSign, MapPin, Calendar, FileText, ChevronRight, HardHat, RefreshCw
+  DollarSign, MapPin, Calendar, FileText, ChevronRight, HardHat, RefreshCw, Zap
 } from 'lucide-react';
 
 interface RDSSScheme {
@@ -112,18 +113,33 @@ const INITIAL_SCHEMES: RDSSScheme[] = [
 
 export const CapitalProjectsRDSS: React.FC = () => {
   const { user } = useAuth();
-  const [schemes, setSchemes] = useState<RDSSScheme[]>(INITIAL_SCHEMES);
-  const [selectedScheme, setSelectedScheme] = useState<RDSSScheme>(INITIAL_SCHEMES[0]);
+  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
+  const [schemes, setSchemes] = useState<RDSSScheme[]>(assetService.isSimulatorMode() ? INITIAL_SCHEMES : []);
+  const [selectedScheme, setSelectedScheme] = useState<RDSSScheme | null>(assetService.isSimulatorMode() ? INITIAL_SCHEMES[0] : null);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      const active = assetService.isSimulatorMode();
+      setIsSimActive(active);
+      const list = active ? INITIAL_SCHEMES : [];
+      setSchemes(list);
+      setSelectedScheme(list[0] || null);
+    });
+    return unsub;
+  }, []);
 
   // Aggregate stats
   const totalSanctionedCr = schemes.reduce((sum, s) => sum + s.sanctionedBudgetCr, 0);
   const totalExpenditureCr = schemes.reduce((sum, s) => sum + s.expenditureCr, 0);
-  const avgPhysicalProgress = Math.round(
-    schemes.reduce((sum, s) => sum + s.physicalProgressPct, 0) / schemes.length
-  );
-  const financialProgressPct = Math.round((totalExpenditureCr / totalSanctionedCr) * 100);
+  const avgPhysicalProgress = schemes.length > 0
+    ? Math.round(schemes.reduce((sum, s) => sum + s.physicalProgressPct, 0) / schemes.length)
+    : 0;
+  const financialProgressPct = totalSanctionedCr > 0
+    ? Math.round((totalExpenditureCr / totalSanctionedCr) * 100)
+    : 0;
 
   const toggleMilestone = (schemeId: string, milestoneIndex: number) => {
+    if (!selectedScheme) return;
     // Only administrators, SE, EE can update milestones
     if (!['super_admin', 'se', 'ee', 'contractor'].includes(user.role)) {
       alert('Milestone sign-off requires Executive Engineer or Contractor Project Manager role.');
@@ -246,8 +262,20 @@ export const CapitalProjectsRDSS: React.FC = () => {
           </div>
 
           <div className="space-y-2.5 max-h-[620px] overflow-y-auto pr-1">
+            {schemes.length === 0 && (
+              <div className="p-8 text-center text-slate-500 font-sans">
+                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-2">
+                  <Building2 className="w-5 h-5 text-slate-400" />
+                </div>
+                <p className="font-semibold text-xs text-slate-700">0 Capital Projects in Scope</p>
+                <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                  Operating in clean operational mode (0 simulated schemes). Turn ON the Simulator in the header to view simulated RDSS capital works packages.
+                </p>
+              </div>
+            )}
+
             {schemes.map(s => {
-              const isSelected = selectedScheme.id === s.id;
+              const isSelected = selectedScheme ? selectedScheme.id === s.id : false;
               return (
                 <button
                   key={s.id}
@@ -298,9 +326,10 @@ export const CapitalProjectsRDSS: React.FC = () => {
 
         {/* Selected Scheme Deep-Dive Column */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+          {selectedScheme ? (
+            <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
               <div>
                 <div className="flex items-center space-x-2">
                   <span className="font-mono font-extrabold text-sm sm:text-base text-neutral-950">
@@ -444,6 +473,17 @@ export const CapitalProjectsRDSS: React.FC = () => {
               </div>
             </div>
           </div>
+          ) : (
+            <div className="bg-white border border-neutral-200 rounded-2xl p-12 text-center text-slate-500 shadow-xs flex flex-col items-center justify-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                <HardHat className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-sm text-slate-800">Clean Operational Mode Active</h3>
+              <p className="text-xs text-slate-500 max-w-md">
+                0 simulated capital projects are loaded. When the Simulator is OFF, all test/dummy RDSS schemes are hidden. Turn ON the Simulator via the header toolbar to view and test simulated schemes.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

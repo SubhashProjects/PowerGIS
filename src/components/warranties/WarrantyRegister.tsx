@@ -4,11 +4,20 @@
 // PURE WHITE THEME & OEM GUARANTEE EXPIRY ALERTS
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
-import { ShieldCheck, AlertCircle, Clock, CheckCircle2, Calendar, FileText } from 'lucide-react';
+import { ShieldCheck, AlertCircle, Clock, CheckCircle2, Calendar, FileText, Zap } from 'lucide-react';
 
 export const WarrantyRegister: React.FC = () => {
+  const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setVersion(v => v + 1);
+    });
+    return unsub;
+  }, []);
+
   const warranties = assetService.getWarranties();
   const lifecycles = assetService.getLifecycles();
 
@@ -99,28 +108,38 @@ export const WarrantyRegister: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100 font-mono text-neutral-700">
-                    {(filterMode === 'expiring' ? expiringSoon : warranties).map(w => {
-                      const isUrgent = w.daysToExpiry <= 30;
-                      return (
-                        <tr key={w.id} className="hover:bg-neutral-50 transition-colors">
-                          <td className="p-3 font-bold text-neutral-950">{w.equipmentCode}</td>
-                          <td className="p-3 text-neutral-900 font-sans">{w.equipmentType}</td>
-                          <td className="p-3 font-sans text-neutral-500">{w.manufacturer}</td>
-                          <td className="p-3 text-neutral-500">{w.commencementDate}</td>
-                          <td className="p-3 text-neutral-900 font-semibold">{w.expiryDate}</td>
-                          <td className="p-3 font-bold">
-                            <span className={isUrgent ? 'text-rose-700 font-extrabold' : 'text-neutral-900'}>
-                              {w.daysToExpiry} days
-                            </span>
-                          </td>
-                          <td className="p-3">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-800 border border-emerald-300">
-                              {w.claimStatus}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {(filterMode === 'expiring' ? expiringSoon : warranties).length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center text-neutral-400 font-sans">
+                          <AlertCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
+                          <p className="font-semibold text-neutral-600">No active warranty records in clean mode</p>
+                          <p className="text-xs text-neutral-400 mt-1">Turn ON the SCADA / System Simulator to load simulated transformer & switchgear OEM warranty telemetry</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      (filterMode === 'expiring' ? expiringSoon : warranties).map(w => {
+                        const isUrgent = w.daysToExpiry <= 30;
+                        return (
+                          <tr key={w.id} className="hover:bg-neutral-50 transition-colors">
+                            <td className="p-3 font-bold text-neutral-950">{w.equipmentCode}</td>
+                            <td className="p-3 text-neutral-900 font-sans">{w.equipmentType}</td>
+                            <td className="p-3 font-sans text-neutral-500">{w.manufacturer}</td>
+                            <td className="p-3 text-neutral-500">{w.commencementDate}</td>
+                            <td className="p-3 text-neutral-900 font-semibold">{w.expiryDate}</td>
+                            <td className="p-3 font-bold">
+                              <span className={isUrgent ? 'text-rose-700 font-extrabold' : 'text-neutral-900'}>
+                                {w.daysToExpiry} days
+                              </span>
+                            </td>
+                            <td className="p-3">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-800 border border-emerald-300">
+                                {w.claimStatus}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -150,25 +169,35 @@ export const WarrantyRegister: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100 font-mono text-neutral-700">
-                    {lifecycles.map(l => (
-                      <tr key={l.id} className="hover:bg-neutral-50 transition-colors">
-                        <td className="p-3 font-bold text-neutral-950">{l.assetCode}</td>
-                        <td className="p-3 text-neutral-900 font-sans">{l.assetType}</td>
-                        <td className="p-3 text-neutral-500">{l.installationDate}</td>
-                        <td className="p-3 text-neutral-500">{l.expectedLifeYears} Years</td>
-                        <td className="p-3 text-neutral-950 font-bold">{l.currentAgeYears} Yrs</td>
-                        <td className="p-3 text-neutral-900 font-bold">{l.conditionScore} / 100</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
-                            l.replacementPriority === 'High' || l.replacementPriority === 'Critical'
-                              ? 'bg-rose-50 text-rose-800 border-rose-300'
-                              : 'bg-neutral-100 text-neutral-700 border-neutral-200'
-                          }`}>
-                            {l.replacementPriority}
-                          </span>
+                    {lifecycles.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center text-neutral-400 font-sans">
+                          <Clock className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
+                          <p className="font-semibold text-neutral-600">No equipment lifecycle records in clean mode</p>
+                          <p className="text-xs text-neutral-400 mt-1">Turn ON the SCADA / System Simulator to load simulated asset degradation and depreciation schedules</p>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      lifecycles.map(l => (
+                        <tr key={l.id} className="hover:bg-neutral-50 transition-colors">
+                          <td className="p-3 font-bold text-neutral-950">{l.assetCode}</td>
+                          <td className="p-3 text-neutral-900 font-sans">{l.assetType}</td>
+                          <td className="p-3 text-neutral-500">{l.installationDate}</td>
+                          <td className="p-3 text-neutral-500">{l.expectedLifeYears} Years</td>
+                          <td className="p-3 text-neutral-950 font-bold">{l.currentAgeYears} Yrs</td>
+                          <td className="p-3 text-neutral-900 font-bold">{l.conditionScore} / 100</td>
+                          <td className="p-3">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                              l.replacementPriority === 'High' || l.replacementPriority === 'Critical'
+                                ? 'bg-rose-50 text-rose-800 border-rose-300'
+                                : 'bg-neutral-100 text-neutral-700 border-neutral-200'
+                            }`}>
+                              {l.replacementPriority}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

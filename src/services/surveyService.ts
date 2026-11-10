@@ -11,8 +11,10 @@ import { authService } from './authService';
 
 export class SurveyService {
   private static instance: SurveyService;
-  private submissions: SurveySubmission[] = [...initialSurveys];
-  private stagingAssets: SurveyStagingAsset[] = [...initialStagingAssets];
+  private simulatedSubmissions: SurveySubmission[] = [...initialSurveys];
+  private simulatedStagingAssets: SurveyStagingAsset[] = [...initialStagingAssets];
+  private userSubmissions: SurveySubmission[] = [];
+  private userStagingAssets: SurveyStagingAsset[] = [];
   private approvalHistory: ApprovalHistoryEntry[] = [
     {
       id: 'appr-1',
@@ -37,23 +39,33 @@ export class SurveyService {
     return SurveyService.instance;
   }
 
-  public getSubmissions(): SurveySubmission[] {
+  public getSubmissions(includeSimulated = false): SurveySubmission[] {
+    const isSim = assetService.isSimulatorMode() || includeSimulated;
+    const list = isSim
+      ? [...this.userSubmissions, ...this.simulatedSubmissions]
+      : [...this.userSubmissions];
+
     const user = authService.getCurrentUser();
     if (user.role === 'contractor') {
-      return this.submissions.filter(s => s.contractorId === user.id);
+      return list.filter(s => s.contractorId === user.id);
     }
-    return this.submissions.filter(s => authService.isWithinJurisdiction(s));
+    return list.filter(s => (s as any).isUserUploaded || authService.isWithinJurisdiction(s));
   }
 
   public getSubmissionById(id: string): SurveySubmission | undefined {
-    return this.submissions.find(s => s.id === id);
+    return this.userSubmissions.find(s => s.id === id) || this.simulatedSubmissions.find(s => s.id === id);
   }
 
-  public getStagingAssets(submissionId?: string): SurveyStagingAsset[] {
+  public getStagingAssets(submissionId?: string, includeSimulated = false): SurveyStagingAsset[] {
+    const isSim = assetService.isSimulatorMode() || includeSimulated;
+    const list = isSim
+      ? [...this.userStagingAssets, ...this.simulatedStagingAssets]
+      : [...this.userStagingAssets];
+
     if (submissionId) {
-      return this.stagingAssets.filter(a => a.submissionId === submissionId);
+      return list.filter(a => a.submissionId === submissionId);
     }
-    return this.stagingAssets;
+    return list;
   }
 
   public getApprovalHistory(submissionId: string): ApprovalHistoryEntry[] {
@@ -70,7 +82,7 @@ export class SurveyService {
   ): SurveySubmission {
     const user = authService.getCurrentUser();
     const subId = `surv-${Date.now()}`;
-    const subCode = `SURV-2026-${String(this.submissions.length + 1).padStart(3, '0')}`;
+    const subCode = `SURV-2026-${String(this.userSubmissions.length + this.simulatedSubmissions.length + 1).padStart(3, '0')}`;
 
     const submission: SurveySubmission = {
       id: subId,
@@ -90,16 +102,19 @@ export class SurveyService {
       status: 'submitted',
       submittedAt: new Date().toISOString(),
     };
+    (submission as any).isUserUploaded = true;
 
-    this.submissions.unshift(submission);
+    this.userSubmissions.unshift(submission);
 
     // Save staging assets
     stagingItems.forEach((item, idx) => {
-      this.stagingAssets.push({
+      const asset = {
         ...item,
         id: `stg-${Date.now()}-${idx}`,
         submissionId: subId,
-      });
+      };
+      (asset as any).isUserUploaded = true;
+      this.userStagingAssets.push(asset);
     });
 
     // Audit log
@@ -124,7 +139,7 @@ export class SurveyService {
    */
   public jeVerify(submissionId: string, comments = 'Inspected in field; pole coordinates verified'): void {
     const user = authService.getCurrentUser();
-    const sub = this.submissions.find(s => s.id === submissionId);
+    const sub = this.getSubmissionById(submissionId);
     if (!sub) throw new Error('Submission not found');
     if (sub.status !== 'submitted') throw new Error('Only submitted surveys can be verified by JE');
 
@@ -152,7 +167,7 @@ export class SurveyService {
    */
   public aeApproveAndPublish(submissionId: string, comments = 'Approved for production GIS catalog'): number {
     const user = authService.getCurrentUser();
-    const sub = this.submissions.find(s => s.id === submissionId);
+    const sub = this.getSubmissionById(submissionId);
     if (!sub) throw new Error('Submission not found');
     if (sub.status !== 'je_verified') throw new Error('Survey must be verified by JE before AE sanction');
 
@@ -162,7 +177,7 @@ export class SurveyService {
     sub.aeApprovedAt = new Date().toISOString();
 
     // Atomic promotion: Staging Assets -> Live Production Layer
-    const staging = this.stagingAssets.filter(a => a.submissionId === submissionId);
+    const staging = this.getStagingAssets(submissionId, true);
     staging.forEach(asset => {
       if (asset.assetType === 'pole') {
         assetService.addPole({
@@ -228,7 +243,7 @@ export class SurveyService {
       throw new Error('A mandatory reason is required to reject a field survey submission');
     }
     const user = authService.getCurrentUser();
-    const sub = this.submissions.find(s => s.id === submissionId);
+    const sub = this.getSubmissionById(submissionId);
     if (!sub) throw new Error('Submission not found');
 
     const prevStatus = sub.status;

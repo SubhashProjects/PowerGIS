@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { assetService } from '../../services/assetService';
 import { faultService } from '../../services/faultService';
 import { surveyService } from '../../services/surveyService';
+import { reliabilityService } from '../../services/reliabilityService';
 import { availableBasemaps, regionCoordinates } from '../../services/gisService';
 import { BasemapSwitcher } from './BasemapSwitcher';
 import { LayerTree } from './LayerTree';
@@ -567,29 +568,32 @@ export const MasterMap: React.FC = () => {
 
     // 9. Outage Zones (Affected Polygons)
     if (isLayerVisible('outage_polygons')) {
-      const polygon = L.polygon([
-        [11.9230, 79.8160],
-        [11.9260, 79.8170],
-        [11.9250, 79.8210],
-        [11.9210, 79.8200]
-      ], {
-        color: '#E11D48',
-        weight: 2,
-        fillColor: '#E11D48',
-        fillOpacity: 0.22,
-        dashArray: '5, 5',
-      });
-      polygon.bindPopup(`
-        <div class="p-2 text-neutral-900 font-sans">
-          <div class="font-bold text-sm text-rose-700 flex items-center justify-between">
-            <span>OUTAGE INCIDENT ZONE</span>
-            <span class="text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded font-mono">OUTAGE</span>
+      const activeOutages = reliabilityService.getOutages();
+      if (assetService.isSimulatorMode() || activeOutages.length > 0) {
+        const polygon = L.polygon([
+          [11.9230, 79.8160],
+          [11.9260, 79.8170],
+          [11.9250, 79.8210],
+          [11.9210, 79.8200]
+        ], {
+          color: '#E11D48',
+          weight: 2,
+          fillColor: '#E11D48',
+          fillOpacity: 0.22,
+          dashArray: '5, 5',
+        });
+        polygon.bindPopup(`
+          <div class="p-2 text-neutral-900 font-sans">
+            <div class="font-bold text-sm text-rose-700 flex items-center justify-between">
+              <span>OUTAGE INCIDENT ZONE</span>
+              <span class="text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded font-mono">OUTAGE</span>
+            </div>
+            <div class="text-xs text-neutral-600 mt-1">Feeder: <b>FDR-MARA-01 (Boulevard 11kV)</b></div>
+            <div class="text-xs text-neutral-600">Affected Consumers: <b>420</b> • Duration: <b>28 mins</b></div>
           </div>
-          <div class="text-xs text-neutral-600 mt-1">Feeder: <b>FDR-MARA-01 (Boulevard 11kV)</b></div>
-          <div class="text-xs text-neutral-600">Affected Consumers: <b>420</b> • Duration: <b>28 mins</b></div>
-        </div>
-      `);
-      fg.addLayer(polygon);
+        `);
+        fg.addLayer(polygon);
+      }
     }
   }, [layers, user, currentZoom, assetVersion]);
 

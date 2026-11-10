@@ -209,21 +209,21 @@ export class AssetService {
   }
 
   // --- Warranties ---
-  public getWarranties(): WarrantyRecord[] {
-    return this.warranties;
+  public getWarranties(includeSimulated = false): WarrantyRecord[] {
+    return (this.isSimulatorActive || includeSimulated) ? this.warranties : [];
   }
 
-  public getExpiringWarranties(daysThreshold = 60): WarrantyRecord[] {
-    return this.warranties.filter(w => w.daysToExpiry <= daysThreshold && w.claimStatus !== 'expired');
+  public getExpiringWarranties(daysThreshold = 60, includeSimulated = false): WarrantyRecord[] {
+    return this.getWarranties(includeSimulated).filter(w => w.daysToExpiry <= daysThreshold && w.claimStatus !== 'expired');
   }
 
   // --- Equipment Lifecycle ---
-  public getLifecycles(): EquipmentLifecycleRecord[] {
-    return this.lifecycles;
+  public getLifecycles(includeSimulated = false): EquipmentLifecycleRecord[] {
+    return (this.isSimulatorActive || includeSimulated) ? this.lifecycles : [];
   }
 
-  public getCriticalReplacementAssets(): EquipmentLifecycleRecord[] {
-    return this.lifecycles.filter(l => l.replacementPriority === 'Critical' || l.isExpired);
+  public getCriticalReplacementAssets(includeSimulated = false): EquipmentLifecycleRecord[] {
+    return this.getLifecycles(includeSimulated).filter(l => l.replacementPriority === 'Critical' || l.isExpired);
   }
 
   // --- Global Asset Search ---

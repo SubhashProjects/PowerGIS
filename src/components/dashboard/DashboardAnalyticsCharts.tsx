@@ -4,7 +4,8 @@
 // GRAPHS, PIES, BARS & CAPACITY GAUGES - PURE WHITE THEME & VIBRANT PALETTE
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { assetService } from '../../services/assetService';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -132,6 +133,35 @@ interface DashboardAnalyticsChartsProps {
 
 export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> = ({ role = 'super_admin' }) => {
   const [activeTimeRange, setActiveTimeRange] = useState<'24h' | '7d' | '30d'>('24h');
+  const [, setVersion] = useState(0);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setVersion(v => v + 1);
+    });
+    return unsub;
+  }, []);
+
+  const isSim = assetService.isSimulatorMode();
+  const poles = assetService.getPoles();
+  const dts = assetService.getTransformers();
+  const feeders = assetService.getFeeders();
+  const subs = assetService.getSubstations();
+  const consumers = assetService.getConsumers();
+
+  const totalAssets = poles.length + dts.length + feeders.length + subs.length + consumers.length;
+
+  const currentAssetDist = isSim ? assetDistributionData : (
+    totalAssets === 0 ? [
+      { name: 'Clean Standby Mode', count: 0, percentage: 100, color: '#94A3B8' }
+    ] : [
+      { name: 'Utility Poles', count: poles.length, percentage: Math.round((poles.length / totalAssets) * 100) || 1, color: '#8B5CF6' },
+      { name: 'Distribution Transformers', count: dts.length, percentage: Math.round((dts.length / totalAssets) * 100) || 1, color: '#10B981' },
+      { name: 'Feeders', count: feeders.length, percentage: Math.round((feeders.length / totalAssets) * 100) || 1, color: '#0EA5E9' },
+      { name: 'Substations', count: subs.length, percentage: Math.round((subs.length / totalAssets) * 100) || 1, color: '#F59E0B' },
+      { name: 'Consumers', count: consumers.length, percentage: Math.round((consumers.length / totalAssets) * 100) || 1, color: '#EC4899' },
+    ].filter(a => a.count > 0)
+  );
 
   // ==========================================================================
   // VIEW 1: CONTRACTOR / SURVEY AGENCY PORTAL
@@ -555,8 +585,8 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
             <div className="h-52 w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={assetDistributionData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="percentage">
-                    {assetDistributionData.map((e, idx) => (
+                  <Pie data={currentAssetDist} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="percentage">
+                    {currentAssetDist.map((e, idx) => (
                       <Cell key={idx} fill={e.color} stroke="#FFFFFF" strokeWidth={2} />
                     ))}
                   </Pie>
@@ -677,8 +707,8 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
           <div className="h-42 w-full relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={assetDistributionData} cx="50%" cy="50%" innerRadius={44} outerRadius={66} paddingAngle={3} dataKey="percentage">
-                  {assetDistributionData.map((entry, index) => (
+                <Pie data={currentAssetDist} cx="50%" cy="50%" innerRadius={44} outerRadius={66} paddingAngle={3} dataKey="percentage">
+                  {currentAssetDist.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} stroke="#FFFFFF" strokeWidth={2} />
                   ))}
                 </Pie>
@@ -686,7 +716,9 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-base font-extrabold font-mono text-slate-950">1,420</span>
+              <span className="text-base font-extrabold font-mono text-slate-950">
+                {isSim ? '1,420' : totalAssets}
+              </span>
               <span className="text-[8px] uppercase tracking-wider text-slate-500 font-semibold font-mono">
                 Assets
               </span>
@@ -694,7 +726,7 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
           </div>
 
           <div className="grid grid-cols-2 gap-1 pt-1.5">
-            {assetDistributionData.map((item, idx) => (
+            {currentAssetDist.map((item, idx) => (
               <div key={idx} className="flex items-center space-x-1 p-1 rounded bg-slate-50 text-[9px] font-mono">
                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                 <span className="truncate text-slate-700">{item.name.split(' ')[0]}</span>

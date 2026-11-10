@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
+import { assetService } from '../../services/assetService';
 import { notificationService, RoleAssignment, RoleNotification } from '../../services/notificationService';
 import { NavTabId } from '../layout/Sidebar';
 import { NAVIGATION_ITEMS } from '../../config/navigationConfig';
@@ -30,6 +31,15 @@ interface RoleBasedDashboardProps {
 
 export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNavigateTab }) => {
   const { user } = useAuth();
+  const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setVersion(v => v + 1);
+    });
+    return unsub;
+  }, []);
+
   const permissions = authService.getRolePermissions(user.role);
   const dashboardData = notificationService.getDashboardData(user);
 
@@ -39,7 +49,7 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
   useEffect(() => {
     const updated = notificationService.getDashboardData(user);
     setNotifications(updated.notifications);
-  }, [user.id, user.role]);
+  }, [user.id, user.role, version]);
 
   const handleMarkAsRead = (id: string) => {
     notificationService.markAsRead(id);

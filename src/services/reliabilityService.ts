@@ -7,6 +7,7 @@
 
 import { Outage, OutageReliabilityMetrics } from '../types/operations';
 import { initialReliabilityMetrics, initialOutages } from './mockData';
+import { assetService } from './assetService';
 
 export interface DynamicReliabilityFilter {
   sectionId?: string;
@@ -37,7 +38,8 @@ export interface CalculatedReliabilityIndices {
 export class ReliabilityService {
   private static instance: ReliabilityService;
   private metrics: OutageReliabilityMetrics[] = [...initialReliabilityMetrics];
-  private outages: Outage[] = [...initialOutages];
+  private simulatedOutages: Outage[] = [...initialOutages];
+  private userOutages: Outage[] = [];
 
   private constructor() {}
 
@@ -52,22 +54,32 @@ export class ReliabilityService {
     return this.metrics;
   }
 
-  public getOutages(sectionId?: string): Outage[] {
+  public getOutages(sectionId?: string, includeSimulated = false): Outage[] {
+    const isSim = assetService.isSimulatorMode() || includeSimulated;
+    const list = isSim
+      ? [...this.userOutages, ...this.simulatedOutages]
+      : [...this.userOutages];
+
     if (sectionId) {
-      return this.outages.filter(o => o.sectionId === sectionId);
+      return list.filter(o => o.sectionId === sectionId);
     }
-    return [...this.outages];
+    return list;
   }
 
   public registerOutage(outage: Outage): void {
-    this.outages.unshift(outage);
+    (outage as any).isUserUploaded = true;
+    this.userOutages.unshift(outage);
   }
 
   /**
    * Computes IEEE 1366 Indices dynamically from live outage records
    */
   public calculateDynamicIndices(filter: DynamicReliabilityFilter): CalculatedReliabilityIndices {
-    let list = [...this.outages];
+    let sourceOutages = this.getOutages(filter.sectionId);
+    if (sourceOutages.length === 0) {
+      sourceOutages = this.getOutages(filter.sectionId, true);
+    }
+    let list = [...sourceOutages];
 
     if (filter.sectionId) {
       list = list.filter(o => o.sectionId === filter.sectionId);

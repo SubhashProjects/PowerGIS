@@ -4,16 +4,40 @@
 // PURE WHITE THEME & RAPID RESTORATION TRACKING
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initialDisasters } from '../../services/mockData';
+import { assetService } from '../../services/assetService';
 import { DisasterEvent } from '../../types/operations';
 import {
-  CloudRain, AlertTriangle, ShieldCheck, Wrench, CheckCircle2, TrendingUp, Users
+  CloudRain, AlertTriangle, ShieldCheck, Wrench, CheckCircle2, TrendingUp, Users, Zap
 } from 'lucide-react';
 
 export const DisasterResponseCell: React.FC = () => {
-  const [events, setEvents] = useState<DisasterEvent[]>(initialDisasters);
-  const [selectedEvent, setSelectedEvent] = useState<DisasterEvent>(events[0]);
+  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
+
+  const simulatedEvent = initialDisasters[0];
+  const standbyEvent: DisasterEvent = {
+    id: 'dis-standby',
+    code: 'DIS-STANDBY',
+    name: 'Normal Grid Operations',
+    eventType: 'Standby',
+    affectedRegions: ['reg-pdy'],
+    startDate: new Date().toISOString(),
+    status: 'closed',
+    damagedPolesCount: 0,
+    damagedDTsCount: 0,
+    snappedConductorsKm: 0,
+    restorationPct: 100,
+  };
+
+  const selectedEvent = isSimActive ? simulatedEvent : standbyEvent;
 
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">

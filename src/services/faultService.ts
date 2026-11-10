@@ -11,7 +11,8 @@ import { authService } from './authService';
 
 export class FaultService {
   private static instance: FaultService;
-  private faults: Fault[] = [...initialFaults];
+  private simulatedFaults: Fault[] = [...initialFaults];
+  private userFaults: Fault[] = [];
 
   private constructor() {}
 
@@ -22,12 +23,15 @@ export class FaultService {
     return FaultService.instance;
   }
 
-  public getFaults(): Fault[] {
-    return this.faults.filter(f => authService.isWithinJurisdiction(f));
+  public getFaults(includeSimulated = false): Fault[] {
+    const list = (assetService.isSimulatorMode() || includeSimulated)
+      ? [...this.userFaults, ...this.simulatedFaults]
+      : [...this.userFaults];
+    return list.filter(f => (f as any).isUserUploaded || authService.isWithinJurisdiction(f));
   }
 
   public getFaultById(id: string): Fault | undefined {
-    return this.faults.find(f => f.id === id);
+    return this.userFaults.find(f => f.id === id) || this.simulatedFaults.find(f => f.id === id);
   }
 
   public calculateFaultDistances(
@@ -111,20 +115,21 @@ export class FaultService {
     const fault: Fault = {
       ...newFaultData,
       id: `flt-${Date.now()}`,
-      faultCode: `FLT-2026-${String(this.faults.length + 1).padStart(4, '0')}`,
+      faultCode: `FLT-2026-${String(this.userFaults.length + this.simulatedFaults.length + 1).padStart(4, '0')}`,
       reportedAt: new Date().toISOString(),
       distanceFromPoleM: calc.distanceFromPoleM,
       distanceFromDtM: calc.distanceFromDtM,
       distanceAlongFeederM: calc.distanceAlongFeederM,
       distanceFromOfficeKm: calc.distanceFromOfficeKm,
     };
+    (fault as any).isUserUploaded = true;
 
-    this.faults.unshift(fault);
+    this.userFaults.unshift(fault);
     return fault;
   }
 
   public updateFaultStatus(id: string, status: FaultStatus, assignedTo?: string): void {
-    const fault = this.faults.find(f => f.id === id);
+    const fault = this.getFaultById(id);
     if (fault) {
       fault.status = status;
       if (assignedTo) fault.assignedTo = assignedTo;

@@ -5,17 +5,29 @@
 // Columns: Assigned -> In Progress -> Completed -> Verified (JE) -> Closed (AE)
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initialWorkOrders } from '../../services/mockData';
+import { assetService } from '../../services/assetService';
 import { WorkOrder, WorkOrderStatus } from '../../types/operations';
 import { WORK_ORDER_COLUMNS } from '../../config/workflowConfig';
 import {
-  CheckSquare, Plus, User, ArrowRight, X, Clock, Calendar, CheckCircle2
+  CheckSquare, Plus, User, ArrowRight, X, Clock, Calendar, CheckCircle2, Zap
 } from 'lucide-react';
 
 export const WorkOrderKanban: React.FC = () => {
-  const [orders, setOrders] = useState<WorkOrder[]>(initialWorkOrders);
+  const [userOrders, setUserOrders] = useState<WorkOrder[]>([]);
+  const [simOrders, setSimOrders] = useState<WorkOrder[]>(initialWorkOrders);
+  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
   const [showNewModal, setShowNewModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setIsSimActive(assetService.isSimulatorMode());
+    });
+    return unsub;
+  }, []);
+
+  const orders = isSimActive ? [...userOrders, ...simOrders] : userOrders;
 
   // New Work Order form state
   const [title, setTitle] = useState('');
@@ -32,9 +44,11 @@ export const WorkOrderKanban: React.FC = () => {
     else if (currentStatus === 'completed') nextStatus = 'verified';
     else if (currentStatus === 'verified') nextStatus = 'closed';
 
-    setOrders(prev =>
-      prev.map(o => (o.id === orderId ? { ...o, status: nextStatus } : o))
-    );
+    if (userOrders.some(o => o.id === orderId)) {
+      setUserOrders(prev => prev.map(o => (o.id === orderId ? { ...o, status: nextStatus } : o)));
+    } else {
+      setSimOrders(prev => prev.map(o => (o.id === orderId ? { ...o, status: nextStatus } : o)));
+    }
   };
 
   const handleCreateOrder = (e: React.FormEvent) => {
@@ -56,7 +70,7 @@ export const WorkOrderKanban: React.FC = () => {
       dueDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
     };
 
-    setOrders([newOrder, ...orders]);
+    setUserOrders(prev => [newOrder, ...prev]);
     setShowNewModal(false);
     setTitle('');
     setInstructions('');

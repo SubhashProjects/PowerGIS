@@ -226,6 +226,7 @@ async function runTestSuite() {
   // --------------------------------------------------------------------------
   console.log('\n--- TEST GROUP 8: Role-Based Dashboard & Notification Scoping ---');
   {
+    assetService.setSimulatorMode(true);
     // 1. JE Anand - Ward Level
     const jeUser = initialUsers.find(u => u.role === 'je')!;
     const jeData = notificationService.getDashboardData(jeUser);
@@ -729,6 +730,43 @@ async function runTestSuite() {
       totalConsumers: 4850,
     });
     assert(emergencyOnly.totalOutages <= dynamicAll.totalOutages, 'Emergency-only outages count is subset of all outages');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 17: COMPLETE CLEAN MODE VS SIMULATOR DUMMY DATA ISOLATION
+  // --------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 17: Clean Mode vs Simulator Isolation ---');
+  {
+    // Step 1: Switch simulator mode OFF (Clean Real Mode)
+    assetService.setSimulatorMode(false);
+    assert(assetService.isSimulatorMode() === false, 'Simulator mode is OFF');
+    assert(!assetService.getPoles().some(p => p.id === 'pol-mara-1'), 'Clean mode strictly excludes simulated dummy pole pol-mara-1');
+    assert(!assetService.getTransformers().some(t => t.id === 'dt-blvd-1'), 'Clean mode strictly excludes simulated dummy transformer dt-blvd-1');
+    assert(assetService.getWarranties().length === 0, 'Clean mode strictly yields 0 simulated warranties');
+    assert(assetService.getLifecycles().length === 0, 'Clean mode strictly yields 0 simulated lifecycles');
+    assert(!surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Clean mode strictly excludes simulated dummy survey surv-1');
+    assert(faultService.getFaults().length === 0, 'Clean mode strictly yields 0 simulated breakdown faults');
+
+    const jeUser = initialUsers.find(u => u.role === 'je')!;
+    const cleanDashboard = notificationService.getDashboardData(jeUser);
+    assert(!cleanDashboard.assignments.some(a => a.id === 'asg-je-1'), 'Clean mode strictly excludes dummy assignment asg-je-1');
+    assert(cleanDashboard.notifications.some(n => n.id === 'clean-mode-standby'), 'Clean mode serves clean operational standby notification');
+
+    // Step 2: Switch simulator mode ON (Dynamic Simulation Mode)
+    assetService.setSimulatorMode(true);
+    assert(assetService.isSimulatorMode() === true, 'Simulator mode is ON');
+    assert(assetService.getPoles().some(p => p.id === 'pol-mara-1'), 'Simulator ON enables simulated dummy pole pol-mara-1');
+    assert(assetService.getTransformers().some(t => t.id === 'dt-blvd-1'), 'Simulator ON enables simulated dummy transformer dt-blvd-1');
+    assert(assetService.getWarranties().length > 0, 'Simulator ON enables simulated warranties');
+    assert(assetService.getLifecycles().length > 0, 'Simulator ON enables simulated lifecycles');
+    assert(surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Simulator ON enables simulated field survey surv-1');
+    assert(faultService.getFaults().length > 0, 'Simulator ON enables simulated breakdown faults');
+    const simDashboard = notificationService.getDashboardData(jeUser);
+    assert(simDashboard.assignments.some(a => a.id === 'asg-je-1'), 'Simulator ON populates simulated role assignment asg-je-1');
+
+    // Step 3: Switch simulator back OFF (Clean Mode restored)
+    assetService.setSimulatorMode(false);
+    assert(assetService.isSimulatorMode() === false, 'Simulator mode successfully returned to Clean Mode (OFF)');
   }
 
   // --------------------------------------------------------------------------
