@@ -7,6 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { assetService } from '../../services/assetService';
+import { COMMONS } from '../../commons';
 import {
   Building2, CheckCircle2, Clock, AlertTriangle, TrendingUp, Layers,
   DollarSign, MapPin, Calendar, FileText, ChevronRight, HardHat, RefreshCw, Zap
@@ -183,14 +184,14 @@ export const CapitalProjectsRDSS: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-base sm:text-lg font-bold text-zinc-950 tracking-tight">
-                Capital Schemes & RDSS Reforms Tracker
+                {COMMONS.labels.capitalProjects.title}
               </h1>
               <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 REVAMPED DISTRIBUTION SECTOR SCHEME
               </span>
             </div>
             <p className="text-xs text-zinc-500 font-mono mt-0.5">
-              Government Infrastructure Modernization · Physical Progress (%) vs Financial Expenditure (₹ Cr)
+              {COMMONS.labels.capitalProjects.subtitle}
             </p>
           </div>
         </div>

@@ -12,6 +12,7 @@ import { scadaService } from '../../services/scadaService';
 import { scadaGatewayService } from '../../services/scadaGatewayService';
 import { ScadaTelemetryPoint, ScadaAlarm, ScadaGatewayProtocol, ScadaConnectionStatus } from '../../types/operations';
 import { ScadaSimulatorControl } from './ScadaSimulatorControl';
+import { COMMONS } from '../../commons';
 import {
   Cpu, Activity, Zap, AlertTriangle, ShieldCheck, RefreshCw, Power, Radio,
   Lock, CheckCircle2, AlertOctagon, X, Clock, HelpCircle, Sliders, Layers,
@@ -147,14 +148,14 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
-                SCADA Telemetry, SLD & Dynamic Telemetry Simulator
+                {COMMONS.labels.scada.title}
               </h1>
               <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                IEC 60870-5-104 • MODBUS • MQTT
+                {COMMONS.labels.scada.protocolBadge}
               </span>
             </div>
             <p className="text-xs text-zinc-500 font-mono mt-0.5">
-              Marapalam 110/22/11kV Primary Substation · Select-Before-Operate (SBO) Interlock Gateway
+              {COMMONS.labels.scada.subtitle}
             </p>
           </div>
         </div>
@@ -403,7 +404,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           }`}
         >
           <Zap className="w-3.5 h-3.5" />
-          <span>Single Line Diagram (SLD)</span>
+          <span>{COMMONS.labels.scada.tabSLD}</span>
         </button>
 
         <button
@@ -415,7 +416,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
-          <span>SCADA Dynamic Simulator (10 Modes)</span>
+          <span>{COMMONS.labels.scada.tabSimulator}</span>
         </button>
 
         <button
@@ -427,7 +428,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           }`}
         >
           <Radio className="w-3.5 h-3.5" />
-          <span>Industrial Gateway Protocols</span>
+          <span>{COMMONS.labels.scada.tabProtocols}</span>
         </button>
 
         <button

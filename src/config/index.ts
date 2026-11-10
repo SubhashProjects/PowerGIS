@@ -1,8 +1,9 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// CENTRAL CONFIGURATION BARREL EXPORT (SSOT)
+// CENTRAL CONFIGURATION & COMMONS BARREL EXPORT (SSOT)
 // ============================================================================
 
+export * from '../commons';
 export * from './appConfig';
 export * from './themeConfig';
 export * from './basemapConfig';

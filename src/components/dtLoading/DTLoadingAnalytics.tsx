@@ -7,6 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
 import { Transformer } from '../../types/assets';
+import { COMMONS } from '../../commons';
 import { BarChart2, AlertTriangle, TrendingUp, CheckCircle2, Zap } from 'lucide-react';
 
 export const DTLoadingAnalytics: React.FC = () => {
@@ -99,14 +100,14 @@ export const DTLoadingAnalytics: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-base sm:text-lg font-bold text-zinc-950 tracking-tight">
-                Distribution Transformer (DT) Loading & Phase Imbalance
+                {COMMONS.labels.dtLoading.title}
               </h1>
               <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 CEA THERMAL SPEC
               </span>
             </div>
             <p className="text-xs text-zinc-500 font-mono mt-0.5">
-              Continuous Peak Loading · 3-Phase Balance (IR, IY, IB) · Augmentation Planning
+              {COMMONS.labels.dtLoading.subtitle}
             </p>
           </div>
         </div>

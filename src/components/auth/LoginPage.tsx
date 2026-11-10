@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { initialUsers } from '../../services/mockData';
 import { assetService } from '../../services/assetService';
 import { UserProfile } from '../../types/auth';
+import { COMMONS } from '../../commons';
 import {
   Zap,
   Lock,
@@ -154,9 +155,9 @@ export const LoginPage: React.FC = () => {
                 <span>Statutory Utility Authentication</span>
               </div>
 
-              <h1 className="text-2xl font-bold text-neutral-950 tracking-tight">Staff Sign In</h1>
+              <h1 className="text-2xl font-bold text-neutral-950 tracking-tight">{COMMONS.labels.auth.loginHeading}</h1>
               <p className="text-xs text-neutral-500 mt-1 mb-6">
-                Access your assigned regional network jurisdiction, live SCADA, and asset registers.
+                {COMMONS.labels.auth.loginSubheading}
               </p>
 
               {error && (

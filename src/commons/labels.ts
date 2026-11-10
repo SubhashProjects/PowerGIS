@@ -1,0 +1,325 @@
+// ============================================================================
+// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
+// COMMONS: UI TEXT LABELS & ACTION STRINGS (SINGLE SOURCE OF TRUTH - SSOT)
+// Change any button text, tab title, table header, or UI label here.
+// Reflects across the entire application.
+// ============================================================================
+
+export const LABELS = {
+  // 1. Global Common Actions & States
+  common: {
+    appName: 'PowerGIS',
+    appEdition: 'DISTRIBUTION',
+    appTagline: 'Electricity Distribution GIS Platform',
+    version: 'v2.0.0 Enterprise',
+    jurisdiction: 'Jurisdiction',
+    active: 'Active',
+    inactive: 'Inactive',
+    status: 'Status',
+    actions: 'Actions',
+    cancel: 'Cancel',
+    save: 'Save Changes',
+    saveNew: 'Create',
+    edit: 'Edit',
+    delete: 'Delete',
+    confirm: 'Confirm',
+    close: 'Close',
+    search: 'Search',
+    loading: 'Loading...',
+    refresh: 'Refresh',
+    all: 'All',
+    enabled: 'ENABLED',
+    disabled: 'DISABLED',
+    verified: 'VERIFIED',
+    youBadge: 'YOU',
+    signOut: 'Sign Out',
+    signOutTooltip: 'Sign Out of PowerGIS',
+    export: 'Export',
+    import: 'Import',
+    filter: 'Filter',
+    clear: 'Clear',
+    download: 'Download',
+    upload: 'Upload',
+    submit: 'Submit',
+    approve: 'Approve',
+    reject: 'Reject',
+    viewDetails: 'View Details',
+    standby: 'Standby',
+    optimal: 'Optimal',
+    warning: 'Warning',
+    critical: 'Critical',
+    normal: 'Normal',
+  },
+
+  // 2. Authentication & Sign In
+  auth: {
+    portalTitle: 'PowerGIS Enterprise Portal',
+    portalSubtitle: 'Electricity Distribution GIS & Network Command Platform',
+    loginHeading: 'Government & Utility Staff Sign In',
+    loginSubheading: 'Access your assigned regional network jurisdiction, live SCADA, and asset registers.',
+    usernamePlaceholder: 'Official Email or Staff ID',
+    passwordPlaceholder: 'Enter your secure password',
+    rememberMe: 'Remember this zero-trust terminal for 12 hours',
+    forgotPassword: 'Forgot Password?',
+    signInButton: 'Sign In to Official Command Center',
+    signingIn: 'Verifying Statutory Credentials...',
+    simulatorNoticeTitle: 'Grid Simulator Mode Active',
+    simulatorNoticeBody: 'Simulated utility personas and test data are available for immediate one-click testing.',
+    cleanModeNoticeTitle: 'Clean Real Operational Mode',
+    cleanModeNoticeBody: 'Simulated accounts hidden. Enter your official registered utility credentials to log in.',
+  },
+
+  // 3. Application Header
+  header: {
+    brandName: 'PowerGIS',
+    brandBadge: 'DISTRIBUTION',
+    brandSubtitle: 'Electricity Distribution GIS Platform',
+    jurisdictionPrefix: 'Jurisdiction:',
+    searchPlaceholder: 'Search (Ctrl + K)',
+    searchMobilePlaceholder: 'Search assets, feeders, poles...',
+    searchMobileTooltip: 'Search Assets',
+    whiteThemeBadge: 'White Theme',
+    notificationsTooltip: 'Role Notifications & Assignments',
+    notificationsTitle: 'Role Notifications',
+    regionsTitle: 'Union Territory Regions',
+    adminConsole: 'Admin Console',
+    adminConsoleTooltip: 'Super Administrator Management Console',
+    signOut: 'Sign Out',
+    signOutTooltip: 'Sign Out of PowerGIS',
+    menuToggleAria: 'Toggle Navigation Drawer',
+    simulatorActiveTitle: 'Simulator ACTIVE: Streaming simulated test grid & SCADA telemetry. Click to turn OFF (Clean Real Mode).',
+    simulatorInactiveTitle: 'Simulator OFF: Clean real operational mode. Click to turn ON simulated test grid & telemetry.',
+    simulatorLabel: 'SIMULATOR:',
+    simulatorOn: 'ON',
+    simulatorOff: 'OFF',
+  },
+
+  // 4. Scope HUD Indicator Banner (Sticky Under Header)
+  scopeHUD: {
+    activeIdentityPrefix: 'Active Identity:',
+    jurisdictionPrefix: 'Jurisdiction:',
+    privilegesPrefix: 'Privileges:',
+    rlsActiveBadge: 'RLS Active',
+    stagingIsolationSuffix: '(Staging Sandbox Isolation)',
+  },
+
+  // 5. Zero-Trust Statutory Access Gate
+  zeroTrustGate: {
+    policyBadge: 'Zero-Trust Access Control • Statutory Policy 4.2',
+    heading: 'Access Restricted by Role Entitlement',
+    messagePrefix: 'Your official active role (',
+    messageMiddle: ') is not provisioned with statutory authorization for the module "',
+    messageSuffix: '".',
+    returnButton: 'Return to Permitted Command Center',
+  },
+
+  // 6. Navigation Tab Labels (SSOT for Sidebar & Routing)
+  navigation: {
+    dashboard: 'Role Dashboard & Tasks',
+    gisMap: 'GIS Master Map',
+    assets: 'Electrical Assets',
+    capitalProjects: 'Capital Projects (RDSS)',
+    smartMeters: 'Smart Meter Dashboard',
+    warranties: 'Warranties & Lifecycle',
+    faults: 'Faults & Distance Calc',
+    workOrders: 'Tasks & Work Orders',
+    contractorPWA: 'Contractor GPS Survey (PWA)',
+    surveyApprovals: 'Survey Approval Queue',
+    scada: 'SCADA Telemetry & SLD',
+    outages: 'Outages & IEEE Reliability',
+    topology: 'Network Topology Tracing',
+    preventive: 'Preventive Maintenance',
+    dtLoading: 'DT Loading & Imbalance',
+    stores: 'Stores & Material Mgmt',
+    disaster: 'Disaster Management',
+    safetyPTW: 'Safety Permit to Work (PTW)',
+    assetRisk: 'ISO 55000 Asset Risk',
+    backupRestore: 'Backup & Data Exchange',
+    adminPanel: 'Admin Control Panel',
+  },
+
+  // 7. Role-Based Dashboard & Assignments
+  dashboard: {
+    assignmentsTitle: 'Pending Statutory Field Assignments',
+    filterAll: 'All Pending',
+    filterImmediate: 'Immediate Action',
+    filterHigh: 'High Priority',
+    noAssignments: 'No assignments pending for current filter.',
+    notificationsTitle: 'Notifications',
+    notificationsNewSuffix: 'New',
+    markAllRead: 'Mark all read',
+    quickActionsTitle: 'Authorized Quick Actions',
+    quickActionsScopedPrefix: '— Scoped to ',
+    quickActionsScopedSuffix: ' entitlements',
+    accessModuleCTA: 'Access Module →',
+    permissionsAuditTitle: 'Statutory Role Permissions & Field Authorization Audit',
+  },
+
+  // 8. Super Administrator Control Panel
+  admin: {
+    consoleTitle: 'Super Administrator Command Console',
+    rootAuthorityBadge: 'ROOT AUTHORITY',
+    consoleSubtitle: 'User Accounts & RBAC • PostGIS Migration • Point-in-Time Backups • Zero-Trust Access',
+    activeSessionPrefix: 'Active Session:',
+    tabUsers: 'Staff Accounts & RBAC',
+    tabMigration: 'Geospatial Migration & Backups',
+    tabFeatures: 'Modular Feature Toggles',
+    searchPlaceholder: 'Search staff by name, email, role, or designation...',
+    allRolesOption: 'All Roles',
+    addUserButton: 'Add New User',
+    resetDefaultTooltip: 'Reset all staff users to factory default initial personas',
+    statTotalStaff: 'Total Staff Accounts',
+    statActiveStaff: 'Active Accounts',
+    statFieldRoles: 'Field Engineering Roles',
+    statContractors: 'External Contractors',
+    thStaffMember: 'Staff Member',
+    thRoleDesignation: 'Role & Designation',
+    thJurisdiction: 'Jurisdiction Scope',
+    thContact: 'Contact',
+    thStatus: 'Status',
+    thActions: 'Actions',
+    btnTestRole: 'Test Role',
+    btnEdit: 'Edit',
+    btnDelete: 'Delete',
+    emptyTable: 'No staff accounts matching search query or role filter.',
+    modalAddTitle: 'Add New Staff User',
+    modalAddSubtitle: 'Provision official role & organizational jurisdiction',
+    modalEditTitle: 'Edit Staff Profile',
+    modalDeleteTitle: 'Confirm Deletion',
+    modalDeleteSubtitle: 'Remove staff profile from system',
+    modalDeleteConfirmText: 'Are you sure you want to permanently delete the staff record for ',
+    modalDeleteConfirmRevoke: 'This will revoke all active zero-trust session tokens.',
+    btnDeleteAccount: 'Delete Account',
+    btnCreateAccount: 'Create Staff Account',
+    accountActiveLabel: 'Account Enabled & Active for Portal Authentication',
+    contractorFirmName: 'Contractor Firm Name',
+    regionCircle: 'Region / Circle',
+    sectionJurisdiction: 'Section Jurisdiction',
+    fullNameLabel: 'Full Name & Salutation *',
+    usernameLabel: 'Username *',
+    emailLabel: 'Official Email *',
+    roleLabel: 'Official Role *',
+    designationLabel: 'Designation Title',
+    phoneLabel: 'Mobile Phone',
+    passwordLabel: 'Default Password',
+  },
+
+  // 9. GIS Master Map Controls
+  gisMap: {
+    title: 'GIS Master Map',
+    basemapSwitcherTooltip: 'Select Base Map Layer',
+    layersTooltip: 'Toggle Distribution Network Layers',
+    rotationNorthTooltip: 'Reset Bearing to True North (0°)',
+    rotationCWTooltip: 'Rotate Map Clockwise (+15°)',
+    rotationCCWTooltip: 'Rotate Map Counter-Clockwise (-15°)',
+    bearingLabel: 'Bearing',
+    measureDistance: 'Distance Measure',
+    measureArea: 'Area Measure',
+    clearMeasure: 'Clear Measure',
+    centerJurisdiction: 'Center Jurisdiction',
+  },
+
+  // 10. Electrical Asset Inventory Register
+  assets: {
+    registryTitle: 'PowerGIS Electrical Asset Inventory Register',
+    searchPlaceholder: 'Search substations, feeders, DTRs, poles, conductors, meters...',
+    exportRegistry: 'Export Register',
+    tabSubstations: 'Substations',
+    tabFeeders: '11kV/22kV Feeders',
+    tabTransformers: 'Distribution Transformers',
+    tabPoles: 'Utility Poles',
+    tabConductors: 'Conductors & Cables',
+    tabConsumers: 'Consumer Services',
+  },
+
+  // 11. Faults & Distance Calculator
+  faults: {
+    moduleTitle: 'Fault Ticket Management & Distance Calculator',
+    calcDistanceTitle: 'Geodesic Proximity & Distance Calculation',
+    nearestPole: 'Distance from Nearest Pole:',
+    nearestDT: 'Distance from Distribution Transformer:',
+    feederRouteDistance: 'Distance Along Feeder Route:',
+    officeDistance: 'Distance from Section Office:',
+    dispatchCrewCTA: 'Dispatch Repair Crew',
+    ticketLifecycleTitle: '8-Stage Fault Progression Lifecycle',
+  },
+
+  // 12. Work Orders Kanban
+  workOrders: {
+    boardTitle: 'Maintenance Tasks & Work Orders (Kanban)',
+    newOrderCTA: 'Create Work Order',
+    slaTimeRemaining: 'SLA Time Remaining:',
+  },
+
+  // 13. Surveys & Multi-Tier Approvals
+  surveys: {
+    pwaTitle: 'Contractor Mobile GPS Field Survey (PWA)',
+    approvalQueueTitle: 'Multi-Tier Survey Verification & Approval Queue',
+    jeVerificationStep: 'JE Physical Field Check',
+    aeApprovalStep: 'AE Statutory Approval & Live GIS Publication',
+  },
+
+  // 14. SCADA Telemetry & Interactive SLD
+  scada: {
+    title: 'SCADA Telemetry, SLD & Dynamic Telemetry Simulator',
+    subtitle: 'Marapalam 110/22/11kV Primary Substation · Select-Before-Operate (SBO) Interlock Gateway',
+    protocolBadge: 'IEC 60870-5-104 • MODBUS • MQTT',
+    tabSLD: 'Single Line Diagram (SLD)',
+    tabSimulator: 'SCADA Dynamic Simulator (10 Modes)',
+    tabProtocols: 'Industrial Gateway Protocols',
+    tabSBO: 'Remote SBO Breaker Control',
+    telemetryStream: 'Live Bidirectional Telemetry Stream',
+    remoteBreakerControl: 'Select-Before-Operate (SBO) Breaker Control',
+  },
+
+  // 15. Outages & IEEE 1366 Reliability
+  outages: {
+    title: 'IEEE 1366 Outage Analytics & Reliability Indices',
+    saifiLabel: 'SAIFI (Interruption Frequency)',
+    saidiLabel: 'SAIDI (Interruption Duration)',
+    caidiLabel: 'CAIDI (Customer Average Interruption Duration)',
+    ensLabel: 'Energy Not Served (ENS MWh)',
+  },
+
+  // 16. Geospatial Data Migration & Backups
+  dataExchange: {
+    title: 'Geospatial Data Migration & Exchange (Import / Export)',
+    subtitle: 'Standardized OpenGIS Formats • Automated Coordinate Verification',
+    importTitle: 'Import Spatial Dataset',
+    exportTitle: 'Export Master GIS Network',
+    backupTitle: 'PostgreSQL Database Backups & Point-in-Time Snapshots',
+    runBackupButton: 'Run Manual Backup',
+  },
+
+  // 17. Distribution Transformer Loading & Imbalance
+  dtLoading: {
+    title: 'Distribution Transformer (DT) Loading & Imbalance Analytics',
+    subtitle: 'Real-time thermal monitoring, 3-phase current balance & technical loss estimation',
+    metricTotalDTs: 'Total Monitored DTRs',
+    metricOverloaded: 'Overloaded DTRs (>100%)',
+    metricHighLoad: 'High Load DTRs (80-100%)',
+    metricOptimal: 'Optimal Load DTRs (<80%)',
+  },
+
+  // 18. Capital Projects (RDSS)
+  capitalProjects: {
+    title: 'Revamped Distribution Sector Scheme (RDSS) Progress Tracker',
+    subtitle: 'Centrally sponsored infrastructure modernization, feeder segregation & smart meter deployment',
+    metricSanctionedCost: 'Sanctioned Outlay',
+    metricDisbursed: 'Disbursed Funds',
+    metricPhysicalProgress: 'Physical Completion',
+    metricFeedersSegregated: 'Feeders Segregated',
+  },
+
+  // 19. Smart Meters & AMI
+  smartMeters: {
+    title: 'Advanced Metering Infrastructure (AMI) & Smart Meter Analytics',
+    subtitle: 'Cellular & RF mesh telemetry, daily load profile curves, and tamper detection',
+    metricActiveMeters: 'Online Meters',
+    metricCommunicating: 'Communicating (24h)',
+    metricTamperAlerts: 'Active Tamper Alerts',
+    metricAvgPowerFactor: 'Avg System Power Factor',
+  },
+} as const;
+
+export type LabelsConfig = typeof LABELS;

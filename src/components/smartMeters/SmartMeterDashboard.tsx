@@ -7,6 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
 import { dataExchangeService } from '../../services/dataExchangeService';
+import { COMMONS } from '../../commons';
 import { Gauge, Download, Zap } from 'lucide-react';
 
 export const SmartMeterDashboard: React.FC = () => {
@@ -36,14 +37,14 @@ export const SmartMeterDashboard: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
-                Smart Meter (AMI) Rollout & Geographic Mapping
+                {COMMONS.labels.smartMeters.title}
               </h1>
               <span className="text-[10px] font-mono uppercase font-semibold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 RDSS AMI GRID
               </span>
             </div>
             <p className="text-xs text-zinc-500 font-mono mt-0.5">
-              Section-wise Installation Progress · Pole-to-Meter Spatial Verification · RF Mesh / 4G
+              {COMMONS.labels.smartMeters.subtitle}
             </p>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { reliabilityService } from '../../services/reliabilityService';
 import { assetService } from '../../services/assetService';
 import { initialSections } from '../../services/mockData';
 import { Outage } from '../../types/operations';
+import { COMMONS } from '../../commons';
 import { Power, BarChart2, AlertOctagon, CheckCircle2, AlertTriangle, Plus, Filter, Calendar, X, Zap } from 'lucide-react';
 
 export const OutageManager: React.FC = () => {
@@ -100,7 +101,7 @@ export const OutageManager: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
-                Outage Management & IEEE 1366 Reliability Indices
+                {COMMONS.labels.outages.title}
               </h1>
               <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
                 IEEE 1366 STANDARD
@@ -115,7 +116,7 @@ export const OutageManager: React.FC = () => {
         <div className="flex items-center space-x-2 text-xs font-mono self-start sm:self-auto">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-3 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs"
+            className="px-3 py-1.5 rounded-md bg-[#09090B] text-white hover:bg-zinc-800 font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Log Outage Event</span>

@@ -33,7 +33,7 @@ import { LoginPage } from './components/auth/LoginPage';
 import { RoleBasedDashboard } from './components/dashboard/RoleBasedDashboard';
 import { notificationService } from './services/notificationService';
 import { NAVIGATION_ITEMS } from './config/navigationConfig';
-import { LABELS } from './config/labelsConfig';
+import { COMMONS, LABELS } from './commons';
 import { X, Zap, ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -50,7 +50,7 @@ const MainLayout: React.FC = () => {
   const isAuthorized = !currentNav?.roles || currentNav.roles.includes(user.role);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#f8f9fa] text-neutral-900 font-sans">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#FAFAFA] text-[#09090B] font-sans">
       {/* 1. Global Header with Mobile Drawer Trigger */}
       <Header
         onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}

@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
+import { COMMONS } from '../../commons';
 import { ShieldCheck, AlertCircle, Clock, CheckCircle2, Calendar, FileText, Zap } from 'lucide-react';
 
 export const WarrantyRegister: React.FC = () => {
@@ -36,7 +37,7 @@ export const WarrantyRegister: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
-                Warranty & Equipment Lifecycle Register
+                {COMMONS.labels.navigation.warranties}
               </h1>
               <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
                 OEM GUARANTEES
