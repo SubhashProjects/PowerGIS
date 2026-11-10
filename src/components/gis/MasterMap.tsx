@@ -352,7 +352,7 @@ export const MasterMap: React.FC = () => {
             const clusterMarker = L.marker(c.centroid, {
               icon: L.divIcon({
                 html: `
-                  <div style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#10B981;color:#ffffff;font-family:monospace;font-weight:800;font-size:11px;border:2.5px solid #ffffff;box-shadow:0 3px 6px rgba(0,0,0,0.25);cursor:pointer;">
+                  <div style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#10B981;color:#ffffff;font-family:'Times New Roman',Times,serif;font-weight:800;font-size:11px;border:2.5px solid #ffffff;box-shadow:0 3px 6px rgba(0,0,0,0.25);cursor:pointer;">
                     ${c.items.length}
                   </div>
                 `,
@@ -427,7 +427,7 @@ export const MasterMap: React.FC = () => {
             const clusterMarker = L.marker(c.centroid, {
               icon: L.divIcon({
                 html: `
-                  <div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#8B5CF6;color:#ffffff;font-family:monospace;font-weight:800;font-size:11px;border:2px solid #ffffff;box-shadow:0 3px 6px rgba(0,0,0,0.25);cursor:pointer;">
+                  <div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#8B5CF6;color:#ffffff;font-family:'Times New Roman',Times,serif;font-weight:800;font-size:11px;border:2px solid #ffffff;box-shadow:0 3px 6px rgba(0,0,0,0.25);cursor:pointer;">
                     ${c.items.length}
                   </div>
                 `,

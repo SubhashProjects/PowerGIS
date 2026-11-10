@@ -273,30 +273,30 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
   };
 
   return (
-    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-slate-900 select-none">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#09090B]">
       {/* 1. Header Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5 min-w-0">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-700 via-indigo-700 to-cyan-600 text-white font-extrabold flex items-center justify-center text-xl shadow-md shadow-blue-500/20 flex-shrink-0">
-            ⚡
+          <div className="w-8 h-8 rounded-md bg-[#09090B] text-white font-bold flex items-center justify-center text-sm border border-zinc-800 flex-shrink-0">
+            <Zap className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center space-x-2 flex-wrap">
-              <h1 className="text-base sm:text-lg font-extrabold text-slate-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
                 {LABELS.admin.consoleTitle}
               </h1>
-              <span className="text-[10px] font-mono uppercase font-extrabold px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200">
+              <span className="text-[10px] font-mono uppercase font-semibold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 {LABELS.admin.rootAuthorityBadge}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5 font-mono truncate">
+            <p className="text-xs text-zinc-500 mt-0.5 font-mono truncate">
               {LABELS.admin.consoleSubtitle}
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2 self-start sm:self-auto flex-shrink-0">
-          <span className="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-mono text-slate-800 font-bold">
+          <span className="px-3 py-1 rounded-md bg-zinc-100 border border-zinc-200 text-xs font-mono text-zinc-800 font-medium">
             {LABELS.admin.activeSessionPrefix} {user.fullName.split(',')[0]} ({user.role.toUpperCase()})
           </span>
         </div>
@@ -304,52 +304,52 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
       {/* Global Status Notice */}
       {actionNotice && (
-        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between shadow-sm animate-in fade-in duration-150">
+        <div className="p-3.5 rounded-md bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs flex items-center justify-between animate-in fade-in duration-150">
           <div className="flex items-center space-x-2.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-            <span className="font-semibold">{actionNotice}</span>
+            <span className="font-medium">{actionNotice}</span>
           </div>
-          <button onClick={() => setActionNotice(null)} className="text-slate-500 hover:text-slate-900 cursor-pointer">
+          <button onClick={() => setActionNotice(null)} className="text-zinc-500 hover:text-zinc-900 cursor-pointer">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* 2. Admin Sub-Navigation Tabs */}
-      <div className="flex items-center space-x-2 border-b border-slate-200 pb-2">
+      <div className="flex items-center space-x-2 border-b border-zinc-200 pb-2">
         <button
           onClick={() => setActiveTab('users')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
             activeTab === 'users'
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 ring-1 ring-blue-400/30'
-              : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
+              ? 'bg-[#09090B] text-white'
+              : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200'
           }`}
         >
-          <Users className="w-4 h-4 flex-shrink-0" />
+          <Users className="w-3.5 h-3.5 flex-shrink-0" />
           <span>{LABELS.admin.tabUsers} ({users.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('migration')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
             activeTab === 'migration'
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 ring-1 ring-blue-400/30'
-              : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
+              ? 'bg-[#09090B] text-white'
+              : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200'
           }`}
         >
-          <FileUp className="w-4 h-4 flex-shrink-0" />
+          <FileUp className="w-3.5 h-3.5 flex-shrink-0" />
           <span>{LABELS.admin.tabMigration}</span>
         </button>
 
         <button
           onClick={() => setActiveTab('features')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
             activeTab === 'features'
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 ring-1 ring-blue-400/30'
-              : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
+              ? 'bg-[#09090B] text-white'
+              : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200'
           }`}
         >
-          <Shield className="w-4 h-4 flex-shrink-0" />
+          <Shield className="w-3.5 h-3.5 flex-shrink-0" />
           <span>{LABELS.admin.tabFeatures}</span>
         </button>
       </div>
@@ -361,14 +361,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
         <div className="space-y-4">
           {/* Simulation Mode Indicator for Staff Personas */}
           {!isSimulatorActive && (
-            <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="p-3.5 rounded-md bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
               <div className="flex items-center space-x-2.5">
-                <div className="p-2 rounded-xl bg-amber-100 text-amber-800 border border-amber-300 flex-shrink-0">
-                  <Zap className="w-4 h-4 text-amber-700" />
+                <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-600 flex-shrink-0">
+                  <Zap className="w-4 h-4 text-zinc-600" />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900">Pre-seeded Test Personas Isolated (Clean Operational Mode)</div>
-                  <p className="text-[11px] text-slate-600">
+                  <div className="font-semibold text-[#09090B]">Pre-seeded Test Personas Isolated (Clean Operational Mode)</div>
+                  <p className="text-[11px] text-zinc-500 font-mono">
                     Showing <b>{users.length}</b> registered utility user(s). The 10 pre-seeded dummy engineering personas (SE, EE, AEE, AE, JE, Contractor, Auditor, GIS Admin) are isolated and will only appear when Simulator is ON.
                   </p>
                 </div>
@@ -376,26 +376,26 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
               <button
                 type="button"
                 onClick={handleToggleSimulator}
-                className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+                className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium text-xs border border-zinc-900 transition-colors flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
               >
                 <Zap className="w-3.5 h-3.5" />
-                <span>⚡ Load Simulated Personas</span>
+                <span>Load Simulated Personas</span>
               </button>
             </div>
           )}
 
           {/* Controls Bar: Search, Role Filter, Add User, Reset */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="bg-white border border-zinc-200 rounded-md p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="flex items-center space-x-2.5 flex-1 min-w-0">
               {/* Search */}
               <div className="relative flex-1 max-w-sm">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+                <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5 pointer-events-none" />
                 <input
                   type="text"
                   value={userSearchQuery}
                   onChange={e => setUserSearchQuery(e.target.value)}
                   placeholder={LABELS.admin.searchPlaceholder}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-md pl-9 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                 />
               </div>
 
@@ -404,7 +404,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 <select
                   value={roleFilter}
                   onChange={e => setRoleFilter(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:bg-white focus:outline-none focus:border-blue-600 font-mono font-medium"
+                  className="bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-700 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono font-medium"
                 >
                   <option value="all">{LABELS.admin.allRolesOption} ({users.length})</option>
                   <option value="super_admin">Super Administrator</option>
@@ -424,9 +424,9 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
             <div className="flex items-center space-x-2 flex-shrink-0">
               <button
                 onClick={openAddUserModal}
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm shadow-blue-500/20 cursor-pointer transition-all"
+                className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium text-xs flex items-center space-x-1.5 border border-zinc-900 cursor-pointer transition-colors"
               >
-                <UserPlus className="w-4 h-4" />
+                <UserPlus className="w-3.5 h-3.5" />
                 <span>{LABELS.admin.addUserButton}</span>
               </button>
 
@@ -439,93 +439,93 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                   }
                 }}
                 title={LABELS.admin.resetDefaultTooltip}
-                className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors cursor-pointer"
+                className="p-1.5 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-600 border border-zinc-200 transition-colors cursor-pointer"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
           {/* Quick Stats Summary */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statTotalStaff}</div>
-              <div className="text-xl font-extrabold text-slate-900 mt-1">{users.length}</div>
+            <div className="p-3 rounded-md bg-white border border-zinc-200">
+              <div className="text-[10px] uppercase font-medium text-zinc-500 font-mono">{LABELS.admin.statTotalStaff}</div>
+              <div className="text-xl font-bold font-mono text-[#09090B] mt-1">{users.length}</div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statActiveStaff}</div>
-              <div className="text-xl font-extrabold text-emerald-600 mt-1">{users.filter(u => u.isActive).length}</div>
+            <div className="p-3 rounded-md bg-white border border-zinc-200">
+              <div className="text-[10px] uppercase font-medium text-zinc-500 font-mono">{LABELS.admin.statActiveStaff}</div>
+              <div className="text-xl font-bold font-mono text-emerald-700 mt-1">{users.filter(u => u.isActive).length}</div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statFieldRoles}</div>
-              <div className="text-xl font-extrabold text-blue-600 mt-1">
+            <div className="p-3 rounded-md bg-white border border-zinc-200">
+              <div className="text-[10px] uppercase font-medium text-zinc-500 font-mono">{LABELS.admin.statFieldRoles}</div>
+              <div className="text-xl font-bold font-mono text-[#09090B] mt-1">
                 {users.filter(u => ['se', 'ee', 'aee', 'ae', 'je'].includes(u.role)).length}
               </div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-              <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">{LABELS.admin.statContractors}</div>
-              <div className="text-xl font-extrabold text-purple-600 mt-1">
+            <div className="p-3 rounded-md bg-white border border-zinc-200">
+              <div className="text-[10px] uppercase font-medium text-zinc-500 font-mono">{LABELS.admin.statContractors}</div>
+              <div className="text-xl font-bold font-mono text-zinc-700 mt-1">
                 {users.filter(u => u.role === 'contractor').length}
               </div>
             </div>
           </div>
 
           {/* Comprehensive Users Table */}
-          <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-zinc-200 rounded-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-mono font-bold text-slate-500">
-                    <th className="py-3 px-4">{LABELS.admin.thStaffMember}</th>
-                    <th className="py-3 px-4">{LABELS.admin.thRoleDesignation}</th>
-                    <th className="py-3 px-4 hidden md:table-cell">{LABELS.admin.thJurisdiction}</th>
-                    <th className="py-3 px-4 hidden lg:table-cell">{LABELS.admin.thContact}</th>
-                    <th className="py-3 px-4">{LABELS.admin.thStatus}</th>
-                    <th className="py-3 px-4 text-right">{LABELS.admin.thActions}</th>
+                  <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] uppercase font-mono font-semibold text-zinc-600">
+                    <th className="py-2.5 px-3">{LABELS.admin.thStaffMember}</th>
+                    <th className="py-2.5 px-3">{LABELS.admin.thRoleDesignation}</th>
+                    <th className="py-2.5 px-3 hidden md:table-cell">{LABELS.admin.thJurisdiction}</th>
+                    <th className="py-2.5 px-3 hidden lg:table-cell">{LABELS.admin.thContact}</th>
+                    <th className="py-2.5 px-3">{LABELS.admin.thStatus}</th>
+                    <th className="py-2.5 px-3 text-right">{LABELS.admin.thActions}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-zinc-100">
                   {filteredUsers.map(u => {
                     const isCurrent = user.id === u.id;
                     return (
-                      <tr key={u.id} className={`hover:bg-blue-50/40 transition-colors ${isCurrent ? 'bg-blue-50/60' : ''}`}>
+                      <tr key={u.id} className={`hover:bg-zinc-50 transition-colors ${isCurrent ? 'bg-zinc-50/60' : ''}`}>
                         {/* Member Name & Avatar */}
-                        <td className="py-3 px-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-extrabold flex items-center justify-center text-xs flex-shrink-0 shadow-2xs">
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center space-x-2.5">
+                            <div className="w-7 h-7 rounded-md bg-[#09090B] text-white font-medium flex items-center justify-center text-xs flex-shrink-0 border border-zinc-800">
                               {u.fullName.substring(0, 2).toUpperCase()}
                             </div>
                             <div className="min-w-0">
-                              <div className="font-bold text-slate-900 truncate flex items-center space-x-1.5">
+                              <div className="font-semibold text-zinc-900 truncate flex items-center space-x-1.5">
                                 <span>{u.fullName}</span>
                                 {isCurrent && (
-                                  <span className="text-[9px] bg-blue-100 text-blue-800 font-mono px-1.5 py-0.2 rounded font-extrabold border border-blue-200">
+                                  <span className="text-[9px] bg-zinc-100 text-zinc-800 font-mono px-1.5 py-0.2 rounded font-semibold border border-zinc-200">
                                     {LABELS.common.youBadge}
                                   </span>
                                 )}
                               </div>
-                              <div className="text-[10px] text-slate-400 font-mono truncate">@{u.username}</div>
+                              <div className="text-[10px] text-zinc-500 font-mono truncate">@{u.username}</div>
                             </div>
                           </div>
                         </td>
 
                         {/* Role & Designation */}
-                        <td className="py-3 px-4">
+                        <td className="py-2.5 px-3">
                           <div>
-                            <span className="inline-block px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-[10px] font-extrabold uppercase border border-slate-200">
+                            <span className="inline-block px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono text-[10px] font-semibold uppercase border border-zinc-200">
                               {u.role}
                             </span>
-                            <div className="text-[11px] text-slate-600 mt-0.5 font-medium truncate max-w-[200px]">
+                            <div className="text-[11px] text-zinc-600 mt-0.5 font-normal truncate max-w-[200px]">
                               {u.designation}
                             </div>
                           </div>
                         </td>
 
                         {/* Jurisdiction */}
-                        <td className="py-3 px-4 hidden md:table-cell">
-                          <div className="text-slate-700 font-mono text-[11px]">
+                        <td className="py-2.5 px-3 hidden md:table-cell">
+                          <div className="text-zinc-700 font-mono text-[11px]">
                             {u.contractorCompany ? (
-                              <span className="text-purple-700 font-bold">{u.contractorCompany}</span>
+                              <span className="text-zinc-900 font-semibold">{u.contractorCompany}</span>
                             ) : (
                               <span>
                                 {initialSections.find(s => s.id === u.sectionId)?.name ||
@@ -538,40 +538,40 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                         </td>
 
                         {/* Contact */}
-                        <td className="py-3 px-4 hidden lg:table-cell">
-                          <div className="space-y-0.5 text-[11px] font-mono text-slate-600">
+                        <td className="py-2.5 px-3 hidden lg:table-cell">
+                          <div className="space-y-0.5 text-[11px] font-mono text-zinc-600">
                             <div className="truncate max-w-[180px]">{u.email}</div>
-                            <div className="text-slate-400 text-[10px]">{u.phone}</div>
+                            <div className="text-zinc-400 text-[10px]">{u.phone}</div>
                           </div>
                         </td>
 
                         {/* Status */}
-                        <td className="py-3 px-4">
+                        <td className="py-2.5 px-3">
                           {u.isActive ? (
-                            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                               <span>{LABELS.common.active}</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-mono font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                            <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-500 border border-zinc-200 text-[10px] font-mono font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
                               <span>{LABELS.common.inactive}</span>
                             </span>
                           )}
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3 px-4 text-right">
+                        <td className="py-2.5 px-3 text-right">
                           <div className="flex items-center justify-end space-x-1.5">
                             {/* Impersonate / Test as Persona Button */}
                             <button
                               onClick={() => handleImpersonate(u)}
                               disabled={isCurrent}
                               title={`Test live portal as ${u.fullName}`}
-                              className={`p-1.5 rounded-lg border text-xs font-bold transition-all flex items-center space-x-1 ${
+                              className={`p-1.5 rounded-md border text-xs font-medium transition-colors flex items-center space-x-1 ${
                                 isCurrent
-                                  ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                                  : 'bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border-blue-200 cursor-pointer shadow-2xs'
+                                  ? 'bg-zinc-100 text-zinc-400 border-zinc-200 cursor-not-allowed'
+                                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-200 cursor-pointer'
                               }`}
                             >
                               <UserCheck className="w-3.5 h-3.5" />
@@ -582,7 +582,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                             <button
                               onClick={() => openEditUserModal(u)}
                               title={LABELS.admin.btnEdit}
-                              className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors cursor-pointer shadow-2xs"
+                              className="p-1.5 rounded-md bg-white hover:bg-zinc-100 text-zinc-700 border border-zinc-200 transition-colors cursor-pointer"
                             >
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
@@ -592,10 +592,10 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                               onClick={() => setUserToDelete(u)}
                               disabled={isCurrent}
                               title={isCurrent ? 'Cannot delete your active session' : LABELS.admin.btnDelete}
-                              className={`p-1.5 rounded-lg border transition-colors ${
+                              className={`p-1.5 rounded-md border transition-colors ${
                                 isCurrent
-                                  ? 'bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed'
-                                  : 'bg-slate-50 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 text-slate-600 border-slate-200 cursor-pointer shadow-2xs'
+                                  ? 'bg-zinc-100 text-zinc-300 border-zinc-200 cursor-not-allowed'
+                                  : 'bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-zinc-600 border-zinc-200 cursor-pointer'
                               }`}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -608,7 +608,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
                   {filteredUsers.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-slate-400 font-mono text-xs">
+                      <td colSpan={6} className="py-8 text-center text-zinc-400 font-mono text-xs">
                         {LABELS.admin.emptyTable}
                       </td>
                     </tr>
@@ -627,9 +627,9 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
         <div className="space-y-4">
           {/* Import Result Notification Modal */}
           {importStatus && (
-            <div className="p-4 rounded-2xl bg-white border border-slate-300 text-slate-900 text-xs shadow-xl space-y-2 animate-in fade-in duration-200">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <div className="flex items-center space-x-2 font-bold text-sm">
+            <div className="p-3.5 rounded-md bg-white border border-zinc-200 text-[#09090B] text-xs space-y-2 animate-in fade-in duration-150">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+                <div className="flex items-center space-x-2 font-semibold text-xs">
                   {importStatus.success ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   ) : (
@@ -639,30 +639,30 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 </div>
                 <button
                   onClick={() => setImportStatus(null)}
-                  className="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+                  className="p-1 rounded text-zinc-500 hover:text-zinc-900 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="text-slate-700 font-mono text-[11px]">{importStatus.message}</p>
+              <p className="text-zinc-600 font-mono text-[11px]">{importStatus.message}</p>
 
-              <div className="flex items-center space-x-4 font-mono text-[11px] pt-1">
-                <span className="px-2 py-0.5 rounded bg-slate-900 text-white font-bold">
+              <div className="flex items-center space-x-3 font-mono text-[11px] pt-1">
+                <span className="px-2 py-0.5 rounded bg-[#09090B] text-white font-medium">
                   Imported: {importStatus.importedCount}
                 </span>
-                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200">
                   Duplicates: {importStatus.duplicateCount}
                 </span>
                 {importStatus.errorCount > 0 && (
-                  <span className="px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-bold">
+                  <span className="px-2 py-0.5 rounded bg-red-50 text-red-700 border border-red-200 font-medium">
                     Errors: {importStatus.errorCount}
                   </span>
                 )}
               </div>
 
               {importStatus.details.length > 0 && (
-                <div className="max-h-28 overflow-y-auto bg-slate-50 p-2.5 rounded-xl border border-slate-200 font-mono text-[10px] space-y-1 text-slate-600">
+                <div className="max-h-28 overflow-y-auto bg-zinc-50 p-2 rounded-md border border-zinc-200 font-mono text-[10px] space-y-1 text-zinc-600">
                   {importStatus.details.map((d, i) => (
                     <div key={i}>• {d}</div>
                   ))}
@@ -672,29 +672,29 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
           )}
 
           {/* Import / Export Grid */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2.5">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-700 border border-blue-200">
+                <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700">
                   <FileUp className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-slate-950">Geospatial Data Migration & Exchange (Import / Export)</h2>
-                  <p className="text-xs text-slate-500">Standardized OpenGIS Formats • Automated Coordinate Verification</p>
+                  <h2 className="text-sm font-bold text-[#09090B]">Geospatial Data Migration & Exchange (Import / Export)</h2>
+                  <p className="text-xs text-zinc-500">Standardized OpenGIS Formats • Automated Coordinate Verification</p>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* A. Import Dataset Card */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 space-y-3 flex flex-col justify-between">
                 <div className="space-y-1.5">
-                  <div className="flex items-center space-x-2 text-slate-950 font-bold text-xs uppercase tracking-wider">
-                    <Upload className="w-4 h-4 text-blue-600" />
+                  <div className="flex items-center space-x-2 text-[#09090B] font-semibold text-xs uppercase tracking-wider font-mono">
+                    <Upload className="w-3.5 h-3.5 text-zinc-700" />
                     <span>Import Spatial Dataset</span>
                   </div>
-                  <p className="text-slate-600 text-xs leading-relaxed">
-                    Upload KML (<code className="text-slate-900 font-bold">.kml</code>), GeoJSON (<code className="text-slate-900 font-bold">.geojson</code>), CSV / Excel (<code className="text-slate-900 font-bold">.csv</code>), or System Snapshot (<code className="text-slate-900 font-bold">.json</code>). Feeders (lines), DTs, and poles are parsed and immediately rendered onto the live GIS Master Map.
+                  <p className="text-zinc-600 text-xs leading-relaxed">
+                    Upload KML (<code className="text-zinc-900 font-semibold">.kml</code>), GeoJSON (<code className="text-zinc-900 font-semibold">.geojson</code>), CSV / Excel (<code className="text-zinc-900 font-semibold">.csv</code>), or System Snapshot (<code className="text-zinc-900 font-semibold">.json</code>). Feeders (lines), DTs, and poles are parsed and immediately rendered onto the live GIS Master Map.
                   </p>
                 </div>
 
@@ -704,22 +704,22 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     type="file"
                     accept=".kml,.geojson,.json,.csv"
                     onChange={handleFileUpload}
-                    className="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-black cursor-pointer transition-all"
+                    className="block w-full text-xs text-zinc-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[#09090B] file:text-white hover:file:bg-zinc-800 cursor-pointer transition-colors"
                   />
-                  <span className="text-[10px] text-slate-500 font-mono mt-1 block">
+                  <span className="text-[10px] text-zinc-500 font-mono mt-1 block">
                     Automatic duplicate avoidance & coordinate validation enabled.
                   </span>
                 </div>
               </div>
 
               {/* B. Export Layers Card */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 space-y-3 flex flex-col justify-between">
                 <div className="space-y-1.5">
-                  <div className="flex items-center space-x-2 text-slate-950 font-bold text-xs uppercase tracking-wider">
-                    <Download className="w-4 h-4 text-emerald-600" />
+                  <div className="flex items-center space-x-2 text-[#09090B] font-semibold text-xs uppercase tracking-wider font-mono">
+                    <Download className="w-3.5 h-3.5 text-zinc-700" />
                     <span>Export Master GIS Network</span>
                   </div>
-                  <p className="text-slate-600 text-xs leading-relaxed">
+                  <p className="text-zinc-600 text-xs leading-relaxed">
                     Download verified distribution network layers in standard spatial data formats for statutory filings, offline CAD, and regional audits.
                   </p>
                 </div>
@@ -727,7 +727,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 <div className="grid grid-cols-3 gap-2 pt-2">
                   <button
                     onClick={() => dataExchangeService.exportGeoJSON()}
-                    className="py-2 px-2 rounded-xl bg-slate-900 text-white hover:bg-black font-bold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+                    className="py-1.5 px-2 rounded-md bg-[#09090B] text-white hover:bg-zinc-800 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
                     title="Download complete RFC 7946 GeoJSON FeatureCollection"
                   >
                     <FileCode className="w-3.5 h-3.5" />
@@ -736,7 +736,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
                   <button
                     onClick={() => dataExchangeService.exportCSV('transformers')}
-                    className="py-2 px-2 rounded-xl bg-white text-slate-800 hover:bg-slate-100 border border-slate-300 font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-2xs cursor-pointer"
+                    className="py-1.5 px-2 rounded-md bg-white text-zinc-800 hover:bg-zinc-100 border border-zinc-200 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
                     title="Download CSV Asset Register"
                   >
                     <FileSpreadsheet className="w-3.5 h-3.5" />
@@ -745,7 +745,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
                   <button
                     onClick={() => dataExchangeService.exportKML()}
-                    className="py-2 px-2 rounded-xl bg-white text-slate-800 hover:bg-slate-100 border border-slate-300 font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-2xs cursor-pointer"
+                    className="py-1.5 px-2 rounded-md bg-white text-zinc-800 hover:bg-zinc-100 border border-zinc-200 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
                     title="Download KML for Google Earth"
                   >
                     <Map className="w-3.5 h-3.5" />
@@ -757,23 +757,23 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
           </div>
 
           {/* Database Backups Card */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2.5">
-                <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700">
                   <Database className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-950">
+                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#09090B] font-mono">
                     PostgreSQL Database Backups & Point-in-Time Snapshots
                   </h3>
-                  <p className="text-[11px] text-slate-500 font-mono">Automated Point-in-Time Recovery and Disaster Resilience</p>
+                  <p className="text-[11px] text-zinc-500 font-mono">Automated Point-in-Time Recovery and Disaster Resilience</p>
                 </div>
               </div>
 
               <button
                 onClick={handleRunManualBackup}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-medium border border-zinc-900 transition-colors flex items-center space-x-1.5 cursor-pointer"
               >
                 <HardDrive className="w-3.5 h-3.5" />
                 <span>Run Manual Backup</span>
@@ -781,29 +781,29 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
             </div>
 
             {backupHistory.length === 0 ? (
-              <div className="py-8 px-4 text-center rounded-2xl bg-slate-50 border border-dashed border-slate-300 space-y-2">
-                <Database className="w-8 h-8 text-slate-300 mx-auto" />
-                <div className="text-xs font-bold text-slate-800">No Database Snapshots Recorded</div>
-                <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+              <div className="py-8 px-4 text-center rounded-md bg-zinc-50 border border-dashed border-zinc-200 space-y-2">
+                <Database className="w-7 h-7 text-zinc-400 mx-auto" />
+                <div className="text-xs font-semibold text-[#09090B]">No Database Snapshots Recorded</div>
+                <p className="text-[11px] text-zinc-500 max-w-md mx-auto">
                   Operational database is running in clean production mode with 0 pre-seeded archives. Click "Run Manual Backup" above to export a point-in-time PostgreSQL PostGIS snapshot, or turn ON the Simulator to load historical simulated archives.
                 </p>
               </div>
             ) : (
-              <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                 {backupHistory.map(bk => (
                   <div
                     key={bk.id}
-                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors text-xs space-y-1.5"
+                    className="p-3 rounded-md bg-zinc-50 border border-zinc-200 hover:border-zinc-300 transition-colors text-xs space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-950">{bk.type} ({bk.size})</span>
+                      <span className="font-semibold text-[#09090B]">{bk.type} ({bk.size})</span>
                       <div className="flex items-center space-x-2">
-                        <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] border border-emerald-300 font-bold">
+                        <span className="px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono text-[10px] border border-zinc-200 font-medium">
                           VERIFIED
                         </span>
                         <button
                           onClick={() => handleRestore(bk.id)}
-                          className="px-2.5 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-mono transition-colors font-bold shadow-2xs cursor-pointer"
+                          className="px-2 py-0.5 rounded bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200 text-[10px] font-mono transition-colors font-medium cursor-pointer"
                           title="Restore point-in-time snapshot"
                         >
                           Restore
@@ -811,8 +811,8 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                       </div>
                     </div>
 
-                    <div className="text-[10px] text-slate-500 font-mono truncate">{bk.checksum}</div>
-                    <div className="text-[10px] text-slate-400 font-mono">{bk.date}</div>
+                    <div className="text-[10px] text-zinc-500 font-mono truncate">{bk.checksum}</div>
+                    <div className="text-[10px] text-zinc-400 font-mono">{bk.date}</div>
                   </div>
                 ))}
               </div>
@@ -827,20 +827,20 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {activeTab === 'features' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Modular Feature Toggles */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2.5">
-                <div className="p-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900">
+                <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-800">
                   <Shield className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-950">
+                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#09090B] font-mono">
                     Modular System Feature Toggles
                   </h3>
-                  <p className="text-[11px] text-slate-500 font-mono">Zero-Restart Dynamic Activation</p>
+                  <p className="text-[11px] text-zinc-500 font-mono">Zero-Restart Dynamic Activation</p>
                 </div>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono border border-slate-300 font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono border border-zinc-200 font-medium">
                 {modules.filter(m => m.enabled).length}/{modules.length} Active
               </span>
             </div>
@@ -849,19 +849,19 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
               {modules.map(mod => (
                 <div
                   key={mod.id}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors text-xs"
+                  className="flex items-center justify-between p-3 rounded-md bg-zinc-50 border border-zinc-200 hover:border-zinc-300 transition-colors text-xs"
                 >
-                  <span className="font-semibold text-slate-800">{mod.name}</span>
+                  <span className="font-medium text-zinc-800">{mod.name}</span>
                   <button
                     onClick={() => toggleModule(mod.id)}
-                    className="flex items-center space-x-1 transition-all cursor-pointer"
+                    className="flex items-center space-x-1 transition-colors cursor-pointer"
                   >
                     {mod.enabled ? (
-                      <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-mono text-[10px] font-bold shadow-xs">
+                      <span className="px-2 py-0.5 rounded bg-[#09090B] text-white font-mono text-[10px] font-medium">
                         ENABLED
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-200 text-slate-600 font-mono text-[10px] border border-slate-300">
+                      <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 font-mono text-[10px] border border-zinc-200">
                         DISABLED
                       </span>
                     )}
@@ -872,42 +872,42 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
           </div>
 
           {/* Zero-Trust RLS Policies Summary */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2.5">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-700 border border-blue-200">
+                <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-800">
                   <Key className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-950">
+                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#09090B] font-mono">
                     Zero-Trust Jurisdiction Policies
                   </h3>
-                  <p className="text-[11px] text-slate-500 font-mono">Row-Level Security (RLS) Enforcements</p>
+                  <p className="text-[11px] text-zinc-500 font-mono">Row-Level Security (RLS) Enforcements</p>
                 </div>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold font-mono">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200 font-medium font-mono">
                 100% ENFORCED
               </span>
             </div>
 
-            <div className="space-y-2.5 text-xs text-slate-600 leading-relaxed font-mono">
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">1. Junior Engineer Isolation (JE)</div>
-                <p className="text-[11px] text-slate-500">
+            <div className="space-y-2 text-xs text-zinc-600 leading-relaxed font-mono">
+              <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 space-y-1">
+                <div className="font-semibold text-zinc-900">1. Junior Engineer Isolation (JE)</div>
+                <p className="text-[11px] text-zinc-500">
                   JE accounts are cryptographically locked to their assigned Ward Boundary (e.g., JE-JUR-MARA-01). Queries outside ward boundaries are filtered by PostGIS RLS.
                 </p>
               </div>
 
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">2. External Contractor Staging Sandbox</div>
-                <p className="text-[11px] text-slate-500">
+              <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 space-y-1">
+                <div className="font-semibold text-zinc-900">2. External Contractor Staging Sandbox</div>
+                <p className="text-[11px] text-zinc-500">
                   Contractors only view assets they have captured in unapproved survey status. Live electrical distribution network write access is strictly prohibited.
                 </p>
               </div>
 
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">3. Multi-Tier Operational Hierarchy</div>
-                <p className="text-[11px] text-slate-500">
+              <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 space-y-1">
+                <div className="font-semibold text-zinc-900">3. Multi-Tier Operational Hierarchy</div>
+                <p className="text-[11px] text-zinc-500">
                   AEs and AEEs exercise statutory clearance for line switching and PTW issuance within their operational sections.
                 </p>
               </div>
@@ -915,27 +915,25 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
           </div>
 
           {/* Master Grid & SCADA Simulator Mode Card ("Where to ON it") */}
-          <div className="lg:col-span-2 bg-gradient-to-r from-amber-50/70 via-white to-amber-50/70 border border-amber-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="lg:col-span-2 bg-white border border-zinc-200 rounded-md p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start sm:items-center space-x-3.5">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white shadow-md flex-shrink-0 ${
-                isSimulatorActive ? 'bg-amber-500 shadow-amber-500/20 animate-pulse' : 'bg-slate-400 shadow-slate-400/20'
-              }`}>
-                <Zap className="w-6 h-6 text-white" />
+              <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold border border-zinc-800 flex-shrink-0">
+                <Zap className="w-4 h-4 text-white" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h3 className="text-sm font-bold text-[#09090B]">
                     Master Grid & SCADA Simulator Engine
                   </h3>
-                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase border ${
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase border ${
                     isSimulatorActive
-                      ? 'bg-amber-100 text-amber-800 border-amber-300'
-                      : 'bg-slate-200 text-slate-600 border-slate-300'
+                      ? 'bg-zinc-900 text-white border-zinc-900'
+                      : 'bg-zinc-100 text-zinc-600 border-zinc-200'
                   }`}>
                     {isSimulatorActive ? 'ACTIVE (ON)' : 'INACTIVE (OFF)'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                <p className="text-xs text-zinc-600 mt-1 max-w-2xl leading-relaxed">
                   Controls whether pre-seeded test electrical grid assets (Substations, 11kV/22kV Feeders, DTs, Poles) and SCADA dynamic telemetry appear on the GIS Map and Dashboards.
                   When <b>OFF</b>, PowerGIS operates in clean operational mode showing <b>only</b> user-uploaded/imported assets.
                 </p>
@@ -945,14 +943,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
             <button
               type="button"
               onClick={handleToggleSimulator}
-              className={`px-5 py-2.5 rounded-2xl text-xs font-mono font-bold transition-all flex items-center space-x-2 flex-shrink-0 cursor-pointer shadow-md ${
+              className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium transition-colors flex items-center space-x-2 flex-shrink-0 border cursor-pointer ${
                 isSimulatorActive
-                  ? 'bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 shadow-rose-500/10'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/25 ring-1 ring-blue-400/30'
+                  ? 'bg-white hover:bg-zinc-50 text-zinc-800 border-zinc-300'
+                  : 'bg-[#09090B] hover:bg-zinc-800 text-white border-zinc-900'
               }`}
             >
-              <Zap className="w-4 h-4" />
-              <span>{isSimulatorActive ? 'Turn OFF Simulator' : '⚡ Turn ON Simulator'}</span>
+              <Zap className="w-3.5 h-3.5" />
+              <span>{isSimulatorActive ? 'Turn OFF Simulator' : 'Turn ON Simulator'}</span>
             </button>
           </div>
         </div>
@@ -962,28 +960,28 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* MODAL: ADD NEW USER                                                  */}
       {/* ==================================================================== */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 animate-in fade-in duration-150 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div className="flex items-center space-x-2">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-700">
-                  <UserPlus className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center border border-zinc-800">
+                  <UserPlus className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-950">{LABELS.admin.modalAddTitle}</h3>
-                  <p className="text-[11px] text-slate-500">{LABELS.admin.modalAddSubtitle}</p>
+                  <h3 className="font-bold text-sm text-[#09090B]">{LABELS.admin.modalAddTitle}</h3>
+                  <p className="text-[11px] text-zinc-500 font-mono">{LABELS.admin.modalAddSubtitle}</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+                className="p-1 rounded text-zinc-400 hover:text-zinc-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2">
+              <div className="p-2.5 rounded-md bg-red-50 border border-red-200 text-red-800 text-xs flex items-center space-x-2">
                 <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -991,7 +989,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
             <form onSubmit={handleSaveAddUser} className="space-y-3 text-xs">
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                   {LABELS.admin.fullNameLabel}
                 </label>
                 <input
@@ -1000,13 +998,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                   placeholder="e.g. Er. K. Venkatesan, AE"
                   value={formData.fullName}
                   onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.usernameLabel}
                   </label>
                   <input
@@ -1015,12 +1013,12 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     placeholder="e.g. ae_venkatesan"
                     value={formData.username}
                     onChange={e => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.emailLabel}
                   </label>
                   <input
@@ -1029,20 +1027,20 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     placeholder="e.g. ae.venkat@powergis.internal"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.roleLabel}
                   </label>
                   <select
                     value={formData.role}
                     onChange={e => setFormData({ ...formData, role: e.target.value as OfficialRole })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono font-medium"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono font-medium"
                   >
                     <option value="super_admin">Super Administrator</option>
                     <option value="se">Superintending Engineer (SE)</option>
@@ -1057,7 +1055,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.designationLabel}
                   </label>
                   <input
@@ -1065,14 +1063,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     placeholder="e.g. Assistant Engineer (O&M)"
                     value={formData.designation}
                     onChange={e => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.phoneLabel}
                   </label>
                   <input
@@ -1080,12 +1078,12 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     placeholder="+91 94430 00000"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.passwordLabel}
                   </label>
                   <input
@@ -1093,14 +1091,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     placeholder="PowerGIS@2026"
                     value={formData.password}
                     onChange={e => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
               </div>
 
               {formData.role === 'contractor' ? (
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.contractorFirmName} *
                   </label>
                   <input
@@ -1108,19 +1106,19 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     placeholder="e.g. Larsen Power Grid EPC Pvt Ltd"
                     value={formData.contractorCompany}
                     onChange={e => setFormData({ ...formData, contractorCompany: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                   />
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                    <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                       {LABELS.admin.regionCircle}
                     </label>
                     <select
                       value={formData.regionId}
                       onChange={e => setFormData({ ...formData, regionId: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white font-mono"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white font-mono"
                     >
                       {initialRegions.map(r => (
                         <option key={r.id} value={r.id}>{r.name}</option>
@@ -1129,13 +1127,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                    <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                       {LABELS.admin.sectionJurisdiction}
                     </label>
                     <select
                       value={formData.sectionId}
                       onChange={e => setFormData({ ...formData, sectionId: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white font-mono"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white font-mono"
                     >
                       {initialSections.map(s => (
                         <option key={s.id} value={s.id}>{s.name}</option>
@@ -1145,30 +1143,30 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 </div>
               )}
 
-              <div className="flex items-center space-x-2 pt-2">
+              <div className="flex items-center space-x-2 pt-1">
                 <input
                   type="checkbox"
                   id="addUserActive"
                   checked={formData.isActive}
                   onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                  className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 w-4 h-4 cursor-pointer"
                 />
-                <label htmlFor="addUserActive" className="text-xs text-slate-800 font-semibold cursor-pointer">
+                <label htmlFor="addUserActive" className="text-xs text-zinc-800 font-medium cursor-pointer">
                   {LABELS.admin.accountActiveLabel}
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium cursor-pointer"
                 >
                   {LABELS.common.cancel}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer shadow-md shadow-blue-500/20"
+                  className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium border border-zinc-900 cursor-pointer transition-colors"
                 >
                   {LABELS.admin.btnCreateAccount}
                 </button>
@@ -1182,28 +1180,28 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* MODAL: EDIT USER                                                     */}
       {/* ==================================================================== */}
       {editingUser && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 animate-in fade-in duration-150 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div className="flex items-center space-x-2">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-700">
-                  <Pencil className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center border border-zinc-800">
+                  <Pencil className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-950">{LABELS.admin.modalEditTitle}</h3>
-                  <p className="text-[11px] text-slate-500 font-mono">Modifying @{editingUser.username}</p>
+                  <h3 className="font-bold text-sm text-[#09090B]">{LABELS.admin.modalEditTitle}</h3>
+                  <p className="text-[11px] text-zinc-500 font-mono">Modifying @{editingUser.username}</p>
                 </div>
               </div>
               <button
                 onClick={() => setEditingUser(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+                className="p-1 rounded text-zinc-400 hover:text-zinc-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {formError && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2">
+              <div className="p-2.5 rounded-md bg-red-50 border border-red-200 text-red-800 text-xs flex items-center space-x-2">
                 <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -1211,7 +1209,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
             <form onSubmit={handleSaveEditUser} className="space-y-3 text-xs">
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                   {LABELS.admin.fullNameLabel}
                 </label>
                 <input
@@ -1219,13 +1217,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                   required
                   value={formData.fullName}
                   onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.usernameLabel}
                   </label>
                   <input
@@ -1233,12 +1231,12 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     required
                     value={formData.username}
                     onChange={e => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.emailLabel}
                   </label>
                   <input
@@ -1246,20 +1244,20 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                     required
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.roleLabel}
                   </label>
                   <select
                     value={formData.role}
                     onChange={e => setFormData({ ...formData, role: e.target.value as OfficialRole })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono font-medium"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono font-medium"
                   >
                     <option value="super_admin">Super Administrator</option>
                     <option value="se">Superintending Engineer (SE)</option>
@@ -1274,66 +1272,66 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.designationLabel}
                   </label>
                   <input
                     type="text"
                     value={formData.designation}
                     onChange={e => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.phoneLabel}
                   </label>
                   <input
                     type="text"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.passwordLabel}
                   </label>
                   <input
                     type="text"
                     value={formData.password}
                     onChange={e => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600 font-mono"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
                   />
                 </div>
               </div>
 
               {formData.role === 'contractor' ? (
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                  <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                     {LABELS.admin.contractorFirmName}
                   </label>
                   <input
                     type="text"
                     value={formData.contractorCompany}
                     onChange={e => setFormData({ ...formData, contractorCompany: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-blue-600"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                   />
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                    <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                       {LABELS.admin.regionCircle}
                     </label>
                     <select
                       value={formData.regionId}
                       onChange={e => setFormData({ ...formData, regionId: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white font-mono"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white font-mono"
                     >
                       {initialRegions.map(r => (
                         <option key={r.id} value={r.id}>{r.name}</option>
@@ -1342,13 +1340,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
+                    <label className="block text-[11px] font-medium text-zinc-700 uppercase font-mono mb-1">
                       {LABELS.admin.sectionJurisdiction}
                     </label>
                     <select
                       value={formData.sectionId}
                       onChange={e => setFormData({ ...formData, sectionId: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:bg-white font-mono"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white font-mono"
                     >
                       {initialSections.map(s => (
                         <option key={s.id} value={s.id}>{s.name}</option>
@@ -1358,30 +1356,30 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
                 </div>
               )}
 
-              <div className="flex items-center space-x-2 pt-2">
+              <div className="flex items-center space-x-2 pt-1">
                 <input
                   type="checkbox"
                   id="editUserActive"
                   checked={formData.isActive}
                   onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                  className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 w-4 h-4 cursor-pointer"
                 />
-                <label htmlFor="editUserActive" className="text-xs text-slate-800 font-semibold cursor-pointer">
+                <label htmlFor="editUserActive" className="text-xs text-zinc-800 font-medium cursor-pointer">
                   {LABELS.admin.accountActiveLabel}
                 </label>
               </div>
 
-              <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium cursor-pointer"
                 >
                   {LABELS.common.cancel}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer shadow-md shadow-blue-500/20"
+                  className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium border border-zinc-900 cursor-pointer transition-colors"
                 >
                   {LABELS.common.save}
                 </button>
@@ -1395,35 +1393,35 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* MODAL: DELETE CONFIRMATION                                           */}
       {/* ==================================================================== */}
       {userToDelete && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-md w-full space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
-                <Trash2 className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-md bg-red-50 text-red-600 border border-red-200 flex items-center justify-center flex-shrink-0">
+                <Trash2 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-slate-950">{LABELS.admin.modalDeleteTitle}</h3>
-                <p className="text-xs text-slate-500 font-mono">{LABELS.admin.modalDeleteSubtitle}</p>
+                <h3 className="font-bold text-sm text-[#09090B]">{LABELS.admin.modalDeleteTitle}</h3>
+                <p className="text-xs text-zinc-500 font-mono">{LABELS.admin.modalDeleteSubtitle}</p>
               </div>
             </div>
 
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-zinc-600 leading-relaxed">
               {LABELS.admin.modalDeleteConfirmText}{' '}
-              <span className="font-bold text-slate-900">{userToDelete.fullName}</span> (
+              <span className="font-semibold text-zinc-900">{userToDelete.fullName}</span> (
               <span className="font-mono">{userToDelete.email}</span>)?{' '}
               {LABELS.admin.modalDeleteConfirmRevoke}
             </p>
 
-            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-zinc-100">
               <button
                 onClick={() => setUserToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs cursor-pointer"
+                className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium text-xs cursor-pointer"
               >
                 {LABELS.common.cancel}
               </button>
               <button
                 onClick={confirmDeleteUser}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer shadow-md shadow-rose-500/20"
+                className="px-3.5 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium text-xs cursor-pointer transition-colors"
               >
                 {LABELS.admin.btnDeleteAccount}
               </button>

@@ -11,23 +11,34 @@ body {
   padding: 0;
   background-color: #FAFAFA;
   color: #09090B;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Times New Roman", Times, Georgia, serif !important;
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.011em;
   overscroll-behavior-y: none;
 }
 
-/* Safe area padding for notched mobile phones & modern PWA */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.pt-safe {
-  padding-top: env(safe-area-inset-top, 0px);
+/* Universal Times New Roman Font Enforcement Across Entire Website */
+*, *::before, *::after {
+  font-family: "Times New Roman", Times, Georgia, serif !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Touch responsiveness */
-* {
-  -webkit-tap-highlight-color: transparent;
+html, body, #root,
+button, input, select, textarea,
+h1, h2, h3, h4, h5, h6, p, span, div, a, label,
+table, thead, tbody, tfoot, tr, th, td,
+pre, code, kbd, samp,
+.font-sans, .font-mono, .font-serif {
+  font-family: "Times New Roman", Times, Georgia, serif !important;
+}
+
+/* Leaflet map markers, controls, popups and tooltips */
+.leaflet-container,
+.leaflet-popup,
+.leaflet-popup-content,
+.leaflet-popup-content-wrapper,
+.leaflet-tooltip,
+.leaflet-control {
+  font-family: "Times New Roman", Times, Georgia, serif !important;
 }
 
 /* Custom Minimal Hairline Scrollbar */
