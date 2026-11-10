@@ -30,7 +30,7 @@ import {
 export const LoginPage: React.FC = () => {
   const { login, loginAsPersona } = useAuth();
 
-  // Route between View 1 (Official Sign In) and View 2 (Demo Personas Sandbox)
+  // Route between View 1 (Sign In) and View 2 (Demo Personas Sandbox)
   const [currentView, setCurrentView] = useState<'login' | 'demo'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
