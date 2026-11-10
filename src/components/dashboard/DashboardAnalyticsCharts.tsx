@@ -168,6 +168,55 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // Strictly scoped to EPC GPS field operations, accuracy & staging pipeline
   // ==========================================================================
   if (role === 'contractor') {
+    if (!isSim) {
+      return (
+        <div className="space-y-3.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-base shadow-sm flex-shrink-0">
+                <Compass className="w-4 h-4 text-slate-400" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
+                    EPC Field Survey Analytics & Geolocation QA
+                  </h2>
+                  <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                    Standby (Empty)
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-mono">
+                  Clean Operational Mode Active • Field GPS Cadence Standby
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center flex flex-col items-center justify-center space-y-3 shadow-2xs">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+              <Compass className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-slate-900">No Active Field Survey Benchmarks</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Contractor daily survey cadences and DGPS precision test points have been moved to the Simulator. Turn ON the Simulator to stream simulated field survey operations.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => assetService.setSimulatorMode(true)}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
+              >
+                <Zap className="w-4 h-4" />
+                <span>⚡ Turn ON Survey Simulator</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-3.5">
         {/* Contractor Header */}
@@ -319,6 +368,55 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // Ward operations, breakdown ticket restorations & local distribution assets
   // ==========================================================================
   if (role === 'je') {
+    if (!isSim) {
+      return (
+        <div className="space-y-3.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-base shadow-sm flex-shrink-0">
+                <Wrench className="w-4 h-4 text-slate-400" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
+                    Ward Jurisdiction Telemetry & Restoration Analytics
+                  </h2>
+                  <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                    Standby (Empty)
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-mono">
+                  Clean Operational Mode Active • Ward Breakdown Telemetry Standby
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center flex flex-col items-center justify-center space-y-3 shadow-2xs">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+              <Wrench className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-slate-900">No Active Ward Breakdown Tickets</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Ward breakdown restoration logs and simulated distribution assets have been moved to the Simulator. Turn ON the Simulator to stream test ward outages and asset verifications.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => assetService.setSimulatorMode(true)}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
+              >
+                <Zap className="w-4 h-4" />
+                <span>⚡ Turn ON Ward Simulator</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-3.5">
         {/* JE Header */}
@@ -599,6 +697,49 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // Regulatory compliance, IEEE 1366 reliability indices & asset health
   // ==========================================================================
   if (role === 'auditor') {
+    if (!isSim) {
+      return (
+        <div className="space-y-3.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-base shadow-sm">
+                <ShieldCheck className="w-4 h-4 text-slate-400" />
+              </div>
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-slate-950">Statutory & Regulatory Audit Telemetry</h2>
+                <p className="text-[11px] text-slate-500 font-mono">Clean Operational Mode Active • Regulatory Reliability Standby</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+              Clean Standby
+            </span>
+          </div>
+
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center flex flex-col items-center justify-center space-y-3 shadow-2xs">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-slate-900">0 Regulatory Outage Violations</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                No statutory IEEE 1366 reliability breaches logged in clean operational mode. Simulated audit telemetry and SAIDI/SAIFI historical charts are active only when the Simulator is ON.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => assetService.setSimulatorMode(true)}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
+              >
+                <Zap className="w-4 h-4" />
+                <span>⚡ Turn ON Audit Simulator</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-3.5">
         <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex items-center justify-between">
@@ -808,25 +949,35 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
               <p className="text-[10px] text-slate-500">Average Outage Duration per Consumer (Minutes)</p>
             </div>
             <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-bold">
-              JERC Compliant (&lt;45 min)
+              {isSim ? 'JERC Compliant (<45 min)' : 'Clean Standby'}
             </span>
           </div>
 
-          <div className="h-50 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyReliabilityData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="month" stroke="#94A3B8" fontSize={10} tickLine={false} />
-                <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="m" />
-                <Tooltip />
-                <Bar dataKey="saidiMin" name="SAIDI (Minutes)" fill="#6366F1" radius={[4, 4, 0, 0]}>
-                  {monthlyReliabilityData.map((entry, index) => (
-                    <Cell key={`bar-${index}`} fill={entry.saidiMin <= 45 ? '#4F46E5' : '#F43F5E'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {isSim ? (
+            <div className="h-50 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyReliabilityData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                  <XAxis dataKey="month" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="m" />
+                  <Tooltip />
+                  <Bar dataKey="saidiMin" name="SAIDI (Minutes)" fill="#6366F1" radius={[4, 4, 0, 0]}>
+                    {monthlyReliabilityData.map((entry, index) => (
+                      <Cell key={`bar-${index}`} fill={entry.saidiMin <= 45 ? '#4F46E5' : '#F43F5E'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-50 w-full flex flex-col items-center justify-center p-4 text-center rounded-xl bg-slate-50 border border-dashed border-slate-200 my-auto">
+              <BarChart3 className="w-8 h-8 text-slate-300 mb-2" />
+              <span className="text-xs font-bold text-slate-700">0 Reliability Outages Logged</span>
+              <p className="text-[11px] text-slate-500 max-w-xs mt-1">
+                IEEE 1366 SAIFI/SAIDI trends are in clean standby. Turn ON Simulator to view historical monthly benchmark curves.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
@@ -890,29 +1041,83 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
       </div>
 
       {/* Row 3: Consumer Category Breakdown Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-        {consumerCategories.map((cat, idx) => (
-          <div key={idx} className={`border rounded-xl p-3 transition-all shadow-2xs hover:shadow-xs ${cat.color}`}>
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] uppercase font-bold tracking-wider font-mono text-slate-700">
-                {cat.label.split(' ')[0]}
-              </span>
-              <span className={`text-[9px] font-mono font-bold text-white px-1.5 py-0.2 rounded-full ${cat.badgeBg}`}>
-                {cat.share}
-              </span>
-            </div>
+      {isSim ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          {consumerCategories.map((cat, idx) => (
+            <div key={idx} className={`border rounded-xl p-3 transition-all shadow-2xs hover:shadow-xs ${cat.color}`}>
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] uppercase font-bold tracking-wider font-mono text-slate-700">
+                  {cat.label.split(' ')[0]}
+                </span>
+                <span className={`text-[9px] font-mono font-bold text-white px-1.5 py-0.2 rounded-full ${cat.badgeBg}`}>
+                  {cat.share}
+                </span>
+              </div>
 
-            <div className="text-xl font-black font-mono mt-1 tracking-tight text-slate-950">
-              {cat.consumers}
-            </div>
+              <div className="text-xl font-black font-mono mt-1 tracking-tight text-slate-950">
+                {cat.consumers}
+              </div>
 
-            <div className="mt-2 pt-1 border-t border-slate-200/60 flex items-center justify-between text-[9px] font-mono">
-              <span className="text-slate-500">Meters</span>
-              <span className="font-semibold text-emerald-700">{cat.growth}</span>
+              <div className="mt-2 pt-1 border-t border-slate-200/60 flex items-center justify-between text-[9px] font-mono">
+                <span className="text-slate-500">Meters</span>
+                <span className="font-semibold text-emerald-700">{cat.growth}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : consumers.length > 0 ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          {[
+            { label: 'Domestic / Residential', count: consumers.filter(c => c.category?.toLowerCase().includes('dom')).length, color: 'border-blue-500 text-blue-600 bg-blue-50/70', badgeBg: 'bg-blue-600' },
+            { label: 'Commercial & Retail', count: consumers.filter(c => c.category?.toLowerCase().includes('com')).length, color: 'border-amber-500 text-amber-600 bg-amber-50/70', badgeBg: 'bg-amber-600' },
+            { label: 'Industrial & HT Power', count: consumers.filter(c => c.category?.toLowerCase().includes('ind')).length, color: 'border-purple-500 text-purple-600 bg-purple-50/70', badgeBg: 'bg-purple-600' },
+            { label: 'Agricultural & Civic', count: consumers.filter(c => c.category?.toLowerCase().includes('agr')).length, color: 'border-emerald-500 text-emerald-600 bg-emerald-50/70', badgeBg: 'bg-emerald-600' },
+          ].map((cat, idx) => {
+            const share = consumers.length > 0 ? `${Math.round((cat.count / consumers.length) * 100)}%` : '0%';
+            return (
+              <div key={idx} className={`border rounded-xl p-3 transition-all shadow-2xs hover:shadow-xs ${cat.color}`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] uppercase font-bold tracking-wider font-mono text-slate-700">
+                    {cat.label.split(' ')[0]}
+                  </span>
+                  <span className={`text-[9px] font-mono font-bold text-white px-1.5 py-0.2 rounded-full ${cat.badgeBg}`}>
+                    {share}
+                  </span>
+                </div>
+                <div className="text-xl font-black font-mono mt-1 tracking-tight text-slate-950">
+                  {cat.count}
+                </div>
+                <div className="mt-2 pt-1 border-t border-slate-200/60 flex items-center justify-between text-[9px] font-mono">
+                  <span className="text-slate-500">Meters</span>
+                  <span className="font-semibold text-emerald-700">Active</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="p-3.5 rounded-xl bg-slate-50 border border-dashed border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-lg bg-slate-200/80 flex items-center justify-center text-slate-500 flex-shrink-0">
+              <Gauge className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-slate-800">Consumer Meter Telemetry Inactive (Clean Mode)</div>
+              <div className="text-[11px] text-slate-500 font-mono">
+                0 meters in operational database. 125,400 test meters have been moved to the Simulator.
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+          <button
+            type="button"
+            onClick={() => assetService.setSimulatorMode(true)}
+            className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-2xs transition-all flex items-center space-x-1.5 self-start sm:self-auto cursor-pointer flex-shrink-0"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>⚡ Turn ON Simulator</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

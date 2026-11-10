@@ -51,8 +51,9 @@ export class ReliabilityService {
     return ReliabilityService.instance;
   }
 
-  public getMetrics(): OutageReliabilityMetrics[] {
-    return this.metrics;
+  public getMetrics(includeSimulated = false): OutageReliabilityMetrics[] {
+    const isSim = assetService.isSimulatorMode() || includeSimulated;
+    return isSim ? this.metrics : [];
   }
 
   public getOutages(sectionId?: string, includeSimulated = false): Outage[] {

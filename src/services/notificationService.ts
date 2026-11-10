@@ -283,6 +283,25 @@ class NotificationService {
             { label: 'GIS Master Map Inspection', targetTab: 'gis_map', description: 'Read-only territorial GIS inspection' },
           ],
         };
+      case 'super_admin':
+        return {
+          roleTitle: 'Super Administrator Enterprise Grid Command',
+          jurisdictionScope: 'All 4 Regional Enclaves (Puducherry, Karaikal, Mahe, Yanam) • Enterprise Command',
+          metrics: [
+            { label: 'Distribution Regions', value: 4, subtext: 'Puducherry, Karaikal, Mahe, Yanam', trend: '100% Online' },
+            { label: 'Grid Substations', value: userSubstations.length, subtext: 'Substations in database', trend: userSubstations.length > 0 ? 'Energized' : 'Clean Mode' },
+            { label: 'Distribution Feeders', value: userFeeders.length, subtext: 'Feeders in database', trend: userFeeders.length > 0 ? 'Energized' : 'Clean Mode' },
+            { label: 'Distribution Transformers', value: userDTRs.length, subtext: 'DTRs in database', trend: userDTRs.length > 0 ? 'Operational' : 'Clean Mode' },
+          ],
+          assignments: realAssignments,
+          notifications: [cleanNotification],
+          quickActions: [
+            { label: 'SCADA Telemetry & Interactive SLD', targetTab: 'scada', description: 'Monitor substation breakers and active alarms' },
+            { label: 'System Administration & User Roles', targetTab: 'admin_panel', description: 'Manage accounts, permissions & security audits' },
+            { label: 'Geospatial Backup & Migration', targetTab: 'backup_restore', description: 'Export GeoJSON, CSV & database snapshots' },
+            { label: 'Open GIS Master Map', targetTab: 'gis_map', description: 'Full territorial electrical network view' },
+          ],
+        };
       case 'gis_admin':
       default:
         return {

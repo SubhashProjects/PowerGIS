@@ -745,6 +745,9 @@ async function runTestSuite() {
     assert(!assetService.getTransformers().some(t => t.id === 'dt-blvd-1'), 'Clean mode strictly excludes simulated dummy transformer dt-blvd-1');
     assert(assetService.getWarranties().length === 0, 'Clean mode strictly yields 0 simulated warranties');
     assert(assetService.getLifecycles().length === 0, 'Clean mode strictly yields 0 simulated lifecycles');
+    assert(!assetService.getConsumers().some(c => c.id === 'con-1'), 'Clean mode strictly excludes simulated dummy consumer con-1');
+    assert(assetService.getSmartMeters().filter(c => c.id === 'con-1').length === 0, 'Clean mode strictly excludes simulated smart meter con-1');
+    assert(reliabilityService.getMetrics().length === 0, 'Clean mode strictly yields 0 simulated outage reliability metrics');
     assert(!surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Clean mode strictly excludes simulated dummy survey surv-1');
     assert(faultService.getFaults().length === 0, 'Clean mode strictly yields 0 simulated breakdown faults');
     assert(scadaService.getPoints().length === 0, 'Clean mode strictly yields 0 SCADA telemetry points');
@@ -765,6 +768,9 @@ async function runTestSuite() {
     assert(assetService.isSimulatorMode() === true, 'Simulator mode is ON');
     assert(assetService.getPoles().some(p => p.id === 'pol-mara-1'), 'Simulator ON enables simulated dummy pole pol-mara-1');
     assert(assetService.getTransformers().some(t => t.id === 'dt-blvd-1'), 'Simulator ON enables simulated dummy transformer dt-blvd-1');
+    assert(assetService.getConsumers().some(c => c.id === 'con-1'), 'Simulator ON enables simulated dummy consumer con-1');
+    assert(assetService.getSmartMeters().some(c => c.id === 'con-1'), 'Simulator ON enables simulated smart meters');
+    assert(reliabilityService.getMetrics().length > 0, 'Simulator ON enables simulated outage reliability metrics');
     assert(assetService.getWarranties().length > 0, 'Simulator ON enables simulated warranties');
     assert(assetService.getLifecycles().length > 0, 'Simulator ON enables simulated lifecycles');
     assert(surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Simulator ON enables simulated field survey surv-1');
@@ -781,6 +787,9 @@ async function runTestSuite() {
     // Step 3: Switch simulator back OFF (Clean Mode restored)
     assetService.setSimulatorMode(false);
     assert(assetService.isSimulatorMode() === false, 'Simulator mode successfully returned to Clean Mode (OFF)');
+    assert(!assetService.getConsumers().some(c => c.id === 'con-1'), 'Clean mode restored strictly excludes dummy consumer con-1');
+    assert(assetService.getSmartMeters().filter(c => c.id === 'con-1').length === 0, 'Clean mode restored strictly excludes dummy smart meters');
+    assert(reliabilityService.getMetrics().length === 0, 'Clean mode restored strictly yields 0 dummy reliability metrics');
     assert(!authService.getAllUsers().some(u => u.id === 'user-ee'), 'Clean mode restored strictly excludes dummy users');
     assert(dataExchangeService.getBackupHistory().length === 0, 'Clean mode restored strictly yields 0 dummy backups');
   }
