@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import { initialUsers } from '../../services/mockData';
 import { assetService } from '../../services/assetService';
 import { UserProfile } from '../../types/auth';
-import { LABELS, validateEmail, checkPasswordCriteria, validateStrictPassword } from '../../commons';
+import { LABELS, validateEmail } from '../../commons';
 import {
   Zap,
   KeyRound,
@@ -54,7 +54,6 @@ export const LoginPage: React.FC = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [identifierTouched, setIdentifierTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   // Demo Page filter and search state
   const [demoSearch, setDemoSearch] = useState('');
@@ -65,10 +64,6 @@ export const LoginPage: React.FC = () => {
   const [forgotError, setForgotError] = useState<string | null>(null);
   const [forgotTouched, setForgotTouched] = useState(false);
   const [forgotFeedback, setForgotFeedback] = useState<string | null>(null);
-
-  // Compute live criteria checklist for strict password (dynamically shown only when requirements not met)
-  const passwordCriteria = checkPasswordCriteria(password);
-  const showStrictCriteria = (isPasswordFocused || passwordTouched) && password.length > 0 && !passwordCriteria.isValid;
 
   // --------------------------------------------------------------------------
   // EVENT HANDLERS
@@ -84,7 +79,7 @@ export const LoginPage: React.FC = () => {
   const handlePasswordChange = (val: string) => {
     setPassword(val);
     if (passwordTouched) {
-      setPasswordError(validateStrictPassword(val));
+      setPasswordError(!val ? 'Password is required.' : null);
     }
     if (error) setError(null);
   };
@@ -95,7 +90,7 @@ export const LoginPage: React.FC = () => {
     setPasswordTouched(true);
 
     const idErr = validateEmail(identifier);
-    const passErr = validateStrictPassword(password);
+    const passErr = !password ? 'Password is required.' : null;
     setIdentifierError(idErr);
     setPasswordError(passErr);
 
@@ -161,7 +156,7 @@ export const LoginPage: React.FC = () => {
     if (err) return;
 
     setForgotFeedback(
-      `A reset link will be sent to '${forgotInput.trim()}'. Check your registered email address.`
+      `a reset link will be sent to '${forgotInput.trim()}'. check your registered email address.`
     );
     setTimeout(() => {
       handleCloseForgotModal();
@@ -273,11 +268,9 @@ export const LoginPage: React.FC = () => {
                   autoComplete="current-password"
                   value={password}
                   onChange={e => handlePasswordChange(e.target.value)}
-                  onFocus={() => setIsPasswordFocused(true)}
                   onBlur={() => {
-                    setIsPasswordFocused(false);
                     setPasswordTouched(true);
-                    setPasswordError(validateStrictPassword(password));
+                    setPasswordError(!password ? 'Password is required.' : null);
                   }}
                   placeholder={LABELS.auth.passwordPlaceholder}
                   className={`w-full bg-white border rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none transition-colors ${
@@ -295,69 +288,6 @@ export const LoginPage: React.FC = () => {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-
-              {/* Real-time strict password strength indicator as per visual specification */}
-              {showStrictCriteria && (
-                <div className="mt-2.5 pt-2 border-t border-[#E4E4E7]/60 space-y-2">
-                  {/* Rounded pill progress bar */}
-                  <div className="w-full bg-zinc-200 h-2 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        passwordCriteria.score <= 2
-                          ? 'bg-rose-500'
-                          : passwordCriteria.score < 5
-                          ? 'bg-amber-500'
-                          : 'bg-emerald-600'
-                      }`}
-                      style={{ width: `${Math.max(6, (passwordCriteria.score / 5) * 100)}%` }}
-                    />
-                  </div>
-
-                  {/* Bulleted criteria list with colored dots */}
-                  <ul className="space-y-1 text-xs">
-                    <li
-                      className={`flex items-center space-x-1.5 transition-colors ${
-                        passwordCriteria.hasMinLength ? 'text-emerald-700' : 'text-rose-600'
-                      }`}
-                    >
-                      <span className="text-sm leading-none">•</span>
-                      <span>{LABELS.auth.strictPasswordRequirements.length}</span>
-                    </li>
-                    <li
-                      className={`flex items-center space-x-1.5 transition-colors ${
-                        passwordCriteria.hasUppercase ? 'text-emerald-700' : 'text-rose-600'
-                      }`}
-                    >
-                      <span className="text-sm leading-none">•</span>
-                      <span>{LABELS.auth.strictPasswordRequirements.uppercase}</span>
-                    </li>
-                    <li
-                      className={`flex items-center space-x-1.5 transition-colors ${
-                        passwordCriteria.hasLowercase ? 'text-emerald-700' : 'text-rose-600'
-                      }`}
-                    >
-                      <span className="text-sm leading-none">•</span>
-                      <span>{LABELS.auth.strictPasswordRequirements.lowercase}</span>
-                    </li>
-                    <li
-                      className={`flex items-center space-x-1.5 transition-colors ${
-                        passwordCriteria.hasNumber ? 'text-emerald-700' : 'text-rose-600'
-                      }`}
-                    >
-                      <span className="text-sm leading-none">•</span>
-                      <span>{LABELS.auth.strictPasswordRequirements.number}</span>
-                    </li>
-                    <li
-                      className={`flex items-center space-x-1.5 transition-colors ${
-                        passwordCriteria.hasSpecialChar ? 'text-emerald-700' : 'text-rose-600'
-                      }`}
-                    >
-                      <span className="text-sm leading-none">•</span>
-                      <span>{LABELS.auth.strictPasswordRequirements.specialChar}</span>
-                    </li>
-                  </ul>
-                </div>
-              )}
 
               {passwordError && passwordTouched && (
                 <p className="text-[11px] text-rose-600 mt-1 flex items-center space-x-1">
