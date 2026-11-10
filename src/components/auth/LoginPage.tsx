@@ -24,7 +24,6 @@ import {
   EyeOff,
   CheckCircle2,
   AlertTriangle,
-  Info,
   Search,
 } from 'lucide-react';
 
@@ -275,35 +274,6 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* Zero-Trust Notice */}
-          <div className="mt-5 pt-4 border-t border-[#E4E4E7] text-[11px] text-zinc-500 flex items-start space-x-2">
-            <Info className="w-3.5 h-3.5 text-zinc-700 flex-shrink-0 mt-0.5" />
-            <p className="leading-snug">
-              Zero-trust jurisdiction RLS enforced at database layer. Each staff persona operates strictly within designated territorial bounds.
-            </p>
-          </div>
-
-          {/* Demo Sandbox Entry Option */}
-          <div className="mt-5 pt-4 border-t border-[#E4E4E7] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-50 p-3 rounded-md border border-[#E4E4E7]">
-            <div>
-              <div className="text-xs font-bold text-zinc-950 flex items-center space-x-1.5">
-                <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                <span>Demo & Simulation Sandbox</span>
-              </div>
-              <div className="text-[11px] text-zinc-500 mt-0.5">
-                Looking for pre-seeded test roles (SE, EE, AE, JE...)?
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setCurrentView('demo')}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-zinc-100 text-zinc-900 border border-[#E4E4E7] text-xs font-semibold transition-colors cursor-pointer flex-shrink-0 self-start sm:self-auto"
-            >
-              <span>Open Demo Sandbox</span>
-              <ArrowRight className="w-3 h-3 text-zinc-600" />
-            </button>
-          </div>
         </div>
       ) : (
         /* ====================================================================
