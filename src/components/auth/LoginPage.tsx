@@ -4,7 +4,7 @@
 // Strict Anti-Slop Constraints: Flat paper-clean palette, zero ambient blobs,
 // max 6px radius (rounded-md), 1px structural hairlines (#E4E4E7).
 // Standalone centered sign-in card with integrated PowerGIS branding (no outer header/footer).
-// Uniform font styling enforced across the entire login view (no font-mono splits).
+// Comprehensive real-time client-side validation for email, staff ID, and password.
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -48,29 +48,119 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Validation States for Login
+  const [identifierError, setIdentifierError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [identifierTouched, setIdentifierTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+
   // Demo Page filter and search state
   const [demoSearch, setDemoSearch] = useState('');
   const [demoCategory, setDemoCategory] = useState<'ALL' | 'EXEC' | 'FIELD' | 'OPERATIONS'>('ALL');
 
-  // Forgot password modal state
+  // Forgot password modal state & validation
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState('');
+  const [forgotError, setForgotError] = useState<string | null>(null);
+  const [forgotTouched, setForgotTouched] = useState(false);
   const [forgotFeedback, setForgotFeedback] = useState<string | null>(null);
+
+  // --------------------------------------------------------------------------
+  // VALIDATION HELPERS
+  // --------------------------------------------------------------------------
+  const validateIdentifier = (val: string): string | null => {
+    const trimmed = val.trim();
+    if (!trimmed) {
+      return 'Official email or staff ID is required.';
+    }
+    if (trimmed.includes('@')) {
+      // RFC-compliant email regex pattern
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmed)) {
+        return 'Please enter a valid official email address (e.g. staff@powergis.internal).';
+      }
+    } else {
+      if (trimmed.length < 3) {
+        return 'Staff username must be at least 3 characters.';
+      }
+      if (!/^[a-zA-Z0-9_.-]+$/.test(trimmed)) {
+        return 'Username may only contain letters, numbers, dots, and underscores.';
+      }
+    }
+    return null;
+  };
+
+  const validatePassword = (val: string): string | null => {
+    if (!val) {
+      return 'Password is required.';
+    }
+    if (val.length < 6) {
+      return 'Password must be at least 6 characters.';
+    }
+    return null;
+  };
+
+  const validateForgotInput = (val: string): string | null => {
+    const trimmed = val.trim();
+    if (!trimmed) {
+      return 'Please enter your registered staff email or username.';
+    }
+    if (trimmed.includes('@')) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmed)) {
+        return 'Please enter a valid email address.';
+      }
+    } else if (trimmed.length < 3) {
+      return 'Staff username must be at least 3 characters.';
+    }
+    return null;
+  };
+
+  // --------------------------------------------------------------------------
+  // EVENT HANDLERS
+  // --------------------------------------------------------------------------
+  const handleIdentifierChange = (val: string) => {
+    setIdentifier(val);
+    if (identifierTouched) {
+      setIdentifierError(validateIdentifier(val));
+    }
+    if (error) setError(null);
+  };
+
+  const handlePasswordChange = (val: string) => {
+    setPassword(val);
+    if (passwordTouched) {
+      setPasswordError(validatePassword(val));
+    }
+    if (error) setError(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIdentifierTouched(true);
+    setPasswordTouched(true);
+
+    const idErr = validateIdentifier(identifier);
+    const passErr = validatePassword(password);
+    setIdentifierError(idErr);
+    setPasswordError(passErr);
+
+    if (idErr || passErr) {
+      return;
+    }
+
     setError(null);
     setIsLoading(true);
 
     try {
-      const res = await login(identifier, password);
+      const res = await login(identifier.trim(), password);
       setIsLoading(false);
       if (!res.success) {
-        setError(res.error || 'Authentication failed. Please verify credentials.');
+        setError(res.error || 'Authentication failed. Please verify statutory credentials.');
       }
     } catch (err: any) {
       setIsLoading(false);
-      setError(err?.message || 'Authentication error occurred during verification.');
+      setError(err?.message || 'Authentication error occurred during statutory verification.');
     }
   };
 
@@ -91,20 +181,50 @@ export const LoginPage: React.FC = () => {
     setIsSimulatorActive(true);
     setIdentifier(u.email);
     setPassword('PowerGIS@2026');
+    setIdentifierError(null);
+    setPasswordError(null);
+    setIdentifierTouched(false);
+    setPasswordTouched(false);
     setError(null);
     setCurrentView('login');
   };
 
+  const handleOpenForgotModal = () => {
+    setForgotInput(identifier.includes('@') ? identifier.trim() : '');
+    setForgotError(null);
+    setForgotTouched(false);
+    setForgotFeedback(null);
+    setShowForgotModal(true);
+  };
+
+  const handleCloseForgotModal = () => {
+    setShowForgotModal(false);
+    setForgotError(null);
+    setForgotTouched(false);
+    setForgotFeedback(null);
+    setForgotInput('');
+  };
+
+  const handleForgotInputChange = (val: string) => {
+    setForgotInput(val);
+    if (forgotTouched) {
+      setForgotError(validateForgotInput(val));
+    }
+  };
+
   const handleForgotPassword = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!forgotInput.trim()) return;
+    setForgotTouched(true);
+
+    const err = validateForgotInput(forgotInput);
+    setForgotError(err);
+    if (err) return;
+
     setForgotFeedback(
-      `A reset link will be sent to '${forgotInput}'. Check your registered email address.`
+      `A reset link will be sent to '${forgotInput.trim()}'. Check your registered email address.`
     );
     setTimeout(() => {
-      setShowForgotModal(false);
-      setForgotFeedback(null);
-      setForgotInput('');
+      handleCloseForgotModal();
     }, 2500);
   };
 
@@ -151,6 +271,9 @@ export const LoginPage: React.FC = () => {
                 <span className="font-bold text-base text-[#09090B] tracking-tight">
                   {LABELS.header.brandName}
                 </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-semibold border border-zinc-200 uppercase tracking-wider">
+                  {LABELS.header.brandBadge}
+                </span>
               </div>
             </div>
 
@@ -173,7 +296,7 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-zinc-800 mb-1.5">
                 Official Email or Staff ID
@@ -182,13 +305,25 @@ export const LoginPage: React.FC = () => {
                 <User className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
-                  required
                   value={identifier}
-                  onChange={e => setIdentifier(e.target.value)}
+                  onChange={e => handleIdentifierChange(e.target.value)}
+                  onBlur={() => {
+                    setIdentifierTouched(true);
+                    setIdentifierError(validateIdentifier(identifier));
+                  }}
                   placeholder="e.g. ee.urban@powergis.internal"
-                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 transition-colors"
+                  className={`w-full bg-white border rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none transition-colors ${
+                    identifierError && identifierTouched
+                      ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20'
+                      : 'border-[#E4E4E7] focus:border-zinc-900'
+                  }`}
                 />
               </div>
+              {identifierError && identifierTouched && (
+                <p className="text-[11px] text-rose-600 mt-1 flex items-center space-x-1">
+                  <span>{identifierError}</span>
+                </p>
+              )}
             </div>
 
             <div>
@@ -196,7 +331,7 @@ export const LoginPage: React.FC = () => {
                 <label className="text-xs font-medium text-zinc-800">Password</label>
                 <button
                   type="button"
-                  onClick={() => setShowForgotModal(true)}
+                  onClick={handleOpenForgotModal}
                   className="text-xs text-zinc-500 hover:text-zinc-950 underline transition-colors cursor-pointer"
                 >
                   Forgot password?
@@ -206,11 +341,18 @@ export const LoginPage: React.FC = () => {
                 <KeyRound className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={e => handlePasswordChange(e.target.value)}
+                  onBlur={() => {
+                    setPasswordTouched(true);
+                    setPasswordError(validatePassword(password));
+                  }}
                   placeholder="••••••••••••"
-                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 transition-colors"
+                  className={`w-full bg-white border rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none transition-colors ${
+                    passwordError && passwordTouched
+                      ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20'
+                      : 'border-[#E4E4E7] focus:border-zinc-900'
+                  }`}
                 />
                 <button
                   type="button"
@@ -221,6 +363,11 @@ export const LoginPage: React.FC = () => {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {passwordError && passwordTouched && (
+                <p className="text-[11px] text-rose-600 mt-1 flex items-center space-x-1">
+                  <span>{passwordError}</span>
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between text-xs pt-1">
@@ -479,24 +626,36 @@ export const LoginPage: React.FC = () => {
                 <span>{forgotFeedback}</span>
               </div>
             ) : (
-              <form onSubmit={handleForgotPassword} className="space-y-4">
+              <form onSubmit={handleForgotPassword} noValidate className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-zinc-700 mb-1">
                     Staff Email or Username
                   </label>
                   <input
                     type="text"
-                    required
                     value={forgotInput}
-                    onChange={e => setForgotInput(e.target.value)}
+                    onChange={e => handleForgotInputChange(e.target.value)}
+                    onBlur={() => {
+                      setForgotTouched(true);
+                      setForgotError(validateForgotInput(forgotInput));
+                    }}
                     placeholder="e.g. ee.urban@powergis.internal"
-                    className="w-full bg-white border border-[#E4E4E7] rounded-md px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
+                    className={`w-full bg-white border rounded-md px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors ${
+                      forgotError && forgotTouched
+                        ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20'
+                        : 'border-[#E4E4E7] focus:border-zinc-900'
+                    }`}
                   />
+                  {forgotError && forgotTouched && (
+                    <p className="text-[11px] text-rose-600 mt-1 flex items-center space-x-1">
+                      <span>{forgotError}</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center justify-end space-x-2 pt-2">
                   <button
                     type="button"
-                    onClick={() => setShowForgotModal(false)}
+                    onClick={handleCloseForgotModal}
                     className="px-3 py-1.5 rounded-md text-xs font-medium text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer"
                   >
                     Cancel
