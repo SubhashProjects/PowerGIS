@@ -5,6 +5,7 @@
 // ============================================================================
 
 import React, { useState, useEffect, useRef } from 'react';
+import { assetService } from '../../services/assetService';
 import {
   scadaSimulatorService,
   SimulationEventLog,
@@ -76,9 +77,13 @@ export const ScadaSimulatorControl: React.FC = () => {
     return unsub;
   }, [selectedTag]);
 
+  const isSimulatorModeActive = assetService.isSimulatorMode();
   const activePoint = points.find(p => p.tag === selectedTag) || points[0];
 
-  const handleStart = () => scadaSimulatorService.start();
+  const handleStart = () => {
+    assetService.setSimulatorMode(true);
+    scadaSimulatorService.start();
+  };
   const handlePause = () => scadaSimulatorService.pause();
   const handleResume = () => scadaSimulatorService.resume();
   const handleStop = () => scadaSimulatorService.stop();
@@ -316,7 +321,7 @@ export const ScadaSimulatorControl: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-[11px] font-bold text-slate-700 font-mono mb-1">
+          <label className="block text-[11px] font-bold text-zinc-700 font-mono mb-1">
             Quick Scenario Preset:
           </label>
           <div className="flex items-center gap-1 overflow-x-auto">
@@ -334,7 +339,7 @@ export const ScadaSimulatorControl: React.FC = () => {
                 onClick={() => handleScenarioChange(preset as ScadaScenarioPreset)}
                 className={`px-2 py-1 rounded-md text-[10px] font-mono font-bold border transition-all cursor-pointer whitespace-nowrap ${
                   config.scenario === preset
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    ? 'bg-[#09090B] text-white border-zinc-900 shadow-xs'
                     : `${clr} hover:opacity-80`
                 }`}
               >
@@ -346,10 +351,10 @@ export const ScadaSimulatorControl: React.FC = () => {
       </div>
 
       {/* 3. Live 3-Phase Parameter Metrics Strip for Active Asset */}
-      {activePoint && (
+      {isSimulatorModeActive && activePoint ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 font-mono flex items-center space-x-1.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#09090B] font-mono flex items-center space-x-1.5">
               <Activity className="w-4 h-4 text-blue-600" />
               <span>
                 Physically Consistent 3-Phase Telemetry: {activePoint.description} ({activePoint.tag})
@@ -388,23 +393,15 @@ export const ScadaSimulatorControl: React.FC = () => {
               <span className="text-base font-extrabold text-emerald-700 font-mono mt-0.5 block">
                 {activePoint.activePowerMW} MW
               </span>
-              <span className="text-[9px] text-zinc-400 font-mono">√3·V·I·cosφ</span>
+              <span className="text-[9px] text-zinc-400 font-mono">Cos(φ) {activePoint.powerFactor || 0.965}</span>
             </div>
 
             <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
-              <span className="text-[10px] text-zinc-500 font-mono block">Reactive (Q)</span>
-              <span className="text-base font-extrabold text-amber-700 font-mono mt-0.5 block">
-                {activePoint.reactivePowerMVAR} MVAr
+              <span className="text-[10px] text-zinc-500 font-mono block">Reactive Power (Q)</span>
+              <span className="text-base font-extrabold text-blue-700 font-mono mt-0.5 block">
+                {activePoint.reactivePowerMVAR} MVAR
               </span>
-              <span className="text-[9px] text-zinc-400 font-mono">√3·V·I·sinφ</span>
-            </div>
-
-            <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
-              <span className="text-[10px] text-zinc-500 font-mono block">Power Factor</span>
-              <span className="text-base font-extrabold text-zinc-950 font-mono mt-0.5 block">
-                {activePoint.powerFactor?.toFixed(3) || '0.965'}
-              </span>
-              <span className="text-[9px] text-zinc-400 font-mono">cos φ</span>
+              <span className="text-[9px] text-zinc-400 font-mono">Sin(φ) Inductive</span>
             </div>
 
             <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
@@ -412,24 +409,28 @@ export const ScadaSimulatorControl: React.FC = () => {
               <span className="text-base font-extrabold text-zinc-950 font-mono mt-0.5 block">
                 {activePoint.frequencyHz} Hz
               </span>
-              <span className="text-[9px] text-zinc-400 font-mono">Nominal: 50.00</span>
+              <span className="text-[9px] text-zinc-400 font-mono">IEGC Band ±0.05</span>
             </div>
 
             <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
-              <span className="text-[10px] text-zinc-500 font-mono block">Neutral (IN)</span>
-              <span className="text-base font-extrabold text-zinc-950 font-mono mt-0.5 block">
+              <span className="text-[10px] text-zinc-500 font-mono block">Phase Angles</span>
+              <span className="text-xs font-bold text-zinc-950 font-mono mt-1 block">
+                0° / 120° / 240°
+              </span>
+              <span className="text-[9px] text-zinc-400 font-mono">120° Symmetry</span>
+            </div>
+
+            <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+              <span className="text-[10px] text-zinc-500 font-mono block">Neutral Current</span>
+              <span className="text-base font-extrabold text-amber-700 font-mono mt-0.5 block">
                 {activePoint.neutralCurrentAmps || 0} A
               </span>
-              <span className="text-[9px] text-zinc-400 font-mono">Phasor Sum</span>
+              <span className="text-[9px] text-zinc-400 font-mono">Zero Seq. Return</span>
             </div>
 
             <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
-              <span className="text-[10px] text-zinc-500 font-mono block">Thermal Temp</span>
-              <span
-                className={`text-base font-extrabold font-mono mt-0.5 block ${
-                  (activePoint.oilTempC || 0) > 75 ? 'text-rose-600' : 'text-zinc-900'
-                }`}
-              >
+              <span className="text-[10px] text-zinc-500 font-mono block">Thermal Oil / Wdg</span>
+              <span className="text-base font-extrabold text-zinc-950 font-mono mt-0.5 block">
                 {activePoint.oilTempC || 48}°C
               </span>
               <span className="text-[9px] text-zinc-400 font-mono">
@@ -437,6 +438,14 @@ export const ScadaSimulatorControl: React.FC = () => {
               </span>
             </div>
           </div>
+        </div>
+      ) : (
+        <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 text-center space-y-1">
+          <Activity className="w-5 h-5 text-zinc-400 mx-auto mb-1" />
+          <h4 className="text-xs font-semibold text-[#09090B]">3-Phase Telemetry Inactive (Clean Standby Mode)</h4>
+          <p className="text-[11px] text-zinc-500 font-mono">
+            Operating in clean mode (0 active telemetry feeds). Click &apos;Start Simulator&apos; to stream physically consistent 3-phase measurements.
+          </p>
         </div>
       )}
 
@@ -449,63 +458,73 @@ export const ScadaSimulatorControl: React.FC = () => {
               Dynamic Telemetry Trend Waveform: {selectedTag} (Rolling 60 Samples)
             </h4>
           </div>
-          <span className="text-[10px] text-slate-500 font-mono">Physical Consistency Engine</span>
+          <span className="text-[10px] text-zinc-500 font-mono">Physical Consistency Engine</span>
         </div>
 
-        <div className="h-48 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="timestamp" tick={{ fontSize: 9 }} stroke="#64748b" />
-              <YAxis yAxisId="amp" tick={{ fontSize: 9 }} stroke="#2563eb" domain={['auto', 'auto']} />
-              <YAxis
-                yAxisId="pwr"
-                orientation="right"
-                tick={{ fontSize: 9 }}
-                stroke="#16a34a"
-                domain={['auto', 'auto']}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#ffffff',
-                  borderColor: '#cbd5e1',
-                  fontSize: '11px',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                }}
-              />
-              <Legend wrapperStyle={{ fontSize: '10px' }} />
-              <Line
-                yAxisId="amp"
-                type="monotone"
-                dataKey="currentAmps"
-                name="Current (A)"
-                stroke="#2563eb"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                yAxisId="pwr"
-                type="monotone"
-                dataKey="activePowerMW"
-                name="Power (MW)"
-                stroke="#16a34a"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                yAxisId="amp"
-                type="monotone"
-                dataKey="windingTempC"
-                name="Winding Temp (°C)"
-                stroke="#f59e0b"
-                strokeWidth={1.5}
-                strokeDasharray="4 4"
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        {isSimulatorModeActive && trendData.length > 0 ? (
+          <div className="h-48 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="timestamp" tick={{ fontSize: 9 }} stroke="#64748b" />
+                <YAxis yAxisId="amp" tick={{ fontSize: 9 }} stroke="#2563eb" domain={['auto', 'auto']} />
+                <YAxis
+                  yAxisId="pwr"
+                  orientation="right"
+                  tick={{ fontSize: 9 }}
+                  stroke="#16a34a"
+                  domain={['auto', 'auto']}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    borderColor: '#cbd5e1',
+                    fontSize: '11px',
+                    borderRadius: '6px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: '10px' }} />
+                <Line
+                  yAxisId="amp"
+                  type="monotone"
+                  dataKey="currentAmps"
+                  name="Current (A)"
+                  stroke="#2563eb"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  yAxisId="pwr"
+                  type="monotone"
+                  dataKey="activePowerMW"
+                  name="Power (MW)"
+                  stroke="#16a34a"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  yAxisId="amp"
+                  type="monotone"
+                  dataKey="windingTempC"
+                  name="Winding Temp (°C)"
+                  stroke="#f59e0b"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 4"
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="h-36 w-full flex flex-col items-center justify-center p-4 text-center rounded-md bg-white border border-zinc-200">
+            <Gauge className="w-6 h-6 text-zinc-400 mb-1.5" />
+            <span className="text-xs font-semibold text-[#09090B]">No Dynamic Telemetry Trends in Clean Standby</span>
+            <p className="text-[11px] text-zinc-500 max-w-sm mt-0.5 font-mono">
+              Simulator is currently turned OFF. Click &apos;Start Simulator&apos; to begin streaming dynamic 3-phase waveforms.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 5. Manual Telemetry Injection Panel */}
@@ -592,47 +611,55 @@ export const ScadaSimulatorControl: React.FC = () => {
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-bold text-zinc-900 font-mono uppercase flex items-center space-x-1.5">
             <Clock className="w-4 h-4 text-zinc-600" />
-            <span>Simulation Event History & Ingestion Log ({logs.length})</span>
+            <span>Simulation Event History & Ingestion Log ({isSimulatorModeActive ? logs.length : 0})</span>
           </h4>
           <span className="text-[10px] text-zinc-500 font-mono">Immutable Sandbox Audit</span>
         </div>
 
-        <div className="border border-zinc-200 rounded-md overflow-hidden max-h-48 overflow-y-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-zinc-50 text-zinc-600 font-mono text-[10px] uppercase tracking-wider border-b border-zinc-200">
-              <tr>
-                <th className="p-2.5">Time</th>
-                <th className="p-2.5">Scenario</th>
-                <th className="p-2.5">Event Type</th>
-                <th className="p-2.5">Tag</th>
-                <th className="p-2.5">Message</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 font-mono text-[11px]">
-              {logs.slice(0, 15).map(log => (
-                <tr key={log.id} className="hover:bg-zinc-50">
-                  <td className="p-2 text-zinc-500 whitespace-nowrap">{log.timestamp}</td>
-                  <td className="p-2 font-semibold text-zinc-700">{log.scenario}</td>
-                  <td className="p-2">
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                        log.eventType === 'FAULT' || log.eventType === 'BREAKER_TRIP'
-                          ? 'bg-rose-100 text-rose-800'
-                          : log.eventType === 'OVERLOAD'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-zinc-100 text-zinc-800'
-                      }`}
-                    >
-                      {log.eventType}
-                    </span>
-                  </td>
-                  <td className="p-2 text-zinc-800 font-semibold">{log.tag}</td>
-                  <td className="p-2 text-zinc-600 font-sans">{log.message}</td>
+        {isSimulatorModeActive && logs.length > 0 ? (
+          <div className="border border-zinc-200 rounded-md overflow-hidden max-h-48 overflow-y-auto">
+            <table className="w-full text-xs text-left">
+              <thead className="bg-zinc-50 text-zinc-600 font-mono text-[10px] uppercase tracking-wider border-b border-zinc-200">
+                <tr>
+                  <th className="p-2.5">Time</th>
+                  <th className="p-2.5">Scenario</th>
+                  <th className="p-2.5">Event Type</th>
+                  <th className="p-2.5">Tag</th>
+                  <th className="p-2.5">Message</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-zinc-100 font-mono text-[11px]">
+                {logs.slice(0, 15).map(log => (
+                  <tr key={log.id} className="hover:bg-zinc-50">
+                    <td className="p-2 text-zinc-500 whitespace-nowrap">{log.timestamp}</td>
+                    <td className="p-2 font-semibold text-zinc-700">{log.scenario}</td>
+                    <td className="p-2">
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                          log.eventType === 'FAULT' || log.eventType === 'BREAKER_TRIP'
+                            ? 'bg-rose-100 text-rose-800'
+                            : log.eventType === 'OVERLOAD'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-zinc-100 text-zinc-800'
+                        }`}
+                      >
+                        {log.eventType}
+                      </span>
+                    </td>
+                    <td className="p-2 text-zinc-800 font-semibold">{log.tag}</td>
+                    <td className="p-2 text-zinc-600 font-sans">{log.message}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-6 text-center text-zinc-500 font-mono text-xs border border-zinc-200 rounded-md bg-zinc-50 space-y-1">
+            <Clock className="w-5 h-5 text-zinc-400 mx-auto mb-1" />
+            <p className="font-semibold text-zinc-700">No simulation events logged in clean operational mode</p>
+            <p className="text-[11px] text-zinc-400">Click &apos;Start Simulator&apos; to initialize simulation ingestion events.</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -288,7 +288,7 @@ class NotificationService {
           roleTitle: 'Super Administrator Enterprise Grid Command',
           jurisdictionScope: 'All 4 Regional Enclaves (Puducherry, Karaikal, Mahe, Yanam) • Enterprise Command',
           metrics: [
-            { label: 'Distribution Regions', value: 4, subtext: 'Puducherry, Karaikal, Mahe, Yanam', trend: '100% Online' },
+            { label: 'Distribution Regions', value: 0, subtext: '0 simulated regions in clean mode', trend: 'Standby' },
             { label: 'Grid Substations', value: userSubstations.length, subtext: 'Substations in database', trend: userSubstations.length > 0 ? 'Energized' : 'Clean Mode' },
             { label: 'Distribution Feeders', value: userFeeders.length, subtext: 'Feeders in database', trend: userFeeders.length > 0 ? 'Energized' : 'Clean Mode' },
             { label: 'Distribution Transformers', value: userDTRs.length, subtext: 'DTRs in database', trend: userDTRs.length > 0 ? 'Operational' : 'Clean Mode' },

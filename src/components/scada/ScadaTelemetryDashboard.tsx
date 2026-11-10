@@ -137,23 +137,23 @@ export const ScadaTelemetryDashboard: React.FC = () => {
   const protocolStatuses = scadaGatewayService.getProtocolStatus();
 
   return (
-    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-slate-900 select-none">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#09090B] select-none">
       {/* Top Header Card */}
-      <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+      <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
           <div className="w-11 h-11 rounded-md  bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-blue-500/20 flex-shrink-0">
             <Cpu className="w-5 h-5 text-cyan-200" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
                 SCADA Telemetry, SLD & Dynamic Telemetry Simulator
               </h1>
               <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                 IEC 60870-5-104 • MODBUS • MQTT
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">
+            <p className="text-xs text-zinc-500 font-mono mt-0.5">
               Marapalam 110/22/11kV Primary Substation · Select-Before-Operate (SBO) Interlock Gateway
             </p>
           </div>
@@ -162,8 +162,8 @@ export const ScadaTelemetryDashboard: React.FC = () => {
         {/* Source Isolation Filter & Protocol Indicators */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Source Filter Toggle (Data Isolation Mandate) */}
-          <div className="flex items-center rounded-md bg-slate-100 p-0.5 border border-slate-200 text-xs font-mono">
-            <span className="px-2 text-[10px] font-bold text-slate-500 flex items-center space-x-1">
+          <div className="flex items-center rounded-md bg-zinc-100 p-0.5 border border-[#E4E4E7] text-xs font-mono">
+            <span className="px-2 text-[10px] font-bold text-zinc-500 flex items-center space-x-1">
               <Filter className="w-3 h-3" />
               <span>SOURCE:</span>
             </span>
@@ -177,8 +177,8 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       ? 'bg-blue-600 text-white shadow-xs'
                       : f === 'OPERATIONAL'
                       ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                      : 'bg-[#09090B] text-white shadow-xs'
+                    : 'text-zinc-600 hover:text-[#09090B]'
                 }`}
               >
                 {f}
@@ -200,7 +200,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                   : connectionStatus === 'COMM_FAILURE'
                   ? 'bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100 animate-pulse'
-                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
+                  : 'bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200'
               }`}
             >
               <span
@@ -213,7 +213,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                     ? 'bg-amber-500'
                     : connectionStatus === 'COMM_FAILURE'
                     ? 'bg-rose-600 animate-ping'
-                    : 'bg-slate-400'
+                    : 'bg-zinc-400'
                 }`}
               />
               <span className="font-extrabold">
@@ -223,15 +223,15 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                 {connectionStatus === 'COMM_FAILURE' && 'COMMUNICATION FAILURE'}
                 {connectionStatus === 'DISCONNECTED' && 'GATEWAY DISCONNECTED'}
               </span>
-              <span className="text-[10px] text-slate-400 font-mono pl-1">▼</span>
+              <span className="text-[10px] text-zinc-400 font-mono pl-1">▼</span>
             </button>
 
             {/* Quick Connection State Dropdown for Operators / Reviewers */}
             {showStatusMenu && (
-              <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-xl border border-slate-200 p-3 z-50 text-xs font-mono space-y-2">
-                <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-                  <span className="font-bold text-slate-900">SCADA Gateway Link State</span>
-                  <button onClick={() => setShowStatusMenu(false)} className="text-slate-400 hover:text-slate-600">
+              <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-xl border border-[#E4E4E7] p-3 z-50 text-xs font-mono space-y-2">
+                <div className="flex items-center justify-between pb-1.5 border-b border-zinc-100">
+                  <span className="font-bold text-[#09090B]">SCADA Gateway Link State</span>
+                  <button onClick={() => setShowStatusMenu(false)} className="text-zinc-400 hover:text-zinc-600">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -243,14 +243,14 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       setShowStatusMenu(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between ${
-                      connectionStatus === 'SIMULATOR_CONNECTED' ? 'bg-blue-50 text-blue-800 font-bold' : 'hover:bg-slate-50'
+                      connectionStatus === 'SIMULATOR_CONNECTED' ? 'bg-blue-50 text-blue-800 font-bold' : 'hover:bg-[#FAFAFA]'
                     }`}
                   >
                     <span className="flex items-center space-x-2">
                       <span className="w-2 h-2 rounded-full bg-blue-500" />
                       <span>Simulator Connected</span>
                     </span>
-                    <span className="text-[10px] text-slate-400">10ms</span>
+                    <span className="text-[10px] text-zinc-400">10ms</span>
                   </button>
 
                   <button
@@ -259,14 +259,14 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       setShowStatusMenu(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between ${
-                      connectionStatus === 'LIVE_CONNECTED' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'hover:bg-slate-50'
+                      connectionStatus === 'LIVE_CONNECTED' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'hover:bg-[#FAFAFA]'
                     }`}
                   >
                     <span className="flex items-center space-x-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       <span>Live SCADA Connected</span>
                     </span>
-                    <span className="text-[10px] text-slate-400">IEC-104</span>
+                    <span className="text-[10px] text-zinc-400">IEC-104</span>
                   </button>
 
                   <button
@@ -275,7 +275,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       setShowStatusMenu(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between ${
-                      connectionStatus === 'STALE_TELEMETRY' ? 'bg-amber-50 text-amber-800 font-bold' : 'hover:bg-slate-50'
+                      connectionStatus === 'STALE_TELEMETRY' ? 'bg-amber-50 text-amber-800 font-bold' : 'hover:bg-[#FAFAFA]'
                     }`}
                   >
                     <span className="flex items-center space-x-2">
@@ -291,7 +291,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       setShowStatusMenu(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between ${
-                      connectionStatus === 'COMM_FAILURE' ? 'bg-rose-50 text-rose-800 font-bold' : 'hover:bg-slate-50'
+                      connectionStatus === 'COMM_FAILURE' ? 'bg-rose-50 text-rose-800 font-bold' : 'hover:bg-[#FAFAFA]'
                     }`}
                   >
                     <span className="flex items-center space-x-2">
@@ -307,20 +307,20 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       setShowStatusMenu(false);
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-md flex items-center justify-between ${
-                      connectionStatus === 'DISCONNECTED' ? 'bg-slate-100 text-slate-800 font-bold' : 'hover:bg-slate-50'
+                      connectionStatus === 'DISCONNECTED' ? 'bg-zinc-100 text-[#09090B] font-bold' : 'hover:bg-[#FAFAFA]'
                     }`}
                   >
                     <span className="flex items-center space-x-2">
-                      <span className="w-2 h-2 rounded-full bg-slate-400" />
+                      <span className="w-2 h-2 rounded-full bg-zinc-400" />
                       <span>Disconnected</span>
                     </span>
-                    <span className="text-[10px] text-slate-400">Off</span>
+                    <span className="text-[10px] text-zinc-400">Off</span>
                   </button>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 text-[10px] text-slate-500 space-y-0.5">
-                  <div>Heartbeat: <span className="font-bold text-slate-800">{gatewayStats.heartbeat}</span></div>
-                  <div>Frames: <span className="font-bold text-slate-800">{gatewayStats.frames}</span> | Errors: <span className="font-bold text-rose-600">{gatewayStats.errors}</span></div>
+                <div className="pt-2 border-t border-zinc-100 text-[10px] text-zinc-500 space-y-0.5">
+                  <div>Heartbeat: <span className="font-bold text-[#09090B]">{gatewayStats.heartbeat}</span></div>
+                  <div>Frames: <span className="font-bold text-[#09090B]">{gatewayStats.frames}</span> | Errors: <span className="font-bold text-rose-600">{gatewayStats.errors}</span></div>
                 </div>
               </div>
             )}
@@ -333,31 +333,31 @@ export const ScadaTelemetryDashboard: React.FC = () => {
         className={`p-3.5 sm:p-4 rounded-md border text-xs font-mono flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
           isSimulatorActive
             ? ' bg-amber-50 border-amber-300 text-amber-950 shadow-2xs'
-            : 'bg-slate-50 border-slate-200 text-slate-700'
+            : 'bg-[#FAFAFA] border-[#E4E4E7] text-zinc-700'
         }`}
       >
         <div className="flex items-center space-x-3">
           <div
             className={`w-9 h-9 rounded-md flex items-center justify-center font-bold text-white flex-shrink-0 ${
-              isSimulatorActive ? 'bg-amber-500 shadow-xs animate-pulse' : 'bg-slate-400'
+              isSimulatorActive ? 'bg-amber-500 shadow-xs animate-pulse' : 'bg-zinc-400'
             }`}
           >
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <div className="font-bold text-slate-900 flex items-center space-x-2">
+            <div className="font-bold text-[#09090B] flex items-center space-x-2">
               <span className="text-sm">SCADA Dynamic Telemetry Simulator:</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase border ${
                   isSimulatorActive
                     ? 'bg-amber-100 text-amber-800 border-amber-300'
-                    : 'bg-slate-200 text-slate-600 border-slate-300'
+                    : 'bg-zinc-200 text-zinc-600 border-zinc-300'
                 }`}
               >
                 {isSimulatorActive ? 'ACTIVE (STREAMING)' : 'OFF (CLEAN MODE)'}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-sans mt-0.5 leading-snug">
+            <p className="text-[11px] text-zinc-500 font-sans mt-0.5 leading-snug">
               {isSimulatorActive
                 ? 'Dynamic 3-phase physics simulation running. Telemetry streams into SLD, live gauges, and protocols (IEC-104 / Modbus / MQTT).'
                 : 'Operating in pure real mode (test/dummy grid data is hidden). Turn ON the simulator to stream dynamic telemetry & test scenarios.'}
@@ -393,13 +393,13 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       )}
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex space-x-1.5 overflow-x-auto pb-1 border-b border-slate-200 text-xs font-medium">
+      <div className="flex space-x-1.5 overflow-x-auto pb-1 border-b border-[#E4E4E7] text-xs font-medium">
         <button
           onClick={() => setActiveTab('sld')}
           className={`px-4 py-2 rounded-md transition-all whitespace-nowrap font-bold cursor-pointer flex items-center space-x-1.5 ${
             activeTab === 'sld'
-              ? 'bg-slate-900 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'bg-[#09090B] text-white shadow-xs'
+              : 'text-zinc-600 hover:text-[#09090B] hover:bg-zinc-100'
           }`}
         >
           <Zap className="w-3.5 h-3.5" />
@@ -411,7 +411,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           className={`px-4 py-2 rounded-md transition-all whitespace-nowrap font-bold cursor-pointer flex items-center space-x-1.5 ${
             activeTab === 'simulator'
               ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              : 'text-zinc-600 hover:text-[#09090B] hover:bg-zinc-100'
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
@@ -423,7 +423,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           className={`px-4 py-2 rounded-md transition-all whitespace-nowrap font-bold cursor-pointer flex items-center space-x-1.5 ${
             activeTab === 'protocols'
               ? 'bg-indigo-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              : 'text-zinc-600 hover:text-[#09090B] hover:bg-zinc-100'
           }`}
         >
           <Radio className="w-3.5 h-3.5" />
@@ -434,8 +434,8 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           onClick={() => setActiveTab('alarms')}
           className={`px-4 py-2 rounded-md transition-all whitespace-nowrap font-bold cursor-pointer flex items-center space-x-1.5 ${
             activeTab === 'alarms'
-              ? 'bg-slate-900 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'bg-[#09090B] text-white shadow-xs'
+              : 'text-zinc-600 hover:text-[#09090B] hover:bg-zinc-100'
           }`}
         >
           <AlertOctagon className="w-3.5 h-3.5" />
@@ -447,29 +447,29 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       {points.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {points.slice(0, 6).map(pt => (
-            <div key={pt.tag} className="p-3.5 rounded-md bg-white border border-slate-200 shadow-xs">
-              <div className="flex items-center justify-between text-[11px] font-mono text-slate-500">
+            <div key={pt.tag} className="p-3.5 rounded-md bg-white border border-[#E4E4E7] shadow-xs">
+              <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500">
                 <span className="truncate">{pt.description}</span>
                 <span
                   className={`text-[9px] px-1 rounded border font-bold ${
                     pt.sourceType === 'SIMULATOR'
                       ? 'bg-blue-50 text-blue-700 border-blue-200'
-                      : 'bg-slate-100 text-slate-700 border-slate-200'
+                      : 'bg-zinc-100 text-zinc-700 border-[#E4E4E7]'
                   }`}
                 >
                   {pt.sourceType === 'SIMULATOR' ? 'SIM' : 'OP'}
                 </span>
               </div>
               <div className="flex items-baseline space-x-1.5 mt-1.5">
-                <span className="font-mono text-base sm:text-lg font-extrabold text-slate-950">
+                <span className="font-mono text-base sm:text-lg font-extrabold text-[#09090B]">
                   {pt.voltageKV ? `${pt.voltageKV} kV` : pt.currentAmps ? `${pt.currentAmps} A` : '50.02 Hz'}
                 </span>
                 {pt.activePowerMW !== undefined && pt.activePowerMW > 0 && (
-                  <span className="text-[10px] text-slate-500 font-mono">({pt.activePowerMW} MW)</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">({pt.activePowerMW} MW)</span>
                 )}
               </div>
-              <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100 text-[10px] font-mono">
-                <span className="text-slate-400">{pt.lastUpdated}</span>
+              <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-zinc-100 text-[10px] font-mono">
+                <span className="text-zinc-400">{pt.lastUpdated}</span>
                 <span
                   className={`font-bold px-1.5 py-0.2 rounded border ${
                     pt.breakerStatus === 'CLOSED'
@@ -484,12 +484,12 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="p-8 rounded-md bg-white border border-slate-200 text-center space-y-2 shadow-xs">
-          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
-            <Radio className="w-6 h-6 text-slate-400" />
+        <div className="p-8 rounded-md bg-white border border-[#E4E4E7] text-center space-y-2 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center mx-auto text-zinc-400">
+            <Radio className="w-6 h-6 text-zinc-400" />
           </div>
-          <h3 className="font-bold text-sm text-slate-800">SCADA Telemetry Disconnected (Clean Standby Mode)</h3>
-          <p className="text-xs text-slate-500 max-w-lg mx-auto">
+          <h3 className="font-bold text-sm text-[#09090B]">SCADA Telemetry Disconnected (Clean Standby Mode)</h3>
+          <p className="text-xs text-zinc-500 max-w-lg mx-auto">
             Operating in clean mode without simulated telemetry feeds. Turn ON the SCADA / System Simulator to stream dynamic 3-phase measurements, load curves, breaker statuses, and alarm events.
           </p>
           <div className="pt-2">
@@ -517,15 +517,15 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           connectionStatus !== 'DISCONNECTED';
 
         return (
-          <div className="bg-white border border-slate-200 rounded-md p-5 shadow-xs relative overflow-hidden space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="bg-white border border-[#E4E4E7] rounded-md p-5 shadow-xs relative overflow-hidden space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2">
                 <Zap className="w-4 h-4 text-amber-500" />
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-[#09090B]">
                   Substation Single Line Diagram (SLD Dynamic Schematic)
                 </h3>
               </div>
-              <div className="flex items-center space-x-3 text-[11px] font-mono text-slate-500">
+              <div className="flex items-center space-x-3 text-[11px] font-mono text-zinc-500">
                 <span className="flex items-center space-x-1">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-xs shadow-emerald-500/50" />
                   <span className="font-semibold text-emerald-800">Closed (Energized)</span>
@@ -534,7 +534,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
                   <span className="font-semibold text-rose-800">Open (Tripped)</span>
                 </span>
-                <span className="text-slate-400 hidden sm:inline">| Click any Breaker for SBO Remote Control</span>
+                <span className="text-zinc-400 hidden sm:inline">| Click any Breaker for SBO Remote Control</span>
               </div>
             </div>
 
@@ -574,16 +574,9 @@ export const ScadaTelemetryDashboard: React.FC = () => {
             )}
 
             {/* SVG SLD Vector Schematic */}
-            <div className="w-full flex justify-center py-4 bg-slate-50/70 border border-slate-200 rounded-md overflow-x-auto">
+            <div className="w-full flex justify-center py-4 bg-[#FAFAFA] border border-[#E4E4E7] rounded-md overflow-x-auto">
               <svg className="w-full max-w-3xl h-84 select-none" viewBox="0 0 700 330">
-                <defs>
-                  <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#10B981" floodOpacity="0.4" />
-                  </filter>
-                  <filter id="glow-rose" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#EF4444" floodOpacity="0.4" />
-                  </filter>
-                </defs>
+                
 
                 {/* 110kV Incomer Busbar */}
                 <line x1="80" y1="35" x2="620" y2="35" stroke="#DC2626" strokeWidth="4.5" strokeLinecap="round" />
@@ -678,7 +671,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                         fill={isClosed ? '#10B981' : '#EF4444'}
                         stroke="#0F172A"
                         strokeWidth="2"
-                        filter={isClosed ? 'url(#glow-emerald)' : 'url(#glow-rose)'}
+                        
                         className="transition-transform group-hover:scale-110"
                       />
                       <text
@@ -790,10 +783,10 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                 return (
                   <div
                     key={pt.tag}
-                    className="p-3 rounded-md border border-slate-200 bg-white hover:border-blue-300 transition-all shadow-xs space-y-2"
+                    className="p-3 rounded-md border border-[#E4E4E7] bg-white hover:border-blue-300 transition-all shadow-xs space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-slate-900 truncate">{pt.description}</span>
+                      <span className="font-mono text-xs font-bold text-[#09090B] truncate">{pt.description}</span>
                       <span
                         className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
                           isClosed
@@ -805,11 +798,11 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-1 text-[11px] font-mono text-slate-600">
-                      <div>Current: <b className="text-slate-900">{pt.currentAmps} A</b></div>
-                      <div>Voltage: <b className="text-slate-900">{pt.voltageKV} kV</b></div>
-                      <div>Active P: <b className="text-slate-900">{pt.activePowerMW} MW</b></div>
-                      <div>PF: <b className="text-slate-900">{pt.powerFactor ?? 0.95}</b></div>
+                    <div className="grid grid-cols-2 gap-1 text-[11px] font-mono text-zinc-600">
+                      <div>Current: <b className="text-[#09090B]">{pt.currentAmps} A</b></div>
+                      <div>Voltage: <b className="text-[#09090B]">{pt.voltageKV} kV</b></div>
+                      <div>Active P: <b className="text-[#09090B]">{pt.activePowerMW} MW</b></div>
+                      <div>PF: <b className="text-[#09090B]">{pt.powerFactor ?? 0.95}</b></div>
                     </div>
 
                     <button
@@ -817,7 +810,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                       disabled={!canOperateSCADA}
                       className={`w-full py-1.5 rounded-md text-xs font-mono font-bold cursor-pointer transition-all flex items-center justify-center space-x-1.5 ${
                         !canOperateSCADA
-                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                          ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
                           : isClosed
                           ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200'
                           : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
@@ -831,9 +824,9 @@ export const ScadaTelemetryDashboard: React.FC = () => {
               })}
             </div>
 
-            <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1">
+            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 pt-1">
               <span>* Operator Safety Note: Remote breaker toggling enforces statutory 3-tier SBO audit logging.</span>
-              <span className="font-semibold text-slate-700">Substation Bay: 110/22kV Marapalam Switchyard</span>
+              <span className="font-semibold text-zinc-700">Substation Bay: 110/22kV Marapalam Switchyard</span>
             </div>
           </div>
         );
@@ -844,71 +837,75 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
       {/* TAB 3: INDUSTRIAL GATEWAY PROTOCOLS */}
       {activeTab === 'protocols' && (
-        <div className="bg-white border border-slate-200 rounded-md p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="bg-white border border-[#E4E4E7] rounded-md p-5 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
             <div>
-              <h3 className="font-bold text-sm text-slate-950 font-mono uppercase">
+              <h3 className="font-bold text-sm text-[#09090B] font-mono uppercase">
                 SCADA Gateway Protocol Adapters & Communication Channels
               </h3>
-              <p className="text-xs text-slate-500 font-mono mt-0.5">
+              <p className="text-xs text-zinc-500 font-mono mt-0.5">
                 IEC 60870-5-104 (ASDU Type 9/13/45) · Modbus TCP (Holding Regs) · MQTT (Pub/Sub) · WebSocket
               </p>
             </div>
-            <span className="px-3 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-mono font-bold">
-              All Protocol Stacks Active
+            <span className={`px-3 py-1 rounded-md text-xs font-mono font-bold border ${
+              isSimulatorActive
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                : 'bg-zinc-100 text-zinc-700 border-zinc-200'
+            }`}>
+              {isSimulatorActive ? 'All Protocol Stacks Active' : 'Protocol Stacks in Standby (Simulator OFF)'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="p-4 rounded-md bg-slate-50 border border-slate-200 space-y-2">
+            <div className="p-4 rounded-md bg-[#FAFAFA] border border-[#E4E4E7] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-900 font-mono">IEC 60870-5-104</span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="text-xs font-bold text-[#09090B] font-mono">IEC 60870-5-104</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${isSimulatorActive ? 'bg-emerald-500' : 'bg-zinc-300'}`} />
               </div>
-              <div className="text-[11px] font-mono text-slate-600 space-y-1">
-                <div>Port: <b className="text-slate-900">2404 (TCP)</b></div>
-                <div>APCI: <b className="text-emerald-700">STARTDT ACTIVE</b></div>
-                <div>ASDU Type: <b>13 (Short Float)</b></div>
-                <div>COT: <b>3 (Spontaneous)</b></div>
+              <div className="text-[11px] font-mono text-zinc-600 space-y-1">
+                <div>Port: <b className="text-[#09090B]">{isSimulatorActive ? '2404 (TCP)' : '2404 (Standby)'}</b></div>
+                <div>APCI: <b className={isSimulatorActive ? 'text-emerald-700' : 'text-zinc-500'}>{isSimulatorActive ? 'STARTDT ACTIVE' : 'INACTIVE'}</b></div>
+                <div>ASDU Type: <b>{isSimulatorActive ? '13 (Short Float)' : 'None (0 Frames)'}</b></div>
+                <div>COT: <b>{isSimulatorActive ? '3 (Spontaneous)' : '0 (Idle)'}</b></div>
               </div>
             </div>
 
-            <div className="p-4 rounded-md bg-slate-50 border border-slate-200 space-y-2">
+            <div className="p-4 rounded-md bg-[#FAFAFA] border border-[#E4E4E7] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-900 font-mono">Modbus TCP</span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="text-xs font-bold text-[#09090B] font-mono">Modbus TCP</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${isSimulatorActive ? 'bg-emerald-500' : 'bg-zinc-300'}`} />
               </div>
-              <div className="text-[11px] font-mono text-slate-600 space-y-1">
-                <div>Port: <b className="text-slate-900">502 (TCP)</b></div>
-                <div>Unit ID: <b>1</b></div>
-                <div>Holding Regs: <b>40001 - 40050</b></div>
-                <div>Function: <b>03 (Read Holding)</b></div>
+              <div className="text-[11px] font-mono text-zinc-600 space-y-1">
+                <div>Port: <b className="text-[#09090B]">{isSimulatorActive ? '502 (TCP)' : '502 (Standby)'}</b></div>
+                <div>Unit ID: <b>{isSimulatorActive ? '1' : 'None'}</b></div>
+                <div>Holding Regs: <b>{isSimulatorActive ? '40001 - 40050' : '0 Active'}</b></div>
+                <div>Function: <b>{isSimulatorActive ? '03 (Read Holding)' : 'Standby'}</b></div>
               </div>
             </div>
 
-            <div className="p-4 rounded-md bg-slate-50 border border-slate-200 space-y-2">
+            <div className="p-4 rounded-md bg-[#FAFAFA] border border-[#E4E4E7] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-900 font-mono">MQTT Telemetry</span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="text-xs font-bold text-[#09090B] font-mono">MQTT Telemetry</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${isSimulatorActive ? 'bg-emerald-500' : 'bg-zinc-300'}`} />
               </div>
-              <div className="text-[11px] font-mono text-slate-600 space-y-1">
-                <div>Topic: <b className="text-slate-900">powergis/substation/#</b></div>
-                <div>QoS: <b>1 (At least once)</b></div>
-                <div>Format: <b>JSON Telemetry</b></div>
-                <div>Retained: <b>True</b></div>
+              <div className="text-[11px] font-mono text-zinc-600 space-y-1">
+                <div>Topic: <b className="text-[#09090B]">powergis/substation/#</b></div>
+                <div>QoS: <b>{isSimulatorActive ? '1 (At least once)' : 'Standby'}</b></div>
+                <div>Format: <b>{isSimulatorActive ? 'JSON Telemetry' : 'No Stream'}</b></div>
+                <div>Retained: <b>{isSimulatorActive ? 'True' : 'False'}</b></div>
               </div>
             </div>
 
-            <div className="p-4 rounded-md bg-slate-50 border border-slate-200 space-y-2">
+            <div className="p-4 rounded-md bg-[#FAFAFA] border border-[#E4E4E7] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-900 font-mono">WebSocket Stream</span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="text-xs font-bold text-[#09090B] font-mono">WebSocket Stream</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${isSimulatorActive ? 'bg-emerald-500' : 'bg-zinc-300'}`} />
               </div>
-              <div className="text-[11px] font-mono text-slate-600 space-y-1">
-                <div>Path: <b className="text-slate-900">/ws/scada/telemetry</b></div>
-                <div>Encoding: <b>Binary / JSON</b></div>
-                <div>Heartbeat: <b>5000 ms</b></div>
-                <div>Latency: <b className="text-emerald-700">~12 ms</b></div>
+              <div className="text-[11px] font-mono text-zinc-600 space-y-1">
+                <div>Path: <b className="text-[#09090B]">/ws/scada/telemetry</b></div>
+                <div>Encoding: <b>{isSimulatorActive ? 'Binary / JSON' : 'None'}</b></div>
+                <div>Heartbeat: <b>{isSimulatorActive ? '5000 ms' : 'Standby'}</b></div>
+                <div>Latency: <b className={isSimulatorActive ? 'text-emerald-700' : 'text-zinc-500'}>{isSimulatorActive ? '~12 ms' : '0 ms (Idle)'}</b></div>
               </div>
             </div>
           </div>
@@ -917,11 +914,11 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
       {/* TAB 4: SCADA ALARMS & EVENT LOGS */}
       {((activeTab === 'sld' && points.length > 0) || activeTab === 'alarms') && (
-        <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-5 shadow-xs space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+        <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-xs space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3">
             <div className="flex items-center space-x-2">
               <AlertOctagon className="w-4 h-4 text-rose-600" />
-              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-900">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-[#09090B]">
                 Substation Telemetry Alarms & Event Log ({alarms.length})
               </h3>
             </div>
@@ -933,8 +930,8 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   onClick={() => setAlarmFilter(sev)}
                   className={`px-2 py-0.5 rounded border transition-all cursor-pointer ${
                     alarmFilter === sev
-                      ? 'bg-slate-900 text-white border-slate-900 font-bold'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-[#09090B] text-white border-zinc-900 font-bold'
+                      : 'bg-[#FAFAFA] text-zinc-600 border-[#E4E4E7] hover:bg-zinc-100'
                   }`}
                 >
                   {sev.toUpperCase()}
@@ -945,10 +942,10 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
           <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
             {filteredAlarms.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 font-mono text-xs border border-slate-200 rounded-md bg-slate-50 space-y-1">
-                <AlertOctagon className="w-5 h-5 text-slate-400 mx-auto mb-1" />
-                <p className="font-semibold text-slate-700">No active telemetry alarms in clean standby mode</p>
-                <p className="text-[11px] text-slate-400">
+              <div className="p-8 text-center text-zinc-500 font-mono text-xs border border-[#E4E4E7] rounded-md bg-[#FAFAFA] space-y-1">
+                <AlertOctagon className="w-5 h-5 text-zinc-400 mx-auto mb-1" />
+                <p className="font-semibold text-zinc-700">No active telemetry alarms in clean standby mode</p>
+                <p className="text-[11px] text-zinc-400">
                   {isSimulatorActive
                     ? 'All parameters within normal operating thresholds.'
                     : 'Operating in clean operational standby (0 simulated alarms). Turn ON the Simulator to stream alarms.'}
@@ -963,7 +960,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                     ? 'bg-rose-50/60 border-rose-200 text-rose-950'
                     : a.severity === 'high'
                     ? 'bg-amber-50/60 border-amber-200 text-amber-950'
-                    : 'bg-slate-50 border-slate-200 text-slate-900'
+                    : 'bg-[#FAFAFA] border-[#E4E4E7] text-[#09090B]'
                 }`}
               >
                 <div className="space-y-1">
@@ -974,20 +971,20 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                           ? 'bg-rose-100 text-rose-800 border-rose-300'
                           : a.severity === 'high'
                           ? 'bg-amber-100 text-amber-800 border-amber-300'
-                          : 'bg-slate-100 text-slate-700 border-slate-300'
+                          : 'bg-zinc-100 text-zinc-700 border-zinc-300'
                       }`}
                     >
                       {a.severity}
                     </span>
-                    <span className="font-bold text-slate-900">{a.alarmCode}</span>
+                    <span className="font-bold text-[#09090B]">{a.alarmCode}</span>
                     {a.sourceType && (
-                      <span className="text-[9px] px-1 rounded bg-slate-200 text-slate-700 font-bold">
+                      <span className="text-[9px] px-1 rounded bg-zinc-200 text-zinc-700 font-bold">
                         {a.sourceType}
                       </span>
                     )}
-                    <span className="text-[10px] text-slate-500">{a.timestamp}</span>
+                    <span className="text-[10px] text-zinc-500">{a.timestamp}</span>
                   </div>
-                  <p className="text-[11px] text-slate-700 font-sans">{a.message}</p>
+                  <p className="text-[11px] text-zinc-700 font-sans">{a.message}</p>
                 </div>
 
                 <div className="flex items-center space-x-2 self-start sm:self-auto">
@@ -1003,7 +1000,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   {a.status === 'active' && (
                     <button
                       onClick={() => handleAcknowledge(a.alarmCode)}
-                      className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold cursor-pointer transition-colors"
+                      className="px-2.5 py-1 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-[10px] font-bold cursor-pointer transition-colors"
                     >
                       Acknowledge
                     </button>
@@ -1017,39 +1014,39 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
       {/* SELECT-BEFORE-OPERATE (SBO) CONFIRMATION MODAL WITH PROTOCOL & INTERLOCK (SECTION 12.2) */}
       {selectedTagForSBO && targetPoint && (
-        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 select-none">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 select-none">
           <form
             onSubmit={handleExecuteSBO}
-            className="bg-white border border-slate-300 rounded-md p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4"
+            className="bg-white border border-zinc-300 rounded-md p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4"
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2">
                 <AlertTriangle className="w-5 h-5 text-amber-600" />
-                <h3 className="font-bold text-sm text-slate-950 font-mono">
+                <h3 className="font-bold text-sm text-[#09090B] font-mono">
                   Select-Before-Operate (SBO) Remote Command
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedTagForSBO(null)}
-                className="p-1 rounded-md text-slate-400 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+                className="p-1 rounded-md text-zinc-400 hover:text-[#09090B] hover:bg-zinc-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Target Breaker Info */}
-            <div className="p-3.5 rounded-md bg-slate-50 border border-slate-200 space-y-2 font-mono text-xs">
+            <div className="p-3.5 rounded-md bg-[#FAFAFA] border border-[#E4E4E7] space-y-2 font-mono text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Breaker Tag:</span>
-                <span className="font-bold text-slate-900">{targetPoint.tag}</span>
+                <span className="text-zinc-500">Breaker Tag:</span>
+                <span className="font-bold text-[#09090B]">{targetPoint.tag}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Description:</span>
-                <span className="font-bold text-slate-900">{targetPoint.description}</span>
+                <span className="text-zinc-500">Description:</span>
+                <span className="font-bold text-[#09090B]">{targetPoint.description}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Data Source:</span>
+                <span className="text-zinc-500">Data Source:</span>
                 <span
                   className={`font-bold px-1.5 py-0.2 rounded border text-[10px] ${
                     targetPoint.sourceType === 'SIMULATOR'
@@ -1060,8 +1057,8 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   {targetPoint.sourceType}
                 </span>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-2">
-                <span className="text-slate-500">Current State:</span>
+              <div className="flex justify-between border-t border-[#E4E4E7] pt-2">
+                <span className="text-zinc-500">Current State:</span>
                 <span
                   className={`font-bold px-1.5 py-0.2 rounded border ${
                     targetPoint.breakerStatus === 'CLOSED'
@@ -1073,7 +1070,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 font-bold">Target State:</span>
+                <span className="text-zinc-500 font-bold">Target State:</span>
                 <span
                   className={`font-extrabold px-2 py-0.5 rounded border text-sm ${
                     targetNewState === 'OPEN'
@@ -1088,13 +1085,13 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
             {/* Protocol Selector */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+              <label className="block text-xs font-bold text-zinc-700 mb-1 font-mono">
                 Gateway Dispatch Protocol:
               </label>
               <select
                 value={sboProtocol}
                 onChange={e => setSboProtocol(e.target.value as ScadaGatewayProtocol)}
-                className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-900"
+                className="w-full bg-[#FAFAFA] border border-zinc-300 rounded-md px-3 py-2 text-xs text-[#09090B] font-mono focus:outline-none focus:border-zinc-900"
               >
                 <option value="IEC-60870-5-104">IEC 60870-5-104 (ASDU Type 45 Single Command)</option>
                 <option value="MODBUS-TCP">Modbus TCP (Function Code 05 Write Coil)</option>
@@ -1105,13 +1102,13 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
             {/* Supervisory Reason Code */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+              <label className="block text-xs font-bold text-zinc-700 mb-1 font-mono">
                 Mandatory Supervisory Reason Code:
               </label>
               <select
                 value={sboReason}
                 onChange={e => setSboReason(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-slate-900"
+                className="w-full bg-[#FAFAFA] border border-zinc-300 rounded-md px-3 py-2 text-xs text-[#09090B] focus:outline-none focus:border-zinc-900"
               >
                 <option value="Emergency Line Breakdown / Conductor Snap">Emergency Line Breakdown / Conductor Snap</option>
                 <option value="Scheduled Line Maintenance / PTW Clearance">Scheduled Line Maintenance / PTW Clearance</option>
@@ -1128,7 +1125,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   type="checkbox"
                   checked={sboConfirmed}
                   onChange={e => setSboConfirmed(e.target.checked)}
-                  className="mt-0.5 rounded text-slate-900 focus:ring-0 cursor-pointer"
+                  className="mt-0.5 rounded text-[#09090B] focus:ring-0 cursor-pointer"
                 />
                 <span className="text-amber-950 font-medium">
                   I certify that statutory Permit-to-Work (PTW) clearances have been verified and all field patrol personnel are clear of the line.
@@ -1137,11 +1134,11 @@ export const ScadaTelemetryDashboard: React.FC = () => {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+            <div className="flex justify-end space-x-2 pt-2 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setSelectedTagForSBO(null)}
-                className="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
