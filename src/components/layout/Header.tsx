@@ -80,13 +80,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
 
   return (
     <header className="relative bg-white border-b border-[#E4E4E7] z-30 select-none">
-      <div className="h-14 px-3 sm:px-4 flex items-center justify-between gap-2">
+      <div className="h-14 px-3 sm:px-4 flex items-center justify-between gap-3">
         {/* Left: Mobile Menu Button & Brand */}
-        <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0 min-w-0">
           {/* Mobile Hamburger Drawer Trigger */}
           <button
             onClick={onToggleMobileMenu}
-            className="p-1.5 rounded-md text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 md:hidden transition-colors flex-shrink-0"
+            className="h-8 w-8 rounded-md text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 md:hidden flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
             aria-label={LABELS.header.menuToggleAria}
           >
             <Menu className="w-5 h-5" />
@@ -111,66 +111,66 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           </div>
         </div>
 
-        {/* Global Asset Search (Desktop) with Ctrl + K */}
-        <div className="relative w-36 md:w-48 lg:w-60 xl:w-72 hidden md:block flex-shrink min-w-[120px]">
-          <div className="relative flex items-center">
-            <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 pointer-events-none flex-shrink-0" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={handleSearch}
-              placeholder={LABELS.header.searchPlaceholder}
-              className="w-full bg-white border border-[#E4E4E7] rounded-md pl-8 pr-12 py-1.5 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 transition-colors font-mono truncate"
-            />
-            <div className="absolute right-2 flex items-center space-x-0.5 pointer-events-none flex-shrink-0">
-              <kbd className="px-1 py-0.2 text-[9px] font-mono font-semibold bg-zinc-100 text-zinc-600 rounded border border-zinc-200">
-                Ctrl
-              </kbd>
-              <kbd className="px-1 py-0.2 text-[9px] font-mono font-semibold bg-zinc-100 text-zinc-600 rounded border border-zinc-200">
-                K
-              </kbd>
+        {/* Right Controls & Toolbar (All boxes equal height h-8 with equal gap-2 spacing) */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Global Asset Search (Desktop) - Fit to text with Ctrl + K */}
+          <div className="relative h-8 w-36 sm:w-40 focus-within:w-56 transition-all duration-200 hidden md:block flex-shrink-0">
+            <div className="relative h-8 flex items-center">
+              <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 pointer-events-none flex-shrink-0" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={handleSearch}
+                placeholder={LABELS.header.searchPlaceholder}
+                className="h-8 w-full bg-white border border-[#E4E4E7] rounded-md pl-8 pr-12 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 transition-colors font-mono truncate"
+              />
+              <div className="absolute right-2 flex items-center space-x-0.5 pointer-events-none flex-shrink-0">
+                <kbd className="px-1 py-0.5 text-[9px] font-mono font-semibold bg-zinc-100 text-zinc-600 rounded border border-zinc-200 leading-none">
+                  Ctrl
+                </kbd>
+                <kbd className="px-1 py-0.5 text-[9px] font-mono font-semibold bg-zinc-100 text-zinc-600 rounded border border-zinc-200 leading-none">
+                  K
+                </kbd>
+              </div>
             </div>
+
+            {/* Dropdown Results */}
+            {searchResults.length > 0 && (
+              <div className="absolute top-10 right-0 sm:left-0 w-72 bg-white border border-[#E4E4E7] rounded-md shadow-lg overflow-hidden z-50">
+                {searchResults.map(res => (
+                  <button
+                    key={res.id || res.code || res.poleNumber}
+                    onClick={() => handleSelectResult(res)}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-zinc-50 flex items-center justify-between border-b border-zinc-100 last:border-0 cursor-pointer"
+                  >
+                    <div>
+                      <div className="font-semibold text-zinc-950">{res.name || res.code || res.poleNumber}</div>
+                      <div className="text-[10px] text-zinc-500 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
+                    </div>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200 font-mono">
+                      {res.voltageClass || res.capacityKVA ? `${res.capacityKVA}kVA` : 'Asset'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Dropdown Results */}
-          {searchResults.length > 0 && (
-            <div className="absolute top-10 left-0 right-0 bg-white border border-[#E4E4E7] rounded-md shadow-lg overflow-hidden z-50">
-              {searchResults.map(res => (
-                <button
-                  key={res.id || res.code || res.poleNumber}
-                  onClick={() => handleSelectResult(res)}
-                  className="w-full text-left px-3 py-2 text-xs hover:bg-zinc-50 flex items-center justify-between border-b border-zinc-100 last:border-0"
-                >
-                  <div>
-                    <div className="font-semibold text-zinc-950">{res.name || res.code || res.poleNumber}</div>
-                    <div className="text-[10px] text-zinc-500 font-mono">{res.type || res.tariffCategory || 'Asset'}</div>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-700 border border-zinc-200 font-mono">
-                    {res.voltageClass || res.capacityKVA ? `${res.capacityKVA}kVA` : 'Asset'}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Right Toolbar */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
           {/* Mobile Search Button Toggle */}
           <button
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="p-1.5 rounded-md bg-white hover:bg-zinc-100 border border-[#E4E4E7] text-zinc-700 md:hidden transition-colors flex-shrink-0"
+            className="h-8 w-8 rounded-md bg-white hover:bg-zinc-100 border border-[#E4E4E7] text-zinc-700 md:hidden flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
             title={LABELS.header.searchMobileTooltip}
           >
             <Search className="w-4 h-4" />
           </button>
 
           {/* Notifications Bell Dropdown */}
-          <div className="relative flex-shrink-0">
+          <div className="relative h-8 flex-shrink-0">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-1.5 rounded-md bg-white hover:bg-zinc-100 border border-[#E4E4E7] text-zinc-700 hover:text-zinc-950 transition-colors flex-shrink-0"
+              className="relative h-8 w-8 rounded-md bg-white hover:bg-zinc-100 border border-[#E4E4E7] text-zinc-700 hover:text-zinc-950 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
               title={LABELS.header.notificationsTooltip}
             >
               <Bell className="w-4 h-4" />
@@ -182,10 +182,10 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 top-11 w-72 sm:w-96 bg-white border border-[#E4E4E7] rounded-md shadow-xl p-3 z-50">
+              <div className="absolute right-0 top-10 w-72 sm:w-96 bg-white border border-[#E4E4E7] rounded-md shadow-xl p-3 z-50">
                 <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-200 text-[10px] uppercase font-bold text-zinc-500">
                   <span className="text-zinc-950 font-bold">{LABELS.header.notificationsTitle} ({notifications.length})</span>
-                  <span className="font-mono text-zinc-700 px-1.5 py-0.2 rounded bg-zinc-100 border border-zinc-200">
+                  <span className="font-mono text-zinc-700 px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-200">
                     {user.role.toUpperCase()}
                   </span>
                 </div>
@@ -200,7 +200,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
                       className="p-2.5 rounded-md bg-zinc-50 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100 transition-all text-left cursor-pointer"
                     >
                       <div className="flex items-center justify-between text-[10px] mb-1">
-                        <span className="font-mono uppercase font-semibold text-zinc-800 bg-white border border-zinc-200 px-1.5 py-0.2 rounded">
+                        <span className="font-mono uppercase font-semibold text-zinc-800 bg-white border border-zinc-200 px-1.5 py-0.5 rounded">
                           {n.priority}
                         </span>
                         <span className="text-zinc-500 font-mono">{n.timestamp}</span>
@@ -222,7 +222,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
                 ? 'Simulator ACTIVE: Streaming simulated test grid & SCADA telemetry. Click to turn OFF (Clean Real Mode).'
                 : 'Simulator OFF: Clean real operational mode. Click to turn ON simulated test grid & telemetry.'
             }
-            className={`inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md border text-xs font-mono font-medium whitespace-nowrap flex-shrink-0 leading-none transition-colors cursor-pointer select-none ${
+            className={`h-8 inline-flex items-center space-x-1.5 px-2.5 rounded-md border text-xs font-mono font-medium whitespace-nowrap flex-shrink-0 transition-colors cursor-pointer select-none ${
               isSimulatorActive
                 ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                 : 'bg-white text-zinc-700 border-[#E4E4E7] hover:bg-zinc-50 hover:text-zinc-950'
@@ -240,13 +240,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           </button>
 
           {/* Region Switcher */}
-          <div className="relative flex-shrink-0">
+          <div className="relative h-8 flex-shrink-0">
             <button
               onClick={() => setShowRegionDropdown(!showRegionDropdown)}
-              className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1.5 rounded-md bg-white hover:bg-zinc-50 border border-[#E4E4E7] text-xs text-zinc-800 transition-colors whitespace-nowrap flex-shrink-0"
+              className="h-8 flex items-center space-x-1 sm:space-x-1.5 px-2.5 rounded-md bg-white hover:bg-zinc-50 border border-[#E4E4E7] text-xs text-zinc-800 transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer"
             >
               <Globe className="w-3.5 h-3.5 text-zinc-600 flex-shrink-0" />
-              <span className="font-medium truncate max-w-[70px] sm:max-w-none whitespace-nowrap">
+              <span className="font-medium truncate max-w-[70px] sm:max-w-none whitespace-nowrap leading-none">
                 {initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry'}
               </span>
               <ChevronDown className="w-3 h-3 text-zinc-500 flex-shrink-0" />
@@ -264,7 +264,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
                       flyToRegion(reg.id);
                       setShowRegionDropdown(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-zinc-50 ${
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-zinc-50 cursor-pointer ${
                       activeRegion === reg.id ? 'text-zinc-950 font-bold bg-zinc-100' : 'text-zinc-700'
                     }`}
                   >
@@ -276,16 +276,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             )}
           </div>
 
-          {/* User Profile Identity Badge (High-Craft Minimalist) */}
-          <div className="flex items-center space-x-2 px-2.5 py-1.5 rounded-md bg-white border border-[#E4E4E7] text-xs text-[#09090B] whitespace-nowrap flex-shrink-0">
-            <div className="w-6 h-6 rounded bg-[#09090B] text-white font-mono font-bold flex items-center justify-center text-[10px] uppercase flex-shrink-0">
+          {/* User Profile Identity Badge */}
+          <div className="h-8 flex items-center space-x-2 px-2.5 rounded-md bg-white border border-[#E4E4E7] text-xs text-[#09090B] whitespace-nowrap flex-shrink-0">
+            <div className="w-5.5 h-5.5 rounded bg-[#09090B] text-white font-mono font-bold flex items-center justify-center text-[10px] uppercase flex-shrink-0">
               {user.fullName ? user.fullName.substring(0, 2).toUpperCase() : user.role.substring(0, 2).toUpperCase()}
             </div>
-            <div className="text-left hidden sm:block max-w-[110px] md:max-w-[130px] lg:max-w-[170px] truncate">
-              <div className="font-bold text-zinc-950 leading-tight truncate whitespace-nowrap">{user.fullName.split(',')[0]}</div>
-              <div className="text-[10px] text-zinc-500 font-mono leading-none truncate whitespace-nowrap">{user.designation}</div>
+            <div className="text-left hidden sm:flex flex-col justify-center max-w-[110px] md:max-w-[130px] lg:max-w-[170px] truncate leading-none">
+              <div className="font-bold text-zinc-950 text-xs leading-none truncate whitespace-nowrap">{user.fullName.split(',')[0]}</div>
+              <div className="text-[9px] text-zinc-500 font-mono leading-none truncate whitespace-nowrap mt-0.5">{user.designation}</div>
             </div>
-            <span className="hidden md:inline-block px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-700 font-mono text-[9px] font-semibold uppercase border border-zinc-200 whitespace-nowrap flex-shrink-0">
+            <span className="hidden md:inline-block px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 font-mono text-[9px] font-semibold uppercase border border-zinc-200 whitespace-nowrap flex-shrink-0 leading-none">
               {user.role}
             </span>
           </div>
@@ -295,7 +295,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             <button
               onClick={() => onNavigateTab('admin_panel')}
               title={LABELS.header.adminConsoleTooltip}
-              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-800 border border-[#E4E4E7] text-xs transition-colors font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
+              className="h-8 flex items-center space-x-1.5 px-2.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-800 border border-[#E4E4E7] text-xs transition-colors font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-zinc-700 flex-shrink-0" />
               <span className="hidden lg:inline text-[11px] whitespace-nowrap leading-none">{LABELS.header.adminConsole}</span>
@@ -306,7 +306,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           <button
             onClick={logout}
             title={LABELS.header.signOutTooltip}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-zinc-700 border border-[#E4E4E7] text-xs transition-colors font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
+            className="h-8 flex items-center space-x-1.5 px-2.5 rounded-md bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-zinc-700 border border-[#E4E4E7] text-xs transition-colors font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="hidden md:inline text-[11px] whitespace-nowrap leading-none">{LABELS.header.signOut}</span>
