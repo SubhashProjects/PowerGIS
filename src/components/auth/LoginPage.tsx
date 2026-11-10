@@ -15,7 +15,6 @@ import { UserProfile } from '../../types/auth';
 import { LABELS } from '../../commons';
 import {
   Zap,
-  Shield,
   KeyRound,
   ArrowRight,
   ArrowLeft,
@@ -153,9 +152,6 @@ export const LoginPage: React.FC = () => {
                   <span className="font-bold text-base text-[#09090B] tracking-tight">
                     {LABELS.header.brandName}
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono font-semibold border border-zinc-200 uppercase tracking-wider">
-                    {LABELS.header.brandBadge}
-                  </span>
                 </div>
                 <p className="text-[11px] text-zinc-500 font-mono leading-tight mt-0.5">
                   {LABELS.header.brandSubtitle}
@@ -173,20 +169,6 @@ export const LoginPage: React.FC = () => {
               <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
               <span className="font-medium">Demo</span>
             </button>
-          </div>
-
-          {/* Heading & Subheading */}
-          <div className="mb-5">
-            <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 text-[10px] font-mono font-semibold uppercase tracking-wider mb-2">
-              <Shield className="w-3 h-3 text-zinc-800" />
-              <span>Statutory Utility Authentication</span>
-            </div>
-            <h1 className="text-lg font-bold text-[#09090B] tracking-tight">
-              {LABELS.auth.loginHeading}
-            </h1>
-            <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
-              {LABELS.auth.loginSubheading}
-            </p>
           </div>
 
           {error && (
