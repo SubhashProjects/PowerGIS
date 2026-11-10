@@ -2,8 +2,9 @@
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // DEDICATED ENTERPRISE LOGIN PAGE - PURE WHITE THEME
 // Strict Anti-Slop Constraints: Flat paper-clean palette, zero ambient blobs,
-// max 6px radius (rounded-md), 1px structural hairlines (#E4E4E7),
-// single centered card login; dummy personas housed exclusively in second page.
+// max 6px radius (rounded-md), 1px structural hairlines (#E4E4E7).
+// Standalone centered sign-in card with integrated PowerGIS branding (no outer header/footer).
+// Dummy test personas housed exclusively in dedicated second page via Demo action.
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -11,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import { initialUsers } from '../../services/mockData';
 import { assetService } from '../../services/assetService';
 import { UserProfile } from '../../types/auth';
-import { COMMONS, LABELS } from '../../commons';
+import { LABELS } from '../../commons';
 import {
   Zap,
   Shield,
@@ -23,11 +24,8 @@ import {
   EyeOff,
   CheckCircle2,
   AlertTriangle,
-  Layers,
   Info,
-  Sparkles,
   Search,
-  Check,
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -136,224 +134,221 @@ export const LoginPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-[#FAFAFA] text-[#09090B] flex flex-col justify-between selection:bg-[#09090B] selection:text-white font-sans">
-      {/* 1. Official Header */}
-      <header className="border-b border-[#E4E4E7] bg-white px-4 sm:px-6 py-3 flex items-center justify-between select-none">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold text-xs border border-zinc-800 flex-shrink-0">
-            <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-bold text-sm tracking-tight text-[#09090B]">
-                {LABELS.header.brandName}
-              </span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-800 font-mono font-semibold border border-zinc-200 uppercase tracking-wider">
-                {LABELS.header.brandBadge}
-              </span>
+    <div className="min-h-screen w-full bg-[#FAFAFA] text-[#09090B] flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-[#09090B] selection:text-white font-sans">
+      {/* View Router */}
+      {currentView === 'login' ? (
+        /* ====================================================================
+           PAGE 1: OFFICIAL STATUTORY LOGIN
+           Centered card with integrated PowerGIS branding (no outer header/footer)
+           ==================================================================== */
+        <div className="w-full max-w-[440px] bg-white border border-[#E4E4E7] rounded-md p-6 sm:p-8 shadow-xs">
+          {/* Integrated PowerGIS Branding Header */}
+          <div className="flex items-start justify-between gap-3 mb-6 pb-5 border-b border-[#E4E4E7]">
+            <div className="flex items-center space-x-3">
+              {/* Logo Emblem (Minimalist Solid High-Craft) */}
+              <div className="w-9 h-9 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold text-xs border border-zinc-800 flex-shrink-0">
+                <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="font-bold text-base text-[#09090B] tracking-tight">
+                    {LABELS.header.brandName}
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono font-semibold border border-zinc-200 uppercase tracking-wider">
+                    {LABELS.header.brandBadge}
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-500 font-mono leading-tight mt-0.5">
+                  {LABELS.header.brandSubtitle}
+                </p>
+              </div>
             </div>
-            <p className="text-[10px] text-zinc-500 font-mono hidden sm:block">
-              {LABELS.header.brandSubtitle}
-            </p>
-          </div>
-        </div>
 
-        <div className="flex items-center space-x-3 text-xs">
-          {currentView === 'login' ? (
+            {/* Quick Demo Sandbox Action */}
             <button
               type="button"
               onClick={() => setCurrentView('demo')}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-800 border border-[#E4E4E7] text-xs font-medium transition-colors cursor-pointer"
+              title="Open Demo Personas & Simulation Sandbox"
+              className="inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-[#E4E4E7] text-[11px] font-mono transition-colors cursor-pointer flex-shrink-0"
             >
-              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-              <span>Demo Sandbox</span>
+              <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+              <span className="font-medium">Demo</span>
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setCurrentView('login')}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-800 border border-[#E4E4E7] text-xs font-medium transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-zinc-600" />
-              <span>Sign In</span>
-            </button>
-          )}
-
-          <div className="hidden md:flex items-center space-x-4 text-xs text-zinc-600 pl-2 border-l border-zinc-200">
-            <div className="flex items-center space-x-1.5 font-mono text-[11px]">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-zinc-800 font-medium">Grid Online</span>
-            </div>
-            <div className="flex items-center space-x-1.5 font-mono text-[11px]">
-              <Layers className="w-3.5 h-3.5 text-zinc-500" />
-              <span>4 Regions</span>
-            </div>
-            <div className="flex items-center space-x-1.5 font-mono text-[11px]">
-              <Shield className="w-3.5 h-3.5 text-zinc-500" />
-              <span>Zero-Trust RLS</span>
-            </div>
           </div>
-        </div>
-      </header>
 
-      {/* 2. Main Content View Router */}
-      {currentView === 'login' ? (
-        /* ====================================================================
-           PAGE 1: OFFICIAL STATUTORY LOGIN (CENTERED & FOCUSED, NO DUMMY USERS)
-           ==================================================================== */
-        <main className="flex-1 flex items-center justify-center p-4 sm:p-6 w-full max-w-lg mx-auto">
-          <div className="w-full bg-white border border-[#E4E4E7] rounded-md p-6 sm:p-8 shadow-xs">
-            {/* Badge */}
-            <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 text-[10px] font-mono font-semibold uppercase tracking-wider mb-4">
+          {/* Heading & Subheading */}
+          <div className="mb-5">
+            <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 text-[10px] font-mono font-semibold uppercase tracking-wider mb-2">
               <Shield className="w-3 h-3 text-zinc-800" />
               <span>Statutory Utility Authentication</span>
             </div>
-
-            <h1 className="text-xl sm:text-2xl font-bold text-[#09090B] tracking-tight">
+            <h1 className="text-lg font-bold text-[#09090B] tracking-tight">
               {LABELS.auth.loginHeading}
             </h1>
-            <p className="text-xs text-zinc-500 mt-1 mb-6 leading-relaxed">
+            <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
               {LABELS.auth.loginSubheading}
             </p>
-
-            {error && (
-              <div className="mb-5 p-3 rounded-md bg-rose-50 border border-rose-200 flex items-start space-x-2 text-rose-900 text-xs font-mono">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
-                <div className="flex-1 leading-snug">{error}</div>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-800 mb-1.5">
-                  Official Email or Staff ID
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    required
-                    value={identifier}
-                    onChange={e => setIdentifier(e.target.value)}
-                    placeholder="e.g. ee.urban@powergis.internal"
-                    className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-zinc-800">Password</label>
-                  <button
-                    type="button"
-                    onClick={() => setShowForgotModal(true)}
-                    className="text-xs text-zinc-500 hover:text-zinc-950 underline transition-colors cursor-pointer"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-                <div className="relative">
-                  <KeyRound className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 cursor-pointer"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center space-x-2 text-zinc-600 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={e => setRememberMe(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded border-[#E4E4E7] text-zinc-900 focus:ring-0"
-                  />
-                  <span className="text-[11px]">Remember staff session</span>
-                </label>
-                <span className="text-[10px] text-zinc-400 font-mono">256-bit AES encrypted</span>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 px-4 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-colors disabled:opacity-50 mt-2 cursor-pointer"
-              >
-                {isLoading ? (
-                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <span>Enter Operations Workspace</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Zero-Trust Notice */}
-            <div className="mt-5 pt-4 border-t border-[#E4E4E7] text-[11px] text-zinc-500 flex items-start space-x-2">
-              <Info className="w-3.5 h-3.5 text-zinc-700 flex-shrink-0 mt-0.5" />
-              <p className="leading-snug">
-                Zero-trust jurisdiction RLS enforced at database layer. Each staff persona operates strictly within designated territorial bounds.
-              </p>
-            </div>
-
-            {/* Demo Sandbox Entry Option */}
-            <div className="mt-5 pt-4 border-t border-[#E4E4E7] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-50 p-3 rounded-md border">
-              <div>
-                <div className="text-xs font-bold text-zinc-950 flex items-center space-x-1.5">
-                  <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                  <span>Demo & Simulation Sandbox</span>
-                </div>
-                <div className="text-[11px] text-zinc-500 mt-0.5">
-                  Looking for pre-seeded test roles (SE, EE, AE, JE...)?
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCurrentView('demo')}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-zinc-100 text-zinc-900 border border-[#E4E4E7] text-xs font-semibold transition-colors cursor-pointer flex-shrink-0 self-start sm:self-auto"
-              >
-                <span>Open Demo Sandbox</span>
-                <ArrowRight className="w-3 h-3 text-zinc-600" />
-              </button>
-            </div>
           </div>
-        </main>
+
+          {error && (
+            <div className="mb-5 p-3 rounded-md bg-rose-50 border border-rose-200 flex items-start space-x-2 text-rose-900 text-xs font-mono">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
+              <div className="flex-1 leading-snug">{error}</div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-zinc-800 mb-1.5">
+                Official Email or Staff ID
+              </label>
+              <div className="relative">
+                <User className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  required
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
+                  placeholder="e.g. ee.urban@powergis.internal"
+                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono transition-colors"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-medium text-zinc-800">Password</label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotModal(true)}
+                  className="text-xs text-zinc-500 hover:text-zinc-950 underline transition-colors cursor-pointer"
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative">
+                <KeyRound className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 cursor-pointer"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-1">
+              <label className="flex items-center space-x-2 text-zinc-600 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-[#E4E4E7] text-zinc-900 focus:ring-0"
+                />
+                <span className="text-[11px]">Remember staff session</span>
+              </label>
+              <span className="text-[10px] text-zinc-400 font-mono">256-bit AES encrypted</span>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2.5 px-4 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition-colors disabled:opacity-50 mt-2 cursor-pointer"
+            >
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>Enter Operations Workspace</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Zero-Trust Notice */}
+          <div className="mt-5 pt-4 border-t border-[#E4E4E7] text-[11px] text-zinc-500 flex items-start space-x-2">
+            <Info className="w-3.5 h-3.5 text-zinc-700 flex-shrink-0 mt-0.5" />
+            <p className="leading-snug">
+              Zero-trust jurisdiction RLS enforced at database layer. Each staff persona operates strictly within designated territorial bounds.
+            </p>
+          </div>
+
+          {/* Demo Sandbox Entry Option */}
+          <div className="mt-5 pt-4 border-t border-[#E4E4E7] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-50 p-3 rounded-md border border-[#E4E4E7]">
+            <div>
+              <div className="text-xs font-bold text-zinc-950 flex items-center space-x-1.5">
+                <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                <span>Demo & Simulation Sandbox</span>
+              </div>
+              <div className="text-[11px] text-zinc-500 mt-0.5">
+                Looking for pre-seeded test roles (SE, EE, AE, JE...)?
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCurrentView('demo')}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-zinc-100 text-zinc-900 border border-[#E4E4E7] text-xs font-semibold transition-colors cursor-pointer flex-shrink-0 self-start sm:self-auto"
+            >
+              <span>Open Demo Sandbox</span>
+              <ArrowRight className="w-3 h-3 text-zinc-600" />
+            </button>
+          </div>
+        </div>
       ) : (
         /* ====================================================================
            PAGE 2: DEDICATED DEMO PERSONAS & SIMULATION SANDBOX (FULL VIEW)
+           Self-contained with PowerGIS branding and Back to Sign In
            ==================================================================== */
-        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col">
-          {/* Top Return Bar */}
+        <div className="w-full max-w-6xl mx-auto flex flex-col">
+          {/* Top Return Bar with Branding */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-6 border-b border-[#E4E4E7]">
-            <button
-              type="button"
-              onClick={() => setCurrentView('login')}
-              className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-900 border border-[#E4E4E7] text-xs font-medium transition-colors cursor-pointer self-start"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-zinc-700" />
-              <span>{LABELS.auth.backToLogin}</span>
-            </button>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold text-xs border border-zinc-800 flex-shrink-0">
+                <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="font-bold text-sm tracking-tight text-[#09090B]">
+                    {LABELS.header.brandName}
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-800 font-mono font-semibold border border-zinc-200 uppercase tracking-wider">
+                    {LABELS.header.brandBadge}
+                  </span>
+                </div>
+                <p className="text-[10px] text-zinc-500 font-mono hidden sm:block">
+                  {LABELS.header.brandSubtitle}
+                </p>
+              </div>
+            </div>
 
-            <div className="flex items-center space-x-3 text-xs font-mono">
-              <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span>Simulation Sandbox Mode</span>
-              </span>
-              <span className="text-zinc-500 hidden sm:inline">11 Roles Pre-Configured</span>
+            <div className="flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={() => setCurrentView('login')}
+                className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-900 border border-[#E4E4E7] text-xs font-medium transition-colors cursor-pointer self-start"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-zinc-700" />
+                <span>{LABELS.auth.backToLogin}</span>
+              </button>
+
+              <div className="flex items-center space-x-2 text-xs font-mono">
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span>Simulation Sandbox Mode</span>
+                </span>
+                <span className="text-zinc-500 hidden sm:inline">11 Roles Pre-Configured</span>
+              </div>
             </div>
           </div>
 
@@ -501,7 +496,7 @@ export const LoginPage: React.FC = () => {
           )}
 
           {/* Quick Network Stats Summary */}
-          <div className="mt-auto bg-white border border-[#E4E4E7] rounded-md p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          <div className="bg-white border border-[#E4E4E7] rounded-md p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
               <div className="text-base font-bold text-zinc-950 font-mono">4 Enclaves</div>
               <div className="text-[10px] text-zinc-500 uppercase font-semibold">Territorial Regions</div>
@@ -519,24 +514,10 @@ export const LoginPage: React.FC = () => {
               <div className="text-[10px] text-zinc-500 uppercase font-semibold">Active Workspaces</div>
             </div>
           </div>
-        </main>
+        </div>
       )}
 
-      {/* 3. Footer */}
-      <footer className="border-t border-[#E4E4E7] bg-white px-4 sm:px-6 py-2.5 text-xs text-zinc-500 flex flex-col sm:flex-row items-center justify-between gap-2 select-none">
-        <div className="flex items-center space-x-2">
-          <span>&copy; 2026 PowerGIS Enterprise. All rights reserved.</span>
-          <span>•</span>
-          <span className="font-semibold text-zinc-800">State Electricity Department</span>
-        </div>
-        <div className="flex items-center space-x-3 font-mono text-[11px] text-zinc-500">
-          <span>PostGIS 3.4 Spatial Core</span>
-          <span>•</span>
-          <span>IEEE 1366 / ISO 55000</span>
-        </div>
-      </footer>
-
-      {/* 4. Forgot Password Modal */}
+      {/* Forgot Password Modal */}
       {showForgotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
           <div className="bg-white border border-[#E4E4E7] rounded-md max-w-md w-full p-6 shadow-xl relative">
