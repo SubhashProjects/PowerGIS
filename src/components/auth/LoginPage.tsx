@@ -4,7 +4,7 @@
 // Strict Anti-Slop Constraints: Flat paper-clean palette, zero ambient blobs,
 // max 6px radius (rounded-md), 1px structural hairlines (#E4E4E7).
 // Standalone centered sign-in card with integrated PowerGIS branding (no outer header/footer).
-// Dummy test personas housed exclusively in dedicated second page via Demo action.
+// Uniform font styling enforced across the entire login view (no font-mono splits).
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -66,11 +66,11 @@ export const LoginPage: React.FC = () => {
       const res = await login(identifier, password);
       setIsLoading(false);
       if (!res.success) {
-        setError(res.error || 'Authentication failed. Please verify statutory credentials.');
+        setError(res.error || 'Authentication failed. Please verify credentials.');
       }
     } catch (err: any) {
       setIsLoading(false);
-      setError(err?.message || 'Authentication error occurred during statutory verification.');
+      setError(err?.message || 'Authentication error occurred during verification.');
     }
   };
 
@@ -99,7 +99,7 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     if (!forgotInput.trim()) return;
     setForgotFeedback(
-      `Statutory password reset token dispatched to '${forgotInput}'. Check registered mobile/email.`
+      `Password reset token dispatched to '${forgotInput}'. Check registered mobile/email.`
     );
     setTimeout(() => {
       setShowForgotModal(false);
@@ -132,30 +132,28 @@ export const LoginPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-[#FAFAFA] text-[#09090B] flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-[#09090B] selection:text-white font-sans">
+    <div className="min-h-screen w-full bg-[#FAFAFA] text-[#09090B] flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-[#09090B] selection:text-white">
       {/* View Router */}
       {currentView === 'login' ? (
         /* ====================================================================
-           PAGE 1: OFFICIAL STATUTORY LOGIN
+           PAGE 1: OFFICIAL LOGIN
            Centered card with integrated PowerGIS branding (no outer header/footer)
            ==================================================================== */
         <div className="w-full max-w-[440px] bg-white border border-[#E4E4E7] rounded-md p-6 sm:p-8 shadow-xs">
           {/* Integrated PowerGIS Branding Header */}
-          <div className="flex items-start justify-between gap-3 mb-6 pb-5 border-b border-[#E4E4E7]">
+          <div className="flex items-center justify-between gap-3 mb-6 pb-5 border-b border-[#E4E4E7]">
             <div className="flex items-center space-x-3">
               {/* Logo Emblem (Minimalist Solid High-Craft) */}
               <div className="w-9 h-9 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold text-xs border border-zinc-800 flex-shrink-0">
                 <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
               </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-bold text-base text-[#09090B] tracking-tight">
-                    {LABELS.header.brandName}
-                  </span>
-                </div>
-                <p className="text-[11px] text-zinc-500 font-mono leading-tight mt-0.5">
-                  {LABELS.header.brandSubtitle}
-                </p>
+              <div className="flex items-center space-x-2">
+                <span className="font-bold text-base text-[#09090B] tracking-tight">
+                  {LABELS.header.brandName}
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-semibold border border-zinc-200 uppercase tracking-wider">
+                  {LABELS.header.brandBadge}
+                </span>
               </div>
             </div>
 
@@ -164,7 +162,7 @@ export const LoginPage: React.FC = () => {
               type="button"
               onClick={() => setCurrentView('demo')}
               title="Open Demo Personas & Simulation Sandbox"
-              className="inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-[#E4E4E7] text-[11px] font-mono transition-colors cursor-pointer flex-shrink-0"
+              className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-[#E4E4E7] text-xs transition-colors cursor-pointer flex-shrink-0"
             >
               <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
               <span className="font-medium">Demo</span>
@@ -172,7 +170,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-5 p-3 rounded-md bg-rose-50 border border-rose-200 flex items-start space-x-2 text-rose-900 text-xs font-mono">
+            <div className="mb-5 p-3 rounded-md bg-rose-50 border border-rose-200 flex items-start space-x-2 text-rose-900 text-xs">
               <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
               <div className="flex-1 leading-snug">{error}</div>
             </div>
@@ -191,7 +189,7 @@ export const LoginPage: React.FC = () => {
                   value={identifier}
                   onChange={e => setIdentifier(e.target.value)}
                   placeholder="e.g. ee.urban@powergis.internal"
-                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono transition-colors"
+                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 transition-colors"
                 />
               </div>
             </div>
@@ -215,7 +213,7 @@ export const LoginPage: React.FC = () => {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono transition-colors"
+                  className="w-full bg-white border border-[#E4E4E7] rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none focus:border-zinc-900 transition-colors"
                 />
                 <button
                   type="button"
@@ -238,7 +236,7 @@ export const LoginPage: React.FC = () => {
                 />
                 <span className="text-[11px]">Remember staff session</span>
               </label>
-              <span className="text-[10px] text-zinc-400 font-mono">256-bit AES encrypted</span>
+              <span className="text-[10px] text-zinc-400">256-bit AES encrypted</span>
             </div>
 
             <button
@@ -269,18 +267,13 @@ export const LoginPage: React.FC = () => {
               <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold text-xs border border-zinc-800 flex-shrink-0">
                 <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
               </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-bold text-sm tracking-tight text-[#09090B]">
-                    {LABELS.header.brandName}
-                  </span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-800 font-mono font-semibold border border-zinc-200 uppercase tracking-wider">
-                    {LABELS.header.brandBadge}
-                  </span>
-                </div>
-                <p className="text-[10px] text-zinc-500 font-mono hidden sm:block">
-                  {LABELS.header.brandSubtitle}
-                </p>
+              <div className="flex items-center space-x-2">
+                <span className="font-bold text-sm tracking-tight text-[#09090B]">
+                  {LABELS.header.brandName}
+                </span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-800 font-semibold border border-zinc-200 uppercase tracking-wider">
+                  {LABELS.header.brandBadge}
+                </span>
               </div>
             </div>
 
@@ -294,7 +287,7 @@ export const LoginPage: React.FC = () => {
                 <span>{LABELS.auth.backToLogin}</span>
               </button>
 
-              <div className="flex items-center space-x-2 text-xs font-mono">
+              <div className="flex items-center space-x-2 text-xs">
                 <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200">
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
                   <span>Simulation Sandbox Mode</span>
@@ -372,7 +365,7 @@ export const LoginPage: React.FC = () => {
                 value={demoSearch}
                 onChange={e => setDemoSearch(e.target.value)}
                 placeholder="Search persona or role..."
-                className="w-full bg-white border border-[#E4E4E7] rounded-md pl-8 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono"
+                className="w-full bg-white border border-[#E4E4E7] rounded-md pl-8 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
               />
             </div>
           </div>
@@ -388,10 +381,10 @@ export const LoginPage: React.FC = () => {
                   <div>
                     {/* Header: Role badge and email */}
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                         {u.role.replace('_', ' ')}
                       </span>
-                      <span className="text-[10px] text-zinc-500 font-mono truncate max-w-[170px]" title={u.email}>
+                      <span className="text-[10px] text-zinc-500 truncate max-w-[170px]" title={u.email}>
                         {u.email}
                       </span>
                     </div>
@@ -400,12 +393,12 @@ export const LoginPage: React.FC = () => {
                     <div className="font-bold text-sm text-zinc-950 leading-snug">
                       {u.fullName}
                     </div>
-                    <div className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1 font-sans">
+                    <div className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1">
                       {u.designation}
                     </div>
 
                     {/* Territorial Jurisdiction Scope */}
-                    <div className="mt-2.5 pt-2 border-t border-zinc-100 text-[10px] text-zinc-500 font-mono">
+                    <div className="mt-2.5 pt-2 border-t border-zinc-100 text-[10px] text-zinc-500">
                       <span className="text-zinc-400">Scope: </span>
                       <span className="text-zinc-800 font-medium">
                         {u.regionId === 'reg-pdy' ? 'Puducherry' : u.regionId === 'reg-kkl' ? 'Karaikal' : 'State-Wide'}
@@ -450,19 +443,19 @@ export const LoginPage: React.FC = () => {
           {/* Quick Network Stats Summary */}
           <div className="bg-white border border-[#E4E4E7] rounded-md p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950 font-mono">4 Enclaves</div>
+              <div className="text-base font-bold text-zinc-950">4 Enclaves</div>
               <div className="text-[10px] text-zinc-500 uppercase font-semibold">Territorial Regions</div>
             </div>
             <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950 font-mono">8 Stations</div>
+              <div className="text-base font-bold text-zinc-950">8 Stations</div>
               <div className="text-[10px] text-zinc-500 uppercase font-semibold">110kV / 22kV / 11kV</div>
             </div>
             <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950 font-mono">7 DTRs</div>
+              <div className="text-base font-bold text-zinc-950">7 DTRs</div>
               <div className="text-[10px] text-zinc-500 uppercase font-semibold">Distribution Transformers</div>
             </div>
             <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950 font-mono">22+ Modules</div>
+              <div className="text-base font-bold text-zinc-950">22+ Modules</div>
               <div className="text-[10px] text-zinc-500 uppercase font-semibold">Active Workspaces</div>
             </div>
           </div>
@@ -482,7 +475,7 @@ export const LoginPage: React.FC = () => {
             </p>
 
             {forgotFeedback ? (
-              <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center space-x-2 font-mono">
+              <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
                 <span>{forgotFeedback}</span>
               </div>
@@ -498,7 +491,7 @@ export const LoginPage: React.FC = () => {
                     value={forgotInput}
                     onChange={e => setForgotInput(e.target.value)}
                     placeholder="e.g. ee.urban@powergis.internal"
-                    className="w-full bg-white border border-[#E4E4E7] rounded-md px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 font-mono"
+                    className="w-full bg-white border border-[#E4E4E7] rounded-md px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
                   />
                 </div>
                 <div className="flex items-center justify-end space-x-2 pt-2">
