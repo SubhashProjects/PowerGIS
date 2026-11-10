@@ -306,7 +306,6 @@ export const LoginPage: React.FC = () => {
                 />
                 <span className="text-[11px]">Remember session</span>
               </label>
-              <span className="text-[10px] text-zinc-400">256-bit AES encrypted</span>
             </div>
 
             <button
