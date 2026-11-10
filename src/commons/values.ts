@@ -101,7 +101,20 @@ export const VALUES = {
     cotActivationConfirm: 7,
   },
 
-  // 5. System, UI & Pagination Defaults
+  // 5. Statutory Security & Strict Password Policy (Zero-Trust Standard)
+  security: {
+    minPasswordLength: 8,
+    requireUppercase: true,
+    requireLowercase: true,
+    requireNumber: true,
+    requireSpecialChar: true,
+    specialCharPattern: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/,
+    maxFailedLoginAttempts: 5,
+    lockoutDurationMinutes: 15,
+    sessionTimeoutHours: 12,
+  },
+
+  // 6. System, UI & Pagination Defaults
   system: {
     maxBorderRadiusPx: 6,
     headerHeightPx: 56,

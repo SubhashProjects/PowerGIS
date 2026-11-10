@@ -10,12 +10,14 @@ export * from './theme';
 export * from './values';
 export * from './texts';
 export * from './labels';
+export * from './validators';
 
 import { FONTS } from './fonts';
 import { THEME } from './theme';
 import { VALUES } from './values';
 import { TEXTS } from './texts';
 import { LABELS } from './labels';
+import * as VALIDATORS from './validators';
 
 /**
  * Unified COMMONS Bundle - One single import giving access to all configuration pillars:
@@ -24,6 +26,7 @@ import { LABELS } from './labels';
  * 3. values: All grid nominal standards, IEEE 1366 reliability targets, and system thresholds
  * 4. fonts: All typography scales, font families, letter-spacing, and line-heights
  * 5. theme: All surface colors, 1px structural borders, 6px max radii, and status badge styles
+ * 6. validators: All statutory RFC email and zero-trust strict password validators
  */
 export const COMMONS = {
   fonts: FONTS,
@@ -31,6 +34,7 @@ export const COMMONS = {
   values: VALUES,
   texts: TEXTS,
   labels: LABELS,
+  validators: VALIDATORS,
 } as const;
 
 export type CommonsType = typeof COMMONS;

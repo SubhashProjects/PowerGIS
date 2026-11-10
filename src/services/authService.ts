@@ -34,15 +34,10 @@ export class AuthService {
   private credentialsVault: Record<string, string> = {
     'user-superadmin': 'Admin@PowerGIS2026',
     'user-se1': 'SEUrban@2026',
-    'user-se2': 'SERural@2026',
-    'user-se3': 'SEOuter@2026',
     'user-ee': 'EEUrban@2026',
-    'user-aee': 'AEETown@2026',
     'user-ae': 'AEMarapalam@2026',
     'user-je': 'JEMarapalam@2026',
     'user-contractor': 'Contractor@2026',
-    'user-gisadmin': 'GISAdmin@2026',
-    'user-auditor': 'Auditor@2026',
   };
 
   private constructor() {
@@ -319,7 +314,7 @@ export class AuthService {
       this.recordFailedAttempt(trimmedId);
       return {
         success: false,
-        error: 'Invalid username, email, or credentials.',
+        error: 'Invalid official email or credentials.',
         remainingAttempts: Math.max(0, 5 - (attempts + 1)),
       };
     }
@@ -473,7 +468,7 @@ export class AuthService {
     if (!user) {
       return {
         success: false,
-        message: 'No active staff record found matching the given email or username.',
+        message: 'No active staff record found matching the given official staff email.',
       };
     }
     delete this.failedAttempts[trimmed];

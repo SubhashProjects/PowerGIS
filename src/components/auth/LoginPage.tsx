@@ -12,13 +12,14 @@ import { useAuth } from '../../context/AuthContext';
 import { initialUsers } from '../../services/mockData';
 import { assetService } from '../../services/assetService';
 import { UserProfile } from '../../types/auth';
-import { LABELS } from '../../commons';
+import { LABELS, validateEmail, checkPasswordCriteria, validateStrictPassword } from '../../commons';
 import {
   Zap,
   KeyRound,
   ArrowRight,
   ArrowLeft,
-  User,
+  Mail,
+  Check,
   Eye,
   EyeOff,
   CheckCircle2,
@@ -56,7 +57,6 @@ export const LoginPage: React.FC = () => {
 
   // Demo Page filter and search state
   const [demoSearch, setDemoSearch] = useState('');
-  const [demoCategory, setDemoCategory] = useState<'ALL' | 'EXEC' | 'FIELD' | 'OPERATIONS'>('ALL');
 
   // Forgot password modal state & validation
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -65,56 +65,8 @@ export const LoginPage: React.FC = () => {
   const [forgotTouched, setForgotTouched] = useState(false);
   const [forgotFeedback, setForgotFeedback] = useState<string | null>(null);
 
-  // --------------------------------------------------------------------------
-  // VALIDATION HELPERS
-  // --------------------------------------------------------------------------
-  const validateIdentifier = (val: string): string | null => {
-    const trimmed = val.trim();
-    if (!trimmed) {
-      return 'Official email or staff ID is required.';
-    }
-    if (trimmed.includes('@')) {
-      // RFC-compliant email regex pattern
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(trimmed)) {
-        return 'Please enter a valid official email address (e.g. staff@powergis.internal).';
-      }
-    } else {
-      if (trimmed.length < 3) {
-        return 'Staff username must be at least 3 characters.';
-      }
-      if (!/^[a-zA-Z0-9_.-]+$/.test(trimmed)) {
-        return 'Username may only contain letters, numbers, dots, and underscores.';
-      }
-    }
-    return null;
-  };
-
-  const validatePassword = (val: string): string | null => {
-    if (!val) {
-      return 'Password is required.';
-    }
-    if (val.length < 6) {
-      return 'Password must be at least 6 characters.';
-    }
-    return null;
-  };
-
-  const validateForgotInput = (val: string): string | null => {
-    const trimmed = val.trim();
-    if (!trimmed) {
-      return 'Please enter your registered staff email or username.';
-    }
-    if (trimmed.includes('@')) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(trimmed)) {
-        return 'Please enter a valid email address.';
-      }
-    } else if (trimmed.length < 3) {
-      return 'Staff username must be at least 3 characters.';
-    }
-    return null;
-  };
+  // Compute live criteria checklist for strict password
+  const passwordCriteria = checkPasswordCriteria(password);
 
   // --------------------------------------------------------------------------
   // EVENT HANDLERS
@@ -122,7 +74,7 @@ export const LoginPage: React.FC = () => {
   const handleIdentifierChange = (val: string) => {
     setIdentifier(val);
     if (identifierTouched) {
-      setIdentifierError(validateIdentifier(val));
+      setIdentifierError(validateEmail(val));
     }
     if (error) setError(null);
   };
@@ -130,7 +82,7 @@ export const LoginPage: React.FC = () => {
   const handlePasswordChange = (val: string) => {
     setPassword(val);
     if (passwordTouched) {
-      setPasswordError(validatePassword(val));
+      setPasswordError(validateStrictPassword(val));
     }
     if (error) setError(null);
   };
@@ -140,8 +92,8 @@ export const LoginPage: React.FC = () => {
     setIdentifierTouched(true);
     setPasswordTouched(true);
 
-    const idErr = validateIdentifier(identifier);
-    const passErr = validatePassword(password);
+    const idErr = validateEmail(identifier);
+    const passErr = validateStrictPassword(password);
     setIdentifierError(idErr);
     setPasswordError(passErr);
 
@@ -175,20 +127,6 @@ export const LoginPage: React.FC = () => {
     }, 250);
   };
 
-  // Autofill credentials and navigate back to login view
-  const handleUseCredentials = (u: UserProfile) => {
-    assetService.setSimulatorMode(true);
-    setIsSimulatorActive(true);
-    setIdentifier(u.email);
-    setPassword('PowerGIS@2026');
-    setIdentifierError(null);
-    setPasswordError(null);
-    setIdentifierTouched(false);
-    setPasswordTouched(false);
-    setError(null);
-    setCurrentView('login');
-  };
-
   const handleOpenForgotModal = () => {
     setForgotInput(identifier.includes('@') ? identifier.trim() : '');
     setForgotError(null);
@@ -208,7 +146,7 @@ export const LoginPage: React.FC = () => {
   const handleForgotInputChange = (val: string) => {
     setForgotInput(val);
     if (forgotTouched) {
-      setForgotError(validateForgotInput(val));
+      setForgotError(validateEmail(val));
     }
   };
 
@@ -216,7 +154,7 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     setForgotTouched(true);
 
-    const err = validateForgotInput(forgotInput);
+    const err = validateEmail(forgotInput);
     setForgotError(err);
     if (err) return;
 
@@ -230,25 +168,14 @@ export const LoginPage: React.FC = () => {
 
   // Filtered personas for Demo Page
   const filteredPersonas = initialUsers.filter(u => {
-    const matchesSearch =
-      demoSearch.trim() === '' ||
-      u.fullName.toLowerCase().includes(demoSearch.toLowerCase()) ||
-      u.designation.toLowerCase().includes(demoSearch.toLowerCase()) ||
-      u.role.toLowerCase().includes(demoSearch.toLowerCase()) ||
-      u.email.toLowerCase().includes(demoSearch.toLowerCase());
-
-    if (!matchesSearch) return false;
-
-    if (demoCategory === 'EXEC') {
-      return ['super_admin', 'se', 'ee'].includes(u.role);
-    }
-    if (demoCategory === 'FIELD') {
-      return ['aee', 'ae', 'je'].includes(u.role);
-    }
-    if (demoCategory === 'OPERATIONS') {
-      return ['contractor', 'auditor', 'gis_admin'].includes(u.role);
-    }
-    return true;
+    if (!demoSearch.trim()) return true;
+    const q = demoSearch.toLowerCase();
+    return (
+      u.fullName.toLowerCase().includes(q) ||
+      u.designation.toLowerCase().includes(q) ||
+      u.role.toLowerCase().includes(q) ||
+      u.email.toLowerCase().includes(q)
+    );
   });
 
   return (
@@ -270,9 +197,6 @@ export const LoginPage: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-base text-[#09090B] tracking-tight">
                   {LABELS.header.brandName}
-                </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-semibold border border-zinc-200 uppercase tracking-wider">
-                  {LABELS.header.brandBadge}
                 </span>
               </div>
             </div>
@@ -299,19 +223,20 @@ export const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-zinc-800 mb-1.5">
-                Official Email or Staff ID
+                {LABELS.auth.emailLabel}
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
-                  type="text"
+                  type="email"
+                  autoComplete="email"
                   value={identifier}
                   onChange={e => handleIdentifierChange(e.target.value)}
                   onBlur={() => {
                     setIdentifierTouched(true);
-                    setIdentifierError(validateIdentifier(identifier));
+                    setIdentifierError(validateEmail(identifier));
                   }}
-                  placeholder="e.g. ee.urban@powergis.internal"
+                  placeholder={LABELS.auth.emailPlaceholder}
                   className={`w-full bg-white border rounded-md pl-9 pr-3 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none transition-colors ${
                     identifierError && identifierTouched
                       ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20'
@@ -328,26 +253,29 @@ export const LoginPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-medium text-zinc-800">Password</label>
+                <label className="text-xs font-medium text-zinc-800">
+                  {LABELS.auth.passwordLabel}
+                </label>
                 <button
                   type="button"
                   onClick={handleOpenForgotModal}
                   className="text-xs text-zinc-500 hover:text-zinc-950 underline transition-colors cursor-pointer"
                 >
-                  Forgot password?
+                  {LABELS.auth.forgotPassword}
                 </button>
               </div>
               <div className="relative">
                 <KeyRound className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   value={password}
                   onChange={e => handlePasswordChange(e.target.value)}
                   onBlur={() => {
                     setPasswordTouched(true);
-                    setPasswordError(validatePassword(password));
+                    setPasswordError(validateStrictPassword(password));
                   }}
-                  placeholder="••••••••••••"
+                  placeholder={LABELS.auth.passwordPlaceholder}
                   className={`w-full bg-white border rounded-md pl-9 pr-10 py-2 text-xs text-[#09090B] placeholder-zinc-400 focus:outline-none transition-colors ${
                     passwordError && passwordTouched
                       ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20'
@@ -363,6 +291,77 @@ export const LoginPage: React.FC = () => {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+
+              {/* Real-time strict password criteria indicators */}
+              {(password || passwordTouched) && (
+                <div className="mt-2 pt-2 border-t border-[#E4E4E7]/60">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">
+                      {LABELS.auth.strictPasswordTitle}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold ${
+                        passwordCriteria.isValid ? 'text-emerald-600' : 'text-zinc-400'
+                      }`}
+                    >
+                      {passwordCriteria.score}/5 Satisfied
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
+                    <div
+                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
+                        passwordCriteria.hasMinLength
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                      }`}
+                    >
+                      <Check className={`w-3 h-3 ${passwordCriteria.hasMinLength ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span>{LABELS.auth.strictPasswordRequirements.length}</span>
+                    </div>
+                    <div
+                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
+                        passwordCriteria.hasUppercase
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                      }`}
+                    >
+                      <Check className={`w-3 h-3 ${passwordCriteria.hasUppercase ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span>{LABELS.auth.strictPasswordRequirements.uppercase}</span>
+                    </div>
+                    <div
+                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
+                        passwordCriteria.hasLowercase
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                      }`}
+                    >
+                      <Check className={`w-3 h-3 ${passwordCriteria.hasLowercase ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span>{LABELS.auth.strictPasswordRequirements.lowercase}</span>
+                    </div>
+                    <div
+                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
+                        passwordCriteria.hasNumber
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                      }`}
+                    >
+                      <Check className={`w-3 h-3 ${passwordCriteria.hasNumber ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span>{LABELS.auth.strictPasswordRequirements.number}</span>
+                    </div>
+                    <div
+                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] col-span-2 sm:col-span-1 ${
+                        passwordCriteria.hasSpecialChar
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                      }`}
+                    >
+                      <Check className={`w-3 h-3 ${passwordCriteria.hasSpecialChar ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span>{LABELS.auth.strictPasswordRequirements.specialChar}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {passwordError && passwordTouched && (
                 <p className="text-[11px] text-rose-600 mt-1 flex items-center space-x-1">
                   <span>{passwordError}</span>
@@ -415,9 +414,6 @@ export const LoginPage: React.FC = () => {
                 <span className="font-bold text-sm tracking-tight text-[#09090B]">
                   {LABELS.header.brandName}
                 </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-800 font-semibold border border-zinc-200 uppercase tracking-wider">
-                  {LABELS.header.brandBadge}
-                </span>
               </div>
             </div>
 
@@ -436,79 +432,22 @@ export const LoginPage: React.FC = () => {
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
                   <span>Simulation Sandbox Mode</span>
                 </span>
-                <span className="text-zinc-500 hidden sm:inline">11 Roles Pre-Configured</span>
               </div>
             </div>
           </div>
 
-          {/* Heading */}
-          <div className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-zinc-950 tracking-tight">
-              {LABELS.auth.demoPageTitle}
-            </h2>
-            <p className="text-xs text-zinc-600 mt-1 max-w-3xl leading-relaxed">
-              {LABELS.auth.demoPageSubtitle}
-            </p>
-          </div>
-
-          {/* Filters & Search Toolbar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-md border border-[#E4E4E7]">
-            {/* Category Tabs */}
-            <div className="flex items-center space-x-1 overflow-x-auto text-xs">
-              <button
-                type="button"
-                onClick={() => setDemoCategory('ALL')}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
-                  demoCategory === 'ALL'
-                    ? 'bg-[#09090B] text-white'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
-                }`}
-              >
-                All Roles (11)
-              </button>
-              <button
-                type="button"
-                onClick={() => setDemoCategory('EXEC')}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
-                  demoCategory === 'EXEC'
-                    ? 'bg-[#09090B] text-white'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
-                }`}
-              >
-                Executive & Circle (5)
-              </button>
-              <button
-                type="button"
-                onClick={() => setDemoCategory('FIELD')}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
-                  demoCategory === 'FIELD'
-                    ? 'bg-[#09090B] text-white'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
-                }`}
-              >
-                Section & Ward (3)
-              </button>
-              <button
-                type="button"
-                onClick={() => setDemoCategory('OPERATIONS')}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
-                  demoCategory === 'OPERATIONS'
-                    ? 'bg-[#09090B] text-white'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
-                }`}
-              >
-                Contractor & Audit (3)
-              </button>
+          {/* Search Toolbar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-md border border-[#E4E4E7]">
+            <div className="text-xs text-zinc-600 font-medium">
+              Select an official engineering staff role to sign in:
             </div>
-
-            {/* Search Input */}
-            <div className="relative w-full md:w-64">
+            <div className="relative w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={demoSearch}
                 onChange={e => setDemoSearch(e.target.value)}
-                placeholder="Search persona or role..."
+                placeholder="Search staff role or name..."
                 className="w-full bg-white border border-[#E4E4E7] rounded-md pl-8 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
               />
             </div>
@@ -552,25 +491,17 @@ export const LoginPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center space-x-2">
+                  {/* Action Button */}
+                  <div className="mt-4 pt-3 border-t border-zinc-100">
                     <button
                       type="button"
                       onClick={() => handleOneClickLogin(u)}
                       disabled={isLoading}
-                      className="flex-1 py-1.5 px-2.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
-                      title="Instantly sign in as this persona"
+                      className="w-full py-1.5 px-3 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+                      title="Sign in as this staff member"
                     >
                       <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
                       <span>{LABELS.auth.oneClickLogin}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleUseCredentials(u)}
-                      className="py-1.5 px-2.5 rounded-md bg-white hover:bg-zinc-50 text-zinc-800 border border-[#E4E4E7] text-xs font-medium transition-colors cursor-pointer"
-                      title="Autofill this persona into the sign in form"
-                    >
-                      <span>{LABELS.auth.useCredentials}</span>
                     </button>
                   </div>
                 </div>
@@ -580,29 +511,9 @@ export const LoginPage: React.FC = () => {
 
           {filteredPersonas.length === 0 && (
             <div className="bg-white border border-[#E4E4E7] rounded-md p-8 text-center text-zinc-500 text-xs mb-8">
-              No personas matched your query '{demoSearch}'.
+              No staff members matched your query '{demoSearch}'.
             </div>
           )}
-
-          {/* Quick Network Stats Summary */}
-          <div className="bg-white border border-[#E4E4E7] rounded-md p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950">4 Enclaves</div>
-              <div className="text-[10px] text-zinc-500 uppercase font-semibold">Territorial Regions</div>
-            </div>
-            <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950">8 Stations</div>
-              <div className="text-[10px] text-zinc-500 uppercase font-semibold">110kV / 22kV / 11kV</div>
-            </div>
-            <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950">7 DTRs</div>
-              <div className="text-[10px] text-zinc-500 uppercase font-semibold">Distribution Transformers</div>
-            </div>
-            <div className="p-2 rounded bg-zinc-50 border border-zinc-200">
-              <div className="text-base font-bold text-zinc-950">22+ Modules</div>
-              <div className="text-[10px] text-zinc-500 uppercase font-semibold">Active Workspaces</div>
-            </div>
-          </div>
         </div>
       )}
 
@@ -612,12 +523,12 @@ export const LoginPage: React.FC = () => {
           <div className="bg-white border border-[#E4E4E7] rounded-md max-w-md w-full p-6 shadow-xl relative">
             <h3 className="text-sm font-bold text-zinc-950 flex items-center space-x-2">
               <KeyRound className="w-4 h-4 text-zinc-900" />
-              <span>Reset Staff Password</span>
+              <span>{LABELS.auth.resetPasswordTitle}</span>
             </h3>
             <p className="text-xs text-zinc-500 mt-1 mb-4 leading-relaxed">
-              Enter your official staff email or username.
+              {LABELS.auth.resetPasswordInstructionsLine1}
               <br />
-              A reset link will be sent to Registered Email address.
+              {LABELS.auth.resetPasswordInstructionsLine2}
             </p>
 
             {forgotFeedback ? (
@@ -629,17 +540,18 @@ export const LoginPage: React.FC = () => {
               <form onSubmit={handleForgotPassword} noValidate className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-zinc-700 mb-1">
-                    Staff Email or Username
+                    {LABELS.auth.emailLabel}
                   </label>
                   <input
-                    type="text"
+                    type="email"
+                    autoComplete="email"
                     value={forgotInput}
                     onChange={e => handleForgotInputChange(e.target.value)}
                     onBlur={() => {
                       setForgotTouched(true);
-                      setForgotError(validateForgotInput(forgotInput));
+                      setForgotError(validateEmail(forgotInput));
                     }}
-                    placeholder="e.g. ee.urban@powergis.internal"
+                    placeholder={LABELS.auth.emailPlaceholder}
                     className={`w-full bg-white border rounded-md px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none transition-colors ${
                       forgotError && forgotTouched
                         ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20'
@@ -664,7 +576,7 @@ export const LoginPage: React.FC = () => {
                     type="submit"
                     className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-bold transition-colors cursor-pointer"
                   >
-                    Reset Password
+                    {LABELS.auth.resetPasswordButton}
                   </button>
                 </div>
               </form>

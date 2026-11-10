@@ -10,6 +10,7 @@ import { assetService } from '../../services/assetService';
 import { dataExchangeService, ImportResult, DatabaseBackupRecord } from '../../services/dataExchangeService';
 import { ROLES_REGISTRY } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
+import { validateStrictPassword } from '../../commons';
 import { UserProfile, OfficialRole } from '../../types/auth';
 import { initialRegions, initialDivisions, initialSections } from '../../services/mockData';
 import {
@@ -194,6 +195,15 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       return;
     }
 
+    // Enforce strict statutory password policy
+    if (formData.password) {
+      const passErr = validateStrictPassword(formData.password);
+      if (passErr) {
+        setFormError(`Statutory Password Policy Violation: ${passErr}`);
+        return;
+      }
+    }
+
     const created = addUser({
       fullName: formData.fullName.trim(),
       username: formData.username.trim().toLowerCase(),
@@ -230,6 +240,15 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
     if (duplicate) {
       setFormError(`Username '${formData.username}' is already in use by another staff account.`);
       return;
+    }
+
+    // Enforce strict statutory password policy
+    if (formData.password) {
+      const passErr = validateStrictPassword(formData.password);
+      if (passErr) {
+        setFormError(`Statutory Password Policy Violation: ${passErr}`);
+        return;
+      }
     }
 
     updateUser(editingUser.id, {

@@ -14,7 +14,8 @@ import { scadaSimulatorService } from '../src/services/scadaSimulatorService';
 import { scadaGatewayService } from '../src/services/scadaGatewayService';
 import { scadaService } from '../src/services/scadaService';
 import { dataExchangeService } from '../src/services/dataExchangeService';
-import { initialUsers, initialTransformers, initialFeeders, initialScadaPoints } from '../src/services/mockData';
+import { validateStrictPassword, validateEmail } from '../src/commons';
+import { initialUsers, initialTransformers, initialFeeders, initialScadaPoints, UserProfile } from '../src/services/mockData';
 
 let passed = 0;
 let failed = 0;
@@ -220,6 +221,41 @@ async function runTestSuite() {
     // 6. Sign out session clearance
     authService.logout();
     assert(authService.isAuthenticated() === false, 'Logout terminates active session');
+
+    // 7. Strict Password Policy Verification (Zero-Trust Standard)
+    const tooShort = validateStrictPassword('Ab1!');
+    assert(tooShort !== null, 'Rejects password shorter than 8 characters');
+
+    const noUpper = validateStrictPassword('lowercase1@');
+    assert(noUpper !== null, 'Rejects password missing uppercase letters');
+
+    const noLower = validateStrictPassword('UPPERCASE1@');
+    assert(noLower !== null, 'Rejects password missing lowercase letters');
+
+    const noNumber = validateStrictPassword('NoNumbers@Here');
+    assert(noNumber !== null, 'Rejects password missing numeric digits');
+
+    const noSpecial = validateStrictPassword('NoSpecial1234');
+    assert(noSpecial !== null, 'Rejects password missing special characters');
+
+    const validStrict = validateStrictPassword('EEUrban@2026');
+    assert(validStrict === null, 'Accepts valid strict password EEUrban@2026');
+
+    // 8. Strict Official Staff Email Validation
+    assert(validateEmail('ee.urban@powergis.internal') === null, 'Accepts RFC valid email format');
+    assert(validateEmail('ee_urban') !== null, 'Rejects plain username without @');
+    assert(validateEmail('invalid@') !== null, 'Rejects malformed email missing domain');
+    assert(validateEmail('') !== null, 'Rejects empty email field');
+
+    // 9. Verify initialUsers has exactly 6 statutory personas
+    assert(initialUsers.length === 6, 'initialUsers strictly has exactly 6 staff personas');
+    const roles = initialUsers.map(u => u.role);
+    assert(roles.includes('super_admin'), 'Contains 1 Super User');
+    assert(roles.includes('se'), 'Contains 1 Superintending Engineer (SE)');
+    assert(roles.includes('ee'), 'Contains 1 Executive Engineer (EE)');
+    assert(roles.includes('ae'), 'Contains 1 Assistant Engineer (AE)');
+    assert(roles.includes('je'), 'Contains 1 Junior Engineer (JE)');
+    assert(roles.includes('contractor'), 'Contains 1 Contractor');
   }
 
   // --------------------------------------------------------------------------
@@ -248,7 +284,16 @@ async function runTestSuite() {
     assert(eeData.metrics.some(m => m.label.includes('SAIFI') || m.label.includes('SAIDI')), 'EE metrics track IEEE 1366 SAIFI/SAIDI');
 
     // 4. Auditor
-    const auditorUser = initialUsers.find(u => u.role === 'auditor')!;
+    const auditorUser: UserProfile = {
+      id: 'test-auditor',
+      username: 'test_auditor',
+      email: 'auditor.test@powergis.internal',
+      fullName: 'Dr. S. Ramachandran',
+      role: 'auditor',
+      designation: 'Principal Regulatory Grid Auditor',
+      phone: '+91 94430 11015',
+      isActive: true,
+    };
     const auditorData = notificationService.getDashboardData(auditorUser);
     assert(auditorData.jurisdictionScope.includes('Regulatory Compliance'), 'Auditor Dashboard is scoped to regulatory compliance');
 
