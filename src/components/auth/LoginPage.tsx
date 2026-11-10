@@ -4,7 +4,7 @@
 // Strict Anti-Slop Constraints: Flat paper-clean palette, zero ambient blobs,
 // max 6px radius (rounded-md), 1px structural hairlines (#E4E4E7).
 // Standalone centered sign-in card with integrated PowerGIS branding (no outer header/footer).
-// Comprehensive real-time client-side validation for email, staff ID, and password.
+// Comprehensive real-time client-side validation for official email and password.
 // ============================================================================
 
 import React, { useState } from 'react';
@@ -296,69 +296,66 @@ export const LoginPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Real-time strict password criteria indicators - dynamically shown only when requirements not met */}
+              {/* Real-time strict password strength indicator as per visual specification */}
               {showStrictCriteria && (
-                <div className="mt-2 pt-2 border-t border-[#E4E4E7]/60">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">
-                      {LABELS.auth.strictPasswordTitle}
-                    </span>
-                    <span className="text-[10px] font-bold text-amber-600">
-                      {passwordCriteria.score}/5 Satisfied
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
+                <div className="mt-2.5 pt-2 border-t border-[#E4E4E7]/60 space-y-2">
+                  {/* Rounded pill progress bar */}
+                  <div className="w-full bg-zinc-200 h-2 rounded-full overflow-hidden">
                     <div
-                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
-                        passwordCriteria.hasMinLength
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                      className={`h-full rounded-full transition-all duration-300 ${
+                        passwordCriteria.score <= 2
+                          ? 'bg-rose-500'
+                          : passwordCriteria.score < 5
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-600'
+                      }`}
+                      style={{ width: `${Math.max(6, (passwordCriteria.score / 5) * 100)}%` }}
+                    />
+                  </div>
+
+                  {/* Bulleted criteria list with colored dots */}
+                  <ul className="space-y-1 text-xs">
+                    <li
+                      className={`flex items-center space-x-1.5 transition-colors ${
+                        passwordCriteria.hasMinLength ? 'text-emerald-700' : 'text-rose-600'
                       }`}
                     >
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasMinLength ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span className="text-sm leading-none">•</span>
                       <span>{LABELS.auth.strictPasswordRequirements.length}</span>
-                    </div>
-                    <div
-                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
-                        passwordCriteria.hasUppercase
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                    </li>
+                    <li
+                      className={`flex items-center space-x-1.5 transition-colors ${
+                        passwordCriteria.hasUppercase ? 'text-emerald-700' : 'text-rose-600'
                       }`}
                     >
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasUppercase ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span className="text-sm leading-none">•</span>
                       <span>{LABELS.auth.strictPasswordRequirements.uppercase}</span>
-                    </div>
-                    <div
-                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
-                        passwordCriteria.hasLowercase
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                    </li>
+                    <li
+                      className={`flex items-center space-x-1.5 transition-colors ${
+                        passwordCriteria.hasLowercase ? 'text-emerald-700' : 'text-rose-600'
                       }`}
                     >
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasLowercase ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span className="text-sm leading-none">•</span>
                       <span>{LABELS.auth.strictPasswordRequirements.lowercase}</span>
-                    </div>
-                    <div
-                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] ${
-                        passwordCriteria.hasNumber
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                    </li>
+                    <li
+                      className={`flex items-center space-x-1.5 transition-colors ${
+                        passwordCriteria.hasNumber ? 'text-emerald-700' : 'text-rose-600'
                       }`}
                     >
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasNumber ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span className="text-sm leading-none">•</span>
                       <span>{LABELS.auth.strictPasswordRequirements.number}</span>
-                    </div>
-                    <div
-                      className={`flex items-center space-x-1 px-1.5 py-0.5 rounded border text-[10px] col-span-2 sm:col-span-1 ${
-                        passwordCriteria.hasSpecialChar
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                          : 'bg-zinc-50 text-zinc-400 border-zinc-200'
+                    </li>
+                    <li
+                      className={`flex items-center space-x-1.5 transition-colors ${
+                        passwordCriteria.hasSpecialChar ? 'text-emerald-700' : 'text-rose-600'
                       }`}
                     >
-                      <Check className={`w-3 h-3 ${passwordCriteria.hasSpecialChar ? 'text-emerald-600' : 'text-zinc-300'}`} />
+                      <span className="text-sm leading-none">•</span>
                       <span>{LABELS.auth.strictPasswordRequirements.specialChar}</span>
-                    </div>
-                  </div>
+                    </li>
+                  </ul>
                 </div>
               )}
 
@@ -377,7 +374,7 @@ export const LoginPage: React.FC = () => {
                   onChange={e => setRememberMe(e.target.checked)}
                   className="w-3.5 h-3.5 rounded border-[#E4E4E7] text-zinc-900 focus:ring-0"
                 />
-                <span className="text-[11px]">Remember staff session</span>
+                <span className="text-[11px]">Remember session</span>
               </label>
               <span className="text-[10px] text-zinc-400">256-bit AES encrypted</span>
             </div>
@@ -439,7 +436,7 @@ export const LoginPage: React.FC = () => {
           {/* Search Toolbar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-md border border-[#E4E4E7]">
             <div className="text-xs text-zinc-600 font-medium">
-              Select an official engineering staff role to sign in:
+              Select an official engineering role to sign in:
             </div>
             <div className="relative w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -447,7 +444,7 @@ export const LoginPage: React.FC = () => {
                 type="text"
                 value={demoSearch}
                 onChange={e => setDemoSearch(e.target.value)}
-                placeholder="Search staff role or name..."
+                placeholder="Search role or name..."
                 className="w-full bg-white border border-[#E4E4E7] rounded-md pl-8 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
               />
             </div>
@@ -498,7 +495,7 @@ export const LoginPage: React.FC = () => {
                       onClick={() => handleOneClickLogin(u)}
                       disabled={isLoading}
                       className="w-full py-1.5 px-3 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
-                      title="Sign in as this staff member"
+                      title="Sign in as this user"
                     >
                       <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
                       <span>{LABELS.auth.oneClickLogin}</span>
@@ -511,7 +508,7 @@ export const LoginPage: React.FC = () => {
 
           {filteredPersonas.length === 0 && (
             <div className="bg-white border border-[#E4E4E7] rounded-md p-8 text-center text-zinc-500 text-xs mb-8">
-              No staff members matched your query '{demoSearch}'.
+              No roles matched your query '{demoSearch}'.
             </div>
           )}
         </div>

@@ -20,7 +20,7 @@ export interface PasswordCriteriaResult {
 }
 
 /**
- * RFC 5322-compliant email validator for official staff accounts.
+ * RFC 5322-compliant email validator for official accounts.
  * Disallows plain usernames or numeric IDs.
  */
 export function validateEmail(val: string): string | null {

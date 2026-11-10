@@ -241,14 +241,14 @@ async function runTestSuite() {
     const validStrict = validateStrictPassword('EEUrban@2026');
     assert(validStrict === null, 'Accepts valid strict password EEUrban@2026');
 
-    // 8. Strict Official Staff Email Validation
+    // 8. Strict Official Email Validation
     assert(validateEmail('ee.urban@powergis.internal') === null, 'Accepts RFC valid email format');
     assert(validateEmail('ee_urban') !== null, 'Rejects plain username without @');
     assert(validateEmail('invalid@') !== null, 'Rejects malformed email missing domain');
     assert(validateEmail('') !== null, 'Rejects empty email field');
 
     // 9. Verify initialUsers has exactly 6 statutory personas
-    assert(initialUsers.length === 6, 'initialUsers strictly has exactly 6 staff personas');
+    assert(initialUsers.length === 6, 'initialUsers strictly has exactly 6 personas');
     const roles = initialUsers.map(u => u.role);
     assert(roles.includes('super_admin'), 'Contains 1 Super User');
     assert(roles.includes('se'), 'Contains 1 Superintending Engineer (SE)');
