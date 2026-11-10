@@ -99,7 +99,7 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     if (!forgotInput.trim()) return;
     setForgotFeedback(
-      `Password reset token dispatched to '${forgotInput}'. Check registered mobile/email.`
+      `A reset link will be sent to '${forgotInput}'. Check your registered email address.`
     );
     setTimeout(() => {
       setShowForgotModal(false);
@@ -150,9 +150,6 @@ export const LoginPage: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-base text-[#09090B] tracking-tight">
                   {LABELS.header.brandName}
-                </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 font-semibold border border-zinc-200 uppercase tracking-wider">
-                  {LABELS.header.brandBadge}
                 </span>
               </div>
             </div>
@@ -471,7 +468,9 @@ export const LoginPage: React.FC = () => {
               <span>Reset Staff Password</span>
             </h3>
             <p className="text-xs text-zinc-500 mt-1 mb-4 leading-relaxed">
-              Enter your official staff email or username. An administrative verification token will be dispatched.
+              Enter your official staff email or username.
+              <br />
+              A reset link will be sent to Registered Email address.
             </p>
 
             {forgotFeedback ? (
@@ -506,7 +505,7 @@ export const LoginPage: React.FC = () => {
                     type="submit"
                     className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-bold transition-colors cursor-pointer"
                   >
-                    Send Reset Token
+                    Reset Password
                   </button>
                 </div>
               </form>

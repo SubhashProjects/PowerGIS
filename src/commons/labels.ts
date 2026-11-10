@@ -82,7 +82,7 @@ export const LABELS = {
     brandBadge: 'DISTRIBUTION',
     brandSubtitle: 'Electricity Distribution GIS Platform',
     jurisdictionPrefix: 'Jurisdiction:',
-    searchPlaceholder: 'Search (Ctrl + K)',
+    searchPlaceholder: 'Search',
     searchMobilePlaceholder: 'Search assets, feeders, poles...',
     searchMobileTooltip: 'Search Assets',
     whiteThemeBadge: 'White Theme',
