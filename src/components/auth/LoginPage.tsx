@@ -106,9 +106,9 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen w-full bg-[#f8f9fa] text-neutral-900 flex flex-col justify-between selection:bg-neutral-900 selection:text-white">
       {/* Top Banner & Enterprise Header */}
-      <header className="border-b border-neutral-200 bg-white/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between shadow-xs">
+      <header className="border-b border-neutral-200 bg-white/90 px-6 py-3.5 flex items-center justify-between shadow-xs">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white p-0.5 shadow-xs flex items-center justify-center font-bold text-lg">
+          <div className="w-10 h-10 rounded-md bg-neutral-900 text-white p-0.5 shadow-xs flex items-center justify-center font-bold text-lg">
             ⚡
           </div>
           <div>
@@ -147,7 +147,7 @@ export const LoginPage: React.FC = () => {
       <main className="flex-1 flex flex-col lg:flex-row items-stretch justify-center p-4 lg:p-8 gap-8 max-w-7xl mx-auto w-full">
         {/* Left Side: Login Credentials Card */}
         <div className="w-full lg:w-[460px] flex flex-col justify-center">
-          <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+          <div className="bg-white border border-neutral-200 rounded-md p-6 sm:p-8 shadow-sm relative overflow-hidden">
             <div className="relative">
               <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-semibold mb-4">
                 <Shield className="w-3.5 h-3.5 text-neutral-900" />
@@ -160,16 +160,16 @@ export const LoginPage: React.FC = () => {
               </p>
 
               {error && (
-                <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-start space-x-2.5 text-rose-800 text-xs">
+                <div className="mb-5 p-3.5 rounded-md bg-rose-50 border border-rose-200 flex items-start space-x-2.5 text-rose-800 text-xs">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-rose-600" />
                   <div className="flex-1 font-mono">{error}</div>
                 </div>
               )}
 
               {/* Simulator & Demo Personas Mode Switch */}
-              <div className="flex items-center justify-between p-3 mb-5 rounded-2xl bg-neutral-50 border border-neutral-200">
+              <div className="flex items-center justify-between p-3 mb-5 rounded-md bg-neutral-50 border border-neutral-200">
                 <div className="flex items-center space-x-2.5">
-                  <div className={`p-1.5 rounded-xl ${isSimulatorActive ? 'bg-amber-100 text-amber-800' : 'bg-neutral-200 text-neutral-600'}`}>
+                  <div className={`p-1.5 rounded-md ${isSimulatorActive ? 'bg-amber-100 text-amber-800' : 'bg-neutral-200 text-neutral-600'}`}>
                     <Zap className="w-4 h-4" />
                   </div>
                   <div>
@@ -209,7 +209,7 @@ export const LoginPage: React.FC = () => {
                       value={identifier}
                       onChange={e => setIdentifier(e.target.value)}
                       placeholder={isSimulatorActive ? "e.g. ee.urban@powergis.internal" : "Official staff email or superadmin@powergis.internal"}
-                      className="w-full bg-neutral-50 border border-neutral-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
+                      className="w-full bg-neutral-50 border border-neutral-300 rounded-md pl-10 pr-4 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
                     />
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export const LoginPage: React.FC = () => {
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full bg-neutral-50 border border-neutral-300 rounded-xl pl-10 pr-10 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
+                      className="w-full bg-neutral-50 border border-neutral-300 rounded-md pl-10 pr-10 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
                     />
                     <button
                       type="button"
@@ -261,7 +261,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-sm shadow-sm flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] disabled:opacity-50 mt-2"
+                  className="w-full py-3 px-4 rounded-md bg-neutral-900 hover:bg-black text-white font-bold text-sm shadow-sm flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] disabled:opacity-50 mt-2"
                 >
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -288,7 +288,7 @@ export const LoginPage: React.FC = () => {
         {/* Right Side: Interactive Test Personas & Dummy Data Switcher */}
         <div className="flex-1 flex flex-col justify-center">
           {isSimulatorActive ? (
-            <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col">
+            <div className="bg-white border border-neutral-200 rounded-md p-6 sm:p-7 shadow-sm flex flex-col">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-neutral-100">
                 <div>
                   <div className="flex items-center space-x-2">
@@ -300,7 +300,7 @@ export const LoginPage: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 font-mono border border-amber-200 font-semibold">
+                  <span className="text-[11px] px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 font-mono border border-amber-200 font-semibold">
                     11 Roles Simulated
                   </span>
                   <button
@@ -321,7 +321,7 @@ export const LoginPage: React.FC = () => {
                     <div
                       key={u.id}
                       onClick={() => handleSelectPersona(u)}
-                      className={`p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-3 rounded-md border transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
                           ? 'bg-neutral-50 border-neutral-900 text-neutral-950 shadow-sm ring-2 ring-neutral-900'
                           : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/60'
@@ -338,7 +338,7 @@ export const LoginPage: React.FC = () => {
                               e.stopPropagation();
                               handleOneClickLogin(u);
                             }}
-                            className="text-[10px] px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-black text-white font-bold flex items-center space-x-1 transition-all shadow-2xs cursor-pointer"
+                            className="text-[10px] px-2.5 py-1 rounded-md bg-neutral-900 hover:bg-black text-white font-bold flex items-center space-x-1 transition-all shadow-2xs cursor-pointer"
                           >
                             <span>1-Click</span>
                             <ArrowRight className="w-3 h-3" />
@@ -364,27 +364,27 @@ export const LoginPage: React.FC = () => {
 
               {/* Quick Test Data Stats Summary */}
               <div className="mt-4 pt-4 border-t border-neutral-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="p-2.5 rounded-md bg-neutral-50 border border-neutral-200">
                   <div className="text-base font-bold text-neutral-950 font-mono">4</div>
                   <div className="text-[10px] text-neutral-500 uppercase font-semibold">Regions</div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="p-2.5 rounded-md bg-neutral-50 border border-neutral-200">
                   <div className="text-base font-bold text-neutral-950 font-mono">8</div>
                   <div className="text-[10px] text-neutral-500 uppercase font-semibold">Substations</div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="p-2.5 rounded-md bg-neutral-50 border border-neutral-200">
                   <div className="text-base font-bold text-neutral-950 font-mono">7 DTRs</div>
                   <div className="text-[10px] text-neutral-500 uppercase font-semibold">Transformers</div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                <div className="p-2.5 rounded-md bg-neutral-50 border border-neutral-200">
                   <div className="text-base font-bold text-neutral-950 font-mono">22+</div>
                   <div className="text-[10px] text-neutral-500 uppercase font-semibold">Modules</div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-white border border-neutral-200 rounded-3xl p-8 shadow-sm flex flex-col items-center justify-center text-center space-y-4 min-h-[460px]">
-              <div className="w-16 h-16 rounded-2xl bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700 shadow-xs">
+            <div className="bg-white border border-neutral-200 rounded-md p-8 shadow-sm flex flex-col items-center justify-center text-center space-y-4 min-h-[460px]">
+              <div className="w-16 h-16 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700 shadow-xs">
                 <Shield className="w-8 h-8 text-neutral-900" />
               </div>
               <div className="space-y-1.5 max-w-sm">
@@ -397,7 +397,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleToggleSimulator(true)}
-                  className="px-5 py-2.5 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-xs flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-md bg-neutral-900 hover:bg-black text-white font-bold text-xs flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   <span>⚡ Simulate Demo Personas (SE, EE, AE, JE...)</span>
@@ -428,8 +428,8 @@ export const LoginPage: React.FC = () => {
 
       {/* Forgot Password Modal */}
       {showForgotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="bg-white border border-neutral-200 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 ">
+          <div className="bg-white border border-neutral-200 rounded-md max-w-md w-full p-6 shadow-2xl relative">
             <h3 className="text-base font-bold text-neutral-950 flex items-center space-x-2">
               <KeyRound className="w-5 h-5 text-neutral-900" />
               <span>Reset Staff Password</span>
@@ -439,7 +439,7 @@ export const LoginPage: React.FC = () => {
             </p>
 
             {forgotFeedback ? (
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2 font-mono">
+              <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2 font-mono">
                 <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
                 <span>{forgotFeedback}</span>
               </div>
@@ -455,20 +455,20 @@ export const LoginPage: React.FC = () => {
                     value={forgotInput}
                     onChange={e => setForgotInput(e.target.value)}
                     placeholder="e.g. ee.urban@powergis.internal"
-                    className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 font-mono"
+                    className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3.5 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 font-mono"
                   />
                 </div>
                 <div className="flex items-center justify-end space-x-3 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowForgotModal(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
+                    className="px-4 py-2 rounded-md text-xs font-semibold text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-bold shadow-sm transition-all"
+                    className="px-4 py-2 rounded-md bg-neutral-900 hover:bg-black text-white text-xs font-bold shadow-sm transition-all"
                   >
                     Send Reset Token
                   </button>

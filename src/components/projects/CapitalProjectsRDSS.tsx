@@ -175,29 +175,29 @@ export const CapitalProjectsRDSS: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Header Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-teal-500 via-emerald-600 to-cyan-600 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-teal-500/20 flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-[#09090B] text-white font-extrabold flex items-center justify-center text-lg border border-zinc-800 flex-shrink-0">
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-zinc-950 tracking-tight">
                 Capital Schemes & RDSS Reforms Tracker
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 REVAMPED DISTRIBUTION SECTOR SCHEME
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">
+            <p className="text-xs text-zinc-500 font-mono mt-0.5">
               Government Infrastructure Modernization · Physical Progress (%) vs Financial Expenditure (₹ Cr)
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2 text-xs font-mono self-start sm:self-auto">
-          <span className="px-3 py-1 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 font-bold">
-            Active Packages: <strong className="text-teal-700">{schemes.length} Schemes</strong>
+          <span className="px-3 py-1 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-900 font-semibold">
+            Active Packages: <strong className="text-zinc-950">{schemes.length} Schemes</strong>
           </span>
         </div>
       </div>
@@ -205,18 +205,18 @@ export const CapitalProjectsRDSS: React.FC = () => {
       {/* Aggregate Financial & Physical Metrics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Total Sanctioned Outlay */}
-        <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs">
-          <div className="text-[11px] font-mono text-neutral-500">Total Sanctioned Outlay</div>
-          <div className="font-mono text-xl sm:text-2xl font-extrabold text-neutral-950 mt-1">
+        <div className="p-4 rounded-md bg-white border border-[#E4E4E7] shadow-xs">
+          <div className="text-[11px] font-mono text-zinc-500">Total Sanctioned Outlay</div>
+          <div className="font-mono text-xl sm:text-2xl font-extrabold text-zinc-950 mt-1">
             ₹{totalSanctionedCr.toFixed(2)} Cr
           </div>
-          <div className="text-[10px] text-neutral-400 font-mono mt-0.5">MoP Approved Grant & Loan</div>
+          <div className="text-[10px] text-zinc-400 font-mono mt-0.5">MoP Approved Grant & Loan</div>
         </div>
 
         {/* Total Expenditure Booked */}
-        <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs">
-          <div className="text-[11px] font-mono text-neutral-500">Cumulative Expenditure</div>
-          <div className="font-mono text-xl sm:text-2xl font-extrabold text-emerald-600 mt-1">
+        <div className="p-4 rounded-md bg-white border border-[#E4E4E7] shadow-xs">
+          <div className="text-[11px] font-mono text-zinc-500">Cumulative Expenditure</div>
+          <div className="font-mono text-xl sm:text-2xl font-extrabold text-emerald-700 mt-1">
             ₹{totalExpenditureCr.toFixed(2)} Cr
           </div>
           <div className="text-[10px] text-emerald-700 font-mono mt-0.5 font-semibold">
@@ -225,19 +225,19 @@ export const CapitalProjectsRDSS: React.FC = () => {
         </div>
 
         {/* Average Physical Progress */}
-        <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs">
-          <div className="text-[11px] font-mono text-neutral-500">Average Physical Progress</div>
-          <div className="font-mono text-xl sm:text-2xl font-extrabold text-sky-600 mt-1">
+        <div className="p-4 rounded-md bg-white border border-[#E4E4E7] shadow-xs">
+          <div className="text-[11px] font-mono text-zinc-500">Average Physical Progress</div>
+          <div className="font-mono text-xl sm:text-2xl font-extrabold text-zinc-950 mt-1">
             {avgPhysicalProgress}%
           </div>
-          <div className="w-full bg-neutral-100 rounded-full h-1.5 mt-2 overflow-hidden">
-            <div className="bg-sky-500 h-1.5 rounded-full" style={{ width: `${avgPhysicalProgress}%` }} />
+          <div className="w-full bg-zinc-100 rounded h-1.5 mt-2 overflow-hidden">
+            <div className="bg-zinc-900 h-1.5 rounded" style={{ width: `${avgPhysicalProgress}%` }} />
           </div>
         </div>
 
         {/* Schemes Status Breakdown */}
-        <div className="p-4 rounded-2xl bg-white border border-neutral-200 shadow-xs">
-          <div className="text-[11px] font-mono text-neutral-500">Package Execution Status</div>
+        <div className="p-4 rounded-md bg-white border border-[#E4E4E7] shadow-xs">
+          <div className="text-[11px] font-mono text-zinc-500">Package Execution Status</div>
           <div className="flex items-center space-x-2 mt-1.5">
             <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
               3 On Track
@@ -246,29 +246,29 @@ export const CapitalProjectsRDSS: React.FC = () => {
               1 Delayed
             </span>
           </div>
-          <div className="text-[10px] text-neutral-400 font-mono mt-1.5">Monitored under SE Capital Schemes</div>
+          <div className="text-[10px] text-zinc-400 font-mono mt-1.5">Monitored under SE Capital Schemes</div>
         </div>
       </div>
 
       {/* Main Grid: Schemes List + Detailed Progress Inspector */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Schemes List Column */}
-        <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-2xl p-4 shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-neutral-900">
+        <div className="lg:col-span-1 bg-white border border-[#E4E4E7] rounded-md p-4 shadow-xs space-y-3">
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-zinc-900 font-mono">
               Capital Schemes ({schemes.length})
             </h3>
-            <span className="text-[10px] font-mono text-neutral-500">Puducherry UT</span>
+            <span className="text-[10px] font-mono text-zinc-500">Puducherry UT</span>
           </div>
 
           <div className="space-y-2.5 max-h-[620px] overflow-y-auto pr-1">
             {schemes.length === 0 && (
-              <div className="p-8 text-center text-slate-500 font-sans">
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-2">
-                  <Building2 className="w-5 h-5 text-slate-400" />
+              <div className="p-8 text-center text-zinc-500 font-sans">
+                <div className="w-10 h-10 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-400 mx-auto mb-2">
+                  <Building2 className="w-5 h-5 text-zinc-500" />
                 </div>
-                <p className="font-semibold text-xs text-slate-700">0 Capital Projects in Scope</p>
-                <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                <p className="font-semibold text-xs text-zinc-700">0 Capital Projects in Scope</p>
+                <p className="text-[11px] text-zinc-400 mt-1 leading-snug">
                   Operating in clean operational mode (0 simulated schemes). Turn ON the Simulator in the header to view simulated RDSS capital works packages.
                 </p>
               </div>
@@ -280,40 +280,40 @@ export const CapitalProjectsRDSS: React.FC = () => {
                 <button
                   key={s.id}
                   onClick={() => setSelectedScheme(s)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
+                  className={`w-full text-left p-3.5 rounded-md border transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-neutral-50 border-neutral-900 shadow-xs ring-1 ring-neutral-900'
-                      : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50'
+                      ? 'bg-zinc-50 border-zinc-900 shadow-xs ring-1 ring-zinc-900'
+                      : 'bg-white border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-neutral-950">{s.schemeCode}</span>
+                    <span className="font-mono text-xs font-bold text-zinc-950">{s.schemeCode}</span>
                     <span
                       className={`px-1.5 py-0.5 rounded text-[9px] font-mono uppercase font-bold border ${
                         s.status === 'Completed'
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           : s.status === 'Delayed'
                           ? 'bg-rose-50 text-rose-800 border-rose-300'
-                          : 'bg-sky-50 text-sky-800 border-sky-300'
+                          : 'bg-zinc-100 text-zinc-800 border-zinc-300'
                       }`}
                     >
                       {s.status}
                     </span>
                   </div>
 
-                  <div className="font-semibold text-xs text-neutral-900 mt-1 leading-snug">
+                  <div className="font-semibold text-xs text-zinc-900 mt-1 leading-snug">
                     {s.title}
                   </div>
 
                   {/* Dual Progress Bars */}
                   <div className="mt-2.5 space-y-1 text-[10px] font-mono">
-                    <div className="flex justify-between text-neutral-500">
-                      <span>Physical: <strong className="text-neutral-900">{s.physicalProgressPct}%</strong></span>
-                      <span>Budget: <strong className="text-neutral-900">₹{s.expenditureCr} / {s.sanctionedBudgetCr} Cr</strong></span>
+                    <div className="flex justify-between text-zinc-500">
+                      <span>Physical: <strong className="text-zinc-900">{s.physicalProgressPct}%</strong></span>
+                      <span>Budget: <strong className="text-zinc-900">₹{s.expenditureCr} / {s.sanctionedBudgetCr} Cr</strong></span>
                     </div>
-                    <div className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-zinc-200 rounded h-1.5 overflow-hidden">
                       <div
-                        className="bg-emerald-500 h-1.5 rounded-full transition-all"
+                        className="bg-emerald-600 h-1.5 rounded transition-all"
                         style={{ width: `${s.physicalProgressPct}%` }}
                       />
                     </div>
@@ -327,15 +327,15 @@ export const CapitalProjectsRDSS: React.FC = () => {
         {/* Selected Scheme Deep-Dive Column */}
         <div className="lg:col-span-2 space-y-4">
           {selectedScheme ? (
-            <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+            <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-xs space-y-4">
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-3">
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="font-mono font-extrabold text-sm sm:text-base text-neutral-950">
+                  <span className="font-mono font-extrabold text-sm sm:text-base text-zinc-950">
                     {selectedScheme.schemeCode}
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-zinc-100 text-zinc-800 border border-zinc-200">
                     {selectedScheme.category}
                   </span>
                 </div>
@@ -348,10 +348,10 @@ export const CapitalProjectsRDSS: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200 self-start sm:self-auto font-mono text-xs">
-                <div className="text-[10px] text-neutral-500">Completion Target:</div>
-                <div className="font-bold text-neutral-900 flex items-center space-x-1 mt-0.5">
-                  <Calendar className="w-3.5 h-3.5 text-neutral-600" />
+              <div className="p-2.5 rounded-md bg-zinc-50 border border-zinc-200 self-start sm:self-auto font-mono text-xs">
+                <div className="text-[10px] text-zinc-500">Completion Target:</div>
+                <div className="font-bold text-zinc-900 flex items-center space-x-1 mt-0.5">
+                  <Calendar className="w-3.5 h-3.5 text-zinc-600" />
                   <span>{selectedScheme.targetDate}</span>
                 </div>
               </div>
@@ -359,21 +359,21 @@ export const CapitalProjectsRDSS: React.FC = () => {
 
             {/* Contractor & Scope Pill Strip */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono text-xs">
-              <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-[10px] text-neutral-500">Assigned EPC Contractor:</div>
-                <div className="font-bold text-neutral-900 mt-0.5 truncate flex items-center space-x-1">
+              <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200">
+                <div className="text-[10px] text-zinc-500">Assigned EPC Contractor:</div>
+                <div className="font-bold text-zinc-900 mt-0.5 truncate flex items-center space-x-1">
                   <HardHat className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
                   <span className="truncate">{selectedScheme.contractor}</span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-[10px] text-neutral-500">Work Scope Quantity:</div>
-                <div className="font-bold text-neutral-900 mt-0.5">{selectedScheme.scopeMetric}</div>
+              <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200">
+                <div className="text-[10px] text-zinc-500">Work Scope Quantity:</div>
+                <div className="font-bold text-zinc-900 mt-0.5">{selectedScheme.scopeMetric}</div>
               </div>
 
-              <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-[10px] text-neutral-500">Financial Expenditure:</div>
+              <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200">
+                <div className="text-[10px] text-zinc-500">Financial Expenditure:</div>
                 <div className="font-bold text-emerald-700 mt-0.5">
                   ₹{selectedScheme.expenditureCr} Cr ({Math.round((selectedScheme.expenditureCr / selectedScheme.sanctionedBudgetCr) * 100)}%)
                 </div>
@@ -381,21 +381,21 @@ export const CapitalProjectsRDSS: React.FC = () => {
             </div>
 
             {/* Comparative Visual Dual Meter */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-neutral-200 space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between font-bold text-neutral-900">
+            <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 space-y-3 font-mono text-xs">
+              <div className="flex items-center justify-between font-bold text-zinc-900">
                 <span>Physical Progress vs Financial Progress:</span>
-                <span className="text-[11px] text-neutral-500">Target Benchmark: 100%</span>
+                <span className="text-[11px] text-zinc-500">Target Benchmark: 100%</span>
               </div>
 
               {/* Physical meter */}
               <div>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="font-semibold text-neutral-700">Physical Milestone Completion</span>
-                  <span className="font-bold text-sky-700">{selectedScheme.physicalProgressPct}%</span>
+                  <span className="font-semibold text-zinc-700">Physical Milestone Completion</span>
+                  <span className="font-bold text-zinc-900">{selectedScheme.physicalProgressPct}%</span>
                 </div>
-                <div className="w-full bg-neutral-200 rounded-full h-3 overflow-hidden shadow-inner">
+                <div className="w-full bg-zinc-200 rounded h-3 overflow-hidden">
                   <div
-                    className="bg-sky-500 h-3 rounded-full transition-all duration-500"
+                    className="bg-zinc-800 h-3 rounded transition-all duration-500"
                     style={{ width: `${selectedScheme.physicalProgressPct}%` }}
                   />
                 </div>
@@ -404,14 +404,14 @@ export const CapitalProjectsRDSS: React.FC = () => {
               {/* Financial meter */}
               <div>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="font-semibold text-neutral-700">Financial Fund Disbursement</span>
+                  <span className="font-semibold text-zinc-700">Financial Fund Disbursement</span>
                   <span className="font-bold text-emerald-700">
                     {Math.round((selectedScheme.expenditureCr / selectedScheme.sanctionedBudgetCr) * 100)}%
                   </span>
                 </div>
-                <div className="w-full bg-neutral-200 rounded-full h-3 overflow-hidden shadow-inner">
+                <div className="w-full bg-zinc-200 rounded h-3 overflow-hidden">
                   <div
-                    className="bg-emerald-500 h-3 rounded-full transition-all duration-500"
+                    className="bg-emerald-600 h-3 rounded transition-all duration-500"
                     style={{
                       width: `${Math.round((selectedScheme.expenditureCr / selectedScheme.sanctionedBudgetCr) * 100)}%`,
                     }}
@@ -423,11 +423,11 @@ export const CapitalProjectsRDSS: React.FC = () => {
             {/* Milestone Checklist Tracker */}
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-neutral-900 font-mono flex items-center space-x-1.5">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-zinc-900 font-mono flex items-center space-x-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Execution Milestones & Quality Sign-Off ({selectedScheme.milestones.length})</span>
                 </h4>
-                <span className="text-[10px] text-neutral-400 font-mono">Click checkbox to sign-off</span>
+                <span className="text-[10px] text-zinc-400 font-mono">Click checkbox to sign-off</span>
               </div>
 
               <div className="space-y-2">
@@ -435,10 +435,10 @@ export const CapitalProjectsRDSS: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => toggleMilestone(selectedScheme.id, idx)}
-                    className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-all cursor-pointer ${
+                    className={`p-3 rounded-md border flex items-center justify-between text-xs transition-colors cursor-pointer ${
                       m.completed
                         ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950'
-                        : 'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+                        : 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50'
                     }`}
                   >
                     <div className="flex items-center space-x-2.5">
@@ -446,23 +446,23 @@ export const CapitalProjectsRDSS: React.FC = () => {
                         className={`w-5 h-5 rounded-md border flex items-center justify-center font-bold text-xs ${
                           m.completed
                             ? 'bg-emerald-600 text-white border-emerald-700'
-                            : 'bg-neutral-100 text-neutral-400 border-neutral-300'
+                            : 'bg-zinc-100 text-zinc-400 border-zinc-300'
                         }`}
                       >
                         {m.completed ? '✓' : idx + 1}
                       </div>
-                      <span className={`font-medium ${m.completed ? 'line-through text-neutral-500' : 'text-neutral-900'}`}>
+                      <span className={`font-medium ${m.completed ? 'line-through text-zinc-500' : 'text-zinc-900'}`}>
                         {m.title}
                       </span>
                     </div>
 
                     <div className="flex items-center space-x-2 font-mono text-[10px]">
-                      <span className="text-neutral-500">{m.date}</span>
+                      <span className="text-zinc-500">{m.date}</span>
                       <span
                         className={`px-1.5 py-0.5 rounded font-bold border ${
                           m.completed
                             ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                            : 'bg-neutral-100 text-neutral-600 border-neutral-300'
+                            : 'bg-zinc-100 text-zinc-600 border-zinc-300'
                         }`}
                       >
                         {m.completed ? 'VERIFIED' : 'PENDING'}
@@ -474,12 +474,12 @@ export const CapitalProjectsRDSS: React.FC = () => {
             </div>
           </div>
           ) : (
-            <div className="bg-white border border-neutral-200 rounded-2xl p-12 text-center text-slate-500 shadow-xs flex flex-col items-center justify-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+            <div className="bg-white border border-[#E4E4E7] rounded-md p-12 text-center text-zinc-500 shadow-xs flex flex-col items-center justify-center space-y-3">
+              <div className="w-12 h-12 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-600">
                 <HardHat className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-sm text-slate-800">Clean Operational Mode Active</h3>
-              <p className="text-xs text-slate-500 max-w-md">
+              <h3 className="font-bold text-sm text-zinc-900">Clean Operational Mode Active</h3>
+              <p className="text-xs text-zinc-500 max-w-md">
                 0 simulated capital projects are loaded. When the Simulator is OFF, all test/dummy RDSS schemes are hidden. Turn ON the Simulator via the header toolbar to view and test simulated schemes.
               </p>
             </div>

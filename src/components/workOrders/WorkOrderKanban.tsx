@@ -77,23 +77,23 @@ export const WorkOrderKanban: React.FC = () => {
   };
 
   return (
-    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-slate-900 select-none">
+    <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#09090B] select-none">
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-emerald-500/20 flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-[#09090B] text-white font-extrabold flex items-center justify-center text-base border border-zinc-800 flex-shrink-0">
             <CheckSquare className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
                 Work Order & Maintenance Task Kanban
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 FIELD WORKFLOW KANBAN
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">
+            <p className="text-xs text-zinc-500 font-mono mt-0.5">
               Field Gang Dispatch · Multi-Tier Verification (JE/AE) · Material Consumption Tracking
             </p>
           </div>
@@ -101,7 +101,7 @@ export const WorkOrderKanban: React.FC = () => {
 
         <button
           onClick={() => setShowNewModal(true)}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-blue-500/20 self-start sm:self-auto cursor-pointer"
+          className="px-3.5 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>New Work Order</span>
@@ -116,13 +116,13 @@ export const WorkOrderKanban: React.FC = () => {
           return (
             <div
               key={col.id}
-              className={`bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col space-y-3 min-h-[500px] shadow-sm ${col.topBorder}`}
+              className={`bg-white border border-[#E4E4E7] rounded-md p-3.5 flex flex-col space-y-3 min-h-[500px] shadow-sm ${col.topBorder}`}
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                <span className="font-bold text-xs uppercase tracking-wider text-slate-900 font-mono">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+                <span className="font-bold text-xs uppercase tracking-wider text-zinc-900 font-mono">
                   {col.title}
                 </span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold border border-slate-200 ${col.badgeBg}`}>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold border border-zinc-200 ${col.badgeBg}`}>
                   {colOrders.length}
                 </span>
               </div>
@@ -131,10 +131,10 @@ export const WorkOrderKanban: React.FC = () => {
                 {colOrders.map(order => (
                   <div
                     key={order.id}
-                    className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-blue-300 hover:bg-blue-50/20 shadow-2xs text-xs space-y-2 transition-all"
+                    className="p-3 rounded-md bg-zinc-50 border border-zinc-200 hover:border-zinc-400 text-xs space-y-2 transition-all"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-slate-950 font-bold text-[10px]">{order.orderNumber}</span>
+                      <span className="font-mono text-zinc-950 font-bold text-[10px]">{order.orderNumber}</span>
                       <span
                         className={`text-[9px] uppercase font-bold px-1.5 py-0.2 rounded border ${
                           order.priority === 'critical'
@@ -146,19 +146,19 @@ export const WorkOrderKanban: React.FC = () => {
                       </span>
                     </div>
 
-                    <h4 className="font-bold text-slate-900 text-xs leading-snug">{order.title}</h4>
-                    <p className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">{order.instructions}</p>
+                    <h4 className="font-bold text-zinc-900 text-xs leading-snug">{order.title}</h4>
+                    <p className="text-[11px] text-zinc-600 line-clamp-2 leading-relaxed">{order.instructions}</p>
 
-                    <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                    <div className="pt-2 border-t border-zinc-200 flex items-center justify-between text-[10px] text-zinc-500 font-mono">
                       <span className="flex items-center space-x-1 truncate max-w-[110px]">
-                        <User className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                        <User className="w-3 h-3 text-zinc-600 flex-shrink-0" />
                         <span className="truncate">{order.assignedCrew}</span>
                       </span>
 
                       {col.id !== 'closed' && (
                         <button
                           onClick={() => handleAdvanceStatus(order.id, order.status)}
-                          className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold flex items-center space-x-1 transition-all shadow-xs cursor-pointer"
+                          className="px-2 py-1 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
                           title="Advance to next workflow stage"
                         >
                           <span>Next</span>
@@ -176,40 +176,40 @@ export const WorkOrderKanban: React.FC = () => {
 
       {/* New Work Order Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 select-none">
-          <form onSubmit={handleCreateOrder} className="bg-white border border-neutral-300 rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-              <h3 className="font-bold text-sm text-neutral-950 flex items-center space-x-2">
-                <CheckSquare className="w-4 h-4 text-neutral-900" />
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 select-none">
+          <form onSubmit={handleCreateOrder} className="bg-white border border-zinc-300 rounded-md p-5 sm:p-6 max-w-md w-full shadow-lg space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <h3 className="font-bold text-sm text-zinc-950 flex items-center space-x-2">
+                <CheckSquare className="w-4 h-4 text-zinc-900" />
                 <span>Create Distribution Work Order</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="p-1 rounded-lg text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 cursor-pointer"
+                className="p-1 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Work Order Title</label>
+              <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Work Order Title</label>
               <input
                 type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="e.g. Conductor re-stringing on Marapalam 11kV Feeder"
-                className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 font-mono"
+                className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-2 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-mono"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Task Category</label>
+                <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Task Category</label>
                 <select
                   value={category}
                   onChange={e => setCategory(e.target.value)}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
+                  className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-2 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
                 >
                   <option value="Line Maintenance">Line Maintenance</option>
                   <option value="Pole Replacement">Pole Replacement</option>
@@ -221,37 +221,37 @@ export const WorkOrderKanban: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Assigned Crew</label>
+                <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Assigned Crew</label>
                 <input
                   type="text"
                   value={assignedCrew}
                   onChange={e => setAssignedCrew(e.target.value)}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                  className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-2 text-xs text-zinc-900 font-mono focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Gang Instructions</label>
+              <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Gang Instructions</label>
               <textarea
                 value={instructions}
                 onChange={e => setInstructions(e.target.value)}
                 placeholder="Instructions on safety, required material and line clear."
-                className="w-full h-20 bg-neutral-50 border border-neutral-300 rounded-xl p-3 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
+                className="w-full h-20 bg-zinc-50 border border-zinc-300 rounded-md p-3 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
               />
             </div>
 
-            <div className="flex justify-end space-x-2 pt-2 border-t border-neutral-100">
+            <div className="flex justify-end space-x-2 pt-2 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs cursor-pointer"
+                className="px-4 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-bold cursor-pointer"
               >
                 Create Work Order
               </button>

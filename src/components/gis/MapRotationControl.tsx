@@ -39,10 +39,10 @@ export const MapRotationControl: React.FC = () => {
               setIsExpanded(!isExpanded);
             }
           }}
-          className={`group flex items-center space-x-2 px-3 py-2 rounded-xl border backdrop-blur-md transition-all shadow-md cursor-pointer ${
+          className={`group flex items-center space-x-2 px-3 py-1.5 rounded-md border transition-colors shadow-sm cursor-pointer ${
             isRotated
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500 ring-2 ring-blue-400 font-bold shadow-md shadow-blue-500/25'
-              : 'bg-white/95 text-slate-900 border-slate-200 hover:border-blue-400 hover:shadow-blue-500/10'
+              ? 'bg-[#09090B] text-white border-zinc-950 font-bold'
+              : 'bg-white text-zinc-900 border-[#E4E4E7] hover:bg-zinc-50'
           }`}
           title={isRotated ? `Bearing: ${bearing}° (${cardinal}) - Click to Reset North, or expand` : 'Map Rotation & Compass'}
         >
@@ -69,7 +69,7 @@ export const MapRotationControl: React.FC = () => {
             >
               <Navigation2
                 className={`w-4 h-4 fill-current ${
-                  isRotated ? 'text-cyan-300' : 'text-blue-600'
+                  isRotated ? 'text-amber-400' : 'text-zinc-700'
                 }`}
               />
             </div>
@@ -96,34 +96,34 @@ export const MapRotationControl: React.FC = () => {
 
       {/* Expanded Rotation Controller Panel */}
       {isExpanded && (
-        <div className="mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md border border-neutral-200 rounded-2xl shadow-2xl p-3.5 text-neutral-900 animate-in fade-in slide-in-from-top-2 duration-150">
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-neutral-200 text-[10px] uppercase font-bold text-neutral-500">
-            <span className="flex items-center space-x-1.5 text-neutral-950 font-extrabold">
+        <div className="mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white border border-[#E4E4E7] rounded-md shadow-lg p-3.5 text-zinc-900 animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="flex items-center justify-between pb-2 mb-3 border-b border-zinc-200 text-[10px] uppercase font-bold text-zinc-500 font-mono">
+            <span className="flex items-center space-x-1.5 text-zinc-950 font-bold">
               <Compass className="w-3.5 h-3.5" />
               <span>Map Orientation & Rotation</span>
             </span>
             <button
               onClick={() => setIsExpanded(false)}
-              className="p-1 rounded text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
+              className="p-1 rounded text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Bearing Readout Display */}
-          <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-center mb-3">
-            <div className="text-[10px] text-neutral-500 uppercase font-mono tracking-wider">Current Bearing</div>
-            <div className="text-2xl font-mono font-extrabold text-neutral-950 tracking-tight my-0.5">
-              {bearing}° <span className="text-sm font-bold text-neutral-500">{cardinal}</span>
+          <div className="bg-zinc-50 border border-zinc-200 rounded-md p-3 text-center mb-3">
+            <div className="text-[10px] text-zinc-500 uppercase font-mono tracking-wider">Current Bearing</div>
+            <div className="text-2xl font-mono font-extrabold text-zinc-950 tracking-tight my-0.5">
+              {bearing}° <span className="text-sm font-bold text-zinc-500">{cardinal}</span>
             </div>
-            <div className="text-[10px] text-neutral-500 font-mono">
+            <div className="text-[10px] text-zinc-500 font-mono">
               {bearing === 0 ? 'True North (Default)' : `${bearing}° Clockwise from True North`}
             </div>
           </div>
 
           {/* Angle Slider */}
           <div className="space-y-1 mb-3">
-            <div className="flex justify-between text-[11px] font-mono text-neutral-500">
+            <div className="flex justify-between text-[11px] font-mono text-zinc-500">
               <span>0° (N)</span>
               <span>180° (S)</span>
               <span>359°</span>
@@ -134,7 +134,7 @@ export const MapRotationControl: React.FC = () => {
               max="359"
               value={bearing}
               onChange={e => setBearing(parseInt(e.target.value, 10))}
-              className="w-full h-1.5 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-neutral-900"
+              className="w-full h-1.5 bg-zinc-200 rounded appearance-none cursor-pointer accent-zinc-900"
             />
           </div>
 
@@ -142,7 +142,7 @@ export const MapRotationControl: React.FC = () => {
           <div className="grid grid-cols-4 gap-1.5 mb-3">
             <button
               onClick={() => rotateBy(-15)}
-              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs font-mono font-semibold transition-colors text-neutral-800"
+              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-md bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs font-mono font-semibold transition-colors text-zinc-800"
               title="Rotate Counter-Clockwise 15°"
             >
               <RotateCcw className="w-3 h-3" />
@@ -150,7 +150,7 @@ export const MapRotationControl: React.FC = () => {
             </button>
             <button
               onClick={() => rotateBy(15)}
-              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs font-mono font-semibold transition-colors text-neutral-800"
+              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-md bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs font-mono font-semibold transition-colors text-zinc-800"
               title="Rotate Clockwise 15°"
             >
               <RotateCw className="w-3 h-3" />
@@ -158,14 +158,14 @@ export const MapRotationControl: React.FC = () => {
             </button>
             <button
               onClick={() => rotateBy(-90)}
-              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs font-mono font-semibold transition-colors text-neutral-800"
+              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-md bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs font-mono font-semibold transition-colors text-zinc-800"
               title="Rotate Counter-Clockwise 90°"
             >
               <span>-90°</span>
             </button>
             <button
               onClick={() => rotateBy(90)}
-              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-xs font-mono font-semibold transition-colors text-neutral-800"
+              className="flex items-center justify-center space-x-1 py-1.5 px-2 rounded-md bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-xs font-mono font-semibold transition-colors text-zinc-800"
               title="Rotate Clockwise 90°"
             >
               <span>+90°</span>
@@ -183,10 +183,10 @@ export const MapRotationControl: React.FC = () => {
               <button
                 key={card.deg}
                 onClick={() => setBearing(card.deg)}
-                className={`py-1.5 rounded-lg border text-center transition-all cursor-pointer ${
+                className={`py-1.5 rounded-md border text-center transition-colors cursor-pointer ${
                   bearing === card.deg
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold border-blue-600 shadow-xs'
-                    : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-blue-50 hover:text-blue-700'
+                    ? 'bg-[#09090B] text-white font-bold border-zinc-900'
+                    : 'bg-zinc-100 text-zinc-700 border-zinc-200 hover:bg-zinc-200'
                 }`}
               >
                 {card.label[0]} ({card.deg}°)
@@ -201,10 +201,10 @@ export const MapRotationControl: React.FC = () => {
               setIsExpanded(false);
             }}
             disabled={bearing === 0}
-            className={`w-full py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
+            className={`w-full py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5 cursor-pointer ${
               bearing !== 0
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/25'
-                : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                ? 'bg-[#09090B] hover:bg-zinc-800 text-white'
+                : 'bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed'
             }`}
           >
             <ArrowUp className="w-3.5 h-3.5" />

@@ -960,7 +960,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* MODAL: ADD NEW USER                                                  */}
       {/* ==================================================================== */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2.5">
@@ -1180,7 +1180,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* MODAL: EDIT USER                                                     */}
       {/* ==================================================================== */}
       {editingUser && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center space-x-2.5">
@@ -1393,7 +1393,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* MODAL: DELETE CONFIRMATION                                           */}
       {/* ==================================================================== */}
       {userToDelete && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-md w-full space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-md bg-red-50 text-red-600 border border-red-200 flex items-center justify-center flex-shrink-0">

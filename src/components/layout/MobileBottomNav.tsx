@@ -37,7 +37,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-neutral-200 select-none pb-safe shadow-lg">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E4E4E7] select-none pb-safe shadow-md">
       <div className="grid grid-cols-5 h-14">
         {tabs.map(item => {
           const Icon = item.icon;

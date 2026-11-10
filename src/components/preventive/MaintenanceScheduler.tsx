@@ -71,9 +71,9 @@ export const MaintenanceScheduler: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Banner */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
             <Calendar className="w-5 h-5 text-sky-400" />
           </div>
           <div>
@@ -91,7 +91,7 @@ export const MaintenanceScheduler: React.FC = () => {
           </div>
         </div>
 
-        <span className={`px-3 py-1.5 rounded-xl font-mono text-xs border self-start sm:self-auto font-semibold ${
+        <span className={`px-3 py-1.5 rounded-md font-mono text-xs border self-start sm:self-auto font-semibold ${
           isSimActive
             ? 'bg-amber-50 text-amber-800 border-amber-200'
             : 'bg-neutral-100 text-neutral-600 border-neutral-200'
@@ -101,7 +101,7 @@ export const MaintenanceScheduler: React.FC = () => {
       </div>
 
       {/* Schedules Table */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-3">
         <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
           <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
             Scheduled Work Orders & Inspection Tasks ({schedules.length})
@@ -111,7 +111,7 @@ export const MaintenanceScheduler: React.FC = () => {
           </span>
         </div>
 
-        <div className="border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="border border-neutral-200 rounded-md overflow-hidden">
           <table className="w-full text-xs text-left">
             <thead className="bg-neutral-50 text-neutral-600 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-200">
               <tr>
@@ -160,7 +160,7 @@ export const MaintenanceScheduler: React.FC = () => {
                       {sch.status !== 'Completed' && (
                         <button
                           onClick={() => handleMarkComplete(sch.id)}
-                          className="px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-bold cursor-pointer transition-colors shadow-2xs"
+                          className="px-2.5 py-1 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-bold cursor-pointer transition-colors shadow-2xs"
                         >
                           Sign Off
                         </button>

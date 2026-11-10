@@ -15,9 +15,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
-        serif: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
-        mono: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"SF Mono"', 'Consolas', 'Menlo', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -65,9 +64,14 @@ export default {
         }
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        none: '0',
+        sm: '2px',
+        DEFAULT: '4px',
+        md: '6px',
+        lg: '6px',
+        xl: '6px',
+        '2xl': '6px',
+        '3xl': '6px',
       },
     },
   },

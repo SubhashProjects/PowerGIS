@@ -134,17 +134,17 @@ const MainLayout: React.FC = () => {
 
           {/* Asset Detail Flyout Drawer (When selected on map or via search) */}
           {selectedAsset && (
-            <div className="absolute bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-sm w-auto sm:w-full bg-[#0d0d0d]/95 backdrop-blur-md border border-neutral-800 rounded-2xl p-4 shadow-2xl z-40 space-y-3">
-              <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+            <div className="absolute bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-sm w-auto sm:w-full bg-white border border-[#E4E4E7] rounded-md p-4 shadow-md z-40 space-y-3">
+              <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
                 <div className="flex items-center space-x-2 truncate">
-                  <div className="p-1.5 rounded-lg bg-white/10 text-white flex-shrink-0">
+                  <div className="p-1.5 rounded-md bg-[#09090B] text-white flex-shrink-0">
                     <Zap className="w-4 h-4" />
                   </div>
                   <div className="truncate">
-                    <h4 className="font-bold text-xs text-white truncate">
+                    <h4 className="font-bold text-xs text-zinc-950 truncate">
                       {selectedAsset.name || selectedAsset.code || selectedAsset.poleNumber}
                     </h4>
-                    <span className="text-[10px] text-neutral-400 font-mono truncate block">
+                    <span className="text-[10px] text-zinc-500 font-mono truncate block">
                       {selectedAsset.code || selectedAsset.consumerNumber || 'Asset Detail'}
                     </span>
                   </div>
@@ -152,41 +152,41 @@ const MainLayout: React.FC = () => {
 
                 <button
                   onClick={() => setSelectedAsset(null)}
-                  className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors flex-shrink-0"
+                  className="p-1 rounded-md text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="space-y-1.5 text-xs text-neutral-300 font-mono">
+              <div className="space-y-1.5 text-xs text-zinc-700 font-mono">
                 {selectedAsset.voltageClass && (
                   <div className="flex justify-between">
-                    <span className="text-neutral-400 font-sans">Voltage:</span>
-                    <span className="text-white font-bold">{selectedAsset.voltageClass}</span>
+                    <span className="text-zinc-500 font-sans">Voltage:</span>
+                    <span className="text-zinc-950 font-bold">{selectedAsset.voltageClass}</span>
                   </div>
                 )}
                 {selectedAsset.capacityMVA && (
                   <div className="flex justify-between">
-                    <span className="text-neutral-400 font-sans">Capacity:</span>
-                    <span className="text-white font-bold">{selectedAsset.capacityMVA} MVA</span>
+                    <span className="text-zinc-500 font-sans">Capacity:</span>
+                    <span className="text-zinc-950 font-bold">{selectedAsset.capacityMVA} MVA</span>
                   </div>
                 )}
                 {selectedAsset.capacityKVA && (
                   <div className="flex justify-between">
-                    <span className="text-neutral-400 font-sans">Rating:</span>
-                    <span className="text-white font-bold">{selectedAsset.capacityKVA} kVA</span>
+                    <span className="text-zinc-500 font-sans">Rating:</span>
+                    <span className="text-zinc-950 font-bold">{selectedAsset.capacityKVA} kVA</span>
                   </div>
                 )}
                 {selectedAsset.loadPercentage !== undefined && (
                   <div className="flex justify-between">
-                    <span className="text-neutral-400 font-sans">Current Load:</span>
-                    <span className="text-white font-bold">{selectedAsset.loadPercentage}%</span>
+                    <span className="text-zinc-500 font-sans">Current Load:</span>
+                    <span className="text-zinc-950 font-bold">{selectedAsset.loadPercentage}%</span>
                   </div>
                 )}
                 {selectedAsset.coordinates && (
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-neutral-400 font-sans">GPS Coords:</span>
-                    <span className="text-neutral-300">
+                    <span className="text-zinc-500 font-sans">GPS Coords:</span>
+                    <span className="text-zinc-800">
                       {Array.isArray(selectedAsset.coordinates[0])
                         ? `${selectedAsset.coordinates[0][0].toFixed(4)}, ${selectedAsset.coordinates[0][1].toFixed(4)}`
                         : `${selectedAsset.coordinates[0].toFixed(4)}, ${selectedAsset.coordinates[1].toFixed(4)}`}

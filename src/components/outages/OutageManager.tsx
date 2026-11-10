@@ -92,9 +92,9 @@ export const OutageManager: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Banner */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
             <Power className="w-5 h-5 text-rose-400" />
           </div>
           <div>
@@ -115,14 +115,14 @@ export const OutageManager: React.FC = () => {
         <div className="flex items-center space-x-2 text-xs font-mono self-start sm:self-auto">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs"
+            className="px-3 py-1.5 rounded-md bg-slate-900 text-white hover:bg-slate-800 font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Log Outage Event</span>
           </button>
 
           <span
-            className={`px-3 py-1.5 rounded-xl border font-bold flex items-center space-x-1 ${
+            className={`px-3 py-1.5 rounded-md border font-bold flex items-center space-x-1 ${
               calculated.jercCompliance.status === 'COMPLIANT'
                 ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                 : 'bg-rose-50 text-rose-800 border-rose-200'
@@ -140,7 +140,7 @@ export const OutageManager: React.FC = () => {
 
       {/* IEEE 1366 KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-neutral-500 font-medium font-mono uppercase">SAIFI (Avg Frequency)</span>
             <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border font-mono ${calculated.jercCompliance.saifiCompliant ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
@@ -153,7 +153,7 @@ export const OutageManager: React.FC = () => {
           <div className="text-[10px] text-neutral-400 font-mono mt-0.5">Interruptions / consumer / yr</div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-neutral-500 font-medium font-mono uppercase">SAIDI (Avg Duration)</span>
             <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border font-mono ${calculated.jercCompliance.saidiCompliant ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
@@ -166,7 +166,7 @@ export const OutageManager: React.FC = () => {
           <div className="text-[10px] text-neutral-400 font-mono mt-0.5">Outage duration / consumer</div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
           <div className="text-[11px] text-neutral-500 font-medium font-mono uppercase">CAIDI (Customer Avg)</div>
           <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 font-mono mt-1 tracking-tight">
             {calculated.caidi} min
@@ -174,7 +174,7 @@ export const OutageManager: React.FC = () => {
           <div className="text-[10px] text-neutral-400 font-mono mt-0.5">Restoration time / interruption</div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200 shadow-xs">
+        <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
           <div className="text-[11px] text-neutral-500 font-medium font-mono uppercase">Energy Not Served (ENS)</div>
           <div className="text-2xl sm:text-3xl font-extrabold text-rose-600 font-mono mt-1 tracking-tight">
             {calculated.ensMWh} MWh
@@ -184,7 +184,7 @@ export const OutageManager: React.FC = () => {
       </div>
 
       {/* Dynamic Reliability Controls Filter Panel */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
           <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider flex items-center space-x-2">
             <Filter className="w-4 h-4 text-neutral-700" />
@@ -201,7 +201,7 @@ export const OutageManager: React.FC = () => {
             <select
               value={selectedSection}
               onChange={e => setSelectedSection(e.target.value)}
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             >
               <option value="ALL">All Sections (Entire Division)</option>
               {initialSections.map(s => (
@@ -215,7 +215,7 @@ export const OutageManager: React.FC = () => {
             <select
               value={outageTypeFilter}
               onChange={e => setOutageTypeFilter(e.target.value as any)}
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             >
               <option value="ALL">All Outage Types</option>
               <option value="Emergency">Emergency Outage</option>
@@ -230,7 +230,7 @@ export const OutageManager: React.FC = () => {
               type="date"
               value={startDate}
               onChange={e => setStartDate(e.target.value)}
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             />
           </div>
 
@@ -240,7 +240,7 @@ export const OutageManager: React.FC = () => {
               type="date"
               value={endDate}
               onChange={e => setEndDate(e.target.value)}
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             />
           </div>
 
@@ -250,14 +250,14 @@ export const OutageManager: React.FC = () => {
               type="number"
               value={totalConsumersInput}
               onChange={e => setTotalConsumersInput(parseInt(e.target.value) || 1)}
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             />
           </div>
         </div>
       </div>
 
       {/* Active Interruption Events Table */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider flex items-center space-x-2">
             <AlertOctagon className="w-4 h-4 text-rose-600" />
@@ -266,7 +266,7 @@ export const OutageManager: React.FC = () => {
           <span className="text-[10px] text-neutral-500 font-mono">Filtered view matching current criteria</span>
         </div>
 
-        <div className="border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="border border-neutral-200 rounded-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead className="bg-neutral-50 text-neutral-600 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-200">
@@ -325,8 +325,8 @@ export const OutageManager: React.FC = () => {
 
       {/* Log Outage Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200 space-y-4">
+        <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white rounded-md max-w-lg w-full p-6 shadow-2xl border border-neutral-200 space-y-4">
             <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
               <h3 className="font-bold text-sm text-neutral-950 font-mono uppercase flex items-center space-x-2">
                 <Power className="w-4 h-4 text-rose-600" />
@@ -343,7 +343,7 @@ export const OutageManager: React.FC = () => {
                 <select
                   value={newOutage.sectionId}
                   onChange={e => setNewOutage({ ...newOutage, sectionId: e.target.value })}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900"
                 >
                   {initialSections.map(s => (
                     <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
@@ -356,7 +356,7 @@ export const OutageManager: React.FC = () => {
                 <select
                   value={newOutage.outageType}
                   onChange={e => setNewOutage({ ...newOutage, outageType: e.target.value as any })}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900"
                 >
                   <option value="Emergency">Emergency</option>
                   <option value="Planned">Planned</option>
@@ -371,7 +371,7 @@ export const OutageManager: React.FC = () => {
                   required
                   value={newOutage.reason}
                   onChange={e => setNewOutage({ ...newOutage, reason: e.target.value })}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900"
+                  className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900"
                 />
               </div>
 
@@ -383,7 +383,7 @@ export const OutageManager: React.FC = () => {
                     min={1}
                     value={newOutage.affectedConsumersCount}
                     onChange={e => setNewOutage({ ...newOutage, affectedConsumersCount: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900"
+                    className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900"
                   />
                 </div>
                 <div>
@@ -393,7 +393,7 @@ export const OutageManager: React.FC = () => {
                     min={1}
                     value={newOutage.durationMinutes}
                     onChange={e => setNewOutage({ ...newOutage, durationMinutes: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900"
+                    className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900"
                   />
                 </div>
                 <div>
@@ -403,7 +403,7 @@ export const OutageManager: React.FC = () => {
                     min={0}
                     value={newOutage.energyNotServedKWh}
                     onChange={e => setNewOutage({ ...newOutage, energyNotServedKWh: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900"
+                    className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900"
                   />
                 </div>
               </div>
@@ -412,13 +412,13 @@ export const OutageManager: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-100 font-bold cursor-pointer"
+                  className="px-4 py-2 rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-100 font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 font-bold cursor-pointer shadow-xs"
+                  className="px-4 py-2 rounded-md bg-slate-900 text-white hover:bg-slate-800 font-bold cursor-pointer shadow-xs"
                 >
                   Commit Outage Record
                 </button>

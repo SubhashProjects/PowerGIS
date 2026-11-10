@@ -61,9 +61,9 @@ export const StoresInventory: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Banner */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
             <Package className="w-5 h-5 text-teal-400" />
           </div>
           <div>
@@ -81,13 +81,13 @@ export const StoresInventory: React.FC = () => {
           </div>
         </div>
 
-        <span className="px-3 py-1.5 rounded-xl bg-neutral-100 text-neutral-800 font-mono text-xs border border-neutral-200 self-start sm:self-auto font-semibold">
+        <span className="px-3 py-1.5 rounded-md bg-neutral-100 text-neutral-800 font-mono text-xs border border-neutral-200 self-start sm:self-auto font-semibold">
           Real-Time Stock Active
         </span>
       </div>
 
       {successMsg && (
-        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2 shadow-xs animate-fadeIn font-mono">
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2 shadow-xs animate-fadeIn font-mono">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <span className="font-bold">{successMsg}</span>
         </div>
@@ -95,7 +95,7 @@ export const StoresInventory: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Inventory Items List */}
-        <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-2xl p-4 shadow-xs space-y-3">
+        <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-md p-4 shadow-xs space-y-3">
           <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
             <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
               Store Stock Inventory ({items.length})
@@ -103,7 +103,7 @@ export const StoresInventory: React.FC = () => {
             <span className="text-[10px] text-neutral-500 font-mono">Real-time Stock Balance</span>
           </div>
 
-          <div className="border border-neutral-200 rounded-xl overflow-hidden">
+          <div className="border border-neutral-200 rounded-md overflow-hidden">
             <table className="w-full text-xs text-left">
               <thead className="bg-neutral-50 text-neutral-600 font-mono text-[10px] uppercase tracking-wider border-b border-neutral-200">
                 <tr>
@@ -149,14 +149,14 @@ export const StoresInventory: React.FC = () => {
 
         {/* Issue Material Card */}
         {selectedItem && (
-          <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+          <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
             <div className="border-b border-neutral-100 pb-2.5">
               <span className="text-[10px] uppercase font-bold text-teal-700 font-mono">Issue Material to Work Order</span>
               <h3 className="font-bold text-sm text-neutral-950 mt-0.5">{selectedItem.name}</h3>
               <div className="text-xs text-neutral-500 font-mono">{selectedItem.itemCode}</div>
             </div>
 
-            <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200 flex justify-between items-center text-xs font-mono">
+            <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 flex justify-between items-center text-xs font-mono">
               <span className="text-neutral-500">Available Stock:</span>
               <span className="font-bold text-emerald-700">
                 {selectedItem.currentStock} {selectedItem.unitOfMeasure}
@@ -173,7 +173,7 @@ export const StoresInventory: React.FC = () => {
                   max={selectedItem.currentStock}
                   value={issueQty}
                   onChange={e => setIssueQty(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                  className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
                 />
               </div>
 
@@ -183,13 +183,13 @@ export const StoresInventory: React.FC = () => {
                   type="text"
                   value={workOrderRef}
                   onChange={e => setWorkOrderRef(e.target.value)}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                  className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white font-bold shadow-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer"
+                className="w-full py-2.5 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white font-bold shadow-xs flex items-center justify-center space-x-1.5 transition-all cursor-pointer"
               >
                 <ArrowUpRight className="w-4 h-4" />
                 <span>Issue Material from Depot</span>

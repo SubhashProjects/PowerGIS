@@ -148,21 +148,21 @@ export const FaultList: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Top Header Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 text-white font-extrabold flex items-center justify-center text-lg shadow-md shadow-orange-500/20 flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-[#09090B] text-white font-extrabold flex items-center justify-center text-base border border-zinc-800 flex-shrink-0">
             ⚡
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight">
+              <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
                 8-Stage Ticket Management & Breakdown Engine
               </h1>
-              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
                 SECTION 9 SPEC
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-mono mt-0.5">
+            <p className="text-xs text-zinc-500 font-mono mt-0.5">
               Live IEEE/JERC SLA Deadlines · Proximity Geodesics · Lifecycle Progression
             </p>
           </div>
@@ -170,7 +170,7 @@ export const FaultList: React.FC = () => {
 
         <button
           onClick={() => setShowNewModal(true)}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md shadow-blue-500/20 self-start sm:self-auto cursor-pointer"
+          className="px-3.5 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-semibold flex items-center space-x-1.5 transition-colors self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Report New Breakdown</span>
@@ -179,28 +179,28 @@ export const FaultList: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column: Fault Tickets List */}
-        <div className="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
+        <div className="lg:col-span-1 bg-white border border-[#E4E4E7] rounded-md p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-zinc-800 font-mono">
               Grid Fault Tickets ({filteredFaults.length})
             </h3>
             {/* Filter buttons */}
             <div className="flex items-center space-x-1 text-[10px] font-mono">
               <button
                 onClick={() => setStatusFilter('all')}
-                className={`px-2 py-0.5 rounded cursor-pointer transition-all ${statusFilter === 'all' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-900'}`}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-colors ${statusFilter === 'all' ? 'bg-[#09090B] text-white font-bold' : 'text-zinc-600 hover:text-zinc-950'}`}
               >
                 All
               </button>
               <button
                 onClick={() => setStatusFilter('active')}
-                className={`px-2 py-0.5 rounded cursor-pointer transition-all ${statusFilter === 'active' ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-900'}`}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-colors ${statusFilter === 'active' ? 'bg-rose-700 text-white font-bold' : 'text-zinc-600 hover:text-zinc-950'}`}
               >
                 Active
               </button>
               <button
                 onClick={() => setStatusFilter('resolved')}
-                className={`px-2 py-0.5 rounded cursor-pointer transition-all ${statusFilter === 'resolved' ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-900'}`}
+                className={`px-2 py-0.5 rounded cursor-pointer transition-colors ${statusFilter === 'resolved' ? 'bg-emerald-700 text-white font-bold' : 'text-zinc-600 hover:text-zinc-950'}`}
               >
                 Resolved
               </button>
@@ -216,32 +216,32 @@ export const FaultList: React.FC = () => {
                 <button
                   key={f.id}
                   onClick={() => setSelectedFault(f)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                  className={`w-full text-left p-3 rounded-md border transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-50/50 border-blue-500 shadow-sm ring-2 ring-blue-500/20'
-                      : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/60'
+                      ? 'bg-zinc-50 border-zinc-900 shadow-sm'
+                      : 'bg-white border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-slate-950">{f.faultCode}</span>
+                    <span className="font-mono text-xs font-bold text-zinc-950">{f.faultCode}</span>
                     <span
                       className={`px-1.5 py-0.5 rounded text-[9px] font-mono uppercase font-bold border ${
                         f.priority === 'critical'
                           ? 'bg-rose-50 text-rose-700 border-rose-200'
                           : f.priority === 'high'
                           ? 'bg-amber-50 text-amber-800 border-amber-200'
-                          : 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-zinc-100 text-zinc-700 border-zinc-200'
                       }`}
                     >
                       {f.priority}
                     </span>
                   </div>
 
-                  <div className="font-bold text-xs text-slate-900 mt-1 truncate">{f.category}</div>
-                  <p className="text-[11px] text-slate-500 mt-0.5 truncate">{f.description}</p>
+                  <div className="font-bold text-xs text-zinc-900 mt-1 truncate">{f.category}</div>
+                  <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{f.description}</p>
 
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[10px] font-mono">
-                    <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-zinc-100 text-[10px] font-mono">
+                    <span className="px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200 font-semibold">
                       {STAGES.find(s => s.key === f.status)?.label || f.status}
                     </span>
                     <span className={`px-1.5 py-0.5 rounded border ${sla.statusColor}`}>
@@ -257,12 +257,12 @@ export const FaultList: React.FC = () => {
         {/* Right Column: Selected Fault Details & Lifecycle Progression */}
         {selectedFault && (
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+            <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-xs space-y-4">
               {/* Header Info */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-3">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-mono font-extrabold text-sm sm:text-base text-neutral-950">
+                    <span className="font-mono font-extrabold text-sm sm:text-base text-zinc-950">
                       {selectedFault.faultCode}
                     </span>
                     <span
@@ -275,8 +275,8 @@ export const FaultList: React.FC = () => {
                       Priority: {selectedFault.priority}
                     </span>
                   </div>
-                  <h3 className="text-xs font-bold text-neutral-800 mt-1">{selectedFault.category}</h3>
-                  <p className="text-[11px] text-neutral-500 font-mono">
+                  <h3 className="text-xs font-bold text-zinc-800 mt-1">{selectedFault.category}</h3>
+                  <p className="text-[11px] text-zinc-500 font-mono">
                     Reported: {selectedFault.reportedAt} · Est. Affected: {selectedFault.affectedConsumersEst} Consumers
                   </p>
                 </div>
@@ -285,10 +285,10 @@ export const FaultList: React.FC = () => {
                 {(() => {
                   const sla = getSlaInfo(selectedFault);
                   return (
-                    <div className="p-2.5 rounded-xl border flex items-center space-x-2 self-start sm:self-auto shadow-2xs font-mono text-xs">
-                      <Timer className="w-4 h-4 text-neutral-700" />
+                    <div className="p-2 rounded-md border border-zinc-200 bg-zinc-50 flex items-center space-x-2 self-start sm:self-auto font-mono text-xs">
+                      <Timer className="w-4 h-4 text-zinc-700" />
                       <div>
-                        <div className="text-[10px] text-neutral-500 font-medium">SLA Deadline ({SLA_HOURS[selectedFault.priority]}h)</div>
+                        <div className="text-[10px] text-zinc-500 font-medium">SLA Deadline ({SLA_HOURS[selectedFault.priority]}h)</div>
                         <div className={`font-bold ${sla.statusColor} px-1.5 py-0.5 rounded border mt-0.5`}>
                           {sla.text}
                         </div>
@@ -299,13 +299,13 @@ export const FaultList: React.FC = () => {
               </div>
 
               {/* 8-STAGE LIFECYCLE PROGRESSION STEPPER (SECTION 9.1) */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800 font-mono">
-                  <span className="flex items-center space-x-1.5 text-blue-700">
+              <div className="bg-zinc-50 border border-zinc-200 rounded-md p-3.5 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-zinc-800 font-mono">
+                  <span className="flex items-center space-x-1.5 text-zinc-900">
                     <CheckSquare className="w-3.5 h-3.5" />
                     <span>8-Stage Lifecycle Progress:</span>
                   </span>
-                  <span className="text-blue-700 bg-blue-100 font-bold px-2 py-0.5 rounded text-[11px]">
+                  <span className="text-zinc-900 bg-zinc-200 font-bold px-2 py-0.5 rounded text-[11px]">
                     Stage {getStageIndex(selectedFault.status) + 1} of 8
                   </span>
                 </div>
@@ -320,12 +320,12 @@ export const FaultList: React.FC = () => {
                       <button
                         key={stage.key}
                         onClick={() => handleUpdateStatus(stage.key)}
-                        className={`p-1.5 rounded-lg border text-[10px] font-mono font-semibold transition-all cursor-pointer ${
+                        className={`p-1.5 rounded-md border text-[10px] font-mono font-semibold transition-colors cursor-pointer ${
                           isCurrent
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 shadow-md shadow-blue-500/25 ring-2 ring-blue-400'
+                            ? 'bg-[#09090B] text-white border-zinc-950 font-bold'
                             : isCompleted
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold'
-                            : 'bg-white text-slate-400 border-slate-200 hover:text-slate-800 hover:border-slate-300'
+                            : 'bg-white text-zinc-400 border-zinc-200 hover:text-zinc-800 hover:border-zinc-300'
                         }`}
                         title={`Advance to ${stage.label}`}
                       >
@@ -338,63 +338,63 @@ export const FaultList: React.FC = () => {
               </div>
 
               {/* Description */}
-              <div className="text-xs text-slate-700 bg-slate-50/70 p-3 rounded-xl border border-slate-200 leading-relaxed">
-                <span className="font-bold text-slate-900">Incident Report: </span>
+              <div className="text-xs text-zinc-700 bg-zinc-50 p-3 rounded-md border border-zinc-200 leading-relaxed">
+                <span className="font-bold text-zinc-900">Incident Report: </span>
                 {selectedFault.description}
               </div>
 
               {/* SPATIAL DISTANCE METRICS (POSTGIS SPHERICAL GEODESICS) */}
-              <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-3">
+              <div className="p-4 rounded-md bg-white border border-zinc-200 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
-                    <Compass className="w-4 h-4 text-blue-600" />
+                  <h4 className="font-bold text-xs text-zinc-900 uppercase tracking-wider flex items-center space-x-1.5">
+                    <Compass className="w-4 h-4 text-zinc-800" />
                     <span>Calculated Spatial Proximity & Network Distances</span>
                   </h4>
-                  <span className="text-[10px] text-blue-700 font-bold font-mono bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                  <span className="text-[10px] text-zinc-800 font-bold font-mono bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
                     PostGIS Geodesic
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-purple-50/50 border border-purple-200">
-                    <div className="text-[10px] text-purple-700 font-bold font-mono">Nearest Pole</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-purple-950 mt-0.5">
+                  <div className="p-2.5 rounded-md bg-zinc-50 border border-zinc-200">
+                    <div className="text-[10px] text-zinc-600 font-bold font-mono">Nearest Pole</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-zinc-950 mt-0.5">
                       {selectedFault.distanceFromPoleM ? `${selectedFault.distanceFromPoleM} m` : 'Calculating...'}
                     </div>
-                    <div className="text-[9px] text-purple-500 font-mono">Straight-line</div>
+                    <div className="text-[9px] text-zinc-500 font-mono">Straight-line</div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-200">
-                    <div className="text-[10px] text-emerald-700 font-bold font-mono">Nearest Transformer</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-emerald-950 mt-0.5">
+                  <div className="p-2.5 rounded-md bg-zinc-50 border border-zinc-200">
+                    <div className="text-[10px] text-zinc-600 font-bold font-mono">Nearest Transformer</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-zinc-950 mt-0.5">
                       {selectedFault.distanceFromDtM ? `${selectedFault.distanceFromDtM} m` : 'Calculating...'}
                     </div>
-                    <div className="text-[9px] text-emerald-500 font-mono">Straight-line</div>
+                    <div className="text-[9px] text-zinc-500 font-mono">Straight-line</div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-cyan-50/50 border border-cyan-200">
-                    <div className="text-[10px] text-cyan-700 font-bold font-mono">Along Feeder Route</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-cyan-950 mt-0.5">
+                  <div className="p-2.5 rounded-md bg-zinc-50 border border-zinc-200">
+                    <div className="text-[10px] text-zinc-600 font-bold font-mono">Along Feeder Route</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-zinc-950 mt-0.5">
                       {selectedFault.distanceAlongFeederM ? `${selectedFault.distanceAlongFeederM} m` : '1850 m'}
                     </div>
-                    <div className="text-[9px] text-cyan-500 font-mono">LineString Route</div>
+                    <div className="text-[9px] text-zinc-500 font-mono">LineString Route</div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-200">
-                    <div className="text-[10px] text-indigo-700 font-bold font-mono">From Section Office</div>
-                    <div className="font-mono text-sm sm:text-base font-extrabold text-indigo-950 mt-0.5">
+                  <div className="p-2.5 rounded-md bg-zinc-50 border border-zinc-200">
+                    <div className="text-[10px] text-zinc-600 font-bold font-mono">From Section Office</div>
+                    <div className="font-mono text-sm sm:text-base font-extrabold text-zinc-950 mt-0.5">
                       {selectedFault.distanceFromOfficeKm ? `${selectedFault.distanceFromOfficeKm} km` : '0.8 km'}
                     </div>
-                    <div className="text-[9px] text-indigo-500 font-mono">Marapalam Section</div>
+                    <div className="text-[9px] text-zinc-500 font-mono">Marapalam Section</div>
                   </div>
                 </div>
               </div>
 
               {/* Assignment & Crew Dispatch */}
-              <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-3.5 rounded-md bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-[11px] text-neutral-500 font-mono">Assigned Field Crew / Contractor:</span>
-                  <div className="font-semibold text-xs text-neutral-900 mt-0.5">
+                  <span className="text-[11px] text-zinc-500 font-mono">Assigned Field Crew / Contractor:</span>
+                  <div className="font-semibold text-xs text-zinc-900 mt-0.5">
                     {initialUsers.find(u => u.id === selectedFault.assignedTo)?.fullName || 'Unassigned (Awaiting JE/AE Dispatch)'}
                   </div>
                 </div>
@@ -402,7 +402,7 @@ export const FaultList: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <select
                     onChange={e => handleAssign(e.target.value)}
-                    className="bg-white border border-neutral-300 rounded-xl px-3 py-1.5 text-xs text-neutral-800 font-mono focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                    className="bg-white border border-zinc-300 rounded-md px-3 py-1.5 text-xs text-zinc-800 font-mono focus:outline-none focus:border-zinc-900"
                     defaultValue=""
                   >
                     <option value="" disabled>Dispatch Field Crew...</option>
@@ -418,28 +418,28 @@ export const FaultList: React.FC = () => {
 
       {/* New Breakdown Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 select-none">
-          <form onSubmit={handleCreateFault} className="bg-white border border-neutral-200 rounded-2xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-              <h3 className="font-bold text-sm text-neutral-950 flex items-center space-x-2">
-                <AlertTriangle className="w-4 h-4 text-neutral-900" />
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 select-none">
+          <form onSubmit={handleCreateFault} className="bg-white border border-zinc-200 rounded-md p-5 sm:p-6 max-w-lg w-full shadow-lg space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <h3 className="font-bold text-sm text-zinc-950 flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 text-zinc-900" />
                 <span>Report Distribution Grid Breakdown</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="p-1 rounded-lg text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 cursor-pointer"
+                className="p-1 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Fault Category</label>
+              <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Fault Category</label>
               <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
+                className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-2 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
               >
                 <option value="Conductor Snapped">Conductor Snapped</option>
                 <option value="HT Line Fault">HT 11kV Line Fault</option>
@@ -452,34 +452,34 @@ export const FaultList: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Description & Location</label>
+              <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Description & Location</label>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 placeholder="e.g. Snapped conductor across Maraimalai Adigal Salai opposite Bus Stand. Danger notices deployed."
-                className="w-full h-20 bg-neutral-50 border border-neutral-300 rounded-xl p-3 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
+                className="w-full h-20 bg-zinc-50 border border-zinc-300 rounded-md p-3 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Latitude</label>
+                <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Latitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={lat}
                   onChange={e => setLat(parseFloat(e.target.value))}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                  className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-2 text-xs text-zinc-900 font-mono focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-neutral-600 font-medium mb-1 font-mono">Longitude</label>
+                <label className="block text-[11px] text-zinc-600 font-medium mb-1 font-mono">Longitude</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={lng}
                   onChange={e => setLng(parseFloat(e.target.value))}
-                  className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                  className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-2 text-xs text-zinc-900 font-mono focus:bg-white focus:outline-none focus:border-zinc-900"
                 />
               </div>
             </div>
@@ -488,13 +488,13 @@ export const FaultList: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs cursor-pointer"
+                className="px-4 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-bold cursor-pointer"
               >
                 Submit & Calculate Distances
               </button>

@@ -82,25 +82,25 @@ export const LayerTree: React.FC = () => {
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-md border border-emerald-200/80 text-slate-900 shadow-lg hover:border-emerald-400 hover:shadow-emerald-500/10 transition-all text-xs font-semibold cursor-pointer"
+          className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-white border border-[#E4E4E7] text-[#09090B] shadow-sm hover:bg-zinc-50 transition-colors text-xs font-semibold cursor-pointer"
         >
-          <div className="w-5 h-5 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-2xs">
+          <div className="w-5 h-5 rounded-md bg-[#09090B] flex items-center justify-center text-white">
             <Sliders className="w-3 h-3" />
           </div>
-          <span className="hidden sm:inline font-bold text-slate-900">GIS Layers</span>
-          <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold">
+          <span className="hidden sm:inline font-bold text-zinc-950">GIS Layers</span>
+          <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-800 border border-zinc-200 font-semibold">
             {activeCount}/{layers.length}
           </span>
-          <ChevronDown className="w-3.5 h-3.5 text-emerald-600" />
+          <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
         </button>
 
         {isOpen && (
-          <div className="absolute left-0 top-11 w-80 max-w-[calc(100vw-2rem)] bg-white/98 backdrop-blur-md border border-slate-200 rounded-2xl shadow-2xl p-3.5 z-50 max-h-[75vh] overflow-y-auto animate-fadeIn">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              <span className="text-emerald-700 font-extrabold font-mono">Electrical GIS Overlays</span>
+          <div className="absolute left-0 top-10 w-80 max-w-[calc(100vw-2rem)] bg-white border border-[#E4E4E7] rounded-md shadow-lg p-3.5 z-50 max-h-[75vh] overflow-y-auto animate-fadeIn">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-100 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+              <span className="text-zinc-900 font-bold font-mono">Electrical GIS Overlays</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 rounded text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors sm:hidden"
+                className="p-1 rounded text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors sm:hidden"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -108,7 +108,7 @@ export const LayerTree: React.FC = () => {
 
             {uploadStatus && (
               <div
-                className={`mb-2.5 p-2 rounded-xl border text-[11px] font-mono leading-tight flex items-start space-x-1.5 ${
+                className={`mb-2.5 p-2 rounded-md border text-[11px] font-mono leading-tight flex items-start space-x-1.5 ${
                   uploadStatus.isError
                     ? 'bg-rose-50 text-rose-800 border-rose-200'
                     : 'bg-emerald-50 text-emerald-800 border-emerald-200'
@@ -141,7 +141,7 @@ export const LayerTree: React.FC = () => {
                       {catLayers.map(l => (
                         <div
                           key={l.id}
-                          className="flex items-center justify-between p-1.5 rounded-lg bg-neutral-50 border border-neutral-200 hover:border-neutral-300 text-xs transition-colors"
+                          className="flex items-center justify-between p-1.5 rounded-md bg-neutral-50 border border-neutral-200 hover:border-neutral-300 text-xs transition-colors"
                         >
                           <div className="flex items-center space-x-2 flex-1 truncate">
                             <span
@@ -184,31 +184,31 @@ export const LayerTree: React.FC = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+                className="w-full py-2 px-3 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-mono font-bold flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
               >
-                <Upload className="w-3.5 h-3.5 text-cyan-300" />
+                <Upload className="w-3.5 h-3.5 text-zinc-300" />
                 <span>Upload Layer (KML, GeoJSON, CSV)</span>
               </button>
-              <span className="block text-[9.5px] text-slate-400 font-mono text-center">
+              <span className="block text-[9.5px] text-zinc-500 font-mono text-center">
                 Supports Feeders (Lines), DTs & Poles (Points)
               </span>
 
-              {/* In-Map Simulator Toggle Pill ("Where to ON it") */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-[11px] font-semibold text-slate-700 flex items-center space-x-1">
+              {/* In-Map Simulator Toggle Pill */}
+              <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-xs">
+                <span className="text-[11px] font-semibold text-zinc-700 flex items-center space-x-1">
                   <Zap className="w-3 h-3 text-amber-500" />
                   <span>Test Grid Dummy Data:</span>
                 </span>
                 <button
                   type="button"
                   onClick={handleToggleSimulator}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold border transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold border transition-colors cursor-pointer ${
                     isSimulatorActive
-                      ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-2xs'
-                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                      ? 'bg-amber-50 text-amber-800 border-amber-300'
+                      : 'bg-zinc-100 text-zinc-700 border-zinc-200 hover:bg-zinc-200'
                   }`}
                 >
-                  {isSimulatorActive ? '⚡ SIMULATOR: ON' : 'SIMULATOR: OFF'}
+                  {isSimulatorActive ? 'SIMULATOR: ON' : 'SIMULATOR: OFF'}
                 </button>
               </div>
 
@@ -216,7 +216,7 @@ export const LayerTree: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClearUserLayers}
-                className="w-full py-1.5 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10.5px] font-semibold flex items-center justify-center space-x-1 transition-all cursor-pointer"
+                className="w-full py-1.5 px-2 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10.5px] font-semibold flex items-center justify-center space-x-1 transition-colors cursor-pointer"
               >
                 <Trash2 className="w-3 h-3 text-rose-600" />
                 <span>Clear Uploaded Map Layers</span>

@@ -85,9 +85,9 @@ export const PermitToWorkManager: React.FC = () => {
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
       {/* Header */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+          <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
             <HardHat className="w-5 h-5 text-amber-400" />
           </div>
           <div>
@@ -107,7 +107,7 @@ export const PermitToWorkManager: React.FC = () => {
 
         <button
           onClick={() => setShowNewModal(true)}
-          className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all self-start sm:self-auto cursor-pointer"
+          className="px-3.5 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Issue New PTW</span>
@@ -116,7 +116,7 @@ export const PermitToWorkManager: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Permits List */}
-        <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-2xl p-4 shadow-xs space-y-3">
+        <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-md p-4 shadow-xs space-y-3">
           <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
             <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
               Permit Register ({permits.length})
@@ -131,7 +131,7 @@ export const PermitToWorkManager: React.FC = () => {
                 <button
                   key={p.id}
                   onClick={() => setSelectedPermit(p)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                  className={`w-full text-left p-3 rounded-md border transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-neutral-50 border-neutral-900 shadow-xs ring-1 ring-neutral-900'
                       : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50'
@@ -158,7 +158,7 @@ export const PermitToWorkManager: React.FC = () => {
         {/* Selected Permit Inspection Card */}
         {selectedPermit && (
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+            <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
                 <div>
                   <div className="flex items-center space-x-2">
@@ -177,7 +177,7 @@ export const PermitToWorkManager: React.FC = () => {
                 {selectedPermit.status === 'isolated' && (
                   <button
                     onClick={() => handleClearPTW(selectedPermit.id)}
-                    className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all self-start sm:self-auto cursor-pointer"
+                    className="px-3.5 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all self-start sm:self-auto cursor-pointer"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Authorize Line Clear & Re-energize</span>
@@ -187,13 +187,13 @@ export const PermitToWorkManager: React.FC = () => {
 
               <div>
                 <span className="text-[11px] text-neutral-500 font-mono font-medium">Work Description & Scope:</span>
-                <p className="text-xs text-neutral-800 mt-1 p-3 rounded-xl bg-neutral-50 border border-neutral-200 leading-relaxed">
+                <p className="text-xs text-neutral-800 mt-1 p-3 rounded-md bg-neutral-50 border border-neutral-200 leading-relaxed">
                   {selectedPermit.workDescription}
                 </p>
               </div>
 
               {/* Statutory Safety Checklist */}
-              <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-2.5">
+              <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 space-y-2.5">
                 <h4 className="font-bold text-xs text-neutral-900 uppercase tracking-wider flex items-center space-x-1.5 font-mono">
                   <Lock className="w-4 h-4 text-amber-600" />
                   <span>Mandatory Statutory Safety Verifications (CEA Safety Regs)</span>
@@ -220,7 +220,7 @@ export const PermitToWorkManager: React.FC = () => {
               </div>
 
               {/* Signatures & Authority */}
-              <div className="grid grid-cols-2 gap-3 text-xs font-mono p-3 rounded-xl bg-white border border-neutral-200">
+              <div className="grid grid-cols-2 gap-3 text-xs font-mono p-3 rounded-md bg-white border border-neutral-200">
                 <div>
                   <span className="text-[10px] text-neutral-500 font-sans">Applicant Officer:</span>
                   <div className="font-bold text-neutral-950 mt-0.5">{selectedPermit.applicantName}</div>
@@ -237,8 +237,8 @@ export const PermitToWorkManager: React.FC = () => {
 
       {/* New PTW Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 select-none">
-          <form onSubmit={handleCreatePTW} className="bg-white border border-neutral-300 rounded-2xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4">
+        <div className="fixed inset-0 bg-neutral-900/40 flex items-center justify-center p-4 z-50 select-none">
+          <form onSubmit={handleCreatePTW} className="bg-white border border-neutral-300 rounded-md p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
               <h3 className="font-bold text-sm text-neutral-950 flex items-center space-x-2">
                 <HardHat className="w-4 h-4 text-amber-600" />
@@ -247,7 +247,7 @@ export const PermitToWorkManager: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="p-1 rounded-lg text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 cursor-pointer"
+                className="p-1 rounded-md text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -258,7 +258,7 @@ export const PermitToWorkManager: React.FC = () => {
               <select
                 value={feederId}
                 onChange={e => setFeederId(e.target.value)}
-                className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
               >
                 {initialFeeders.map(f => (
                   <option key={f.id} value={f.id}>{f.code} - {f.name}</option>
@@ -272,7 +272,7 @@ export const PermitToWorkManager: React.FC = () => {
                 value={workDesc}
                 onChange={e => setWorkDesc(e.target.value)}
                 placeholder="e.g. Conductor stringing and tree clearance between Pole 2 and Pole 4."
-                className="w-full h-20 bg-neutral-50 border border-neutral-300 rounded-xl p-3 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
+                className="w-full h-20 bg-neutral-50 border border-neutral-300 rounded-md p-3 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
               />
             </div>
 
@@ -282,7 +282,7 @@ export const PermitToWorkManager: React.FC = () => {
                 type="text"
                 value={isolationPoints}
                 onChange={e => setIsolationPoints(e.target.value)}
-                className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
               />
             </div>
 
@@ -290,13 +290,13 @@ export const PermitToWorkManager: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
-                className="px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs cursor-pointer"
+                className="px-4 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs cursor-pointer"
               >
                 Sign & Issue Permit
               </button>

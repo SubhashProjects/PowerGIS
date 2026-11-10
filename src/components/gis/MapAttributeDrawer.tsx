@@ -66,12 +66,12 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
       {/* Drawer Handle & Quick Toolbar */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="h-10 px-4 bg-white/95 backdrop-blur-md border-t border-b border-neutral-300 flex items-center justify-between cursor-pointer hover:bg-neutral-50 transition-colors shadow-sm"
+        className="h-10 px-4 bg-white border-t border-b border-[#E4E4E7] flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors shadow-sm"
       >
-        <div className="flex items-center space-x-2 text-xs font-bold text-neutral-900">
-          <Table className="w-4 h-4 text-neutral-800" />
+        <div className="flex items-center space-x-2 text-xs font-bold text-zinc-950">
+          <Table className="w-4 h-4 text-zinc-800" />
           <span>Spatial Attribute Repository</span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-700">
             {isOpen ? 'Click to Collapse' : 'Click to Open Data Grid'}
           </span>
         </div>
@@ -85,7 +85,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
                   e.stopPropagation();
                   handleExportTab();
                 }}
-                className="px-2.5 py-1 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-[11px] font-mono font-semibold text-neutral-800 flex items-center space-x-1 border border-neutral-300"
+                className="px-2.5 py-1 rounded-md bg-neutral-100 hover:bg-neutral-200 text-[11px] font-mono font-semibold text-neutral-800 flex items-center space-x-1 border border-neutral-300"
                 title="Export active table to CSV"
               >
                 <Download className="w-3 h-3" />
@@ -120,7 +120,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
             <div className="flex items-center space-x-1 overflow-x-auto pb-1 sm:pb-0 text-xs font-medium">
               <button
                 onClick={() => setActiveTab('transformers')}
-                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-md whitespace-nowrap transition-all ${
                   activeTab === 'transformers'
                     ? 'bg-neutral-900 text-white font-bold shadow-xs'
                     : 'text-neutral-600 hover:bg-neutral-200'
@@ -130,7 +130,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab('feeders')}
-                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-md whitespace-nowrap transition-all ${
                   activeTab === 'feeders'
                     ? 'bg-neutral-900 text-white font-bold shadow-xs'
                     : 'text-neutral-600 hover:bg-neutral-200'
@@ -140,7 +140,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab('poles')}
-                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-md whitespace-nowrap transition-all ${
                   activeTab === 'poles'
                     ? 'bg-neutral-900 text-white font-bold shadow-xs'
                     : 'text-neutral-600 hover:bg-neutral-200'
@@ -150,7 +150,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab('substations')}
-                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-md whitespace-nowrap transition-all ${
                   activeTab === 'substations'
                     ? 'bg-neutral-900 text-white font-bold shadow-xs'
                     : 'text-neutral-600 hover:bg-neutral-200'
@@ -160,7 +160,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab('consumers')}
-                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-md whitespace-nowrap transition-all ${
                   activeTab === 'consumers'
                     ? 'bg-neutral-900 text-white font-bold shadow-xs'
                     : 'text-neutral-600 hover:bg-neutral-200'
@@ -178,7 +178,7 @@ export const MapAttributeDrawer: React.FC<MapAttributeDrawerProps> = ({
                 value={searchFilter}
                 onChange={e => setSearchFilter(e.target.value)}
                 placeholder="Filter table records..."
-                className="w-full bg-white border border-neutral-300 rounded-lg pl-8 pr-3 py-1 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 font-mono"
+                className="w-full bg-white border border-neutral-300 rounded-md pl-8 pr-3 py-1 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 font-mono"
               />
             </div>
           </div>

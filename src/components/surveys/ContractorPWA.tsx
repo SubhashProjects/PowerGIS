@@ -135,10 +135,10 @@ export const ContractorPWA: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-3 sm:p-6 space-y-4 text-neutral-900 select-none">
       {/* PWA Mobile Header Card */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+      <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+            <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
               <Smartphone className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
@@ -151,12 +151,12 @@ export const ContractorPWA: React.FC = () => {
 
           <div className="flex items-center space-x-2">
             {isOnline ? (
-              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-mono border border-emerald-200 font-bold shadow-2xs">
+              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-xs font-mono border border-emerald-200 font-bold shadow-2xs">
                 <Wifi className="w-3.5 h-3.5 text-emerald-600" />
                 <span>ONLINE</span>
               </span>
             ) : (
-              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-neutral-100 text-neutral-600 text-xs font-mono border border-neutral-200">
+              <span className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-neutral-100 text-neutral-600 text-xs font-mono border border-neutral-200">
                 <WifiOff className="w-3.5 h-3.5" />
                 <span>OFFLINE ({unsyncedCount})</span>
               </span>
@@ -165,7 +165,7 @@ export const ContractorPWA: React.FC = () => {
         </div>
 
         {/* Live GPS Telemetry Box */}
-        <div className="p-3.5 rounded-xl bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-3.5 rounded-md bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="text-[10px] uppercase font-bold text-neutral-500 font-mono">Live GPS Sensor Telemetry</div>
             <div className="font-mono text-sm text-neutral-950 font-extrabold mt-0.5">
@@ -181,7 +181,7 @@ export const ContractorPWA: React.FC = () => {
           <button
             onClick={handleAcquireGPS}
             disabled={isLocating}
-            className="flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs transition-all disabled:opacity-50 cursor-pointer self-start sm:self-auto"
+            className="flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs transition-all disabled:opacity-50 cursor-pointer self-start sm:self-auto"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`} />
             <span>{isLocating ? 'Acquiring...' : 'Refresh GPS'}</span>
@@ -190,7 +190,7 @@ export const ContractorPWA: React.FC = () => {
       </div>
 
       {/* Asset Capture Form */}
-      <form onSubmit={handleAddAssetToDraft} className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+      <form onSubmit={handleAddAssetToDraft} className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
           <h3 className="font-bold text-xs text-neutral-900 uppercase tracking-wider flex items-center space-x-2 font-mono">
             <Plus className="w-4 h-4 text-neutral-700" />
@@ -200,7 +200,7 @@ export const ContractorPWA: React.FC = () => {
         </div>
 
         {submitMessage && (
-          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2 animate-fadeIn font-mono">
+          <div className="p-3 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2 animate-fadeIn font-mono">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
             <span className="font-bold">{submitMessage}</span>
           </div>
@@ -212,7 +212,7 @@ export const ContractorPWA: React.FC = () => {
             <select
               value={assetType}
               onChange={e => setAssetType(e.target.value as SurveyAssetType)}
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             >
               <option value="pole">Utility Pole (HT / LT)</option>
               <option value="transformer">Distribution Transformer (DT)</option>
@@ -229,20 +229,20 @@ export const ContractorPWA: React.FC = () => {
               value={assetCode}
               onChange={e => setAssetCode(e.target.value)}
               placeholder="e.g. POL-MARA-003"
-              className="w-full bg-neutral-50 border border-neutral-300 rounded-xl px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-2 text-xs text-neutral-900 font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
             />
           </div>
         </div>
 
         {/* Dynamic Attributes based on Asset Type */}
         {assetType === 'pole' && (
-          <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-50 rounded-xl border border-neutral-200">
+          <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-50 rounded-md border border-neutral-200">
             <div>
               <label className="block text-[10px] text-neutral-500 font-medium mb-1 font-mono">Pole Type & Material</label>
               <select
                 value={attributes.pole_type}
                 onChange={e => setAttributes({ ...attributes, pole_type: e.target.value })}
-                className="w-full bg-white border border-neutral-300 rounded-lg px-2.5 py-1.5 text-xs text-neutral-900 focus:outline-none"
+                className="w-full bg-white border border-neutral-300 rounded-md px-2.5 py-1.5 text-xs text-neutral-900 focus:outline-none"
               >
                 <option value="PSCC 9m">PSCC 9m (Concrete)</option>
                 <option value="Steel Tubular 11m">Steel Tubular 11m (Galvanized)</option>
@@ -255,20 +255,20 @@ export const ContractorPWA: React.FC = () => {
                 type="number"
                 value={attributes.num_insulators || 3}
                 onChange={e => setAttributes({ ...attributes, num_insulators: parseInt(e.target.value) })}
-                className="w-full bg-white border border-neutral-300 rounded-lg px-2.5 py-1.5 text-xs text-neutral-900 font-mono focus:outline-none"
+                className="w-full bg-white border border-neutral-300 rounded-md px-2.5 py-1.5 text-xs text-neutral-900 font-mono focus:outline-none"
               />
             </div>
           </div>
         )}
 
         {assetType === 'consumer' && (
-          <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-50 rounded-xl border border-neutral-200">
+          <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-50 rounded-md border border-neutral-200">
             <div>
               <label className="block text-[10px] text-neutral-500 font-medium mb-1 font-mono">Meter Classification</label>
               <select
                 value={attributes.is_smart_meter ? 'smart' : 'conv'}
                 onChange={e => setAttributes({ ...attributes, is_smart_meter: e.target.value === 'smart' })}
-                className="w-full bg-white border border-neutral-300 rounded-lg px-2.5 py-1.5 text-xs text-neutral-900 focus:outline-none"
+                className="w-full bg-white border border-neutral-300 rounded-md px-2.5 py-1.5 text-xs text-neutral-900 focus:outline-none"
               >
                 <option value="smart">Smart Energy Meter (AMI)</option>
                 <option value="conv">Conventional Electronic Meter</option>
@@ -280,7 +280,7 @@ export const ContractorPWA: React.FC = () => {
                 type="text"
                 placeholder="e.g. POL-MARA-001"
                 onChange={e => setAttributes({ ...attributes, connected_pole: e.target.value })}
-                className="w-full bg-white border border-neutral-300 rounded-lg px-2.5 py-1.5 text-xs text-neutral-900 font-mono focus:outline-none"
+                className="w-full bg-white border border-neutral-300 rounded-md px-2.5 py-1.5 text-xs text-neutral-900 font-mono focus:outline-none"
               />
             </div>
           </div>
@@ -294,7 +294,7 @@ export const ContractorPWA: React.FC = () => {
 
           <button
             type="submit"
-            className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+            className="px-4 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add to Local Batch</span>
@@ -304,7 +304,7 @@ export const ContractorPWA: React.FC = () => {
 
       {/* Staged Draft Items */}
       {stagedQueue.length > 0 && (
-        <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+        <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
             <h4 className="font-bold text-xs text-neutral-900 uppercase tracking-wider font-mono">
               Pending Survey Batch ({stagedQueue.length} Assets Captured)
@@ -318,7 +318,7 @@ export const ContractorPWA: React.FC = () => {
             {stagedQueue.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between p-3 rounded-xl bg-neutral-50 border border-neutral-200 text-xs"
+                className="flex items-center justify-between p-3 rounded-md bg-neutral-50 border border-neutral-200 text-xs"
               >
                 <div>
                   <span className="font-bold text-neutral-950">{item.temporaryCode}</span>
@@ -331,7 +331,7 @@ export const ContractorPWA: React.FC = () => {
 
           <button
             onClick={handleSubmitBatchForApproval}
-            className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
+            className="w-full py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
           >
             <UploadCloud className="w-4 h-4" />
             <span>Submit Survey to Junior Engineer (JE) for Official Review</span>

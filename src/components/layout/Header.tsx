@@ -236,7 +236,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
                 ? 'Simulator ACTIVE: Streaming simulated test grid & SCADA telemetry. Click to turn OFF (Clean Real Mode).'
                 : 'Simulator OFF: Clean real operational mode. Click to turn ON simulated test grid & telemetry.'
             }
-            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md border text-xs font-mono font-medium whitespace-nowrap flex-shrink-0 transition-colors cursor-pointer ${
+            className={`inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md border text-xs font-mono font-medium whitespace-nowrap flex-shrink-0 leading-none transition-colors cursor-pointer select-none ${
               isSimulatorActive
                 ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                 : 'bg-white text-zinc-700 border-[#E4E4E7] hover:bg-zinc-50 hover:text-zinc-950'
@@ -247,8 +247,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
                 isSimulatorActive ? 'bg-amber-500' : 'bg-zinc-300'
               }`}
             />
-            <span className="hidden sm:inline whitespace-nowrap">SIMULATOR:</span>
-            <span className={`whitespace-nowrap font-bold ${isSimulatorActive ? 'text-amber-900' : 'text-zinc-500'}`}>
+            <span className="hidden sm:inline whitespace-nowrap leading-none tracking-tight">SIMULATOR:</span>
+            <span className={`whitespace-nowrap font-bold leading-none ${isSimulatorActive ? 'text-amber-900' : 'text-zinc-500'}`}>
               {isSimulatorActive ? 'ON' : 'OFF'}
             </span>
           </button>
@@ -339,7 +339,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
               value={searchQuery}
               onChange={handleSearch}
               placeholder={LABELS.header.searchMobilePlaceholder}
-              className="w-full bg-neutral-100 border border-neutral-200 rounded-lg pl-9 pr-9 py-2 text-xs text-neutral-900 placeholder-neutral-500 focus:outline-none focus:border-neutral-900 font-mono"
+              className="w-full bg-neutral-100 border border-neutral-200 rounded-md pl-9 pr-9 py-2 text-xs text-neutral-900 placeholder-neutral-500 focus:outline-none focus:border-neutral-900 font-mono"
             />
             <button
               onClick={() => {
@@ -354,7 +354,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
           </div>
 
           {searchResults.length > 0 && (
-            <div className="mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+            <div className="mt-2 bg-white border border-neutral-200 rounded-md shadow-xl overflow-hidden max-h-60 overflow-y-auto">
               {searchResults.map(res => (
                 <button
                   key={res.id || res.code || res.poleNumber}
