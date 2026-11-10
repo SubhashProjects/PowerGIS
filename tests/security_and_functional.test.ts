@@ -746,6 +746,10 @@ async function runTestSuite() {
     assert(assetService.getLifecycles().length === 0, 'Clean mode strictly yields 0 simulated lifecycles');
     assert(!surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Clean mode strictly excludes simulated dummy survey surv-1');
     assert(faultService.getFaults().length === 0, 'Clean mode strictly yields 0 simulated breakdown faults');
+    assert(scadaService.getPoints().length === 0, 'Clean mode strictly yields 0 SCADA telemetry points');
+    assert(scadaService.getAlarms().length === 0, 'Clean mode strictly yields 0 SCADA alarms');
+    const cleanIndices = reliabilityService.calculateDynamicIndices({ totalConsumers: 4850, outageType: 'ALL' });
+    assert(cleanIndices.totalOutages === 0 && cleanIndices.saifi === 0, 'Clean mode strictly yields 0 IEEE 1366 outages & 0 SAIFI');
 
     const jeUser = initialUsers.find(u => u.role === 'je')!;
     const cleanDashboard = notificationService.getDashboardData(jeUser);
@@ -761,6 +765,10 @@ async function runTestSuite() {
     assert(assetService.getLifecycles().length > 0, 'Simulator ON enables simulated lifecycles');
     assert(surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Simulator ON enables simulated field survey surv-1');
     assert(faultService.getFaults().length > 0, 'Simulator ON enables simulated breakdown faults');
+    assert(scadaService.getPoints().length > 0, 'Simulator ON enables SCADA telemetry points');
+    assert(scadaService.getAlarms().length > 0, 'Simulator ON enables SCADA alarms');
+    const simIndices = reliabilityService.calculateDynamicIndices({ totalConsumers: 4850, outageType: 'ALL' });
+    assert(simIndices.totalOutages > 0, 'Simulator ON enables dynamic IEEE 1366 reliability calculations');
     const simDashboard = notificationService.getDashboardData(jeUser);
     assert(simDashboard.assignments.some(a => a.id === 'asg-je-1'), 'Simulator ON populates simulated role assignment asg-je-1');
 

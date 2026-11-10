@@ -55,6 +55,7 @@ export const OutageManager: React.FC = () => {
     startDate: startDate || undefined,
     endDate: endDate || undefined,
     totalConsumers: totalConsumersInput,
+    includeSimulated: isSimActive,
   });
 
   // Filtered Outages Table

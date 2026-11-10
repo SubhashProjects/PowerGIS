@@ -16,6 +16,7 @@ export interface DynamicReliabilityFilter {
   startDate?: string;
   endDate?: string;
   outageType?: 'Planned' | 'Emergency' | 'Load Shedding' | 'ALL';
+  includeSimulated?: boolean;
 }
 
 export interface CalculatedReliabilityIndices {
@@ -75,10 +76,28 @@ export class ReliabilityService {
    * Computes IEEE 1366 Indices dynamically from live outage records
    */
   public calculateDynamicIndices(filter: DynamicReliabilityFilter): CalculatedReliabilityIndices {
-    let sourceOutages = this.getOutages(filter.sectionId);
-    if (sourceOutages.length === 0) {
-      sourceOutages = this.getOutages(filter.sectionId, true);
+    const isSim = assetService.isSimulatorMode() || Boolean(filter.includeSimulated);
+    let sourceOutages = this.getOutages(filter.sectionId, isSim);
+
+    if (!isSim && sourceOutages.length === 0) {
+      return {
+        sectionId: filter.sectionId,
+        calculationPeriod: `${filter.startDate || 'All'} - ${filter.endDate || 'Present'}`,
+        totalOutages: 0,
+        totalAffected: 0,
+        totalCustomerMinutes: 0,
+        saifi: 0,
+        saidi: 0,
+        caidi: 0,
+        ensMWh: 0,
+        jercCompliance: {
+          saifiCompliant: true,
+          saidiCompliant: true,
+          status: 'COMPLIANT',
+        },
+      };
     }
+
     let list = [...sourceOutages];
 
     if (filter.sectionId) {
@@ -138,7 +157,7 @@ export class ReliabilityService {
    * Backward-compatible helper for legacy components
    */
   public calculateSectionIndices(sectionId: string, totalConsumers: number) {
-    const res = this.calculateDynamicIndices({ sectionId, totalConsumers });
+    const res = this.calculateDynamicIndices({ sectionId, totalConsumers, includeSimulated: true });
     return {
       totalOutages: res.totalOutages,
       totalAffected: res.totalAffected,

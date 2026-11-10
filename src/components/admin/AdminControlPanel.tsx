@@ -18,7 +18,11 @@ import {
   Users, UserPlus, Pencil, Trash2, LogIn, Search, Filter, RefreshCw, UserCheck, Key, Phone, Mail, Building, Zap
 } from 'lucide-react';
 
-export const AdminControlPanel: React.FC = () => {
+interface AdminControlPanelProps {
+  initialTab?: 'users' | 'migration' | 'features';
+}
+
+export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab = 'users' }) => {
   const {
     user,
     users,
@@ -32,8 +36,12 @@ export const AdminControlPanel: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Active Main Sub-Tab in Admin Panel
-  const [activeTab, setActiveTab] = useState<'users' | 'migration' | 'features'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'migration' | 'features'>(initialTab);
   const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   useEffect(() => {
     const unsub = assetService.subscribe(() => {

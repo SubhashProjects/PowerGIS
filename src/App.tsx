@@ -127,8 +127,8 @@ const MainLayout: React.FC = () => {
               {activeTab === 'disaster' && <DisasterResponseCell />}
               {activeTab === 'safety_ptw' && <PermitToWorkManager />}
               {activeTab === 'asset_risk' && <AssetRiskMatrix />}
-              {activeTab === 'backup_restore' && <AdminControlPanel />}
-              {activeTab === 'admin_panel' && <AdminControlPanel />}
+              {activeTab === 'backup_restore' && <AdminControlPanel initialTab="migration" />}
+              {activeTab === 'admin_panel' && <AdminControlPanel initialTab="users" />}
             </>
           )}
 

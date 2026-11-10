@@ -4,16 +4,78 @@
 // PURE WHITE THEME & ELECTRICAL SUPPLY GRAPH TOPOLOGY
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
 import { GitFork, ArrowUp, ArrowDown, Cpu, Zap, Box, Users, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 export const NetworkTraceViewer: React.FC = () => {
+  const [, setVersion] = useState(0);
+
+  useEffect(() => {
+    const unsub = assetService.subscribe(() => {
+      setVersion(v => v + 1);
+    });
+    return unsub;
+  }, []);
+
   const [selectedFeederId, setSelectedFeederId] = useState<string>('fdr-mara-1');
   const [traceDirection, setTraceDirection] = useState<'upstream' | 'downstream'>('downstream');
 
   const feeders = assetService.getFeeders();
-  const currentFeeder = feeders.find(f => f.id === selectedFeederId) || feeders[0];
+  const currentFeeder = feeders.find(f => f.id === selectedFeederId) || feeders[0] || null;
+
+  if (feeders.length === 0 || !currentFeeder) {
+    return (
+      <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-neutral-900 select-none">
+        {/* Top Banner */}
+        <div className="bg-white border border-neutral-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+              <GitFork className="w-5 h-5 text-sky-400" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+                  Network Topology & Supply Graph Tracing
+                </h1>
+                <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
+                  POSTGIS PGROUTING
+                </span>
+              </div>
+              <p className="text-xs text-neutral-500 font-mono mt-0.5">
+                Source Substation › 11kV Feeder Backbone › DT Service Areas › End Consumer Points
+              </p>
+            </div>
+          </div>
+
+          <span className="px-3 py-1.5 rounded-xl bg-neutral-100 text-neutral-800 font-mono text-xs border border-neutral-200 self-start sm:self-auto font-semibold">
+            Clean Standby Mode Active
+          </span>
+        </div>
+
+        {/* Empty State Card */}
+        <div className="p-10 rounded-2xl bg-white border border-neutral-200 text-center space-y-3 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto text-neutral-400">
+            <GitFork className="w-6 h-6 text-neutral-400" />
+          </div>
+          <h3 className="font-bold text-base text-neutral-900">No Distribution Feeders in Clean Mode</h3>
+          <p className="text-xs text-neutral-500 max-w-md mx-auto">
+            Upload your distribution network layers (KML, GeoJSON, CSV) with feeder LineStrings and Substation points, or turn ON the SCADA / System Simulator to trace upstream/downstream power flow graphs.
+          </p>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => assetService.toggleSimulatorMode()}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-bold text-xs font-mono shadow-xs cursor-pointer inline-flex items-center space-x-1.5"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>⚡ Turn ON Simulator</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const sourceSubstation = assetService.getSubstations().find(s => s.id === currentFeeder.substationId);
   const connectedDTs = assetService.getTransformers().filter(t => t.feederId === currentFeeder.id);

@@ -49,7 +49,15 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       setGatewayStats(scadaGatewayService.getStats());
     });
     const unsubAsset = assetService.subscribe(() => {
-      setIsSimulatorActive(assetService.isSimulatorMode());
+      const sim = assetService.isSimulatorMode();
+      setIsSimulatorActive(sim);
+      setPoints(scadaService.getPoints(sourceFilter));
+      setAlarms(scadaService.getAlarms(sourceFilter));
+      if (!sim) {
+        setConnectionStatus('DISCONNECTED');
+      } else {
+        setConnectionStatus(scadaGatewayService.getConnectionStatus());
+      }
     });
     return () => {
       unsubScada();
@@ -429,44 +437,66 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       </div>
 
       {/* Real-time Grid Telemetry Key Metrics Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {points.slice(0, 6).map(pt => (
-          <div key={pt.tag} className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-            <div className="flex items-center justify-between text-[11px] font-mono text-slate-500">
-              <span className="truncate">{pt.description}</span>
-              <span
-                className={`text-[9px] px-1 rounded border font-bold ${
-                  pt.sourceType === 'SIMULATOR'
-                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                    : 'bg-slate-100 text-slate-700 border-slate-200'
-                }`}
-              >
-                {pt.sourceType === 'SIMULATOR' ? 'SIM' : 'OP'}
-              </span>
+      {points.length > 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {points.slice(0, 6).map(pt => (
+            <div key={pt.tag} className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <div className="flex items-center justify-between text-[11px] font-mono text-slate-500">
+                <span className="truncate">{pt.description}</span>
+                <span
+                  className={`text-[9px] px-1 rounded border font-bold ${
+                    pt.sourceType === 'SIMULATOR'
+                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : 'bg-slate-100 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  {pt.sourceType === 'SIMULATOR' ? 'SIM' : 'OP'}
+                </span>
+              </div>
+              <div className="flex items-baseline space-x-1.5 mt-1.5">
+                <span className="font-mono text-base sm:text-lg font-extrabold text-slate-950">
+                  {pt.voltageKV ? `${pt.voltageKV} kV` : pt.currentAmps ? `${pt.currentAmps} A` : '50.02 Hz'}
+                </span>
+                {pt.activePowerMW !== undefined && pt.activePowerMW > 0 && (
+                  <span className="text-[10px] text-slate-500 font-mono">({pt.activePowerMW} MW)</span>
+                )}
+              </div>
+              <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100 text-[10px] font-mono">
+                <span className="text-slate-400">{pt.lastUpdated}</span>
+                <span
+                  className={`font-bold px-1.5 py-0.2 rounded border ${
+                    pt.breakerStatus === 'CLOSED'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                  }`}
+                >
+                  {pt.breakerStatus || 'NORMAL'}
+                </span>
+              </div>
             </div>
-            <div className="flex items-baseline space-x-1.5 mt-1.5">
-              <span className="font-mono text-base sm:text-lg font-extrabold text-slate-950">
-                {pt.voltageKV ? `${pt.voltageKV} kV` : pt.currentAmps ? `${pt.currentAmps} A` : '50.02 Hz'}
-              </span>
-              {pt.activePowerMW !== undefined && pt.activePowerMW > 0 && (
-                <span className="text-[10px] text-slate-500 font-mono">({pt.activePowerMW} MW)</span>
-              )}
-            </div>
-            <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100 text-[10px] font-mono">
-              <span className="text-slate-400">{pt.lastUpdated}</span>
-              <span
-                className={`font-bold px-1.5 py-0.2 rounded border ${
-                  pt.breakerStatus === 'CLOSED'
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-rose-50 text-rose-700 border-rose-200'
-                }`}
-              >
-                {pt.breakerStatus || 'NORMAL'}
-              </span>
-            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center space-y-2 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+            <Radio className="w-6 h-6 text-slate-400" />
           </div>
-        ))}
-      </div>
+          <h3 className="font-bold text-sm text-slate-800">SCADA Telemetry Disconnected (Clean Standby Mode)</h3>
+          <p className="text-xs text-slate-500 max-w-lg mx-auto">
+            Operating in clean mode without simulated telemetry feeds. Turn ON the SCADA / System Simulator to stream dynamic 3-phase measurements, load curves, breaker statuses, and alarm events.
+          </p>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={handleToggleSimulator}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-bold text-xs font-mono shadow-xs cursor-pointer inline-flex items-center space-x-1.5"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>⚡ Turn ON SCADA Simulator</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: INTERACTIVE SINGLE LINE DIAGRAM (SLD) CANVAS */}
       {activeTab === 'sld' && (() => {

@@ -15,6 +15,7 @@ import { initialScadaPoints, initialScadaAlarms } from './mockData';
 import { scadaSimulatorService } from './scadaSimulatorService';
 import { scadaGatewayService } from './scadaGatewayService';
 import { authService } from './authService';
+import { assetService } from './assetService';
 
 export class ScadaService {
   private static instance: ScadaService;
@@ -56,7 +57,11 @@ export class ScadaService {
   /**
    * Retrieves telemetry points according to source filter
    */
-  public getPoints(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR'): ScadaTelemetryPoint[] {
+  public getPoints(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR', includeSimulated = false): ScadaTelemetryPoint[] {
+    const isSim = assetService.isSimulatorMode() || includeSimulated;
+    if (!isSim && !includeSimulated) {
+      return [];
+    }
     const f = filter || this.activeSourceFilter;
     const simPoints = scadaSimulatorService.getPoints();
 
@@ -72,7 +77,11 @@ export class ScadaService {
   /**
    * Retrieves alarms according to source filter
    */
-  public getAlarms(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR'): ScadaAlarm[] {
+  public getAlarms(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR', includeSimulated = false): ScadaAlarm[] {
+    const isSim = assetService.isSimulatorMode() || includeSimulated;
+    if (!isSim && !includeSimulated) {
+      return [];
+    }
     const f = filter || this.activeSourceFilter;
     const simAlarms = scadaSimulatorService.getAlarms();
 
