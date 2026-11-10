@@ -14,7 +14,7 @@ interface AuthContextType {
   availableUsers: UserProfile[];
   users: UserProfile[];
   isAuthenticated: boolean;
-  login: (identifier: string, password: string) => LoginResult;
+  login: (identifier: string, password: string) => Promise<LoginResult>;
   loginAsPersona: (userId: string) => LoginResult;
   switchUser: (userId: string) => void;
   addUser: (userData: Omit<UserProfile, 'id'> & { id?: string; password?: string }) => UserProfile;
@@ -48,8 +48,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (identifier: string, password: string): LoginResult => {
-    const res = authService.login(identifier, password);
+  const login = async (identifier: string, password: string): Promise<LoginResult> => {
+    const res = await authService.loginWithSupabase(identifier, password);
     if (res.success && res.user) {
       setUser(res.user);
       setIsAuthenticated(true);

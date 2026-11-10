@@ -750,8 +750,9 @@ async function runTestSuite() {
     assert(reliabilityService.getMetrics().length === 0, 'Clean mode strictly yields 0 simulated outage reliability metrics');
     assert(!surveyService.getSubmissions().some(s => s.id === 'surv-1'), 'Clean mode strictly excludes simulated dummy survey surv-1');
     assert(faultService.getFaults().length === 0, 'Clean mode strictly yields 0 simulated breakdown faults');
-    assert(scadaService.getPoints().length === 0, 'Clean mode strictly yields 0 SCADA telemetry points');
-    assert(scadaService.getAlarms().length === 0, 'Clean mode strictly yields 0 SCADA alarms');
+    assert(scadaService.getPoints('SIMULATOR').length === 0, 'Clean mode strictly yields 0 simulated SCADA telemetry points');
+    assert(scadaService.getAlarms('SIMULATOR').length === 0, 'Clean mode strictly yields 0 simulated SCADA alarms');
+    assert(scadaService.getPoints('OPERATIONAL').length > 0, 'Clean mode preserves genuine operational SCADA telemetry');
     const cleanIndices = reliabilityService.calculateDynamicIndices({ totalConsumers: 4850, outageType: 'ALL' });
     assert(cleanIndices.totalOutages === 0 && cleanIndices.saifi === 0, 'Clean mode strictly yields 0 IEEE 1366 outages & 0 SAIFI');
 
@@ -792,6 +793,62 @@ async function runTestSuite() {
     assert(reliabilityService.getMetrics().length === 0, 'Clean mode restored strictly yields 0 dummy reliability metrics');
     assert(!authService.getAllUsers().some(u => u.id === 'user-ee'), 'Clean mode restored strictly excludes dummy users');
     assert(dataExchangeService.getBackupHistory().length === 0, 'Clean mode restored strictly yields 0 dummy backups');
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST GROUP 18: SCADA SIMULATOR ENGINE & SAFETY AIR GAP LOCKOUT
+  // --------------------------------------------------------------------------
+  console.log('--- TEST GROUP 18: SCADA Simulator Engine & Safety Air Gap Lockout ---');
+  {
+    // 1. Bug 1: Resume recreates interval timer and clears paused state
+    scadaSimulatorService.start();
+    const config1 = scadaSimulatorService.getConfig();
+    assert(config1.isRunning === true && config1.isPaused === false, 'Simulator starts running');
+    scadaSimulatorService.pause();
+    const configPaused = scadaSimulatorService.getConfig();
+    assert(configPaused.isPaused === true, 'Simulator enters paused state');
+    scadaSimulatorService.resume();
+    const configResumed = scadaSimulatorService.getConfig();
+    assert(configResumed.isRunning === true && configResumed.isPaused === false, 'Simulator resume creates active timer and resets isPaused');
+
+    // 2. Bug 2: Speed changes dynamically recreate timer without stopping
+    scadaSimulatorService.setSpeed(5);
+    assert(scadaSimulatorService.getConfig().speed === 5, 'Simulation speed updated to 5x while running');
+    scadaSimulatorService.setIntervalSeconds(1);
+    assert(scadaSimulatorService.getConfig().intervalSeconds === 1, 'Simulation interval updated to 1s while running');
+
+    // 3. Safety Air Gap Lockout: Physical switchgear is non-operable via web
+    const eeUserForGap = initialUsers.find(u => u.role === 'ee')!;
+    const physicalCmd = scadaGatewayService.executeSecuredSboCommand({
+      tag: 'PHYSICAL_SW_110KV',
+      substationId: 'ss-mara',
+      targetState: 'OPEN',
+      supervisoryReason: 'Attempted remote opening of live physical 110kV line',
+      ptwClearanceChecked: true,
+      operator: eeUserForGap,
+      protocol: 'IEC-60870-5-104',
+    });
+    assert(physicalCmd.auditRecord?.status === 'INTERLOCK_BLOCKED', 'SAFETY AIR GAP: Physical breaker operation via web is strictly blocked');
+    assert(physicalCmd.success === false, 'Physical breaker command rejected with success = false');
+
+    // 4. Validated Manual Injection: Enforces bounds and preserves security isolation
+    const manualResult = scadaSimulatorService.injectManualTelemetry('SIM_FDR_MARA_01', {
+      voltageKV: 11.2,
+      currentAmps: 310.0,
+      activePowerMW: 5.5,
+      powerFactor: 0.94,
+      sourceType: 'OPERATIONAL' as any,
+      substationId: 'HACKED_SUBSTATION' as any
+    });
+    assert(manualResult === true, 'Valid manual injection succeeds');
+    const pt = scadaSimulatorService.getPoints().find(p => p.tag === 'SIM_FDR_MARA_01');
+    assert(pt?.sourceType === 'SIMULATOR', 'Manual injection strictly enforces sourceType = SIMULATOR');
+    assert(pt?.substationId === 'ss-mara', 'Manual injection prevents modifying immutable substationId');
+    assert(pt?.voltageKV === 11.2, 'Manual injection applied voltageKV update');
+
+    // Stop simulator
+    scadaSimulatorService.stop();
+    assert(scadaSimulatorService.getConfig().isRunning === false, 'Simulator cleanly stopped');
   }
 
   // --------------------------------------------------------------------------

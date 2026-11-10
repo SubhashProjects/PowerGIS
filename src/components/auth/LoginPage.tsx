@@ -60,18 +60,21 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
 
-    setTimeout(() => {
-      const res = login(identifier, password);
+    try {
+      const res = await login(identifier, password);
       setIsLoading(false);
       if (!res.success) {
         setError(res.error || 'Authentication failed. Please verify credentials.');
       }
-    }, 400);
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err?.message || 'Authentication error occurred during verification.');
+    }
   };
 
   const handleSelectPersona = (u: UserProfile) => {

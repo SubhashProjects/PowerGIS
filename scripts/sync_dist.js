@@ -42,7 +42,23 @@ if (!distHtml.includes('location.replace(location.pathname')) {
   fs.writeFileSync('dist/index.html', distHtml, 'utf8');
 }
 
-// 1. Mirror dist to docs & portal
+function cleanOldAssets(dir) {
+  if (!fs.existsSync(dir)) return;
+  fs.readdirSync(dir).forEach((file) => {
+    if (file.startsWith('index-') && (file.endsWith('.js') || file.endsWith('.css') || file.endsWith('.map'))) {
+      try {
+        fs.unlinkSync(path.join(dir, file));
+      } catch {}
+    }
+  });
+}
+
+// 1. Clean legacy compiled assets from destination directories
+cleanOldAssets('docs/assets');
+cleanOldAssets('portal/assets');
+cleanOldAssets('assets');
+
+// 2. Mirror dist to docs, portal & root assets
 copyRecursiveSync('dist', 'docs');
 copyRecursiveSync('dist', 'portal');
 copyRecursiveSync('dist/assets', 'assets');

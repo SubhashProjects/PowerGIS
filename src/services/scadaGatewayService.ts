@@ -326,6 +326,39 @@ export class ScadaGatewayService {
     const commandId = `cmd-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`;
     const authorizedRoles = ['super_admin', 'se', 'ee', 'ae'];
 
+    // 0. Statutory Safety Air Gap: Block operational physical switchgear switching via web interface
+    const isSimulated = req.tag.startsWith('SIM_') || req.protocol === 'SIMULATOR';
+    if (!isSimulated) {
+      const blockedRecord: ScadaBreakerCommand = {
+        id: commandId,
+        tag: req.tag,
+        substationId: req.substationId,
+        feederId: req.feederId,
+        targetState: req.targetState,
+        previousState: req.targetState === 'OPEN' ? 'CLOSED' : 'OPEN',
+        supervisoryReason: req.supervisoryReason,
+        operatorId: req.operator.id,
+        operatorName: req.operator.fullName || req.operator.username,
+        operatorRole: req.operator.role,
+        interlocksVerified: {
+          ptwClearanceChecked: req.ptwClearanceChecked,
+          synchroCheckPassed: false,
+          operatorAuthorized: false,
+        },
+        dispatchedVia: req.protocol,
+        status: 'INTERLOCK_BLOCKED',
+        timestamp: new Date().toISOString(),
+      };
+      this.commandHistory.unshift(blockedRecord);
+      this.notifyListeners();
+      return {
+        success: false,
+        commandId,
+        message: 'SAFETY AIR GAP LOCKOUT: Live operational substation breaker switching via web interface is disabled. Only simulated sandbox breakers may be operated.',
+        auditRecord: blockedRecord,
+      };
+    }
+
     // 1. Role Authorization Interlock
     const isAuthorized = authorizedRoles.includes(req.operator.role);
     if (!isAuthorized) {

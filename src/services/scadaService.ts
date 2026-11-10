@@ -55,15 +55,14 @@ export class ScadaService {
   }
 
   /**
-   * Retrieves telemetry points according to source filter
+   * Retrieves telemetry points according to source filter.
+   * OPERATIONAL records are always returned; SIMULATOR records depend on simulator mode.
+   * (Fixes Bug 3: Operational SCADA telemetry previously disappeared when simulator was OFF)
    */
   public getPoints(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR', includeSimulated = false): ScadaTelemetryPoint[] {
     const isSim = assetService.isSimulatorMode() || includeSimulated;
-    if (!isSim && !includeSimulated) {
-      return [];
-    }
     const f = filter || this.activeSourceFilter;
-    const simPoints = scadaSimulatorService.getPoints();
+    const simPoints = isSim ? scadaSimulatorService.getPoints() : [];
 
     if (f === 'OPERATIONAL') {
       return [...this.operationalPoints];
@@ -71,19 +70,17 @@ export class ScadaService {
     if (f === 'SIMULATOR') {
       return [...simPoints];
     }
-    return [...this.operationalPoints, ...simPoints];
+    return isSim ? [...this.operationalPoints, ...simPoints] : [...this.operationalPoints];
   }
 
   /**
-   * Retrieves alarms according to source filter
+   * Retrieves alarms according to source filter.
+   * OPERATIONAL alarms are always preserved.
    */
   public getAlarms(filter?: 'ALL' | 'OPERATIONAL' | 'SIMULATOR', includeSimulated = false): ScadaAlarm[] {
     const isSim = assetService.isSimulatorMode() || includeSimulated;
-    if (!isSim && !includeSimulated) {
-      return [];
-    }
     const f = filter || this.activeSourceFilter;
-    const simAlarms = scadaSimulatorService.getAlarms();
+    const simAlarms = isSim ? scadaSimulatorService.getAlarms() : [];
 
     if (f === 'OPERATIONAL') {
       return [...this.operationalAlarms];
@@ -91,11 +88,11 @@ export class ScadaService {
     if (f === 'SIMULATOR') {
       return [...simAlarms];
     }
-    return [...this.operationalAlarms, ...simAlarms];
+    return isSim ? [...this.operationalAlarms, ...simAlarms] : [...this.operationalAlarms];
   }
 
   /**
-   * Remote Breaker Control with SBO Interlocks
+   * Remote Breaker Control with SBO Interlocks & Statutory Safety Boundary
    */
   public operateBreakerWithSBO(
     tag: string,
@@ -108,8 +105,14 @@ export class ScadaService {
 
     // Check if target is a simulated point
     const isSimulated = tag.startsWith('SIM_') || tag.includes('SIM');
-    const point = this.getPoints('ALL').find(p => p.tag === tag);
+    const point = this.getPoints('ALL', true).find(p => p.tag === tag);
     if (!point) return false;
+
+    // CRITICAL SAFETY AIR GAP: Disallow operational physical breaker operations via web interface
+    if (!isSimulated) {
+      console.warn('SAFETY LOCKOUT: Web-based remote tripping of physical high-voltage switchgear is prohibited.');
+      return false;
+    }
 
     // Execute through gateway SBO validation
     const sboResult = scadaGatewayService.executeSecuredSboCommand({
@@ -120,7 +123,7 @@ export class ScadaService {
       supervisoryReason: reason,
       ptwClearanceChecked: true, // confirmed in UI modal
       operator: currentUser,
-      protocol: isSimulated ? 'SIMULATOR' : protocol,
+      protocol: 'SIMULATOR',
     });
 
     if (!sboResult.success) {
@@ -128,29 +131,8 @@ export class ScadaService {
       return false;
     }
 
-    if (isSimulated) {
-      // Execute in simulator engine
-      return scadaSimulatorService.operateSimulatedBreaker(tag, targetState, operatorName, reason);
-    } else {
-      // Execute on operational record
-      point.breakerStatus = targetState;
-      point.lastUpdated = 'Just now';
-
-      const alarmCode = `ALM-SBO-${Date.now().toString().slice(-4)}`;
-      this.operationalAlarms.unshift({
-        id: `alm-${Date.now()}`,
-        tag: point.tag,
-        alarmCode,
-        sourceType: 'OPERATIONAL',
-        severity: targetState === 'OPEN' ? 'critical' : 'high',
-        message: `SBO ${targetState}: ${point.description} operated by ${operatorName}. Reason: ${reason}`,
-        timestamp: new Date().toLocaleTimeString(),
-        status: targetState === 'OPEN' ? 'active' : 'acknowledged',
-      });
-
-      this.notifyListeners();
-      return true;
-    }
+    // Execute strictly in simulator engine
+    return scadaSimulatorService.operateSimulatedBreaker(tag, targetState, operatorName, reason);
   }
 
   public toggleBreaker(tag: string): void {

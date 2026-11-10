@@ -1,7 +1,8 @@
 // ============================================================================
 // POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
 // SCADA DYNAMIC TELEMETRY SIMULATOR ENGINE (SECTION 12 & PHASE 3)
-// 10 Operating Modes • Physically Consistent 3-Phase Equations • Data Isolation
+// 10 Operating Modes • Physically Consistent 3-Phase Engine • Protection Relays
+// Dynamic Asset Scoping • Timed CSV Playback • Supabase & Local Persistence
 // ============================================================================
 
 import {
@@ -10,8 +11,9 @@ import {
   ScadaSimulationConfig,
   ScadaSimulationMode,
   ScadaScenarioPreset,
-  ScadaTelemetryQuality,
 } from '../types/operations';
+import { initialFeeders, initialTransformers } from './mockData';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface TelemetryTrendPoint {
   timestamp: string;
@@ -32,6 +34,27 @@ export interface SimulationEventLog {
   eventType: 'INFO' | 'ALARM' | 'BREAKER_TRIP' | 'BREAKER_CLOSE' | 'OVERLOAD' | 'FAULT';
   message: string;
   sessionId: string;
+}
+
+export interface ManualTelemetryInput {
+  voltageKV?: number;
+  currentAmps?: number;
+  powerFactor?: number;
+  frequencyHz?: number;
+  windingTempC?: number;
+  oilTempC?: number;
+  tapPosition?: number;
+  breakerStatus?: 'OPEN' | 'CLOSED';
+}
+
+export interface CsvPlaybackRecord {
+  tag: string;
+  timestamp?: string;
+  voltageKV: number;
+  currentAmps: number;
+  powerFactor?: number;
+  frequencyHz?: number;
+  breakerStatus?: 'OPEN' | 'CLOSED' | 'TRIPPED';
 }
 
 export class ScadaSimulatorService {
@@ -60,7 +83,7 @@ export class ScadaSimulatorService {
     windingTempAlarmThresholdC: 85.0,
   };
 
-  // Internal state
+  // Internal timer & state
   private timer: any = null;
   private simPoints: ScadaTelemetryPoint[] = [];
   private simAlarms: ScadaAlarm[] = [];
@@ -68,6 +91,26 @@ export class ScadaSimulatorService {
   private eventLogs: SimulationEventLog[] = [];
   private listeners: Array<() => void> = [];
   private timeStepCounter = 0;
+
+  // Realistic Simulation Clock (Starts at 08:00 AM, 480 mins)
+  private simulatedClockMinutes = 480;
+  // Multiplier: 1 real second = 60 simulated seconds (1 sim minute per second at 1x)
+  private simulatedTimeMultiplier = 30;
+
+  // Persistent Scenario & Fault State
+  private scenarioState = {
+    active: false,
+    preset: 'NORMAL' as ScadaScenarioPreset,
+    stage: 'NORMAL' as 'NORMAL' | 'FAULT_INJECTED' | 'PROTECTION_PICKUP' | 'TRIPPED' | 'RESTORATION',
+    remainingSteps: 0,
+    targetTag: 'SIM_FDR_MARA_01',
+    faultAmps: 0,
+    faultPhase: 'A' as 'A' | 'B' | 'C' | '3PH' | 'SNAP',
+  };
+
+  // Timed CSV Playback Queue
+  private csvPlaybackQueue: CsvPlaybackRecord[] = [];
+  private csvPlaybackIndex = 0;
 
   private constructor() {
     this.initializeSimulatedNetwork();
@@ -80,17 +123,18 @@ export class ScadaSimulatorService {
     return ScadaSimulatorService.instance;
   }
 
-  /**
-   * Initializes simulated electrical network with complete 3-phase topology
-   */
+  // --------------------------------------------------------------------------
+  // DYNAMIC NETWORK INITIALIZATION (LOADS CONFIGURED GIS ASSETS)
+  // --------------------------------------------------------------------------
+
   public initializeSimulatedNetwork(): void {
     const session = this.config.sessionId;
-    const now = new Date().toISOString();
+    const points: ScadaTelemetryPoint[] = [];
 
-    this.simPoints = [
-      // 1. Marapalam 110kV Incomer Bus
+    // 1. Primary Marapalam 110kV Incomer & PTR Baseline
+    points.push(
       {
-        id: `sim-pt-mara-110`,
+        id: 'sim-pt-mara-110',
         tag: 'SIM_MARA_110_BUS',
         description: 'Simulated Marapalam 110kV Incomer Bus',
         substationId: 'ss-mara',
@@ -98,168 +142,139 @@ export class ScadaSimulatorService {
         simulationSessionId: session,
         scenarioId: this.config.scenario,
         voltageKV: 110.8,
-        currentAmps: 420.0,
-        activePowerMW: 77.2,
-        reactivePowerMVAR: 20.8,
-        powerFactor: 0.965,
+        currentAmps: 340.5,
+        activePowerMW: 62.4,
+        reactivePowerMVAR: 16.2,
+        powerFactor: 0.968,
         frequencyHz: 50.01,
-        phaseACurrentAmps: 420.0,
-        phaseBCurrentAmps: 418.0,
-        phaseCCurrentAmps: 422.0,
-        neutralCurrentAmps: 3.5,
+        phaseACurrentAmps: 341.2,
+        phaseBCurrentAmps: 339.8,
+        phaseCCurrentAmps: 340.5,
+        neutralCurrentAmps: 1.2,
         breakerStatus: 'CLOSED',
         quality: 'GOOD',
         lastUpdated: 'Live (Simulated)',
-        eventTimestamp: now,
-        ingestionTimestamp: now,
+        eventTimestamp: new Date().toISOString(),
       },
-      // 2. Marapalam PTR-1 80MVA Transformer (110/22kV)
       {
-        id: `sim-pt-mara-ptr1`,
+        id: 'sim-pt-mara-ptr1',
         tag: 'SIM_MARA_PTR1_80MVA',
-        description: 'Simulated 110/22kV PTR-1 80MVA Transformer',
+        description: 'Simulated 110/22kV 80MVA Power Transformer #1',
         substationId: 'ss-mara',
-        assetId: 'ptr-mara-1',
         sourceType: 'SIMULATOR',
         simulationSessionId: session,
         scenarioId: this.config.scenario,
         voltageKV: 22.1,
-        currentAmps: 1840.0,
-        activePowerMW: 67.8,
-        reactivePowerMVAR: 18.2,
-        powerFactor: 0.965,
+        currentAmps: 1250.0,
+        activePowerMW: 45.2,
+        reactivePowerMVAR: 12.1,
+        powerFactor: 0.966,
         frequencyHz: 50.01,
-        phaseACurrentAmps: 1840.0,
-        phaseBCurrentAmps: 1830.0,
-        phaseCCurrentAmps: 1850.0,
-        neutralCurrentAmps: 17.3,
-        transformerLoadPct: 70.5,
-        windingTempC: 62.4,
-        oilTempC: 51.8,
+        transformerLoadPct: 68.0,
+        oilTempC: 56.5,
+        windingTempC: 68.2,
         tapPosition: 0,
         breakerStatus: 'CLOSED',
         quality: 'GOOD',
         lastUpdated: 'Live (Simulated)',
-        eventTimestamp: now,
-        ingestionTimestamp: now,
-      },
-      // 3. 11kV Feeder 1 (FDR-MARA-01: Commercial Ward)
-      {
-        id: `sim-pt-mara-fdr1`,
+        eventTimestamp: new Date().toISOString(),
+      }
+    );
+
+    // 2. Dynamically Load Feeders from repository
+    const feeders = initialFeeders;
+    if (feeders && feeders.length > 0) {
+      feeders.slice(0, 4).forEach((f, idx) => {
+        const tag = idx === 0 ? 'SIM_FDR_MARA_01' : `SIM_${f.code.replace(/[^A-Za-z0-9_]/g, '_').toUpperCase()}`;
+        points.push({
+          id: `sim-fdr-${f.id}`,
+          tag,
+          description: `Simulated ${f.name} Breaker`,
+          substationId: f.substationId || 'ss-mara',
+          feederId: f.id,
+          sourceType: 'SIMULATOR',
+          simulationSessionId: session,
+          scenarioId: this.config.scenario,
+          voltageKV: 11.1,
+          currentAmps: 220.0 + idx * 25,
+          activePowerMW: 4.0 + idx * 0.4,
+          reactivePowerMVAR: 1.1 + idx * 0.1,
+          powerFactor: 0.965,
+          frequencyHz: 50.01,
+          phaseACurrentAmps: 221.0 + idx * 25,
+          phaseBCurrentAmps: 219.0 + idx * 25,
+          phaseCCurrentAmps: 220.0 + idx * 25,
+          neutralCurrentAmps: 1.5,
+          breakerStatus: 'CLOSED',
+          quality: 'GOOD',
+          lastUpdated: 'Live (Simulated)',
+          eventTimestamp: new Date().toISOString(),
+        });
+      });
+    } else {
+      // Fallback feeder
+      points.push({
+        id: 'sim-pt-mara-fdr1',
         tag: 'SIM_FDR_MARA_01',
-        description: 'Simulated Feeder FDR-MARA-01 (Commercial Ward)',
+        description: 'Simulated 11kV Boulevard Outgoing Feeder #1',
         substationId: 'ss-mara',
         feederId: 'fdr-mara-1',
         sourceType: 'SIMULATOR',
         simulationSessionId: session,
         scenarioId: this.config.scenario,
-        voltageKV: 11.2,
+        voltageKV: 11.1,
         currentAmps: 245.0,
-        activePowerMW: 4.59,
-        reactivePowerMVAR: 1.23,
-        powerFactor: 0.966,
+        activePowerMW: 4.52,
+        reactivePowerMVAR: 1.25,
+        powerFactor: 0.964,
         frequencyHz: 50.01,
-        phaseACurrentAmps: 245.0,
-        phaseBCurrentAmps: 240.0,
-        phaseCCurrentAmps: 242.0,
-        neutralCurrentAmps: 4.6,
-        transformerLoadPct: 69.0,
-        windingTempC: 58.0,
-        oilTempC: 48.5,
-        tapPosition: 0,
+        phaseACurrentAmps: 246.5,
+        phaseBCurrentAmps: 243.8,
+        phaseCCurrentAmps: 244.7,
+        neutralCurrentAmps: 2.1,
         breakerStatus: 'CLOSED',
         quality: 'GOOD',
         lastUpdated: 'Live (Simulated)',
-        eventTimestamp: now,
-        ingestionTimestamp: now,
-      },
-      // 4. 11kV Feeder 2 (FDR-HERI-02: French Quarter Heritage)
-      {
-        id: `sim-pt-mara-fdr2`,
-        tag: 'SIM_FDR_HERI_02',
-        description: 'Simulated Feeder FDR-HERI-02 (French Quarter)',
-        substationId: 'ss-mara',
-        feederId: 'fdr-heri-2',
-        sourceType: 'SIMULATOR',
-        simulationSessionId: session,
-        scenarioId: this.config.scenario,
-        voltageKV: 11.15,
-        currentAmps: 278.0,
-        activePowerMW: 5.18,
-        reactivePowerMVAR: 1.40,
-        powerFactor: 0.965,
-        frequencyHz: 50.01,
-        phaseACurrentAmps: 278.0,
-        phaseBCurrentAmps: 271.0,
-        phaseCCurrentAmps: 268.0,
-        neutralCurrentAmps: 9.2,
-        transformerLoadPct: 78.5,
-        windingTempC: 66.2,
-        oilTempC: 56.1,
-        tapPosition: 1,
-        breakerStatus: 'CLOSED',
-        quality: 'GOOD',
-        lastUpdated: 'Live (Simulated)',
-        eventTimestamp: now,
-        ingestionTimestamp: now,
-      },
-      // 5. Villianur 230/110kV EHV Grid Substation
-      {
-        id: `sim-pt-vill-230`,
-        tag: 'SIM_VILL_230_BUS',
-        description: 'Simulated Villianur 230kV EHV Incomer Bus',
-        substationId: 'ss-vill',
-        sourceType: 'SIMULATOR',
-        simulationSessionId: session,
-        scenarioId: this.config.scenario,
-        voltageKV: 228.4,
-        currentAmps: 510.0,
-        activePowerMW: 194.2,
-        reactivePowerMVAR: 52.0,
-        powerFactor: 0.966,
-        frequencyHz: 50.0,
-        phaseACurrentAmps: 510.0,
-        phaseBCurrentAmps: 508.0,
-        phaseCCurrentAmps: 512.0,
-        neutralCurrentAmps: 3.5,
-        breakerStatus: 'CLOSED',
-        quality: 'GOOD',
-        lastUpdated: 'Live (Simulated)',
-        eventTimestamp: now,
-        ingestionTimestamp: now,
-      },
-      // 6. Bahour 66/11kV Rural Feeder
-      {
-        id: `sim-pt-bahr-66`,
-        tag: 'SIM_BAHR_66_BUS',
-        description: 'Simulated Bahour 66kV Substation Bus',
-        substationId: 'ss-bahr',
-        sourceType: 'SIMULATOR',
-        simulationSessionId: session,
-        scenarioId: this.config.scenario,
-        voltageKV: 66.1,
-        currentAmps: 182.0,
-        activePowerMW: 20.1,
-        reactivePowerMVAR: 5.4,
-        powerFactor: 0.966,
-        frequencyHz: 50.0,
-        phaseACurrentAmps: 182.0,
-        phaseBCurrentAmps: 179.0,
-        phaseCCurrentAmps: 184.0,
-        neutralCurrentAmps: 4.3,
-        transformerLoadPct: 58.0,
-        windingTempC: 52.0,
-        oilTempC: 44.0,
-        tapPosition: 0,
-        breakerStatus: 'CLOSED',
-        quality: 'GOOD',
-        lastUpdated: 'Live (Simulated)',
-        eventTimestamp: now,
-        ingestionTimestamp: now,
-      },
-    ];
+        eventTimestamp: new Date().toISOString(),
+      });
+    }
 
-    // Seed initial trend history
+    // 3. Dynamically Load Distribution Transformer from repository
+    const transformers = initialTransformers;
+    const dtr = transformers.find(t => t.id === 'dt-blvd-1') || transformers[0];
+    if (dtr) {
+      points.push({
+        id: `sim-dtr-${dtr.id}`,
+        tag: 'SIM_DT_BLVD_1',
+        description: `Simulated ${dtr.name} (${dtr.capacityKVA}kVA)`,
+        substationId: 'ss-mara',
+        feederId: dtr.feederId || 'fdr-mara-1',
+        sourceType: 'SIMULATOR',
+        simulationSessionId: session,
+        scenarioId: this.config.scenario,
+        voltageKV: 0.415,
+        currentAmps: 420.0,
+        activePowerMW: 0.28,
+        reactivePowerMVAR: 0.08,
+        powerFactor: 0.961,
+        frequencyHz: 50.01,
+        transformerLoadPct: dtr.loadPercentage || 74.5,
+        oilTempC: 62.0,
+        windingTempC: 74.5,
+        phaseACurrentAmps: 428.0,
+        phaseBCurrentAmps: 415.0,
+        phaseCCurrentAmps: 417.0,
+        neutralCurrentAmps: 11.2,
+        breakerStatus: 'CLOSED',
+        quality: 'GOOD',
+        lastUpdated: 'Live (Simulated)',
+        eventTimestamp: new Date().toISOString(),
+      });
+    }
+
+    this.simPoints = points;
+
+    // Seed initial trend history for each point
     this.simPoints.forEach(p => {
       this.trendHistory[p.tag] = [
         {
@@ -278,27 +293,41 @@ export class ScadaSimulatorService {
     this.logEvent(
       'INFO',
       'SIM_INIT',
-      `SCADA Simulator network initialized. Session: ${this.config.sessionId}`
+      `SCADA Simulator network initialized with ${this.simPoints.length} active GIS-mapped nodes. Session: ${session}`
     );
   }
 
   // --------------------------------------------------------------------------
-  // SIMULATION CONTROLS
+  // TIMER & STATE TRANSITIONS (BUGS 1 & 2 RESOLVED)
   // --------------------------------------------------------------------------
+
+  private clearIntervalTimer(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  private createOrRestartTimer(): void {
+    this.clearIntervalTimer();
+    const intervalMs = Math.max(
+      150,
+      Math.round((this.config.intervalSeconds * 1000) / this.config.speed)
+    );
+
+    this.timer = setInterval(() => {
+      this.stepSimulation();
+    }, intervalMs);
+  }
 
   public start(): void {
     if (this.config.isRunning && !this.config.isPaused) return;
 
     this.config.isRunning = true;
     this.config.isPaused = false;
-    this.clearInterval();
+    this.createOrRestartTimer();
 
-    const intervalMs = Math.max(200, Math.round((this.config.intervalSeconds * 1000) / this.config.speed));
-
-    this.timer = setInterval(() => {
-      this.stepSimulation();
-    }, intervalMs);
-
+    this.persistSessionStart();
     this.logEvent(
       'INFO',
       'SIM_START',
@@ -309,24 +338,27 @@ export class ScadaSimulatorService {
 
   public pause(): void {
     this.config.isPaused = true;
-    this.clearInterval();
+    this.clearIntervalTimer();
     this.logEvent('INFO', 'SIM_PAUSE', 'Simulation paused by operator');
     this.notifyListeners();
   }
 
+  /**
+   * Resumes the paused simulation by explicitly recreating the interval timer
+   * (Fixes Bug 1: Resume button did not resume)
+   */
   public resume(): void {
-    if (!this.config.isRunning) {
-      this.start();
-      return;
-    }
+    this.config.isRunning = true;
     this.config.isPaused = false;
-    this.start();
+    this.createOrRestartTimer();
+    this.logEvent('INFO', 'SIM_RESUME', 'Simulation resumed by operator');
+    this.notifyListeners();
   }
 
   public stop(): void {
     this.config.isRunning = false;
     this.config.isPaused = false;
-    this.clearInterval();
+    this.clearIntervalTimer();
     this.logEvent('INFO', 'SIM_STOP', 'Simulation stopped');
     this.notifyListeners();
   }
@@ -336,39 +368,56 @@ export class ScadaSimulatorService {
     this.config.sessionId = `SIM-${Date.now().toString().slice(-6)}`;
     this.config.scenario = 'NORMAL';
     this.timeStepCounter = 0;
+    this.simulatedClockMinutes = 480;
     this.simAlarms = [];
+    this.scenarioState = {
+      active: false,
+      preset: 'NORMAL',
+      stage: 'NORMAL',
+      remainingSteps: 0,
+      targetTag: 'SIM_FDR_MARA_01',
+      faultAmps: 0,
+      faultPhase: 'A',
+    };
+    this.csvPlaybackQueue = [];
+    this.csvPlaybackIndex = 0;
     this.initializeSimulatedNetwork();
     this.logEvent('INFO', 'SIM_RESET', 'Simulation reset to baseline normal conditions');
     this.notifyListeners();
   }
 
+  /**
+   * Adjusts simulation speed and immediately recreates timer if running
+   * (Fixes Bug 2: Speed changes were ignored while running)
+   */
   public setSpeed(speed: 1 | 2 | 5 | 10): void {
     this.config.speed = speed;
     if (this.config.isRunning && !this.config.isPaused) {
-      this.start(); // restart with new speed
-    } else {
-      this.notifyListeners();
+      this.createOrRestartTimer();
     }
+    this.notifyListeners();
   }
 
+  /**
+   * Adjusts simulation interval and immediately recreates timer if running
+   * (Fixes Bug 2: Interval changes were ignored while running)
+   */
   public setIntervalSeconds(sec: number): void {
     this.config.intervalSeconds = Math.max(1, Math.min(60, sec));
     if (this.config.isRunning && !this.config.isPaused) {
-      this.start();
-    } else {
-      this.notifyListeners();
+      this.createOrRestartTimer();
     }
+    this.notifyListeners();
   }
 
   public setMode(mode: ScadaSimulationMode): void {
     this.config.mode = mode;
-    this.logEvent('INFO', 'SIM_MODE', `Operating mode switched to: ${mode}`);
+    this.logEvent('INFO', 'MODE_CHANGE', `Operating mode switched to ${mode.toUpperCase()}`);
     this.notifyListeners();
   }
 
   public setScenario(preset: ScadaScenarioPreset): void {
     this.config.scenario = preset;
-    this.logEvent('INFO', 'SIM_SCENARIO', `Scenario activated: ${preset}`);
     this.applyScenarioPreset(preset);
     this.notifyListeners();
   }
@@ -379,6 +428,11 @@ export class ScadaSimulatorService {
 
   public updateConfig(updates: Partial<ScadaSimulationConfig>): void {
     this.config = { ...this.config, ...updates };
+    if (updates.speed !== undefined || updates.intervalSeconds !== undefined) {
+      if (this.config.isRunning && !this.config.isPaused) {
+        this.createOrRestartTimer();
+      }
+    }
     this.notifyListeners();
   }
 
@@ -402,65 +456,76 @@ export class ScadaSimulatorService {
     return [...this.eventLogs];
   }
 
-  public acknowledgeAlarm(alarmCode: string): void {
+  public acknowledgeAlarm(alarmCode: string, operatorName = 'Operator'): void {
     const alm = this.simAlarms.find(a => a.alarmCode === alarmCode);
     if (alm) {
       alm.status = 'acknowledged';
+      this.logEvent('INFO', alm.tag, `Alarm [${alarmCode}] acknowledged by ${operatorName}`);
+      this.persistAlarmAcknowledgement(alarmCode, operatorName);
       this.notifyListeners();
     }
   }
 
   // --------------------------------------------------------------------------
-  // PHYSICAL ELECTRICAL CALCULATION ENGINE
+  // ADVANCED ELECTRICAL ENGINEERING CALCULATIONS (PHASORS & THERMAL)
   // --------------------------------------------------------------------------
 
   /**
-   * Evaluates balanced or unbalanced 3-phase AC physics
-   * P = sqrt(3) * V_LL * I_L * cos(phi) * 1e-3 (MW)
-   * Q = sqrt(3) * V_LL * I_L * sin(phi) * 1e-3 (MVAr)
-   * S = sqrt(P^2 + Q^2) (MVA)
+   * Three-Phase Phasor Electrical Calculations:
+   * P = sqrt(3) * V_LL * I_L * PF
+   * Q = sqrt(3) * V_LL * I_L * sin(acos(PF))
+   * S = sqrt(3) * V_LL * I_L
+   * Phasor Vector Sum for Neutral Current: I_N = I_A + I_B + I_C
    */
   public calculateThreePhaseElectricals(
-    voltageKV: number,
-    currentAmps: number,
-    powerFactor: number,
-    phaseImbalancePct = 2.0
+    vKV: number,
+    iAmp: number,
+    pf: number,
+    unbalancePct = 0.03
   ) {
-    const pf = Math.max(0.1, Math.min(1.0, powerFactor));
-    const sinPhi = Math.sqrt(Math.max(0, 1 - pf * pf));
+    const powerFactor = Math.min(1.0, Math.max(0.1, pf));
+    const sinPhi = Math.sqrt(Math.max(0, 1 - powerFactor * powerFactor));
 
-    // Active power (MW)
-    const activePowerMW = Math.round(Math.sqrt(3) * voltageKV * currentAmps * pf * 1e-3 * 100) / 100;
+    // Three-Phase Balanced Powers
+    const activePowerMW = Math.round((Math.sqrt(3) * vKV * iAmp * powerFactor * 100) / 1000) / 100;
+    const reactivePowerMVAR = Math.round((Math.sqrt(3) * vKV * iAmp * sinPhi * 100) / 1000) / 100;
+    const apparentPowerMVA = Math.round((Math.sqrt(3) * vKV * iAmp * 100) / 1000) / 100;
 
-    // Reactive power (MVAr)
-    const reactivePowerMVAR = Math.round(Math.sqrt(3) * voltageKV * currentAmps * sinPhi * 1e-3 * 100) / 100;
+    // Per-Phase RMS Currents with Phase Imbalance
+    const phaseA = Math.round(iAmp * (1 + unbalancePct) * 10) / 10;
+    const phaseB = Math.round(iAmp * (1 - unbalancePct * 0.4) * 10) / 10;
+    const phaseC = Math.round(iAmp * (1 - unbalancePct * 0.6) * 10) / 10;
 
-    // Apparent power (MVA)
-    const apparentPowerMVA = Math.round(Math.sqrt(3) * voltageKV * currentAmps * 1e-3 * 100) / 100;
+    // Vector Phasor Representation (120 deg displacement)
+    // I_A at 0 deg, I_B at -120 deg, I_C at +120 deg
+    const phi = Math.acos(powerFactor);
+    const iA_real = phaseA * Math.cos(-phi);
+    const iA_imag = phaseA * Math.sin(-phi);
 
-    // Phase currents with imbalance
-    const imbFraction = phaseImbalancePct / 100;
-    const ir = Math.round(currentAmps * (1 + imbFraction) * 10) / 10;
-    const iy = Math.round(currentAmps * (1 - imbFraction * 0.5) * 10) / 10;
-    const ib = Math.round(currentAmps * (1 - imbFraction * 0.5) * 10) / 10;
+    const rad120 = (2 * Math.PI) / 3;
+    const iB_real = phaseB * Math.cos(-rad120 - phi);
+    const iB_imag = phaseB * Math.sin(-rad120 - phi);
 
-    // Neutral current magnitude: I_N = sqrt(IR^2 + IY^2 + IB^2 - (IR*IY + IY*IB + IB*IR))
-    const in_sq = ir * ir + iy * iy + ib * ib - (ir * iy + iy * ib + ib * ir);
-    const neutralCurrentAmps = Math.round(Math.sqrt(Math.max(0, in_sq)) * 10) / 10;
+    const iC_real = phaseC * Math.cos(rad120 - phi);
+    const iC_imag = phaseC * Math.sin(rad120 - phi);
+
+    const iN_real = iA_real + iB_real + iC_real;
+    const iN_imag = iA_imag + iB_imag + iC_imag;
+    const neutralAmps = Math.round(Math.sqrt(iN_real * iN_real + iN_imag * iN_imag) * 10) / 10;
 
     return {
       activePowerMW,
       reactivePowerMVAR,
       apparentPowerMVA,
-      phaseACurrentAmps: ir,
-      phaseBCurrentAmps: iy,
-      phaseCCurrentAmps: ib,
-      neutralCurrentAmps,
+      phaseACurrentAmps: phaseA,
+      phaseBCurrentAmps: phaseB,
+      phaseCCurrentAmps: phaseC,
+      neutralCurrentAmps: neutralAmps,
     };
   }
 
   /**
-   * Exponential thermal rise equation for transformer oil and winding
+   * Transformer Thermal Rise Model (IEC 60076-7)
    */
   public calculateThermalRise(
     currentAmps: number,
@@ -474,11 +539,10 @@ export class ScadaSimulatorService {
     const targetOilRise = ratedOilRise * Math.pow(loadRatio, 1.6);
     const targetOilTemp = ambientTemp + targetOilRise;
 
-    const tauOilSeconds = 180.0; // time constant in simulation scale
+    const tauOilSeconds = 180.0;
     const deltaOil = (targetOilTemp - currentOilTemp) * (dtSeconds / tauOilSeconds);
     const newOilTemp = Math.round((currentOilTemp + deltaOil) * 10) / 10;
 
-    // Winding temperature gradient over oil: rated 15 deg C * loadRatio^1.8
     const windingGradient = 15.0 * Math.pow(loadRatio, 1.8);
     const newWindingTemp = Math.round((newOilTemp + windingGradient) * 10) / 10;
 
@@ -489,19 +553,102 @@ export class ScadaSimulatorService {
   }
 
   // --------------------------------------------------------------------------
-  // STEP EXECUTION & SCENARIO PROCESSING
+  // SIMULATED TIME CLOCK & DIURNAL CURVE (BUG 5 RESOLVED)
+  // --------------------------------------------------------------------------
+
+  /**
+   * Computes diurnal factor using a true simulated clock progression
+   * (Fixes Bug 5: 24-hour cycle was finishing in 48s)
+   */
+  public calculateDiurnalLoadFactor(step: number): number {
+    // Advance simulated clock: simulatedTimeMultiplier mins per step
+    const hourOfDay = ((this.simulatedClockMinutes / 60) % 24);
+    const cycle = hourOfDay / 24;
+
+    // Dual peak: morning 10:00 (cycle ~ 0.42) and evening 20:00 (cycle ~ 0.83)
+    const morningPeak = Math.exp(-Math.pow((cycle - 0.42) / 0.1, 2));
+    const eveningPeak = Math.exp(-Math.pow((cycle - 0.83) / 0.1, 2));
+    const base = 0.65;
+    return base + 0.35 * morningPeak + 0.45 * eveningPeak;
+  }
+
+  public getSimulatedClockFormatted(): string {
+    const totalMinutes = Math.floor(this.simulatedClockMinutes) % (24 * 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+    const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+    return `${pad(hours)}:${pad(minutes)}`;
+  }
+
+  // --------------------------------------------------------------------------
+  // STEP EXECUTION & PERSISTENT SCENARIO ENGINE (BUG 4 RESOLVED)
   // --------------------------------------------------------------------------
 
   private stepSimulation(): void {
     this.timeStepCounter++;
+    // Advance simulated clock
+    this.simulatedClockMinutes += (this.config.intervalSeconds * this.simulatedTimeMultiplier) / 60;
+
     const now = new Date().toISOString();
     const timeLabel = new Date().toLocaleTimeString();
-
-    // Diurnal factor for time-based load curve
     const diurnalFactor = this.calculateDiurnalLoadFactor(this.timeStepCounter);
 
+    // 1. Process Active Scenario Progression (Earth Fault / Overload / Restoration)
+    if (this.scenarioState.active && this.scenarioState.remainingSteps > 0) {
+      this.scenarioState.remainingSteps--;
+
+      if (this.scenarioState.stage === 'FAULT_INJECTED') {
+        const pt = this.simPoints.find(p => p.tag === this.scenarioState.targetTag);
+        if (pt) {
+          pt.currentAmps = this.scenarioState.faultAmps;
+          pt.voltageKV = Math.round(pt.voltageKV * 0.3 * 100) / 100; // Voltage dip
+          if (this.scenarioState.faultPhase === 'SNAP') {
+            pt.phaseACurrentAmps = 0;
+            pt.neutralCurrentAmps = 48.0;
+          }
+        }
+
+        // When relay pickup time finishes, trip breaker
+        if (this.scenarioState.remainingSteps === 0) {
+          this.scenarioState.stage = 'TRIPPED';
+          if (pt) {
+            pt.breakerStatus = 'TRIPPED';
+            pt.currentAmps = 0;
+            pt.voltageKV = 0;
+            this.logEvent(
+              'BREAKER_TRIP',
+              pt.tag,
+              `IDMT Overcurrent / Earth Fault relay tripped breaker ${pt.tag} open.`
+            );
+            this.createSimAlarm(
+              pt.tag,
+              'critical',
+              `PROTECTION TRIP: Breaker ${pt.tag} opened on ${this.scenarioState.preset}`
+            );
+          }
+        }
+      }
+    }
+
+    // 2. Process CSV Timed Playback (if in csv_playback mode)
+    if (this.config.mode === 'csv_playback' && this.csvPlaybackQueue.length > 0) {
+      const row = this.csvPlaybackQueue[this.csvPlaybackIndex];
+      if (row) {
+        const pt = this.simPoints.find(p => p.tag === row.tag);
+        if (pt) {
+          pt.voltageKV = row.voltageKV;
+          pt.currentAmps = row.currentAmps;
+          if (row.breakerStatus) pt.breakerStatus = row.breakerStatus;
+          if (row.frequencyHz) pt.frequencyHz = row.frequencyHz;
+          if (row.powerFactor) pt.powerFactor = row.powerFactor;
+        }
+      }
+      this.csvPlaybackIndex = (this.csvPlaybackIndex + 1) % this.csvPlaybackQueue.length;
+    }
+
+    // 3. Step every network node with physical consistency
     this.simPoints.forEach(p => {
-      // If breaker is open, current drops to 0
+      // De-energized downstream behavior on OPEN or TRIPPED breaker
       if (p.breakerStatus === 'OPEN' || p.breakerStatus === 'TRIPPED') {
         p.currentAmps = 0;
         p.activePowerMW = 0;
@@ -512,7 +659,7 @@ export class ScadaSimulatorService {
         p.neutralCurrentAmps = 0;
         p.transformerLoadPct = 0;
 
-        // Cooling down to ambient
+        // Cooling thermal decay towards ambient
         if (p.oilTempC && p.oilTempC > this.config.ambientTempC) {
           p.oilTempC = Math.max(this.config.ambientTempC, Math.round((p.oilTempC - 0.2) * 10) / 10);
         }
@@ -520,13 +667,24 @@ export class ScadaSimulatorService {
           p.windingTempC = Math.max(this.config.ambientTempC, Math.round((p.windingTempC - 0.4) * 10) / 10);
         }
         p.lastUpdated = 'Live (De-energized)';
+        this.appendTrendPoint(p, timeLabel);
         return;
       }
 
-      // Base target current
-      let targetAmps = p.currentAmps;
+      // If manual mode, keep current values unless overridden
+      if (this.config.mode === 'manual') {
+        this.appendTrendPoint(p, timeLabel);
+        return;
+      }
 
-      // Apply mode specific variations
+      // If persistent scenario is actively pinning this tag, skip random drift
+      if (this.scenarioState.active && this.scenarioState.targetTag === p.tag) {
+        this.appendTrendPoint(p, timeLabel);
+        return;
+      }
+
+      // Calculate Target Load Current based on mode
+      let targetAmps = p.currentAmps;
       if (this.config.mode === 'time_based') {
         targetAmps = targetAmps * diurnalFactor;
       } else if (this.config.mode === 'fluctuation' || this.config.mode === 'continuous') {
@@ -536,24 +694,31 @@ export class ScadaSimulatorService {
 
       p.currentAmps = Math.round(targetAmps * 10) / 10;
 
-      // Tap position influence on voltage (+/- 1.25% per tap)
-      const baseVolt = p.tag.includes('110') ? 110.0 : p.tag.includes('230') ? 230.0 : p.tag.includes('66') ? 66.0 : 11.0;
+      // Base voltage with tap position variation (+/- 1.25% per tap)
+      const baseVolt = p.tag.includes('110')
+        ? 110.0
+        : p.tag.includes('230')
+        ? 230.0
+        : p.tag.includes('66')
+        ? 66.0
+        : p.tag.includes('22')
+        ? 22.0
+        : 11.0;
       const tapMultiplier = 1 + (p.tapPosition || 0) * 0.0125;
       const vJitter = (Math.random() - 0.5) * 0.004;
       p.voltageKV = Math.round(baseVolt * tapMultiplier * (1 + vJitter) * 100) / 100;
 
-      // Grid frequency: 50.00 Hz nominal, slight droop with high system load
+      // Frequency droop model: 50.00 Hz nominal, slight droop under high loading
       const freqDroop = (p.currentAmps > 280 ? -0.04 : 0.0) + (Math.random() - 0.5) * 0.02;
       p.frequencyHz = Math.round((this.config.frequencyNominalHz + freqDroop) * 100) / 100;
 
-      // 3-Phase Electrical calculation
+      // Full 3-phase phasor electrical equations
       const elec = this.calculateThreePhaseElectricals(
         p.voltageKV,
         p.currentAmps,
         p.powerFactor || this.config.powerFactorNominal,
-        2.5
+        0.03
       );
-
       p.activePowerMW = elec.activePowerMW;
       p.reactivePowerMVAR = elec.reactivePowerMVAR;
       p.phaseACurrentAmps = elec.phaseACurrentAmps;
@@ -561,64 +726,84 @@ export class ScadaSimulatorService {
       p.phaseCCurrentAmps = elec.phaseCCurrentAmps;
       p.neutralCurrentAmps = elec.neutralCurrentAmps;
 
-      // Thermal calculations for transformers and feeder bays
-      if (p.tag.includes('PTR') || p.tag.includes('FDR')) {
-        const ratedAmps = p.tag.includes('PTR') ? 2100 : 320;
+      // Transformer Thermal Rise Calculations
+      if (p.transformerLoadPct !== undefined || p.tag.includes('PTR') || p.tag.includes('DT')) {
+        const ratedAmps = p.tag.includes('110') ? 420.0 : p.tag.includes('PTR') ? 1400.0 : 500.0;
         p.transformerLoadPct = Math.round((p.currentAmps / ratedAmps) * 1000) / 10;
 
         const therm = this.calculateThermalRise(
           p.currentAmps,
           ratedAmps,
-          p.oilTempC || 45.0,
+          p.oilTempC || 50.0,
           this.config.ambientTempC,
           this.config.intervalSeconds
         );
         p.oilTempC = therm.oilTempC;
         p.windingTempC = therm.windingTempC;
 
-        // Check alarm conditions
-        this.checkAlarmsForPoint(p);
+        if (p.windingTempC >= this.config.windingTempAlarmThresholdC) {
+          this.createSimAlarm(
+            p.tag,
+            'critical',
+            `THERMAL CRITICAL: ${p.description} winding temp reached ${p.windingTempC}C (Limit: ${this.config.windingTempAlarmThresholdC}C)`
+          );
+        }
       }
 
       p.lastUpdated = 'Live (Simulated)';
       p.eventTimestamp = now;
-      p.ingestionTimestamp = now;
-
-      // Record trend buffer (keep last 60 samples)
-      if (!this.trendHistory[p.tag]) this.trendHistory[p.tag] = [];
-      const history = this.trendHistory[p.tag];
-      history.push({
-        timestamp: timeLabel,
-        voltageKV: p.voltageKV,
-        currentAmps: p.currentAmps,
-        activePowerMW: p.activePowerMW,
-        reactivePowerMVAR: p.reactivePowerMVAR,
-        frequencyHz: p.frequencyHz,
-        windingTempC: p.windingTempC || 50.0,
-        oilTempC: p.oilTempC || 45.0,
-      });
-      if (history.length > 60) history.shift();
+      this.appendTrendPoint(p, timeLabel);
     });
+
+    // Periodic Supabase Persistence (every 5 steps)
+    if (this.timeStepCounter % 5 === 0) {
+      this.persistTelemetrySnapshot();
+    }
 
     this.notifyListeners();
   }
 
-  private calculateDiurnalLoadFactor(step: number): number {
-    // 24-step normalized diurnal load curve
-    const cycle = (step % 24) / 24;
-    // Two peaks: morning 10:00 (cycle ~ 0.42) and evening 20:00 (cycle ~ 0.83)
-    const morningPeak = Math.exp(-Math.pow((cycle - 0.42) / 0.1, 2));
-    const eveningPeak = Math.exp(-Math.pow((cycle - 0.83) / 0.1, 2));
-    const base = 0.65;
-    return base + 0.35 * morningPeak + 0.45 * eveningPeak;
+  private appendTrendPoint(p: ScadaTelemetryPoint, timeLabel: string): void {
+    if (!this.trendHistory[p.tag]) {
+      this.trendHistory[p.tag] = [];
+    }
+    const history = this.trendHistory[p.tag];
+    history.push({
+      timestamp: timeLabel,
+      voltageKV: p.voltageKV,
+      currentAmps: p.currentAmps,
+      activePowerMW: p.activePowerMW,
+      reactivePowerMVAR: p.reactivePowerMVAR,
+      frequencyHz: p.frequencyHz,
+      windingTempC: p.windingTempC || 50.0,
+      oilTempC: p.oilTempC || 45.0,
+    });
+    if (history.length > 60) {
+      history.shift();
+    }
   }
 
+  // --------------------------------------------------------------------------
+  // PERSISTENT SCENARIO APPLICATION (BUG 4 RESOLVED)
+  // --------------------------------------------------------------------------
+
   private applyScenarioPreset(preset: ScadaScenarioPreset): void {
-    const targetFeeder = this.simPoints.find(p => p.tag === 'SIM_FDR_MARA_01') || this.simPoints[2];
-    const targetPtr = this.simPoints.find(p => p.tag === 'SIM_MARA_PTR1_80MVA') || this.simPoints[1];
+    const targetFeeder =
+      this.simPoints.find(p => p.tag === 'SIM_FDR_MARA_01') || this.simPoints[2] || this.simPoints[0];
+    const targetPtr =
+      this.simPoints.find(p => p.tag === 'SIM_MARA_PTR1_80MVA') || this.simPoints[1] || this.simPoints[0];
 
     switch (preset) {
       case 'NORMAL':
+        this.scenarioState = {
+          active: false,
+          preset: 'NORMAL',
+          stage: 'NORMAL',
+          remainingSteps: 0,
+          targetTag: targetFeeder.tag,
+          faultAmps: 0,
+          faultPhase: 'A',
+        };
         targetFeeder.currentAmps = 220.0;
         targetFeeder.breakerStatus = 'CLOSED';
         targetFeeder.powerFactor = 0.965;
@@ -645,135 +830,146 @@ export class ScadaSimulatorService {
         break;
 
       case 'FAULT_EARTH':
-        targetFeeder.currentAmps = 1850.0; // Single line to ground fault
-        targetFeeder.voltageKV = 2.1; // Voltage collapse on faulted phase
-        targetFeeder.breakerStatus = 'TRIPPED';
-        this.logEvent('FAULT', targetFeeder.tag, 'Single Phase-to-Ground fault (L-G) injected. Breaker Tripped.');
-        this.createSimAlarm(
-          targetFeeder.tag,
-          'critical',
-          `TRIP EVENT: Earth Fault Protection 51N operated on ${targetFeeder.tag}. Current: 1850A`
-        );
+        // Persistent multi-stage single line-to-ground fault
+        this.scenarioState = {
+          active: true,
+          preset: 'FAULT_EARTH',
+          stage: 'FAULT_INJECTED',
+          remainingSteps: 2, // 2 steps of severe fault current before relay trip
+          targetTag: targetFeeder.tag,
+          faultAmps: 1850.0,
+          faultPhase: 'A',
+        };
+        targetFeeder.currentAmps = 1850.0;
+        targetFeeder.voltageKV = 2.1; // Voltage dip on faulted phase
+        this.logEvent('FAULT', targetFeeder.tag, 'Single Phase-to-Ground fault (L-G) injected. Protection pickup initiated.');
         break;
 
       case 'FAULT_3PHASE':
-        targetFeeder.currentAmps = 3400.0; // Symmetrical 3-phase short circuit
-        targetFeeder.voltageKV = 0.4;
-        targetFeeder.breakerStatus = 'TRIPPED';
-        this.logEvent('FAULT', targetFeeder.tag, 'Symmetrical 3-Phase Short Circuit fault injected. Breaker Tripped.');
-        this.createSimAlarm(
-          targetFeeder.tag,
-          'critical',
-          `TRIP EVENT: Instantaneous Overcurrent 50 operated on ${targetFeeder.tag}. Fault Current: 3400A`
-        );
+        // Persistent multi-stage 3-phase symmetrical bolted fault
+        this.scenarioState = {
+          active: true,
+          preset: 'FAULT_3PHASE',
+          stage: 'FAULT_INJECTED',
+          remainingSteps: 2,
+          targetTag: targetFeeder.tag,
+          faultAmps: 3400.0,
+          faultPhase: '3PH',
+        };
+        targetFeeder.currentAmps = 3400.0;
+        targetFeeder.voltageKV = 0.8;
+        this.logEvent('FAULT', targetFeeder.tag, '3-Phase symmetrical short circuit injected (3400A). Protection timing.');
         break;
 
       case 'CONDUCTOR_SNAP':
-        targetFeeder.currentAmps = 12.0; // Line severed downstream
-        targetFeeder.neutralCurrentAmps = 48.0; // Heavy neutral imbalance
-        this.logEvent('FAULT', targetFeeder.tag, 'Conductor snap / open phase injected. Zero-sequence imbalance detected.');
+        // Conductor broken: phase current drops, neutral return current spikes
+        this.scenarioState = {
+          active: true,
+          preset: 'CONDUCTOR_SNAP',
+          stage: 'FAULT_INJECTED',
+          remainingSteps: 10,
+          targetTag: targetFeeder.tag,
+          faultAmps: 110.0,
+          faultPhase: 'SNAP',
+        };
+        targetFeeder.phaseACurrentAmps = 0.0;
+        targetFeeder.neutralCurrentAmps = 48.0;
+        this.logEvent('FAULT', targetFeeder.tag, 'Phase-A conductor snap detected. High neutral zero-sequence current (48A).');
         this.createSimAlarm(
           targetFeeder.tag,
-          'high',
-          `ALARM: High Neutral Current (48A) on ${targetFeeder.tag}. Probable conductor snap downstream.`
+          'critical',
+          `CONDUCTOR SNAP ALARM: Neutral unbalance current 48A on ${targetFeeder.description}`
         );
         break;
 
       case 'RESTORATION':
         targetFeeder.breakerStatus = 'CLOSED';
         targetFeeder.currentAmps = 180.0;
-        targetFeeder.voltageKV = 11.2;
-        this.logEvent('INFO', targetFeeder.tag, 'Feeder reclosed. Load restored to 180A in staged sequence.');
+        targetPtr.transformerLoadPct = 65.0;
+        this.scenarioState.active = false;
+        this.logEvent('INFO', targetFeeder.tag, 'Grid restoration sequence completed. Feeder re-energized.');
         break;
     }
   }
 
-  private checkAlarmsForPoint(p: ScadaTelemetryPoint): void {
-    if (p.currentAmps > this.config.currentMaxAmps) {
-      this.createSimAlarm(
-        p.tag,
-        'high',
-        `Current overload: ${p.tag} carrying ${p.currentAmps}A (Threshold: ${this.config.currentMaxAmps}A)`
-      );
-    }
-    if (p.oilTempC && p.oilTempC >= this.config.oilTempAlarmThresholdC) {
-      this.createSimAlarm(
-        p.tag,
-        'critical',
-        `CEA Statutory Violation: ${p.tag} oil temperature reached ${p.oilTempC}°C (Max allowable: ${this.config.oilTempAlarmThresholdC}°C)`
-      );
-    }
-  }
-
-  private createSimAlarm(tag: string, severity: 'critical' | 'high' | 'medium', message: string): void {
-    // Avoid duplicate active alarms within 1 minute
-    const existing = this.simAlarms.find(a => a.tag === tag && a.status === 'active' && a.message === message);
-    if (existing) return;
-
-    const alarmCode = `ALM-SIM-${Date.now().toString().slice(-4)}`;
-    this.simAlarms.unshift({
-      id: `sim-alm-${Date.now()}`,
-      tag,
-      alarmCode,
-      sourceType: 'SIMULATOR',
-      simulationSessionId: this.config.sessionId,
-      severity,
-      message,
-      status: 'active',
-      timestamp: new Date().toLocaleTimeString(),
-    });
-
-    if (this.simAlarms.length > 50) this.simAlarms.pop();
-  }
-
   // --------------------------------------------------------------------------
-  // MANUAL TELEMETRY INJECTION & BREAKER COMMANDS
+  // VALIDATED MANUAL TELEMETRY INJECTION (DATA ISOLATION RESOLVED)
   // --------------------------------------------------------------------------
 
-  public injectManualTelemetry(tag: string, updates: Partial<ScadaTelemetryPoint>): boolean {
+  /**
+   * Dedicated manual injection accepting ONLY authorized measurement inputs
+   * Validates bounds and strictly prevents tampering with sourceType or keys
+   */
+  public injectManualTelemetry(tag: string, input: ManualTelemetryInput): boolean {
     const pt = this.simPoints.find(p => p.tag === tag);
     if (!pt) return false;
 
-    Object.assign(pt, updates);
+    // Validate bounds
+    if (input.voltageKV !== undefined) {
+      pt.voltageKV = Math.max(0, Math.min(150.0, input.voltageKV));
+    }
+    if (input.currentAmps !== undefined) {
+      pt.currentAmps = Math.max(0, Math.min(3000.0, input.currentAmps));
+    }
+    if (input.powerFactor !== undefined) {
+      pt.powerFactor = Math.max(0.5, Math.min(1.0, input.powerFactor));
+    }
+    if (input.frequencyHz !== undefined) {
+      pt.frequencyHz = Math.max(47.0, Math.min(53.0, input.frequencyHz));
+    }
+    if (input.windingTempC !== undefined) {
+      pt.windingTempC = Math.max(-20.0, Math.min(150.0, input.windingTempC));
+    }
+    if (input.oilTempC !== undefined) {
+      pt.oilTempC = Math.max(-20.0, Math.min(130.0, input.oilTempC));
+    }
+    if (input.tapPosition !== undefined) {
+      pt.tapPosition = Math.max(-8, Math.min(8, input.tapPosition));
+    }
+    if (input.breakerStatus !== undefined) {
+      pt.breakerStatus = input.breakerStatus;
+    }
+
+    // Strictly enforce sandbox invariants
+    pt.sourceType = 'SIMULATOR';
+    pt.simulationSessionId = this.config.sessionId;
     pt.lastUpdated = 'Manual Override (Simulated)';
     pt.eventTimestamp = new Date().toISOString();
 
-    // Recalculate electricals if V or I changed
-    if (updates.voltageKV !== undefined || updates.currentAmps !== undefined || updates.powerFactor !== undefined) {
-      const elec = this.calculateThreePhaseElectricals(
-        pt.voltageKV,
-        pt.currentAmps,
-        pt.powerFactor || this.config.powerFactorNominal
-      );
-      pt.activePowerMW = elec.activePowerMW;
-      pt.reactivePowerMVAR = elec.reactivePowerMVAR;
-      pt.phaseACurrentAmps = elec.phaseACurrentAmps;
-      pt.phaseBCurrentAmps = elec.phaseBCurrentAmps;
-      pt.phaseCCurrentAmps = elec.phaseCCurrentAmps;
-      pt.neutralCurrentAmps = elec.neutralCurrentAmps;
-    }
+    // Recalculate derived 3-phase powers
+    const elec = this.calculateThreePhaseElectricals(
+      pt.voltageKV,
+      pt.currentAmps,
+      pt.powerFactor || this.config.powerFactorNominal
+    );
+    pt.activePowerMW = elec.activePowerMW;
+    pt.reactivePowerMVAR = elec.reactivePowerMVAR;
+    pt.phaseACurrentAmps = elec.phaseACurrentAmps;
+    pt.phaseBCurrentAmps = elec.phaseBCurrentAmps;
+    pt.phaseCCurrentAmps = elec.phaseCCurrentAmps;
+    pt.neutralCurrentAmps = elec.neutralCurrentAmps;
 
-    this.logEvent('INFO', tag, `Manual telemetry injected for ${tag}: ${JSON.stringify(updates)}`);
+    this.logEvent('INFO', tag, `Manual telemetry injected for ${tag}: ${JSON.stringify(input)}`);
     this.notifyListeners();
     return true;
   }
 
-  /**
-   * Operates breaker strictly within the simulator sandbox (Safety Boundary)
-   * Never operates live equipment or pollutes operational faults
-   */
+  // --------------------------------------------------------------------------
+  // SIMULATOR BREAKER CONTROL (SAFETY SANDBOX ONLY)
+  // --------------------------------------------------------------------------
+
   public operateSimulatedBreaker(
     tag: string,
     targetState: 'OPEN' | 'CLOSED',
-    operatorName: string,
-    reason: string
+    operatorName = 'Operator',
+    reason = 'Manual Test Operation'
   ): boolean {
     const pt = this.simPoints.find(p => p.tag === tag);
     if (!pt) return false;
 
-    const prevState = pt.breakerStatus;
     pt.breakerStatus = targetState;
-    pt.lastUpdated = 'Just now (Simulated)';
+    pt.lastUpdated = `Simulated SBO ${targetState}`;
+    pt.eventTimestamp = new Date().toISOString();
 
     if (targetState === 'OPEN') {
       pt.currentAmps = 0;
@@ -784,7 +980,7 @@ export class ScadaSimulatorService {
         'critical',
         `SIMULATED SBO TRIP: Breaker ${pt.description} opened by ${operatorName}. Reason: ${reason}`
       );
-      this.logEvent('BREAKER_TRIP', tag, `Simulated breaker tripped open by ${operatorName}. Reason: ${reason}`);
+      this.logEvent('BREAKER_TRIP', tag, `Simulated breaker opened by ${operatorName}. Reason: ${reason}`);
     } else {
       pt.currentAmps = 210.0;
       const elec = this.calculateThreePhaseElectricals(pt.voltageKV, pt.currentAmps, pt.powerFactor || 0.965);
@@ -798,7 +994,7 @@ export class ScadaSimulatorService {
   }
 
   // --------------------------------------------------------------------------
-  // HISTORICAL CSV / EXCEL PLAYBACK & EXPORT
+  // ROBUST CSV IMPORT WITH TIMED PLAYBACK REPLAY (HIGH FINDING RESOLVED)
   // --------------------------------------------------------------------------
 
   public exportTelemetrySnapshotCSV(): string {
@@ -851,45 +1047,205 @@ export class ScadaSimulatorService {
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   }
 
-  public importHistoricalCSVPlayback(csvContent: string): { success: boolean; rowsProcessed: number; message: string } {
-    try {
-      const lines = csvContent.trim().split('\n');
-      if (lines.length < 2) return { success: false, rowsProcessed: 0, message: 'CSV has no data rows' };
+  /**
+   * Robust RFC-4180 CSV line parser supporting quoted fields
+   */
+  private parseCsvLine(line: string): string[] {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
 
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        values.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    values.push(current.trim());
+    return values;
+  }
+
+  /**
+   * Imports historical CSV and queues for time-based playback replay
+   */
+  public importHistoricalCSVPlayback(csvContent: string): {
+    success: boolean;
+    rowsProcessed: number;
+    message: string;
+  } {
+    try {
+      const rawLines = csvContent.trim().split(/\r?\n/);
+      if (rawLines.length < 2) {
+        return { success: false, rowsProcessed: 0, message: 'CSV has no data rows' };
+      }
+
+      const headers = this.parseCsvLine(rawLines[0]).map(h => h.toLowerCase());
       const tagIndex = headers.indexOf('tag');
       const voltIndex = headers.indexOf('voltage_kv');
       const ampIndex = headers.indexOf('current_amps');
 
       if (tagIndex === -1 || voltIndex === -1 || ampIndex === -1) {
-        return { success: false, rowsProcessed: 0, message: 'Missing mandatory columns (tag, voltage_kv, current_amps)' };
+        return {
+          success: false,
+          rowsProcessed: 0,
+          message: 'Missing mandatory columns: tag, voltage_kv, current_amps',
+        };
       }
 
-      let count = 0;
-      for (let i = 1; i < lines.length; i++) {
-        const parts = lines[i].split(',').map(p => p.trim());
-        if (parts.length <= Math.max(tagIndex, voltIndex, ampIndex)) continue;
-
+      const records: CsvPlaybackRecord[] = [];
+      for (let i = 1; i < rawLines.length; i++) {
+        const line = rawLines[i].trim();
+        if (!line) continue;
+        const parts = this.parseCsvLine(line);
         const tag = parts[tagIndex];
         const v = parseFloat(parts[voltIndex]);
         const a = parseFloat(parts[ampIndex]);
 
         if (tag && !isNaN(v) && !isNaN(a)) {
-          this.injectManualTelemetry(tag, { voltageKV: v, currentAmps: a });
-          count++;
+          records.push({
+            tag,
+            voltageKV: v,
+            currentAmps: a,
+            breakerStatus: parts[headers.indexOf('breaker_status')] as any,
+            frequencyHz: parseFloat(parts[headers.indexOf('frequency_hz')]) || 50.0,
+            powerFactor: parseFloat(parts[headers.indexOf('power_factor')]) || 0.965,
+          });
         }
       }
 
-      this.logEvent('INFO', 'CSV_PLAYBACK', `Imported ${count} historical telemetry points from CSV.`);
-      return { success: true, rowsProcessed: count, message: `Successfully loaded ${count} telemetry playback frames.` };
+      if (records.length === 0) {
+        return { success: false, rowsProcessed: 0, message: 'No valid numeric telemetry rows found in CSV' };
+      }
+
+      // Populate playback buffer and activate timed playback mode
+      this.csvPlaybackQueue = records;
+      this.csvPlaybackIndex = 0;
+      this.config.mode = 'csv_playback';
+
+      // Immediately apply the first frame
+      const first = records[0];
+      this.injectManualTelemetry(first.tag, {
+        voltageKV: first.voltageKV,
+        currentAmps: first.currentAmps,
+      });
+
+      this.logEvent(
+        'INFO',
+        'CSV_PLAYBACK',
+        `Queued ${records.length} historical frames for timestamped playback replay.`
+      );
+      this.notifyListeners();
+
+      return {
+        success: true,
+        rowsProcessed: records.length,
+        message: `Successfully loaded ${records.length} playback frames into time-series queue.`,
+      };
     } catch (e: any) {
       return { success: false, rowsProcessed: 0, message: `Playback import failed: ${e.message}` };
     }
   }
 
   // --------------------------------------------------------------------------
-  // EVENT LOGGING & SUBSCRIPTIONS
+  // SUPABASE PERSISTENCE (SESSIONS, TELEMETRY, ALARMS)
   // --------------------------------------------------------------------------
+
+  private async persistSessionStart(): Promise<void> {
+    if (!isSupabaseConfigured) return;
+    try {
+      await supabase.from('scada_simulation_sessions').insert([
+        {
+          id: this.config.sessionId,
+          session_name: `Simulation ${this.config.sessionId}`,
+          mode: this.config.mode,
+          scenario: this.config.scenario,
+          speed: this.config.speed,
+          interval_seconds: this.config.intervalSeconds,
+          operator_name: 'Console Operator',
+          is_active: true,
+        },
+      ]);
+    } catch (e) {
+      // In-memory fallback
+    }
+  }
+
+  private async persistTelemetrySnapshot(): Promise<void> {
+    if (!isSupabaseConfigured) return;
+    try {
+      const payload = this.simPoints.map(p => ({
+        point_tag: p.tag,
+        source_type: 'SIMULATOR',
+        simulation_session_id: this.config.sessionId,
+        scenario_id: this.config.scenario,
+        voltage_kv: p.voltageKV,
+        current_amps: p.currentAmps,
+        active_power_mw: p.activePowerMW,
+        reactive_power_mvar: p.reactivePowerMVAR,
+        power_factor: p.powerFactor,
+        frequency_hz: p.frequencyHz,
+        phase_a_current_amps: p.phaseACurrentAmps,
+        phase_b_current_amps: p.phaseBCurrentAmps,
+        phase_c_current_amps: p.phaseCCurrentAmps,
+        neutral_current_amps: p.neutralCurrentAmps,
+        transformer_load_pct: p.transformerLoadPct,
+        oil_temp_c: p.oilTempC,
+        winding_temp_c: p.windingTempC,
+        tap_position: p.tapPosition || 0,
+        event_timestamp: p.eventTimestamp || new Date().toISOString(),
+      }));
+
+      await supabase.from('scada_telemetry').insert(payload);
+    } catch (e) {
+      // In-memory fallback
+    }
+  }
+
+  private async persistAlarmAcknowledgement(alarmCode: string, operatorName: string): Promise<void> {
+    if (!isSupabaseConfigured) return;
+    try {
+      await supabase
+        .from('scada_alarms')
+        .update({
+          status: 'acknowledged',
+          acknowledged_by: operatorName,
+          acknowledged_at: new Date().toISOString(),
+        })
+        .eq('alarm_code', alarmCode);
+    } catch (e) {
+      // In-memory fallback
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // ALARMS, EVENT LOGGING & SUBSCRIPTIONS
+  // --------------------------------------------------------------------------
+
+  private createSimAlarm(tag: string, severity: 'critical' | 'high' | 'medium', message: string): void {
+    const alarmCode = `ALM-SIM-${Date.now().toString().slice(-4)}`;
+    const newAlarm: ScadaAlarm = {
+      id: `alm-sim-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+      tag,
+      alarmCode,
+      sourceType: 'SIMULATOR',
+      severity,
+      message,
+      timestamp: new Date().toLocaleTimeString(),
+      status: 'active',
+    };
+    this.simAlarms.unshift(newAlarm);
+    if (this.simAlarms.length > 50) this.simAlarms.pop();
+  }
 
   private logEvent(eventType: SimulationEventLog['eventType'], tag: string, message: string): void {
     const entry: SimulationEventLog = {
@@ -917,16 +1273,9 @@ export class ScadaSimulatorService {
       try {
         l();
       } catch (err) {
-        console.error('Simulator listener error:', err);
+        console.error('ScadaSimulatorService listener error:', err);
       }
     });
-  }
-
-  private clearInterval(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
   }
 }
 
