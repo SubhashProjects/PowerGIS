@@ -7,7 +7,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { assetService } from '../../services/assetService';
-import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
+import { dataExchangeService, ImportResult, DatabaseBackupRecord } from '../../services/dataExchangeService';
 import { ROLES_REGISTRY } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
 import { UserProfile, OfficialRole } from '../../types/auth';
@@ -93,12 +93,19 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
     { id: 'mod_reliability', name: 'IEEE 1366 Outage Reliability', enabled: true },
   ]);
 
-  // Backup History
-  const [backupHistory, setBackupHistory] = useState([
-    { id: 'bk-1', type: 'Daily Automated', date: '2026-11-08 02:00:00 IST', size: '248 MB', status: 'verified', checksum: 'SHA256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' },
-    { id: 'bk-2', type: 'Daily Automated', date: '2026-11-07 02:00:00 IST', size: '242 MB', status: 'verified', checksum: 'SHA256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069' },
-    { id: 'bk-3', type: 'Weekly Snapshot', date: '2026-11-01 03:30:00 IST', size: '1.2 GB', status: 'verified', checksum: 'SHA256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b' },
-  ]);
+  // Backup History strictly driven by DataExchangeService & Simulator Mode
+  const [backupHistory, setBackupHistory] = useState<DatabaseBackupRecord[]>(() =>
+    dataExchangeService.getBackupHistory()
+  );
+
+  useEffect(() => {
+    const handleSimToggle = () => {
+      setIsSimulatorActive(assetService.isSimulatorMode());
+      setBackupHistory(dataExchangeService.getBackupHistory());
+    };
+    window.addEventListener('powergis:simulator-toggled', handleSimToggle);
+    return () => window.removeEventListener('powergis:simulator-toggled', handleSimToggle);
+  }, []);
 
   const [importStatus, setImportStatus] = useState<ImportResult | null>(null);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
@@ -124,15 +131,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
   const handleRunManualBackup = () => {
     dataExchangeService.exportSystemBackup();
-    const newBk = {
-      id: `bk-${Date.now()}`,
-      type: 'Manual Administrator Snapshot',
-      date: new Date().toLocaleString(),
-      size: '254 MB',
-      status: 'verified',
-      checksum: `SHA256:${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
-    };
-    setBackupHistory([newBk, ...backupHistory]);
+    setBackupHistory(dataExchangeService.getBackupHistory());
     setActionNotice('Database backup snapshot generated and downloaded. PostgreSQL PostGIS tables archived.');
     setTimeout(() => setActionNotice(null), 6000);
   };
@@ -360,6 +359,31 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
       {/* ==================================================================== */}
       {activeTab === 'users' && (
         <div className="space-y-4">
+          {/* Simulation Mode Indicator for Staff Personas */}
+          {!isSimulatorActive && (
+            <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 rounded-xl bg-amber-100 text-amber-800 border border-amber-300 flex-shrink-0">
+                  <Zap className="w-4 h-4 text-amber-700" />
+                </div>
+                <div>
+                  <div className="font-bold text-slate-900">Pre-seeded Test Personas Isolated (Clean Operational Mode)</div>
+                  <p className="text-[11px] text-slate-600">
+                    Showing <b>{users.length}</b> registered utility user(s). The 10 pre-seeded dummy engineering personas (SE, EE, AEE, AE, JE, Contractor, Auditor, GIS Admin) are isolated and will only appear when Simulator is ON.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleSimulator}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>⚡ Load Simulated Personas</span>
+              </button>
+            </div>
+          )}
+
           {/* Controls Bar: Search, Role Filter, Add User, Reset */}
           <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="flex items-center space-x-2.5 flex-1 min-w-0">
@@ -756,33 +780,43 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
               </button>
             </div>
 
-            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-              {backupHistory.map(bk => (
-                <div
-                  key={bk.id}
-                  className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors text-xs space-y-1.5"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-950">{bk.type} ({bk.size})</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] border border-emerald-300 font-bold">
-                        VERIFIED
-                      </span>
-                      <button
-                        onClick={() => handleRestore(bk.id)}
-                        className="px-2.5 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-mono transition-colors font-bold shadow-2xs cursor-pointer"
-                        title="Restore point-in-time snapshot"
-                      >
-                        Restore
-                      </button>
+            {backupHistory.length === 0 ? (
+              <div className="py-8 px-4 text-center rounded-2xl bg-slate-50 border border-dashed border-slate-300 space-y-2">
+                <Database className="w-8 h-8 text-slate-300 mx-auto" />
+                <div className="text-xs font-bold text-slate-800">No Database Snapshots Recorded</div>
+                <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+                  Operational database is running in clean production mode with 0 pre-seeded archives. Click "Run Manual Backup" above to export a point-in-time PostgreSQL PostGIS snapshot, or turn ON the Simulator to load historical simulated archives.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                {backupHistory.map(bk => (
+                  <div
+                    key={bk.id}
+                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors text-xs space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-950">{bk.type} ({bk.size})</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] border border-emerald-300 font-bold">
+                          VERIFIED
+                        </span>
+                        <button
+                          onClick={() => handleRestore(bk.id)}
+                          className="px-2.5 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-mono transition-colors font-bold shadow-2xs cursor-pointer"
+                          title="Restore point-in-time snapshot"
+                        >
+                          Restore
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="text-[10px] text-slate-500 font-mono truncate">{bk.checksum}</div>
-                  <div className="text-[10px] text-slate-400 font-mono">{bk.date}</div>
-                </div>
-              ))}
-            </div>
+                    <div className="text-[10px] text-slate-500 font-mono truncate">{bk.checksum}</div>
+                    <div className="text-[10px] text-slate-400 font-mono">{bk.date}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

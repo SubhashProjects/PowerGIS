@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { initialUsers } from '../../services/mockData';
+import { assetService } from '../../services/assetService';
 import { UserProfile } from '../../types/auth';
 import {
   Zap,
@@ -29,8 +30,9 @@ import {
 export const LoginPage: React.FC = () => {
   const { login, loginAsPersona } = useAuth();
 
-  const [identifier, setIdentifier] = useState('ee.urban@powergis.internal');
-  const [password, setPassword] = useState('EEUrban@2026');
+  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(() => assetService.isSimulatorMode());
+  const [identifier, setIdentifier] = useState(isSimulatorActive ? 'ee.urban@powergis.internal' : '');
+  const [password, setPassword] = useState(isSimulatorActive ? 'EEUrban@2026' : '');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +40,24 @@ export const LoginPage: React.FC = () => {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState('');
   const [forgotFeedback, setForgotFeedback] = useState<string | null>(null);
-  const [selectedPersona, setSelectedPersona] = useState<UserProfile | null>(initialUsers[4]);
+  const [selectedPersona, setSelectedPersona] = useState<UserProfile | null>(isSimulatorActive ? initialUsers[4] : null);
+
+  const handleToggleSimulator = (enabled: boolean) => {
+    setIsSimulatorActive(enabled);
+    assetService.setSimulatorMode(enabled);
+    if (enabled) {
+      const defaultPersona = initialUsers[4];
+      setSelectedPersona(defaultPersona);
+      setIdentifier(defaultPersona.email);
+      setPassword('EEUrban@2026');
+      setError(null);
+    } else {
+      setSelectedPersona(null);
+      setIdentifier('');
+      setPassword('');
+      setError(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +82,8 @@ export const LoginPage: React.FC = () => {
 
   const handleOneClickLogin = (u: UserProfile) => {
     setIsLoading(true);
+    assetService.setSimulatorMode(true);
+    setIsSimulatorActive(true);
     setTimeout(() => {
       loginAsPersona(u.id);
       setIsLoading(false);
@@ -145,6 +166,36 @@ export const LoginPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Simulator & Demo Personas Mode Switch */}
+              <div className="flex items-center justify-between p-3 mb-5 rounded-2xl bg-neutral-50 border border-neutral-200">
+                <div className="flex items-center space-x-2.5">
+                  <div className={`p-1.5 rounded-xl ${isSimulatorActive ? 'bg-amber-100 text-amber-800' : 'bg-neutral-200 text-neutral-600'}`}>
+                    <Zap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-neutral-900">Demo / Simulation Mode</div>
+                    <div className="text-[10px] text-neutral-500 font-mono">
+                      {isSimulatorActive ? '11 Pre-seeded Roles Simulated' : 'Clean Operational Mode (No Dummy Data)'}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleToggleSimulator(!isSimulatorActive)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                    isSimulatorActive ? 'bg-amber-500' : 'bg-neutral-300'
+                  }`}
+                  title={isSimulatorActive ? 'Switch to Clean Mode' : 'Enable Demo Personas'}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-xs ${
+                      isSimulatorActive ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
@@ -157,7 +208,7 @@ export const LoginPage: React.FC = () => {
                       required
                       value={identifier}
                       onChange={e => setIdentifier(e.target.value)}
-                      placeholder="e.g. ee.urban@powergis.internal"
+                      placeholder={isSimulatorActive ? "e.g. ee.urban@powergis.internal" : "Official staff email or superadmin@powergis.internal"}
                       className="w-full bg-neutral-50 border border-neutral-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 font-mono transition-all"
                     />
                   </div>
@@ -236,91 +287,128 @@ export const LoginPage: React.FC = () => {
 
         {/* Right Side: Interactive Test Personas & Dummy Data Switcher */}
         <div className="flex-1 flex flex-col justify-center">
-          <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-neutral-100">
-              <div>
-                <div className="flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4 text-neutral-900" />
-                  <h2 className="text-base font-bold text-neutral-950">Engineering Personas & Test Data</h2>
+          {isSimulatorActive ? (
+            <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-neutral-100">
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <h2 className="text-base font-bold text-neutral-950">Engineering Personas & Test Data</h2>
+                  </div>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Select any official role below for instant 1-click login or to autofill test credentials.
+                  </p>
                 </div>
-                <p className="text-xs text-neutral-500 mt-0.5">
-                  Select any official role below for instant 1-click login or to autofill test credentials.
+                <div className="flex items-center space-x-2">
+                  <span className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 font-mono border border-amber-200 font-semibold">
+                    11 Roles Simulated
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleSimulator(false)}
+                    className="text-[10px] text-neutral-500 hover:text-neutral-900 underline font-mono cursor-pointer"
+                  >
+                    Clean Mode
+                  </button>
+                </div>
+              </div>
+
+              {/* Persona Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-[500px] overflow-y-auto pr-1">
+                {initialUsers.map(u => {
+                  const isSelected = selectedPersona?.id === u.id;
+                  return (
+                    <div
+                      key={u.id}
+                      onClick={() => handleSelectPersona(u)}
+                      className={`p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                        isSelected
+                          ? 'bg-neutral-50 border-neutral-900 text-neutral-950 shadow-sm ring-2 ring-neutral-900'
+                          : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/60'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md border bg-neutral-100 text-neutral-800 border-neutral-200">
+                            {u.role.replace('_', ' ')}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleOneClickLogin(u);
+                            }}
+                            className="text-[10px] px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-black text-white font-bold flex items-center space-x-1 transition-all shadow-2xs cursor-pointer"
+                          >
+                            <span>1-Click</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <div className="font-semibold text-xs text-neutral-950 leading-snug">
+                          {u.fullName}
+                        </div>
+                        <div className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">
+                          {u.designation}
+                        </div>
+                      </div>
+
+                      <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
+                        <span className="truncate max-w-[140px]">{u.email}</span>
+                        <span className="text-neutral-900 font-semibold">PowerGIS@2026</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Quick Test Data Stats Summary */}
+              <div className="mt-4 pt-4 border-t border-neutral-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                  <div className="text-base font-bold text-neutral-950 font-mono">4</div>
+                  <div className="text-[10px] text-neutral-500 uppercase font-semibold">Regions</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                  <div className="text-base font-bold text-neutral-950 font-mono">8</div>
+                  <div className="text-[10px] text-neutral-500 uppercase font-semibold">Substations</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                  <div className="text-base font-bold text-neutral-950 font-mono">7 DTRs</div>
+                  <div className="text-[10px] text-neutral-500 uppercase font-semibold">Transformers</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
+                  <div className="text-base font-bold text-neutral-950 font-mono">22+</div>
+                  <div className="text-[10px] text-neutral-500 uppercase font-semibold">Modules</div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white border border-neutral-200 rounded-3xl p-8 shadow-sm flex flex-col items-center justify-center text-center space-y-4 min-h-[460px]">
+              <div className="w-16 h-16 rounded-2xl bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700 shadow-xs">
+                <Shield className="w-8 h-8 text-neutral-900" />
+              </div>
+              <div className="space-y-1.5 max-w-sm">
+                <h2 className="text-base font-bold text-neutral-950">Clean Operational Mode Active</h2>
+                <p className="text-xs text-neutral-500 leading-relaxed">
+                  Pre-seeded dummy users and simulated accounts are disabled in clean production mode. Enter your registered utility credentials on the left to sign in.
                 </p>
               </div>
-              <span className="self-start sm:self-auto text-[11px] px-2.5 py-1 rounded-lg bg-neutral-100 text-neutral-800 font-mono border border-neutral-200 font-semibold">
-                11 Official Roles
-              </span>
-            </div>
-
-            {/* Persona Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-[500px] overflow-y-auto pr-1">
-              {initialUsers.map(u => {
-                const isSelected = selectedPersona?.id === u.id;
-                return (
-                  <div
-                    key={u.id}
-                    onClick={() => handleSelectPersona(u)}
-                    className={`p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                      isSelected
-                        ? 'bg-neutral-50 border-neutral-900 text-neutral-950 shadow-sm ring-2 ring-neutral-900'
-                        : 'bg-white border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/60'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-start justify-between gap-2 mb-1.5">
-                        <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md border bg-neutral-100 text-neutral-800 border-neutral-200">
-                          {u.role.replace('_', ' ')}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleOneClickLogin(u);
-                          }}
-                          className="text-[10px] px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-black text-white font-bold flex items-center space-x-1 transition-all shadow-2xs"
-                        >
-                          <span>1-Click</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </button>
-                      </div>
-
-                      <div className="font-semibold text-xs text-neutral-950 leading-snug">
-                        {u.fullName}
-                      </div>
-                      <div className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">
-                        {u.designation}
-                      </div>
-                    </div>
-
-                    <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
-                      <span className="truncate max-w-[140px]">{u.email}</span>
-                      <span className="text-neutral-900 font-semibold">PowerGIS@2026</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Quick Test Data Stats Summary */}
-            <div className="mt-4 pt-4 border-t border-neutral-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-base font-bold text-neutral-950 font-mono">4</div>
-                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Regions</div>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => handleToggleSimulator(true)}
+                  className="px-5 py-2.5 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold text-xs flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>⚡ Simulate Demo Personas (SE, EE, AE, JE...)</span>
+                </button>
               </div>
-              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-base font-bold text-neutral-950 font-mono">8</div>
-                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Substations</div>
-              </div>
-              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-base font-bold text-neutral-950 font-mono">7 DTRs</div>
-                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Transformers</div>
-              </div>
-              <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200">
-                <div className="text-base font-bold text-neutral-950 font-mono">22+</div>
-                <div className="text-[10px] text-neutral-500 uppercase font-semibold">Modules</div>
+              <div className="text-[11px] text-neutral-400 font-mono pt-4 border-t border-neutral-100 max-w-xs">
+                Root Super Administrator: <br />
+                <span className="text-neutral-700 font-semibold">superadmin@powergis.internal</span>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 

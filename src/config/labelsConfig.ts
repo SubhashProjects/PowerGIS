@@ -43,9 +43,9 @@ export const LABELS = {
   header: {
     brandName: 'PowerGIS',
     brandBadge: 'DISTRIBUTION',
-    brandSubtitle: 'PowerGIS • Utility Asset Management & Operations Portal',
+    brandSubtitle: 'PowerGIS',
     jurisdictionPrefix: 'Jurisdiction:',
-    searchPlaceholder: 'Search assets, feeders, poles... (Ctrl + K)',
+    searchPlaceholder: 'Search (Ctrl + K)',
     searchMobilePlaceholder: 'Search assets, feeders, poles...',
     searchMobileTooltip: 'Search Assets',
     whiteThemeBadge: 'White Theme',

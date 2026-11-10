@@ -62,6 +62,7 @@ export class AssetService {
 
   public setSimulatorMode(active: boolean): void {
     this.isSimulatorActive = active;
+    authService.setSimulatorMode(active);
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       localStorage.setItem('powergis_simulator_mode', active ? 'true' : 'false');
       window.dispatchEvent(new CustomEvent('powergis:simulator-toggled', { detail: { active } }));

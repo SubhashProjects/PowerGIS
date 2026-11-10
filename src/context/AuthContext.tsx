@@ -38,6 +38,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setPermissions(authService.getRolePermissions(user.role));
   }, [user]);
 
+  useEffect(() => {
+    const handleSimToggle = () => {
+      setUsers(authService.getAllUsers());
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('powergis:simulator-toggled', handleSimToggle);
+      return () => window.removeEventListener('powergis:simulator-toggled', handleSimToggle);
+    }
+  }, []);
+
   const login = (identifier: string, password: string): LoginResult => {
     const res = authService.login(identifier, password);
     if (res.success && res.user) {

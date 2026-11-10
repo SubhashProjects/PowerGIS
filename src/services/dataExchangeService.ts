@@ -17,10 +17,82 @@ export interface ImportResult {
   details: string[];
 }
 
+export interface DatabaseBackupRecord {
+  id: string;
+  type: string;
+  date: string;
+  size: string;
+  status: 'verified' | 'in_progress' | 'failed';
+  checksum: string;
+  isSimulated?: boolean;
+}
+
+const USER_BACKUPS_STORAGE_KEY = 'powergis_user_backups_v2';
+
 export class DataExchangeService {
   private static instance: DataExchangeService;
 
-  private constructor() {}
+  // Pre-seeded simulated backups (gated strictly behind Simulator Mode)
+  private simulatedBackups: DatabaseBackupRecord[] = [
+    { id: 'bk-1', type: 'Daily Automated', date: '2026-11-08 02:00:00 IST', size: '248 MB', status: 'verified', checksum: 'SHA256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', isSimulated: true },
+    { id: 'bk-2', type: 'Daily Automated', date: '2026-11-07 02:00:00 IST', size: '242 MB', status: 'verified', checksum: 'SHA256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069', isSimulated: true },
+    { id: 'bk-3', type: 'Weekly Snapshot', date: '2026-11-01 03:30:00 IST', size: '1.2 GB', status: 'verified', checksum: 'SHA256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b', isSimulated: true },
+  ];
+  private userBackups: DatabaseBackupRecord[] = [];
+
+  private constructor() {
+    this.loadUserBackups();
+  }
+
+  private loadUserBackups(): void {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(USER_BACKUPS_STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            this.userBackups = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse stored backups:', e);
+      }
+    }
+  }
+
+  private saveUserBackups(): void {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(USER_BACKUPS_STORAGE_KEY, JSON.stringify(this.userBackups));
+      } catch (e) {
+        console.warn('Failed to persist backups to localStorage:', e);
+      }
+    }
+  }
+
+  public getBackupHistory(includeSimulated?: boolean): DatabaseBackupRecord[] {
+    const shouldInclude = includeSimulated ?? assetService.isSimulatorMode();
+    if (shouldInclude) {
+      return [...this.userBackups, ...this.simulatedBackups];
+    }
+    return [...this.userBackups];
+  }
+
+  public recordBackup(record: Omit<DatabaseBackupRecord, 'id'> & { id?: string }): DatabaseBackupRecord {
+    const newRecord: DatabaseBackupRecord = {
+      ...record,
+      id: record.id || `bk-${Date.now()}`,
+      isSimulated: false,
+    };
+    this.userBackups.unshift(newRecord);
+    this.saveUserBackups();
+    return newRecord;
+  }
+
+  public clearUserBackups(): void {
+    this.userBackups = [];
+    this.saveUserBackups();
+  }
 
   public static getInstance(): DataExchangeService {
     if (!DataExchangeService.instance) {
@@ -304,13 +376,14 @@ export class DataExchangeService {
   // --------------------------------------------------------------------------
   // 4. EXPORT COMPLETE DATABASE SNAPSHOT (JSON Backup)
   // --------------------------------------------------------------------------
-  public exportSystemBackup(): void {
+  public exportSystemBackup(): DatabaseBackupRecord {
+    const checksum = `SHA256:${this.generateChecksum()}`;
     const backupData = {
       version: '2.0.0',
       exportedAt: new Date().toISOString(),
       platform: 'PowerGIS Enterprise Distribution Platform',
       securityScope: 'All 4 Regional Enclaves',
-      checksum: `SHA256:${this.generateChecksum()}`,
+      checksum,
       data: {
         regions: initialRegions,
         divisions: initialDivisions,
@@ -328,6 +401,16 @@ export class DataExchangeService {
 
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     this.triggerDownload(blob, `PowerGIS_System_Backup_${this.getTimestampString()}.json`);
+
+    const record = this.recordBackup({
+      type: 'Manual Administrator Snapshot',
+      date: new Date().toLocaleString(),
+      size: `${Math.max(1, Math.round(blob.size / 1024))} KB`,
+      status: 'verified',
+      checksum,
+    });
+
+    return record;
   }
 
   // --------------------------------------------------------------------------

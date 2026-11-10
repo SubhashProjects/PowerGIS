@@ -13,6 +13,7 @@ import { notificationService } from '../src/services/notificationService';
 import { scadaSimulatorService } from '../src/services/scadaSimulatorService';
 import { scadaGatewayService } from '../src/services/scadaGatewayService';
 import { scadaService } from '../src/services/scadaService';
+import { dataExchangeService } from '../src/services/dataExchangeService';
 import { initialUsers, initialTransformers, initialFeeders, initialScadaPoints } from '../src/services/mockData';
 
 let passed = 0;
@@ -755,6 +756,9 @@ async function runTestSuite() {
     const cleanDashboard = notificationService.getDashboardData(jeUser);
     assert(!cleanDashboard.assignments.some(a => a.id === 'asg-je-1'), 'Clean mode strictly excludes dummy assignment asg-je-1');
     assert(cleanDashboard.notifications.some(n => n.id === 'clean-mode-standby'), 'Clean mode serves clean operational standby notification');
+    assert(!authService.getAllUsers().some(u => u.id === 'user-ee'), 'Clean mode strictly excludes dummy user user-ee');
+    assert(!authService.getAllUsers().some(u => u.id === 'user-contractor'), 'Clean mode strictly excludes dummy user user-contractor');
+    assert(dataExchangeService.getBackupHistory().length === 0, 'Clean mode strictly yields 0 dummy backup archives');
 
     // Step 2: Switch simulator mode ON (Dynamic Simulation Mode)
     assetService.setSimulatorMode(true);
@@ -771,10 +775,14 @@ async function runTestSuite() {
     assert(simIndices.totalOutages > 0, 'Simulator ON enables dynamic IEEE 1366 reliability calculations');
     const simDashboard = notificationService.getDashboardData(jeUser);
     assert(simDashboard.assignments.some(a => a.id === 'asg-je-1'), 'Simulator ON populates simulated role assignment asg-je-1');
+    assert(authService.getAllUsers().some(u => u.id === 'user-ee'), 'Simulator ON enables simulated dummy personas');
+    assert(dataExchangeService.getBackupHistory().length > 0, 'Simulator ON enables simulated database backup archives');
 
     // Step 3: Switch simulator back OFF (Clean Mode restored)
     assetService.setSimulatorMode(false);
     assert(assetService.isSimulatorMode() === false, 'Simulator mode successfully returned to Clean Mode (OFF)');
+    assert(!authService.getAllUsers().some(u => u.id === 'user-ee'), 'Clean mode restored strictly excludes dummy users');
+    assert(dataExchangeService.getBackupHistory().length === 0, 'Clean mode restored strictly yields 0 dummy backups');
   }
 
   // --------------------------------------------------------------------------

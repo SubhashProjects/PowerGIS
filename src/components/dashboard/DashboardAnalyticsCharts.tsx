@@ -444,6 +444,55 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
   // Section Operations, Feeder capacity loading & safety PTW monitoring
   // ==========================================================================
   if (role === 'ae' || role === 'aee') {
+    if (!isSim) {
+      return (
+        <div className="space-y-3.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-base shadow-sm flex-shrink-0">
+                <Zap className="w-4 h-4 text-slate-400" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h2 className="text-sm sm:text-base font-bold text-slate-950 tracking-tight">
+                    Section Feeder Loading & Substation Telemetry
+                  </h2>
+                  <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                    Standby (Empty)
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-mono">
+                  Clean Operational Mode Active • SCADA Feeder Telemetry Standby
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center flex flex-col items-center justify-center space-y-3 shadow-2xs">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+              <Gauge className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-slate-900">No Active Feeder Telemetry Streams</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Section feeder loading and substation telemetry data have been moved to the SCADA Simulator. Turn ON the Simulator to stream live feeder amperage and demand curves.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => assetService.setSimulatorMode(true)}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
+              >
+                <Zap className="w-4 h-4" />
+                <span>⚡ Turn ON SCADA Simulator Telemetry</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-3.5">
         <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -457,7 +506,7 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
                   Section Feeder Loading & Substation Telemetry
                 </h2>
                 <span className="text-[9px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-2xs">
-                  Section Dispatch
+                  Section Dispatch (Simulated)
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-mono">
@@ -660,37 +709,47 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
             <div className="flex items-center space-x-2 text-[10px] font-mono">
               <span className="flex items-center space-x-1 text-cyan-700 font-semibold">
                 <span className="w-2 h-2 rounded-full bg-cyan-500 inline-block"></span>
-                <span>Peak: 38.4 MW</span>
+                <span>Peak: {isSim ? '38.4 MW' : '0.0 MW'}</span>
               </span>
               <span className="flex items-center space-x-1 text-emerald-700 font-semibold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                <span>Solar: 11.8 MW</span>
+                <span>Solar: {isSim ? '11.8 MW' : '0.0 MW'}</span>
               </span>
             </div>
           </div>
 
-          <div className="h-56 w-full pt-1">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={hourlyDemandData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorDemand" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.45} />
-                    <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="colorSolar" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="time" stroke="#94A3B8" fontSize={10} tickLine={false} />
-                <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="MW" />
-                <Tooltip />
-                <Area type="monotone" dataKey="demandMW" name="Grid Demand (MW)" stroke="#0284C7" strokeWidth={2} fill="url(#colorDemand)" />
-                <Area type="monotone" dataKey="solarMW" name="Solar Feed (MW)" stroke="#059669" strokeWidth={1.5} fill="url(#colorSolar)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          {isSim ? (
+            <div className="h-56 w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={hourlyDemandData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorDemand" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.45} />
+                      <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0.0} />
+                    </linearGradient>
+                    <linearGradient id="colorSolar" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                  <XAxis dataKey="time" stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} unit="MW" />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="demandMW" name="Grid Demand (MW)" stroke="#0284C7" strokeWidth={2} fill="url(#colorDemand)" />
+                  <Area type="monotone" dataKey="solarMW" name="Solar Feed (MW)" stroke="#059669" strokeWidth={1.5} fill="url(#colorSolar)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-56 w-full flex flex-col items-center justify-center p-4 text-center rounded-xl bg-slate-50 border border-dashed border-slate-200">
+              <TrendingUp className="w-8 h-8 text-slate-300 mb-2" />
+              <span className="text-xs font-bold text-slate-700">Grid Demand Standby (0.0 MW)</span>
+              <p className="text-[11px] text-slate-500 max-w-sm mt-1">
+                Dynamic telemetry demand profile is isolated. Turn ON the SCADA Simulator to stream live multi-substation demand.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs flex flex-col justify-between">
@@ -781,34 +840,44 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
             </span>
           </div>
 
-          <div className="space-y-3 my-auto">
-            {feederUtilization.map((fdr, idx) => (
-              <div key={idx} className="space-y-1 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-900 truncate text-[11px]">{fdr.name}</span>
-                  <div className="flex items-center space-x-1.5 font-mono text-[10px]">
-                    <span className="text-slate-500">{fdr.currentA}A</span>
-                    <span
-                      className={`font-bold px-1 py-0.1 rounded text-[9px] ${
-                        fdr.loadPct > 80
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-emerald-100 text-emerald-800'
-                      }`}
-                    >
-                      {fdr.loadPct}%
-                    </span>
+          {isSim ? (
+            <div className="space-y-3 my-auto">
+              {feederUtilization.map((fdr, idx) => (
+                <div key={idx} className="space-y-1 p-2 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-900 truncate text-[11px]">{fdr.name}</span>
+                    <div className="flex items-center space-x-1.5 font-mono text-[10px]">
+                      <span className="text-slate-500">{fdr.currentA}A</span>
+                      <span
+                        className={`font-bold px-1 py-0.1 rounded text-[9px] ${
+                          fdr.loadPct > 80
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-emerald-100 text-emerald-800'
+                        }`}
+                      >
+                        {fdr.loadPct}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full bg-gradient-to-r ${fdr.gradient} transition-all duration-500`}
+                      style={{ width: `${fdr.loadPct}%` }}
+                    />
                   </div>
                 </div>
-
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full bg-gradient-to-r ${fdr.gradient} transition-all duration-500`}
-                    style={{ width: `${fdr.loadPct}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-50 w-full flex flex-col items-center justify-center p-4 text-center rounded-xl bg-slate-50 border border-dashed border-slate-200 my-auto">
+              <Gauge className="w-8 h-8 text-slate-300 mb-2" />
+              <span className="text-xs font-bold text-slate-700">No Feeder Telemetry Streams</span>
+              <p className="text-[11px] text-slate-500 max-w-xs mt-1">
+                Section feeder loading streams are empty in clean mode. Turn ON SCADA Simulator to view live thermal loading.
+              </p>
+            </div>
+          )}
 
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-mono">
             <span>Thermal Limit: 90%</span>

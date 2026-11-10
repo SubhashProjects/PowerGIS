@@ -24,10 +24,11 @@ export interface LoginResult {
 
 export class AuthService {
   private static instance: AuthService;
-  private users: UserProfile[] = [];
-  private currentUser: UserProfile = initialUsers[4]; // Er. M. Sivakumar, EE Urban
+  private registeredUsers: UserProfile[] = [];
+  private currentUser: UserProfile = initialUsers[0]; // Statutory Super Administrator by default
   private authenticated: boolean = false; // Strictly defaults to unauthenticated
   private failedAttempts: Record<string, number> = {};
+  private isSimulatorActive: boolean = false;
 
   // Private internal credential vault (Never exposed on UserProfile objects)
   private credentialsVault: Record<string, string> = {
@@ -48,11 +49,20 @@ export class AuthService {
     this.loadUsers();
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const storedSim = localStorage.getItem('powergis_simulator_mode');
+        if (storedSim === 'true') {
+          this.isSimulatorActive = true;
+        }
+        window.addEventListener('powergis:simulator-toggled', (e: any) => {
+          this.isSimulatorActive = Boolean(e?.detail?.active);
+        });
+
         const savedAuth = localStorage.getItem(AUTH_STATUS_KEY);
         const savedUser = localStorage.getItem(SESSION_KEY);
         if (savedAuth === 'true' && savedUser) {
           const parsed = JSON.parse(savedUser);
-          const matched = this.users.find(u => u.id === parsed.id);
+          const allUsers = this.getAllUsers(true);
+          const matched = allUsers.find(u => u.id === parsed.id);
           if (matched) {
             this.currentUser = matched;
             this.authenticated = true;
@@ -71,6 +81,14 @@ export class AuthService {
     if (isSupabaseConfigured) {
       this.restoreSupabaseSession();
     }
+  }
+
+  public isSimulatorMode(): boolean {
+    return this.isSimulatorActive;
+  }
+
+  public setSimulatorMode(active: boolean): void {
+    this.isSimulatorActive = active;
   }
 
   private async restoreSupabaseSession(): Promise<void> {
@@ -116,7 +134,7 @@ export class AuthService {
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            this.users = parsed;
+            this.registeredUsers = parsed;
             return;
           }
         }
@@ -124,14 +142,15 @@ export class AuthService {
         console.warn('Failed to parse stored users:', e);
       }
     }
-    this.users = [...initialUsers];
+    // Clean operational mode: statutory Root Super Administrator is bootstrapped
+    this.registeredUsers = [initialUsers[0]];
     this.saveUsers();
   }
 
   private saveUsers(): void {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       try {
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(this.users));
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(this.registeredUsers));
       } catch (e) {
         console.warn('Failed to persist users to localStorage:', e);
       }
@@ -166,8 +185,14 @@ export class AuthService {
     this.saveSession();
   }
 
-  public getAllUsers(): UserProfile[] {
-    return [...this.users];
+  public getAllUsers(includeSimulated?: boolean): UserProfile[] {
+    const shouldInclude = includeSimulated ?? this.isSimulatorActive;
+    if (shouldInclude) {
+      const regIds = new Set(this.registeredUsers.map(u => u.id));
+      const simOnly = initialUsers.filter(u => !regIds.has(u.id));
+      return [...this.registeredUsers, ...simOnly];
+    }
+    return [...this.registeredUsers];
   }
 
   public addUser(userData: Omit<UserProfile, 'id'> & { id?: string; password?: string }): UserProfile {
@@ -186,47 +211,71 @@ export class AuthService {
       this.credentialsVault[newId] = 'PowerGIS@2026';
     }
 
-    this.users.unshift(newUser);
+    this.registeredUsers.unshift(newUser);
     this.saveUsers();
     return newUser;
   }
 
   public updateUser(id: string, updates: Partial<UserProfile>): UserProfile | null {
-    const index = this.users.findIndex(u => u.id === id);
-    if (index === -1) return null;
+    const index = this.registeredUsers.findIndex(u => u.id === id);
+    if (index !== -1) {
+      const updatedUser: UserProfile = {
+        ...this.registeredUsers[index],
+        ...updates,
+      };
+      this.registeredUsers[index] = updatedUser;
 
-    const updatedUser: UserProfile = {
-      ...this.users[index],
-      ...updates,
-    };
-    this.users[index] = updatedUser;
+      if (this.currentUser.id === id) {
+        this.currentUser = updatedUser;
+        this.saveSession();
+      }
 
-    if (this.currentUser.id === id) {
-      this.currentUser = updatedUser;
-      this.saveSession();
+      this.saveUsers();
+      return updatedUser;
     }
 
-    this.saveUsers();
-    return updatedUser;
+    // If updating a simulated persona while simulator is ON, promote to registered users
+    const simPersona = initialUsers.find(u => u.id === id);
+    if (simPersona) {
+      const updatedUser: UserProfile = {
+        ...simPersona,
+        ...updates,
+      };
+      this.registeredUsers.unshift(updatedUser);
+      if (this.currentUser.id === id) {
+        this.currentUser = updatedUser;
+        this.saveSession();
+      }
+      this.saveUsers();
+      return updatedUser;
+    }
+
+    return null;
   }
 
   public deleteUser(id: string): { success: boolean; message: string } {
     if (this.currentUser.id === id) {
       return { success: false, message: 'Security Policy Violation: Cannot delete your own active administrator account session.' };
     }
-    const beforeCount = this.users.length;
-    this.users = this.users.filter(u => u.id !== id);
-    if (this.users.length === beforeCount) {
-      return { success: false, message: 'User record not found.' };
+    if (id === 'user-superadmin') {
+      return { success: false, message: 'Security Policy Violation: Cannot delete statutory root administrator account.' };
     }
-    this.saveUsers();
-    return { success: true, message: 'User record deleted successfully from database.' };
+    const beforeCount = this.registeredUsers.length;
+    this.registeredUsers = this.registeredUsers.filter(u => u.id !== id);
+    if (this.registeredUsers.length < beforeCount) {
+      this.saveUsers();
+      return { success: true, message: 'User record deleted successfully from database.' };
+    }
+    if (initialUsers.some(u => u.id === id)) {
+      return { success: false, message: 'Simulated pre-seeded personas cannot be permanently deleted. Switch off Simulator to clear them.' };
+    }
+    return { success: false, message: 'User record not found.' };
   }
 
   public resetUsersToDefault(): UserProfile[] {
-    this.users = [...initialUsers];
+    this.registeredUsers = [initialUsers[0]];
     this.saveUsers();
-    return [...this.users];
+    return this.getAllUsers();
   }
 
   /**
@@ -245,9 +294,26 @@ export class AuthService {
       };
     }
 
-    const matchedUser = this.users.find(
+    // Check registered users first
+    let matchedUser = this.registeredUsers.find(
       u => u.username.toLowerCase() === trimmedId || u.email.toLowerCase() === trimmedId
     );
+
+    // If not found in registered users, check simulated personas
+    if (!matchedUser) {
+      const simMatch = initialUsers.find(
+        u => u.username.toLowerCase() === trimmedId || u.email.toLowerCase() === trimmedId
+      );
+      if (simMatch) {
+        matchedUser = simMatch;
+        // Logging in as a simulated persona automatically enables simulator mode
+        this.setSimulatorMode(true);
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          localStorage.setItem('powergis_simulator_mode', 'true');
+          window.dispatchEvent(new CustomEvent('powergis:simulator-toggled', { detail: { active: true } }));
+        }
+      }
+    }
 
     if (!matchedUser) {
       this.recordFailedAttempt(trimmedId);
@@ -358,9 +424,17 @@ export class AuthService {
    * Instant 1-Click Persona Login for Testing & Role Verification
    */
   public loginAsPersona(userId: string): LoginResult {
-    const matched = this.users.find(u => u.id === userId);
+    const all = this.getAllUsers(true);
+    const matched = all.find(u => u.id === userId);
     if (!matched) {
       return { success: false, error: 'Persona not found' };
+    }
+
+    // Always enable simulator mode for 1-click persona testing
+    this.setSimulatorMode(true);
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.setItem('powergis_simulator_mode', 'true');
+      window.dispatchEvent(new CustomEvent('powergis:simulator-toggled', { detail: { active: true } }));
     }
 
     this.currentUser = matched;
@@ -392,7 +466,8 @@ export class AuthService {
    */
   public requestPasswordReset(identifier: string): { success: boolean; message: string } {
     const trimmed = identifier.trim().toLowerCase();
-    const user = this.users.find(
+    const all = this.getAllUsers(true);
+    const user = all.find(
       u => u.username.toLowerCase() === trimmed || u.email.toLowerCase() === trimmed
     );
     if (!user) {
