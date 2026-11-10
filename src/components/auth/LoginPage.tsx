@@ -54,6 +54,7 @@ export const LoginPage: React.FC = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [identifierTouched, setIdentifierTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   // Demo Page filter and search state
   const [demoSearch, setDemoSearch] = useState('');
@@ -65,8 +66,9 @@ export const LoginPage: React.FC = () => {
   const [forgotTouched, setForgotTouched] = useState(false);
   const [forgotFeedback, setForgotFeedback] = useState<string | null>(null);
 
-  // Compute live criteria checklist for strict password
+  // Compute live criteria checklist for strict password (dynamically shown only when requirements not met)
   const passwordCriteria = checkPasswordCriteria(password);
+  const showStrictCriteria = (isPasswordFocused || passwordTouched) && password.length > 0 && !passwordCriteria.isValid;
 
   // --------------------------------------------------------------------------
   // EVENT HANDLERS
@@ -271,7 +273,9 @@ export const LoginPage: React.FC = () => {
                   autoComplete="current-password"
                   value={password}
                   onChange={e => handlePasswordChange(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(true)}
                   onBlur={() => {
+                    setIsPasswordFocused(false);
                     setPasswordTouched(true);
                     setPasswordError(validateStrictPassword(password));
                   }}
@@ -292,18 +296,14 @@ export const LoginPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Real-time strict password criteria indicators */}
-              {(password || passwordTouched) && (
+              {/* Real-time strict password criteria indicators - dynamically shown only when requirements not met */}
+              {showStrictCriteria && (
                 <div className="mt-2 pt-2 border-t border-[#E4E4E7]/60">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">
                       {LABELS.auth.strictPasswordTitle}
                     </span>
-                    <span
-                      className={`text-[10px] font-bold ${
-                        passwordCriteria.isValid ? 'text-emerald-600' : 'text-zinc-400'
-                      }`}
-                    >
+                    <span className="text-[10px] font-bold text-amber-600">
                       {passwordCriteria.score}/5 Satisfied
                     </span>
                   </div>
