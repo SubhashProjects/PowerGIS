@@ -75,7 +75,7 @@ export const initialUsers: UserProfile[] = [
     id: 'user-superadmin',
     username: 'superadmin',
     email: 'superadmin@powergis.internal',
-    fullName: 'Shri. S. Vaitheeswaran, IAS',
+    fullName: 'Shri. S. Vaitheeswaran',
     role: 'super_admin',
     designation: 'Director of IT & Geospatial Systems',
     phone: '+91 413 2336331',
