@@ -78,12 +78,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
     setMobileSearchOpen(false);
   };
 
-  // Breadcrumb determination based on active region & role
-  const getBreadcrumb = () => {
-    const regionName = initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry UT';
-    return `${regionName} › Circle-I › Div-Urban › Marapalam Section`;
-  };
-
   return (
     <header className="relative bg-white border-b border-[#E4E4E7] z-30 select-none">
       <div className="h-14 px-3 sm:px-4 flex items-center justify-between gap-2">
@@ -114,14 +108,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
             <p className="text-[10px] text-zinc-500 font-mono hidden sm:block whitespace-nowrap">
               {LABELS.header.brandSubtitle}
             </p>
-          </div>
-
-          {/* Dynamic Breadcrumbs (Desktop) */}
-          <div className="hidden 2xl:flex items-center space-x-1.5 text-[11px] font-mono pl-3 border-l border-zinc-200 min-w-0 flex-shrink">
-            <span className="text-zinc-400 font-sans flex-shrink-0 whitespace-nowrap">{LABELS.header.jurisdictionPrefix}</span>
-            <span className="font-semibold text-zinc-900 bg-zinc-50 px-2 py-0.5 rounded-md border border-zinc-200 truncate max-w-[200px] xl:max-w-[260px] whitespace-nowrap">
-              {getBreadcrumb()}
-            </span>
           </div>
         </div>
 

@@ -12,6 +12,7 @@ import {
   initialConductors, initialConsumers, initialWarranties, initialLifecycles
 } from './mockData';
 import { authService } from './authService';
+import { scadaSimulatorService } from './scadaSimulatorService';
 
 export class AssetService {
   private static instance: AssetService;
@@ -63,6 +64,9 @@ export class AssetService {
   public setSimulatorMode(active: boolean): void {
     this.isSimulatorActive = active;
     authService.setSimulatorMode(active);
+    if (!active) {
+      scadaSimulatorService.stop();
+    }
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       localStorage.setItem('powergis_simulator_mode', active ? 'true' : 'false');
       window.dispatchEvent(new CustomEvent('powergis:simulator-toggled', { detail: { active } }));

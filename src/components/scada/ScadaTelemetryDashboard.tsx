@@ -21,8 +21,13 @@ import {
 export const ScadaTelemetryDashboard: React.FC = () => {
   const { user } = useAuth();
   const [sourceFilter, setSourceFilter] = useState<'ALL' | 'OPERATIONAL' | 'SIMULATOR'>('ALL');
-  const [points, setPoints] = useState<ScadaTelemetryPoint[]>(scadaService.getPoints('ALL'));
-  const [alarms, setAlarms] = useState<ScadaAlarm[]>(scadaService.getAlarms('ALL'));
+  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
+  const [points, setPoints] = useState<ScadaTelemetryPoint[]>(
+    assetService.isSimulatorMode() ? scadaService.getPoints('ALL') : []
+  );
+  const [alarms, setAlarms] = useState<ScadaAlarm[]>(
+    assetService.isSimulatorMode() ? scadaService.getAlarms('ALL') : []
+  );
   const [selectedTagForSBO, setSelectedTagForSBO] = useState<string | null>(null);
   const [sboReason, setSboReason] = useState<string>('Emergency Line Breakdown / Conductor Snap');
   const [sboConfirmed, setSboConfirmed] = useState<boolean>(false);
@@ -33,26 +38,27 @@ export const ScadaTelemetryDashboard: React.FC = () => {
 
   // Dynamic SCADA Gateway Connection State
   const [connectionStatus, setConnectionStatus] = useState<ScadaConnectionStatus>(
-    scadaGatewayService.getConnectionStatus()
+    assetService.isSimulatorMode() ? scadaGatewayService.getConnectionStatus() : 'DISCONNECTED'
   );
   const [gatewayStats, setGatewayStats] = useState(scadaGatewayService.getStats());
   const [showStatusMenu, setShowStatusMenu] = useState<boolean>(false);
-  const [isSimulatorActive, setIsSimulatorActive] = useState<boolean>(assetService.isSimulatorMode());
 
   useEffect(() => {
     const unsubScada = scadaService.subscribe(() => {
-      setPoints(scadaService.getPoints(sourceFilter));
-      setAlarms(scadaService.getAlarms(sourceFilter));
+      const sim = assetService.isSimulatorMode();
+      setPoints(sim ? scadaService.getPoints(sourceFilter) : []);
+      setAlarms(sim ? scadaService.getAlarms(sourceFilter) : []);
     });
     const unsubGw = scadaGatewayService.subscribe(() => {
-      setConnectionStatus(scadaGatewayService.getConnectionStatus());
+      const sim = assetService.isSimulatorMode();
+      setConnectionStatus(sim ? scadaGatewayService.getConnectionStatus() : 'DISCONNECTED');
       setGatewayStats(scadaGatewayService.getStats());
     });
     const unsubAsset = assetService.subscribe(() => {
       const sim = assetService.isSimulatorMode();
       setIsSimulatorActive(sim);
-      setPoints(scadaService.getPoints(sourceFilter));
-      setAlarms(scadaService.getAlarms(sourceFilter));
+      setPoints(sim ? scadaService.getPoints(sourceFilter) : []);
+      setAlarms(sim ? scadaService.getAlarms(sourceFilter) : []);
       if (!sim) {
         setConnectionStatus('DISCONNECTED');
       } else {
@@ -74,8 +80,9 @@ export const ScadaTelemetryDashboard: React.FC = () => {
   const handleSourceFilterChange = (filter: 'ALL' | 'OPERATIONAL' | 'SIMULATOR') => {
     setSourceFilter(filter);
     scadaService.setSourceFilter(filter);
-    setPoints(scadaService.getPoints(filter));
-    setAlarms(scadaService.getAlarms(filter));
+    const sim = assetService.isSimulatorMode();
+    setPoints(sim ? scadaService.getPoints(filter) : []);
+    setAlarms(sim ? scadaService.getAlarms(filter) : []);
   };
 
   // Authorized roles for SBO remote operations
@@ -499,11 +506,13 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       )}
 
       {/* TAB 1: INTERACTIVE SINGLE LINE DIAGRAM (SLD) CANVAS */}
-      {activeTab === 'sld' && (() => {
+      {activeTab === 'sld' && points.length > 0 && (() => {
         const ptrPoint = points.find(p => p.tag.includes('PTR1') || p.tag.includes('PTR')) || points[0];
         const incomerPoint = points.find(p => p.tag.includes('110') || p.tag.includes('INCOMER')) || points[0];
         const isBusEnergized =
-          incomerPoint?.breakerStatus !== 'OPEN' &&
+          isSimulatorActive &&
+          Boolean(incomerPoint) &&
+          incomerPoint?.breakerStatus === 'CLOSED' &&
           connectionStatus !== 'COMM_FAILURE' &&
           connectionStatus !== 'DISCONNECTED';
 
@@ -592,10 +601,10 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                 <rect x="382" y="76" width="170" height="48" rx="6" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1" />
                 <text x="390" y="91" fill="#B45309" fontSize="10" fontFamily="monospace" fontWeight="bold">PTR-1 80MVA (110/11kV)</text>
                 <text x="390" y="105" fill="#475569" fontSize="9" fontFamily="monospace">
-                  Top-Oil: <tspan fill="#0F172A" fontWeight="bold">{ptrPoint?.oilTempC ?? 46.2}°C</tspan> | Winding: <tspan fill="#0F172A" fontWeight="bold">{ptrPoint?.windingTempC ?? 55.4}°C</tspan>
+                  Top-Oil: <tspan fill="#0F172A" fontWeight="bold">{ptrPoint?.oilTempC !== undefined ? `${ptrPoint.oilTempC.toFixed(1)}°C` : 'STANDBY'}</tspan> | Winding: <tspan fill="#0F172A" fontWeight="bold">{ptrPoint?.windingTempC !== undefined ? `${ptrPoint.windingTempC.toFixed(1)}°C` : 'STANDBY'}</tspan>
                 </text>
                 <text x="390" y="118" fill="#475569" fontSize="9" fontFamily="monospace">
-                  Loading: <tspan fill={ptrPoint?.transformerLoadPct && ptrPoint.transformerLoadPct > 80 ? '#B91C1C' : '#047857'} fontWeight="bold">{ptrPoint?.transformerLoadPct ?? 68}%</tspan> | Freq: {ptrPoint?.frequencyHz ?? 50.02} Hz
+                  Loading: <tspan fill={ptrPoint?.transformerLoadPct && ptrPoint.transformerLoadPct > 80 ? '#B91C1C' : '#047857'} fontWeight="bold">{ptrPoint?.transformerLoadPct !== undefined ? `${ptrPoint.transformerLoadPct}%` : '0%'}</tspan> | Freq: {ptrPoint?.frequencyHz !== undefined ? `${ptrPoint.frequencyHz.toFixed(2)} Hz` : '50.00 Hz'}
                 </text>
 
                 {/* Transformer Secondary line to 11kV Bus */}
@@ -907,7 +916,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
       )}
 
       {/* TAB 4: SCADA ALARMS & EVENT LOGS */}
-      {(activeTab === 'sld' || activeTab === 'alarms') && (
+      {((activeTab === 'sld' && points.length > 0) || activeTab === 'alarms') && (
         <div className="bg-white border border-slate-200 rounded-md p-4 sm:p-5 shadow-xs space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div className="flex items-center space-x-2">
@@ -935,7 +944,18 @@ export const ScadaTelemetryDashboard: React.FC = () => {
           </div>
 
           <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
-            {filteredAlarms.map(a => (
+            {filteredAlarms.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 font-mono text-xs border border-slate-200 rounded-md bg-slate-50 space-y-1">
+                <AlertOctagon className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+                <p className="font-semibold text-slate-700">No active telemetry alarms in clean standby mode</p>
+                <p className="text-[11px] text-slate-400">
+                  {isSimulatorActive
+                    ? 'All parameters within normal operating thresholds.'
+                    : 'Operating in clean operational standby (0 simulated alarms). Turn ON the Simulator to stream alarms.'}
+                </p>
+              </div>
+            ) : (
+              filteredAlarms.map(a => (
               <div
                 key={a.alarmCode}
                 className={`p-3 rounded-md border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono transition-all ${
@@ -990,7 +1010,7 @@ export const ScadaTelemetryDashboard: React.FC = () => {
                   )}
                 </div>
               </div>
-            ))}
+            )))}
           </div>
         </div>
       )}

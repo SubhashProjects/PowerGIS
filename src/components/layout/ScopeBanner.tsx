@@ -7,18 +7,23 @@
 
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useGIS } from '../../context/GISContext';
+import { initialRegions } from '../../services/mockData';
 import { getRoleDefinition } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
 import { ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
 
 export const ScopeBanner: React.FC = () => {
   const { user } = useAuth();
+  const { activeRegion } = useGIS();
   const roleDef = getRoleDefinition(user.role);
 
   const roleTitle = roleDef.title;
+  const regionName = initialRegions.find(r => r.id === activeRegion)?.name || 'Puducherry UT';
+  const hierarchyBreadcrumb = `${regionName} › Circle-I › Div-Urban › Marapalam Section`;
   const jurisdictionLabel = user.contractorCompany
-    ? `${user.contractorCompany} ${LABELS.scopeHUD.stagingIsolationSuffix}`
-    : roleDef.defaultJurisdiction;
+    ? `${hierarchyBreadcrumb} · [${user.contractorCompany} ${LABELS.scopeHUD.stagingIsolationSuffix}]`
+    : hierarchyBreadcrumb;
   const privilegeTags = roleDef.privilegeTags;
 
   const isRestricted = user.role === 'je' || user.role === 'contractor';
