@@ -3,16 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.375rem; /* 6px maximum per Anti-Slop Constraints */
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa;
-  color: #0f172a;
+  background-color: #FAFAFA;
+  color: #09090B;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
   overscroll-behavior-y: none;
 }
 
@@ -29,33 +30,33 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Custom Clean Light Scrollbar */
+/* Custom Minimal Hairline Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #FAFAFA;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #E4E4E7;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #A1A1AA;
 }
 
-/* Leaflet Pure White Theme Customizations */
+/* Leaflet Pure White Theme Customizations (Sharp 6px max radius) */
 .leaflet-popup-content-wrapper {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  background: #FFFFFF !important;
+  color: #09090B !important;
+  border: 1px solid #E4E4E7 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
 .leaflet-popup-tip {
-  background: #ffffff !important;
+  background: #FFFFFF !important;
 }
 
 .leaflet-control-zoom {
@@ -68,13 +69,14 @@ body {
 }
 
 .leaflet-control-zoom a {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  background-color: #FFFFFF !important;
+  color: #09090B !important;
+  border-color: #E4E4E7 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 }
 .leaflet-control-zoom a:hover {
-  background-color: #f8fafc !important;
+  background-color: #F4F4F5 !important;
   color: #000000 !important;
 }
 

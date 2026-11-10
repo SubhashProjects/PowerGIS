@@ -77,7 +77,7 @@ const MainLayout: React.FC = () => {
 
         {/* Primary Viewport Area */}
         <main
-          className={`flex-1 relative flex flex-col bg-[#f8f9fa] min-h-0 ${
+          className={`flex-1 relative flex flex-col bg-[#FAFAFA] min-h-0 ${
             activeTab === 'gis_map'
               ? 'overflow-hidden'
               : 'overflow-y-auto pb-16 md:pb-0'
@@ -85,24 +85,24 @@ const MainLayout: React.FC = () => {
         >
           {/* Strict Zero-Trust Role Jurisdiction Access Gate */}
           {!isAuthorized ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none bg-slate-50 min-h-[460px]">
-              <div className="w-16 h-16 rounded-3xl bg-amber-100 border border-amber-300 text-amber-700 flex items-center justify-center mb-4 shadow-sm">
-                <ShieldAlert className="w-8 h-8" />
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none bg-white border border-zinc-200 rounded-md m-4 min-h-[460px]">
+              <div className="w-12 h-12 rounded-md bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mb-3">
+                <ShieldAlert className="w-6 h-6" />
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 mb-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mb-2">
                 {LABELS.zeroTrustGate.policyBadge}
               </span>
-              <h2 className="text-lg font-bold text-slate-900 mb-1">
+              <h2 className="text-base font-bold text-zinc-950 mb-1 tracking-tight">
                 {LABELS.zeroTrustGate.heading}
               </h2>
-              <p className="text-xs text-slate-600 max-w-md mb-6 leading-relaxed">
-                {LABELS.zeroTrustGate.messagePrefix}<span className="font-bold text-slate-900">{user.role.toUpperCase()}</span> — {user.designation}{LABELS.zeroTrustGate.messageMiddle}<span className="font-bold text-slate-900">{currentNav?.label || activeTab}</span>{LABELS.zeroTrustGate.messageSuffix}
+              <p className="text-xs text-zinc-600 max-w-md mb-5 leading-relaxed">
+                {LABELS.zeroTrustGate.messagePrefix}<span className="font-bold text-zinc-950">{user.role.toUpperCase()}</span> — {user.designation}{LABELS.zeroTrustGate.messageMiddle}<span className="font-bold text-zinc-950">{currentNav?.label || activeTab}</span>{LABELS.zeroTrustGate.messageSuffix}
               </p>
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center space-x-2 cursor-pointer"
+                className="px-3.5 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium text-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-3.5 h-3.5" />
                 <span>{LABELS.zeroTrustGate.returnButton}</span>
               </button>
             </div>

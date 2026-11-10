@@ -11,7 +11,7 @@ export const LABELS = {
   common: {
     appName: 'PowerGIS',
     appEdition: 'DISTRIBUTION',
-    appTagline: 'PowerGIS',
+    appTagline: 'Electricity Distribution GIS Platform',
     version: 'v1.0.0 Enterprise',
     jurisdiction: 'Jurisdiction',
     active: 'Active',
@@ -43,7 +43,7 @@ export const LABELS = {
   header: {
     brandName: 'PowerGIS',
     brandBadge: 'DISTRIBUTION',
-    brandSubtitle: 'PowerGIS',
+    brandSubtitle: 'Electricity Distribution GIS Platform',
     jurisdictionPrefix: 'Jurisdiction:',
     searchPlaceholder: 'Search (Ctrl + K)',
     searchMobilePlaceholder: 'Search assets, feeders, poles...',
