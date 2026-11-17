@@ -176,3 +176,71 @@ textarea:focus {
   .pg-module-page .pg-page-header h1 { line-height: 1.25; }
   .pg-module-page .pg-page-header p { max-width: 100%; }
 }
+
+
+/* --------------------------------------------------------------------------
+   PowerGIS shared UI baseline — applied to every module and route.
+   Keep operational data visualizations and map-layer symbology untouched.
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --pg-bg: #f7f7f7;
+  --pg-surface: #ffffff;
+  --pg-surface-soft: #f2f2f2;
+  --pg-border: #dedede;
+  --pg-border-strong: #b8b8b8;
+  --pg-text: #171717;
+  --pg-text-secondary: #5f5f5f;
+  --pg-text-muted: #777777;
+  --pg-control: #262626;
+  --pg-focus: rgba(0, 0, 0, .14);
+  --pg-radius: 5px;
+}
+
+/* Neutralize decorative icon colors without changing charts or map symbols. */
+svg.lucide {
+  color: var(--pg-text-secondary) !important;
+  fill: none !important;
+  stroke: currentColor;
+}
+svg.lucide [fill]:not([fill="none"]) { fill: none !important; }
+
+/* All utility-driven borders use the same quiet structural neutral. */
+[class*="border-"] { border-color: var(--pg-border) !important; }
+[class*="divide-"] > :not([hidden]) ~ :not([hidden]) { border-color: var(--pg-border) !important; }
+
+/* Consistent controls across pages, including components not using PageShell. */
+button, input, select, textarea {
+  border-radius: var(--pg-radius);
+}
+button:not(:disabled) { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+input, select, textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+input::placeholder, textarea::placeholder { color: var(--pg-text-muted); opacity: 1; }
+
+/* Shared page geometry and typography. */
+.pg-module-page, .pg-module-page > section, .pg-module-page > div { min-width: 0; }
+.pg-page-header { background: var(--pg-surface); border-color: var(--pg-border) !important; }
+.pg-page-header h1 { color: var(--pg-text); letter-spacing: -.015em; }
+.pg-page-header p { color: var(--pg-text-secondary); }
+.pg-common-card, .pg-module-page [class*="shadow-"] { box-shadow: none; }
+.pg-nav-item, .pg-nav-active { border-color: transparent !important; }
+.pg-nav-active { background: var(--pg-surface-soft); box-shadow: inset 3px 0 0 var(--pg-control); }
+.pg-nav-active svg.lucide { color: var(--pg-text) !important; }
+.pg-sidebar { border-right-color: var(--pg-border) !important; }
+.pg-header { border-bottom-color: var(--pg-border) !important; }
+.pg-mobile-drawer, .pg-mobile-nav { border-color: var(--pg-border) !important; }
+
+/* Remove colored utility text from icon-only controls while preserving text/status colors. */
+button > svg.lucide, a > svg.lucide { color: var(--pg-text-secondary) !important; }
+button:hover > svg.lucide, a:hover > svg.lucide { color: var(--pg-text) !important; }
+
+@media (max-width: 767px) {
+  .pg-app-shell { width: 100%; min-height: 100dvh; height: 100dvh; }
+  .pg-main { min-width: 0; }
+  .pg-module-page { overflow-x: clip; }
+  .pg-page-header { padding-left: 1rem; padding-right: 1rem; }
+}

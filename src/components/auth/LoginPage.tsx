@@ -110,7 +110,11 @@ export const LoginPage: React.FC = () => {
 
   // 1-Click Login from Demo Sandbox: sets simulator mode ON and logs in immediately
   const handleOneClickLogin = (u: UserProfile) => {
-    if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) return;
+    if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) {
+      setError('Demo sign-in is available only in development builds without a configured production backend. Use your authorized PowerGIS account to sign in.');
+      setCurrentView('login');
+      return;
+    }
     setIsLoading(true);
     assetService.setSimulatorMode(true);
     setTimeout(() => {
@@ -217,17 +221,16 @@ export const LoginPage: React.FC = () => {
             </div>
 
             {/* Quick Demo Sandbox Action */}
-            {isSimulatorRuntimeAllowed() && !isSupabaseConfigured && (
-              <button
-                type="button"
-                onClick={() => setCurrentView('demo')}
-                title="Open Demo Personas & Simulation Sandbox"
-                className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md bg-neutral-50 hover:bg-neutral-100 text-neutral-700 border border-[#E4E4E4] text-xs transition-colors cursor-pointer flex-shrink-0"
-              >
-                <Zap className="w-3 h-3 text-neutral-500 fill-amber-500" />
-                <span className="font-medium">Demo Roles</span>
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setCurrentView('demo')}
+              title="Open the PowerGIS demo workspace"
+              aria-label="Open demo workspace"
+              className="inline-flex min-h-9 items-center space-x-1.5 px-3 py-1.5 rounded-md bg-neutral-50 hover:bg-neutral-100 text-neutral-900 border border-neutral-200 text-xs font-semibold transition-colors cursor-pointer flex-shrink-0"
+            >
+              <Zap className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Demo</span>
+            </button>
           </div>
 
           {/* Backend configuration is deployment-managed; browser users cannot change trust roots. */}
@@ -254,7 +257,7 @@ export const LoginPage: React.FC = () => {
                 {LABELS.auth.emailLabel}
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -tranneutral-y-1/2 pointer-events-none" />
+                <Mail className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="email"
                   autoComplete="email"
@@ -293,7 +296,7 @@ export const LoginPage: React.FC = () => {
                 </button>
               </div>
               <div className="relative">
-                <KeyRound className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -tranneutral-y-1/2 pointer-events-none" />
+                <KeyRound className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
@@ -313,7 +316,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -tranneutral-y-1/2 text-neutral-400 hover:text-neutral-700 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -381,13 +384,19 @@ export const LoginPage: React.FC = () => {
             </div>
           </div>
 
+          {!isSimulatorRuntimeAllowed() || isSupabaseConfigured ? (
+            <div role="status" className="mb-4 rounded-md border border-neutral-200 bg-neutral-50 p-3 text-xs text-neutral-700">
+              <strong className="font-semibold text-neutral-900">Demo access unavailable in this deployment.</strong> Demo personas are intentionally disabled when the production authentication service is configured or when this is not a development build. Sign in with an authorized account instead.
+            </div>
+          ) : null}
+
           {/* Search Toolbar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-md border border-[#E4E4E4]">
             <div className="text-xs text-neutral-600 font-medium">
-              Select a simulated role or the read-only Demo User to explore the application. No password is used; this sandbox is development-only.
+              Select a simulated role or the read-only Demo User to explore the application. Demo persona sign-in is restricted to development builds; production deployments require an authorized account.
             </div>
             <div className="relative w-full sm:w-64">
-              <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-1/2 -tranneutral-y-1/2 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={demoSearch}
@@ -441,11 +450,11 @@ export const LoginPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleOneClickLogin(u)}
-                      disabled={isLoading}
-                      className="w-full py-1.5 px-3 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+                      disabled={isLoading || !isSimulatorRuntimeAllowed() || isSupabaseConfigured}
+                      className="w-full py-1.5 px-3 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                       title="Sign in as this user"
                     >
-                      <Zap className="w-3 h-3 text-neutral-400 fill-amber-400" />
+                      <Zap className="w-3 h-3" />
                       <span>{LABELS.auth.oneClickLogin}</span>
                     </button>
                   </div>
