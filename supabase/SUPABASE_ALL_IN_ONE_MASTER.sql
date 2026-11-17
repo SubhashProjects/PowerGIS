@@ -4329,6 +4329,252 @@ WITH CHECK (actor_id=auth.uid() AND user_id IN (SELECT id FROM public.user_profi
 
 
 -- ----------------------------------------------------------------------------
+-- SECTION: 20261122_operational_integrity.sql
+-- ----------------------------------------------------------------------------
+
+-- PowerGIS 3.8.0 operational integrity primitives.
+create table if not exists public.operation_idempotency (
+  operation_id text primary key,
+  actor_id uuid references public.user_profiles(id),
+  operation_type text not null,
+  status text not null check (status in ('pending','completed','failed')),
+  result jsonb,
+  error_message text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists operation_idempotency_actor_idx on public.operation_idempotency(actor_id, created_at desc);
+alter table public.operation_idempotency enable row level security;
+create or replace function public.touch_operation_idempotency_updated_at()
+returns trigger language plpgsql security invoker as $$ begin new.updated_at = now(); return new; end; $$;
+drop trigger if exists operation_idempotency_touch on public.operation_idempotency;
+create trigger operation_idempotency_touch before update on public.operation_idempotency for each row execute function public.touch_operation_idempotency_updated_at();
+create or replace function public.begin_idempotent_operation(p_operation_id text, p_operation_type text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare existing jsonb;
+begin
+  select jsonb_build_object('status', status, 'result', result, 'error_message', error_message) into existing from public.operation_idempotency where operation_id = p_operation_id;
+  if existing is not null then return existing; end if;
+  insert into public.operation_idempotency(operation_id, actor_id, operation_type, status) values (p_operation_id, auth.uid(), p_operation_type, 'pending');
+  return jsonb_build_object('status','pending');
+end; $$;
+revoke all on function public.begin_idempotent_operation(text,text) from public, anon;
+grant execute on function public.begin_idempotent_operation(text,text) to authenticated;
+comment on table public.operation_idempotency is 'Server-side idempotency ledger for critical PowerGIS mutations.';
+
+
+create or replace function public.complete_idempotent_operation(p_operation_id text, p_result jsonb)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  update public.operation_idempotency set status='completed', result=p_result, error_message=null, updated_at=now()
+  where operation_id=p_operation_id and actor_id=auth.uid();
+end; $$;
+
+create or replace function public.fail_idempotent_operation(p_operation_id text, p_error_message text)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  update public.operation_idempotency set status='failed', error_message=p_error_message, updated_at=now()
+  where operation_id=p_operation_id and actor_id=auth.uid();
+end; $$;
+
+revoke all on function public.complete_idempotent_operation(text,jsonb) from public, anon;
+revoke all on function public.fail_idempotent_operation(text,text) from public, anon;
+grant execute on function public.complete_idempotent_operation(text,jsonb) to authenticated;
+grant execute on function public.fail_idempotent_operation(text,text) to authenticated;
+
+
+-- ----------------------------------------------------------------------------
+-- SECTION: 20261123_transactional_mutation_wrappers.sql
+-- ----------------------------------------------------------------------------
+
+-- PowerGIS 3.9.0 transactional mutation wrappers.
+-- Each wrapper writes the idempotency ledger and executes the existing business
+-- function in the same PostgreSQL transaction. A client retry therefore cannot
+-- create a second mutation after a transport timeout.
+
+CREATE OR REPLACE FUNCTION public.create_work_order_idempotent(
+  p_operation_id TEXT, p_title TEXT, p_category TEXT, p_instructions TEXT,
+  p_assigned_crew TEXT, p_section_id UUID, p_priority TEXT, p_due_date DATE
+) RETURNS public.work_orders
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_gate JSONB; v_order public.work_orders%ROWTYPE;
+BEGIN
+  v_gate := public.begin_idempotent_operation(p_operation_id, 'work_order.create');
+  IF v_gate->>'status'='completed' THEN
+    SELECT * INTO v_order FROM jsonb_populate_record(NULL::public.work_orders, v_gate->'result');
+    RETURN v_order;
+  END IF;
+  IF v_gate->>'status'='failed' THEN RAISE EXCEPTION '%', COALESCE(v_gate->>'error_message','Previous operation failed'); END IF;
+  v_order := public.create_work_order(p_title,p_category,p_instructions,p_assigned_crew,p_section_id,p_priority,p_due_date);
+  PERFORM public.complete_idempotent_operation(p_operation_id, to_jsonb(v_order));
+  RETURN v_order;
+END $$;
+
+CREATE OR REPLACE FUNCTION public.advance_work_order_status_idempotent(
+  p_operation_id TEXT, p_work_order_id UUID, p_next_status TEXT, p_expected_version TIMESTAMPTZ DEFAULT NULL
+) RETURNS JSONB
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_gate JSONB;
+BEGIN
+  v_gate := public.begin_idempotent_operation(p_operation_id, 'work_order.transition');
+  IF v_gate->>'status'='completed' THEN RETURN COALESCE(v_gate->'result','{}'::jsonb); END IF;
+  IF v_gate->>'status'='failed' THEN RAISE EXCEPTION '%', COALESCE(v_gate->>'error_message','Previous operation failed'); END IF;
+  IF p_expected_version IS NOT NULL AND NOT EXISTS (SELECT 1 FROM public.work_orders WHERE id=p_work_order_id AND updated_at=p_expected_version FOR UPDATE) THEN
+    RAISE EXCEPTION 'CONCURRENCY_CONFLICT: work order changed or was removed before transition';
+  END IF;
+  PERFORM public.advance_work_order_status(p_work_order_id,p_next_status);
+  PERFORM public.complete_idempotent_operation(p_operation_id, jsonb_build_object('work_order_id',p_work_order_id,'status',p_next_status));
+  RETURN jsonb_build_object('work_order_id',p_work_order_id,'status',p_next_status);
+END $$;
+
+CREATE OR REPLACE FUNCTION public.issue_inventory_atomic_idempotent(
+  p_operation_id TEXT, p_item_id UUID, p_quantity NUMERIC, p_work_order_id UUID DEFAULT NULL,
+  p_recipient_name TEXT DEFAULT NULL, p_remarks TEXT DEFAULT NULL
+) RETURNS JSONB
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_gate JSONB; v_result JSONB;
+BEGIN
+  v_gate := public.begin_idempotent_operation(p_operation_id, 'inventory.issue');
+  IF v_gate->>'status'='completed' THEN RETURN COALESCE(v_gate->'result','{}'::jsonb); END IF;
+  IF v_gate->>'status'='failed' THEN RAISE EXCEPTION '%', COALESCE(v_gate->>'error_message','Previous operation failed'); END IF;
+  v_result := public.issue_inventory_atomic(p_item_id,p_quantity,p_work_order_id,p_recipient_name,p_remarks);
+  PERFORM public.complete_idempotent_operation(p_operation_id, v_result);
+  RETURN v_result;
+END $$;
+
+CREATE OR REPLACE FUNCTION public.record_inventory_transaction_idempotent(
+  p_operation_id TEXT, p_item_id UUID, p_transaction_type TEXT, p_quantity NUMERIC,
+  p_work_order_id UUID DEFAULT NULL, p_recipient_name TEXT DEFAULT NULL, p_remarks TEXT DEFAULT NULL
+) RETURNS UUID
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_gate JSONB; v_id UUID;
+BEGIN
+  v_gate := public.begin_idempotent_operation(p_operation_id, 'inventory.transaction');
+  IF v_gate->>'status'='completed' THEN RETURN (v_gate->>'result')::uuid; END IF;
+  IF v_gate->>'status'='failed' THEN RAISE EXCEPTION '%', COALESCE(v_gate->>'error_message','Previous operation failed'); END IF;
+  v_id := public.record_inventory_transaction(p_item_id,p_transaction_type,p_quantity,p_work_order_id,p_recipient_name,p_remarks);
+  PERFORM public.complete_idempotent_operation(p_operation_id, to_jsonb(v_id));
+  RETURN v_id;
+END $$;
+
+CREATE OR REPLACE FUNCTION public.create_ptw_request_idempotent(
+  p_operation_id TEXT, p_feeder_id UUID, p_section_id UUID, p_work_description TEXT, p_isolation_points TEXT
+) RETURNS UUID
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_gate JSONB; v_id UUID;
+BEGIN
+  v_gate := public.begin_idempotent_operation(p_operation_id, 'ptw.create');
+  IF v_gate->>'status'='completed' THEN RETURN (v_gate->>'result')::uuid; END IF;
+  IF v_gate->>'status'='failed' THEN RAISE EXCEPTION '%', COALESCE(v_gate->>'error_message','Previous operation failed'); END IF;
+  v_id := public.create_ptw_request(p_feeder_id,p_section_id,p_work_description,p_isolation_points);
+  PERFORM public.complete_idempotent_operation(p_operation_id, to_jsonb(v_id));
+  RETURN v_id;
+END $$;
+
+CREATE OR REPLACE FUNCTION public.advance_ptw_stage_idempotent(
+  p_operation_id TEXT, p_permit_id UUID, p_stage public.ptw_status, p_equipment TEXT DEFAULT NULL,
+  p_location_lat NUMERIC DEFAULT NULL, p_location_lng NUMERIC DEFAULT NULL, p_confirmation BOOLEAN DEFAULT FALSE,
+  p_evidence_path TEXT DEFAULT NULL, p_comments TEXT DEFAULT NULL
+) RETURNS JSONB
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_gate JSONB; v_result JSONB;
+BEGIN
+  v_gate := public.begin_idempotent_operation(p_operation_id, 'ptw.transition');
+  IF v_gate->>'status'='completed' THEN RETURN COALESCE(v_gate->'result','{}'::jsonb); END IF;
+  IF v_gate->>'status'='failed' THEN RAISE EXCEPTION '%', COALESCE(v_gate->>'error_message','Previous operation failed'); END IF;
+  v_result := public.advance_ptw_stage(p_permit_id,p_stage,p_equipment,p_location_lat,p_location_lng,p_confirmation,p_evidence_path,p_comments);
+  PERFORM public.complete_idempotent_operation(p_operation_id, v_result);
+  RETURN v_result;
+END $$;
+
+REVOKE ALL ON FUNCTION public.create_work_order_idempotent(TEXT,TEXT,TEXT,TEXT,TEXT,UUID,TEXT,DATE) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.advance_work_order_status_idempotent(TEXT,UUID,TEXT,TIMESTAMPTZ) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.issue_inventory_atomic_idempotent(TEXT,UUID,NUMERIC,UUID,TEXT,TEXT) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.record_inventory_transaction_idempotent(TEXT,UUID,TEXT,NUMERIC,UUID,TEXT,TEXT) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.create_ptw_request_idempotent(TEXT,UUID,UUID,TEXT,TEXT) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.advance_ptw_stage_idempotent(TEXT,UUID,public.ptw_status,TEXT,NUMERIC,NUMERIC,BOOLEAN,TEXT,TEXT) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.create_work_order_idempotent(TEXT,TEXT,TEXT,TEXT,TEXT,UUID,TEXT,DATE) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.advance_work_order_status_idempotent(TEXT,UUID,TEXT,TIMESTAMPTZ) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.issue_inventory_atomic_idempotent(TEXT,UUID,NUMERIC,UUID,TEXT,TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.record_inventory_transaction_idempotent(TEXT,UUID,TEXT,NUMERIC,UUID,TEXT,TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_ptw_request_idempotent(TEXT,UUID,UUID,TEXT,TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.advance_ptw_stage_idempotent(TEXT,UUID,public.ptw_status,TEXT,NUMERIC,NUMERIC,BOOLEAN,TEXT,TEXT) TO authenticated;
+
+
+-- ----------------------------------------------------------------------------
+-- SECTION: 20261124_production_enforcement.sql
+-- ----------------------------------------------------------------------------
+
+-- PowerGIS 3.10.0 production enforcement.
+-- Persistent notifications, explicit workflow validation, and least-privilege RPC grants.
+
+CREATE TABLE IF NOT EXISTS public.user_notifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  priority TEXT NOT NULL DEFAULT 'info' CHECK (priority IN ('critical','high','medium','info')),
+  target_tab TEXT,
+  action_label TEXT,
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  read_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_notifications_user_created ON public.user_notifications(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_notifications_unread ON public.user_notifications(user_id, read_at) WHERE read_at IS NULL;
+ALTER TABLE public.user_notifications ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS user_notifications_select_own ON public.user_notifications;
+CREATE POLICY user_notifications_select_own ON public.user_notifications FOR SELECT TO authenticated USING (user_id = auth.uid());
+DROP POLICY IF EXISTS user_notifications_update_own ON public.user_notifications;
+CREATE POLICY user_notifications_update_own ON public.user_notifications FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+
+CREATE OR REPLACE FUNCTION public.create_user_notification(
+  p_user_id UUID, p_title TEXT, p_message TEXT, p_priority TEXT DEFAULT 'info',
+  p_target_tab TEXT DEFAULT NULL, p_action_label TEXT DEFAULT NULL, p_metadata JSONB DEFAULT '{}'::jsonb
+) RETURNS UUID
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_id UUID; v_actor UUID;
+BEGIN
+  v_actor := auth.uid();
+  IF v_actor IS NULL THEN RAISE EXCEPTION 'AUTH_REQUIRED'; END IF;
+  IF p_priority NOT IN ('critical','high','medium','info') THEN RAISE EXCEPTION 'INVALID_NOTIFICATION_PRIORITY'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.user_profiles WHERE auth_user_id=v_actor AND (role='super_admin' OR auth_user_id=p_user_id)) THEN
+    RAISE EXCEPTION 'NOTIFICATION_SCOPE_DENIED';
+  END IF;
+  INSERT INTO public.user_notifications(user_id,title,message,priority,target_tab,action_label,metadata)
+  VALUES(p_user_id,p_title,p_message,p_priority,p_target_tab,p_action_label,COALESCE(p_metadata,'{}'::jsonb)) RETURNING id INTO v_id;
+  RETURN v_id;
+END $$;
+REVOKE ALL ON FUNCTION public.create_user_notification(UUID,TEXT,TEXT,TEXT,TEXT,TEXT,JSONB) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.create_user_notification(UUID,TEXT,TEXT,TEXT,TEXT,TEXT,JSONB) TO authenticated;
+
+ALTER TABLE public.audit_logs ADD COLUMN IF NOT EXISTS operation_id TEXT;
+CREATE INDEX IF NOT EXISTS idx_audit_logs_operation_id ON public.audit_logs(operation_id) WHERE operation_id IS NOT NULL;
+
+-- Ensure the transactional wrappers remain inaccessible to anonymous callers after every deployment.
+REVOKE ALL ON FUNCTION public.create_work_order_idempotent(TEXT,TEXT,TEXT,TEXT,TEXT,UUID,TEXT,DATE) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.advance_work_order_status_idempotent(TEXT,UUID,TEXT,TIMESTAMPTZ) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.issue_inventory_atomic_idempotent(TEXT,UUID,NUMERIC,UUID,TEXT,TEXT) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.record_inventory_transaction_idempotent(TEXT,UUID,TEXT,NUMERIC,UUID,TEXT,TEXT) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.create_ptw_request_idempotent(TEXT,UUID,UUID,TEXT,TEXT) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION public.advance_ptw_stage_idempotent(TEXT,UUID,public.ptw_status,TEXT,NUMERIC,NUMERIC,BOOLEAN,TEXT,TEXT) FROM PUBLIC,anon;
+
+-- Correlate successful transactional operations with an immutable audit event.
+CREATE OR REPLACE FUNCTION public.record_operation_audit(p_operation_id TEXT, p_operation_type TEXT, p_resource_id TEXT DEFAULT NULL, p_details JSONB DEFAULT '{}'::jsonb)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path=public,extensions,pg_temp AS $$
+DECLARE v_user public.user_profiles%ROWTYPE;
+BEGIN
+  SELECT * INTO v_user FROM public.user_profiles WHERE auth_user_id=auth.uid() AND is_active=TRUE LIMIT 1;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Active profile required'; END IF;
+  INSERT INTO public.audit_logs(actor_id,user_id,actor_role,action,module,resource_id,details,operation_id)
+  VALUES(auth.uid(),v_user.id,v_user.role,'operation.completed','transactional_operations',p_resource_id,jsonb_build_object('operation_type',p_operation_type,'details',COALESCE(p_details,'{}'::jsonb)),p_operation_id);
+END $$;
+REVOKE ALL ON FUNCTION public.record_operation_audit(TEXT,TEXT,TEXT,JSONB) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.record_operation_audit(TEXT,TEXT,TEXT,JSONB) TO authenticated;
+
+
+-- ----------------------------------------------------------------------------
 -- SECTION: seed.sql
 -- ----------------------------------------------------------------------------
 

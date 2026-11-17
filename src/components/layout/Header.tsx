@@ -6,10 +6,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useGIS } from '../../context/GISContext';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { APP_CONFIG } from '../../config/appConfig';
 import { NavTabId } from '../../config/navigationConfig';
+import { ConnectionStatus } from '../common/ConnectionStatus';
 import { LABELS } from '../../config/labelsConfig';
 import {
  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Settings, Zap
@@ -18,9 +20,10 @@ import {
 interface HeaderProps {
  onToggleMobileMenu?: () => void;
  onNavigateTab?: (tab: NavTabId) => void;
+ onOpenCommandPalette?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTab }) => {
+export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTab, onOpenCommandPalette }) => {
  const { user, logout } = useAuth();
  const { activeRegion, flyToRegion, setSelectedAsset } = useGIS();
  const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  const handleKeyDown = (e: KeyboardEvent) => {
  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
  e.preventDefault();
- searchInputRef.current?.focus();
+ onOpenCommandPalette?.();
  }
  };
  window.addEventListener('keydown', handleKeyDown);
@@ -118,6 +121,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 pointer-events-none flex-shrink-0" />
  <input
  ref={searchInputRef}
+ onFocus={() => onOpenCommandPalette?.()}
  type="text"
  value={searchQuery}
  onChange={handleSearch}
@@ -168,6 +172,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  <Search className="w-4 h-4" />
  </button>
 
+ <ConnectionStatus />
+
  {/* Notifications Bell Dropdown */}
  <div className="relative h-9 flex-shrink-0">
  <button
@@ -217,7 +223,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  </div>
 
  {/* Master Grid & SCADA Simulator Mode Toggle */}
- <button
+ {!isSupabaseConfigured && <button
  onClick={handleToggleSimulator}
  title={
  isSimulatorActive
@@ -239,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  <span className={`whitespace-nowrap font-bold leading-none ${isSimulatorActive ? 'text-neutral-900' : ''}`}>
  {isSimulatorActive ? 'ON' : 'OFF'}
  </span>
- </button>
+ </button>}
 
  {/* Region Switcher */}
  <div className="relative h-9 flex-shrink-0">
@@ -249,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  >
  <Globe className="w-3.5 h-3.5 text-neutral-600 flex-shrink-0" />
  <span className="font-medium truncate max-w-[70px] sm:max-w-none whitespace-nowrap leading-none">
- {APP_CONFIG.regions[activeRegion]?.name || 'Puducherry'}
+ {APP_CONFIG.regions[user.regionId || activeRegion]?.name || APP_CONFIG.regions[activeRegion]?.name || 'Puducherry'}
  </span>
  <ChevronDown className="w-3 h-3 flex-shrink-0" />
  </button>
@@ -259,7 +265,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, onNavigateTa
  <div className="px-3 py-1.5 text-[10px] font-bold border-b border-neutral-100 ">
  {LABELS.header.regionsTitle}
  </div>
- {Object.values(APP_CONFIG.regions).map(reg => (
+ {Object.values(APP_CONFIG.regions).filter(reg => !user.regionId || reg.id === user.regionId || user.role === 'super_admin' || user.role === 'gis_admin').map(reg => (
  <button
  key={reg.id}
  onClick={() => {

@@ -10,7 +10,7 @@ import {
 import {
  initialSubstations, initialFeeders, initialTransformers, initialPoles,
  initialConductors, initialConsumers, initialWarranties, initialLifecycles
-} from './mockData';
+} from '../data/simulatorData';
 import { authService } from './authService';
 import { scadaSimulatorService } from './scadaSimulatorService';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
@@ -46,7 +46,7 @@ export class AssetService {
  private constructor() {
  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
  const stored = localStorage.getItem('powergis_simulator_mode');
- if (stored === 'true') {
+ if (!isSupabaseConfigured && stored === 'true') {
  this.isSimulatorActive = true;
  }
  }
@@ -109,6 +109,11 @@ export class AssetService {
  }
 
  public setSimulatorMode(active: boolean): void {
+ if (isSupabaseConfigured && active) {
+   this.isSimulatorActive = false;
+   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') localStorage.removeItem('powergis_simulator_mode');
+   return;
+ }
  this.isSimulatorActive = active;
  authService.setSimulatorMode(active);
  if (!active) {

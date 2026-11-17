@@ -11,7 +11,7 @@ import {
  ScadaSourceType,
  ScadaGatewayProtocol,
 } from '../types/operations';
-import { initialScadaPoints, initialScadaAlarms } from './mockData';
+import { initialScadaPoints, initialScadaAlarms } from '../data/simulatorData';
 import { scadaSimulatorService } from './scadaSimulatorService';
 import { scadaGatewayService } from './scadaGatewayService';
 import { authService } from './authService';

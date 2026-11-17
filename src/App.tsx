@@ -33,6 +33,12 @@ import { LoginPage } from './components/auth/LoginPage';
 import { RoleBasedDashboard } from './components/dashboard/RoleBasedDashboard';
 import { CommonPage } from './components/common/CommonPage';
 import { StylesPage } from './components/styles/StylesPage';
+import { CommandPalette } from './components/common/CommandPalette';
+import { Breadcrumbs } from './components/common/Breadcrumbs';
+import { SyncCenter } from './components/common/SyncCenter';
+import { DataQualityCenter } from './components/common/DataQualityCenter';
+import { NotificationCenter } from './components/common/NotificationCenter';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { notificationService } from './services/notificationService';
 import { assetService } from './services/assetService';
 import { isSupabaseConfigured } from './lib/supabase';
@@ -46,6 +52,7 @@ const MainLayout: React.FC = () => {
  const [activeTab, setActiveTab] = useState<NavTabId>('dashboard');
  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+ const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
  const roleData = notificationService.getDashboardData(user);
  const unreadCount = roleData.notifications.filter(n => !n.read).length;
@@ -59,10 +66,19 @@ const MainLayout: React.FC = () => {
  <Header
  onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}
  onNavigateTab={tab => setActiveTab(tab)}
+ onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+ />
+ <CommandPalette
+ open={commandPaletteOpen}
+ onClose={() => setCommandPaletteOpen(false)}
+ onNavigate={tab => setActiveTab(tab)}
+ onSelectAsset={asset => setSelectedAsset(asset)}
  />
 
  {/* 2. Statutory Scope & Entitlement Banner */}
  <ScopeBanner />
+ <SyncCenter />
+ <Breadcrumbs activeTab={activeTab} onNavigate={tab => setActiveTab(tab)} />
 
  {/* 3. Main Workspace Layout */}
  <div className="flex flex-1 overflow-hidden relative">
@@ -133,6 +149,8 @@ const MainLayout: React.FC = () => {
  {activeTab === 'asset_risk' && <AssetRiskMatrix />}
  {activeTab === 'backup_restore' && <AdminControlPanel initialTab="migration" />}
  {activeTab === 'admin_panel' && <AdminControlPanel initialTab="users" />}
+ {activeTab === 'notifications' && <NotificationCenter />}
+ {activeTab === 'data_quality' && <DataQualityCenter />}
  {activeTab === 'common' && <CommonPage />}
  {activeTab === 'styles' && <StylesPage />}
  </>
@@ -240,9 +258,11 @@ const AppContent: React.FC = () => {
 
 export const App: React.FC = () => {
  return (
- <AuthProvider>
- <AppContent />
- </AuthProvider>
+ <ErrorBoundary>
+  <AuthProvider>
+   <AppContent />
+  </AuthProvider>
+ </ErrorBoundary>
  );
 };
 

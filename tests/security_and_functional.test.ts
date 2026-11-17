@@ -15,7 +15,7 @@ import { scadaGatewayService } from '../src/services/scadaGatewayService';
 import { scadaService } from '../src/services/scadaService';
 import { dataExchangeService } from '../src/services/dataExchangeService';
 import { validateStrictPassword, validateEmail } from '../src/commons';
-import { initialUsers, initialTransformers, initialFeeders, initialScadaPoints, UserProfile } from '../src/services/mockData';
+import { initialUsers, initialTransformers, initialFeeders, initialScadaPoints, UserProfile } from '../src/data/simulatorData';
 
 let passed = 0;
 let failed = 0;

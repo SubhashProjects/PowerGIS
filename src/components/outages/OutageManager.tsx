@@ -7,9 +7,9 @@
 import React, { useState, useEffect } from 'react';
 import { reliabilityService } from '../../services/reliabilityService';
 import { assetService } from '../../services/assetService';
-import { initialSections } from '../../simulator/mockData';
-import { supabase } from '../../lib/supabase';
+import { initialSections } from '../../data/simulatorData';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { createRepository } from '../../repositories/repositoryFactory';
 import { useAuth } from '../../context/AuthContext';
 import { Outage } from '../../types/operations';
 import { COMMONS } from '../../commons';
@@ -21,13 +21,12 @@ export const OutageManager: React.FC = () => {
  const [isSimActive, setIsSimActive] = useState<boolean>(assetService.isSimulatorMode());
  const currentYear = new Date().getUTCFullYear();
  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+ const sectionRepository = React.useMemo(() => createRepository<any>('om_sections', initialSections as any[]), []);
  const [sections, setSections] = useState<any[]>(isSupabaseConfigured ? [] : initialSections);
 
  useEffect(() => {
  if (isSupabaseConfigured) {
- void supabase.from('om_sections').select('id,code,name').order('code').then(({ data, error }) => {
- if (error) setErrorMsg(error.message); else setSections(data ?? []);
- });
+ void sectionRepository.list({ orderBy: 'code', ascending: true }).then(data => setSections(data ?? [])).catch(error => setErrorMsg(error?.message || 'Unable to load sections.'));
  void reliabilityService.loadFromSupabase().then(() => setOutages(reliabilityService.getOutages())).catch(error => setErrorMsg(error?.message || 'Unable to load outages from Supabase.'));
  }
  const unsub = assetService.subscribe(() => {

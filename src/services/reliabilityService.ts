@@ -6,7 +6,7 @@
 // ============================================================================
 
 import { Outage, OutageReliabilityMetrics } from '../types/operations';
-import { initialReliabilityMetrics, initialOutages } from './mockData';
+import { initialReliabilityMetrics, initialOutages } from '../data/simulatorData';
 import { assetService } from './assetService';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { backendService } from './backendService';

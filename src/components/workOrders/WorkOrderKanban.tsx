@@ -6,7 +6,7 @@
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
-import { initialWorkOrders } from '../../simulator/mockData';
+import { initialWorkOrders } from '../../data/simulatorData';
 import { assetService } from '../../services/assetService';
 import { workOrderService } from '../../services/workOrderService';
 import { isSupabaseConfigured } from '../../lib/supabase';

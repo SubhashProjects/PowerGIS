@@ -77,4 +77,9 @@ export interface OfflineSurveyRecord {
  attributes: Record<string, any>;
  photoBlob?: string; // base64 or object URL
  synced: boolean;
+ syncStatus?: 'pending' | 'syncing' | 'synced' | 'failed';
+ retryCount?: number;
+ lastAttemptAt?: string;
+ lastError?: string;
 }
+

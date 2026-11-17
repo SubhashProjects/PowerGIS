@@ -5,10 +5,11 @@
 // ============================================================================
 
 import { SurveySubmission, SurveyStagingAsset, ApprovalHistoryEntry, SurveyStatus, OfflineSurveyRecord } from '../types/surveys';
-import { initialSurveys, initialStagingAssets } from './mockData';
+import { initialSurveys, initialStagingAssets } from '../data/simulatorData';
 import { assetService } from './assetService';
 import { authService } from './authService';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { surveyRepository } from '../repositories/domain/SurveyRepository';
 import { backendService } from './backendService';
 
 export class SurveyService {
@@ -77,12 +78,8 @@ export class SurveyService {
 
   public async loadFromSupabase(): Promise<void> {
     if (!isSupabaseConfigured) return;
-    const { data, error } = await supabase
-      .from('survey_submissions')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    const mapped: SurveySubmission[] = (data ?? []).map((row: any) => ({
+    const data = await surveyRepository.submissions();
+    const mapped: SurveySubmission[] = data.map((row: any) => ({
       id: row.id,
       submissionCode: row.submission_code,
       contractorId: row.contractor_id,
@@ -105,12 +102,8 @@ export class SurveyService {
     }));
     this.userSubmissions = mapped;
 
-    const { data: staging, error: stagingError } = await supabase
-      .from('survey_staging_assets')
-      .select('*')
-      .order('created_at');
-    if (stagingError) throw stagingError;
-    this.userStagingAssets = (staging ?? []).map((row: any) => ({
+    const staging = await surveyRepository.stagingAssets();
+    this.userStagingAssets = staging.map((row: any) => ({
       id: row.id,
       submissionId: row.submission_id,
       assetType: row.asset_type,
@@ -124,12 +117,9 @@ export class SurveyService {
       coordinates: row.geom?.coordinates ? [Number(row.geom.coordinates[1]), Number(row.geom.coordinates[0])] : [Number.NaN, Number.NaN],
     }));
 
-    const { data: history, error: historyError } = await supabase
-      .from('approval_history')
-      .select('*, actor:user_profiles!approval_history_actor_id_fkey(full_name, role)')
-      .order('created_at', { ascending: true });
-    if (!historyError) {
-      this.approvalHistory = (history ?? []).map((row: any) => ({
+    const history = await surveyRepository.approvalHistory();
+    if (history.length) {
+      this.approvalHistory = history.map((row: any) => ({
         id: row.id,
         submissionId: row.submission_id,
         actorId: row.actor_id,

@@ -12,7 +12,7 @@ import { ROLES_REGISTRY } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { UserProfile, OfficialRole } from '../../types/auth';
-import { initialRegions, initialDivisions, initialSections } from '../../simulator/mockData';
+import { initialRegions, initialDivisions, initialSections } from '../../data/simulatorData';
 import {
  Settings, Database, Download, Upload, CheckCircle2, AlertTriangle,
  RotateCcw, Shield, HardDrive, FileUp, FileCode, FileSpreadsheet, Map, X, Check,

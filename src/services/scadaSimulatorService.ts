@@ -12,7 +12,7 @@ import {
  ScadaSimulationMode,
  ScadaScenarioPreset,
 } from '../types/operations';
-import { initialFeeders, initialTransformers } from './mockData';
+import { initialFeeders, initialTransformers } from '../data/simulatorData';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface TelemetryTrendPoint {

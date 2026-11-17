@@ -9,7 +9,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { initialUsers } from '../../simulator/mockData';
+import { initialUsers } from '../../data/simulatorData';
 import { assetService } from '../../services/assetService';
 import { authService } from '../../services/authService';
 import { UserProfile } from '../../types/auth';

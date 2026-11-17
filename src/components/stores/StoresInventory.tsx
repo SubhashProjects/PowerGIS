@@ -5,7 +5,7 @@
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
-import { initialStores } from '../../simulator/mockData';
+import { initialStores } from '../../data/simulatorData';
 import { assetService } from '../../services/assetService';
 import { storesService } from '../../services/storesService';
 import { isSupabaseConfigured } from '../../lib/supabase';

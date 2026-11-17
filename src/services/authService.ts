@@ -7,7 +7,7 @@
 // ============================================================================
 
 import { UserProfile, OfficialRole, RolePermission } from '../types/auth';
-import { initialUsers } from './mockData';
+import { initialUsers } from '../data/simulatorData';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const SESSION_KEY = 'powergis_active_user_session';

@@ -5,7 +5,7 @@
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
-import { initialPTWs, initialFeeders } from '../../simulator/mockData';
+import { initialPTWs, initialFeeders } from '../../data/simulatorData';
 import { assetService } from '../../services/assetService';
 import { useAuth } from '../../context/AuthContext';
 import { SafetyPermit } from '../../types/operations';

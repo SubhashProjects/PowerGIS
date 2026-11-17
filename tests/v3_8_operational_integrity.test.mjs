@@ -1,0 +1,15 @@
+import fs from 'node:fs'; import path from 'node:path'; import { fileURLToPath } from 'node:url';
+const root = fileURLToPath(new URL('..', import.meta.url)); const read=p=>fs.readFileSync(path.join(root,p),'utf8'); const assert=(c,m)=>{if(!c)throw new Error(m)};
+assert(/"version": "3\.(8|9|10)\.0"/.test(read('package.json')),'package version mismatch');
+assert(/version: '3\.(8|9|10)\.0'/.test(read('src/config/appConfig.ts')),'app version mismatch');
+assert(fs.existsSync(path.join(root,'src/repositories/domain/PtwRepository.ts')),'PTW repository missing');
+assert(fs.existsSync(path.join(root,'src/repositories/domain/SurveyRepository.ts')),'survey repository missing');
+assert(fs.existsSync(path.join(root,'src/repositories/domain/OutageRepository.ts')),'outage repository missing');
+assert(read('src/services/ptwService.ts').includes('ptwRepository'),'PTW service not routed through repository');
+assert(read('src/services/surveyService.ts').includes('surveyRepository'),'survey reads not routed through repository');
+assert(read('src/services/dataQualityService.ts').includes('getDataQualityIssues'),'data quality service missing');
+assert(read('src/lib/operationalIntegrity.ts').includes('runIdempotent'),'critical mutation wrapper missing');
+assert(read('supabase/migrations/20261122_operational_integrity.sql').includes('operation_idempotency'),'server idempotency migration missing');
+assert(read('docs/POWERGIS_V3.8.0_OPERATIONAL_INTEGRITY.md').includes('3.8.0'),'3.8 documentation missing');
+assert(!read('src/index.css').includes('filter: grayscale(100%)'),'global monochrome filter must not exist');
+console.log('PowerGIS 3.8 operational integrity static tests passed');

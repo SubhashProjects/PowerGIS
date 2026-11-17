@@ -898,7 +898,7 @@ export const DashboardAnalyticsCharts: React.FC<DashboardAnalyticsChartsProps> =
  </ResponsiveContainer>
  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
  <span className="text-base font-bold text-[#090909]">
- {isSim ? '1,420' : totalAssets}
+ {totalAssets}
  </span>
  <span className="text-[9px] ">
  Assets

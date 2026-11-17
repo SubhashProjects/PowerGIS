@@ -10,10 +10,6 @@ export interface RegionalEnclave {
  code: string;
  center: [number, number]; // [lat, lng]
  zoom: number;
- substationsCount: number;
- feedersCount: number;
- dtCount: number;
- consumersCount: number;
  description: string;
 }
 
@@ -21,8 +17,8 @@ export const APP_CONFIG = {
  // Identity
  name: 'PowerGIS Enterprise',
  shortName: 'PowerGIS',
- version: '2.0.0-PROD',
- edition: 'Enterprise Color Edition',
+ version: '3.10.0',
+ edition: 'Enterprise Neutral UI + Operational Architecture Edition',
  tagline: 'Utility Planning, Asset Management, SCADA & Field Operations',
  copyrightYear: 2026,
 
@@ -43,10 +39,6 @@ export const APP_CONFIG = {
  code: 'PDY',
  center: [11.9360, 79.8250],
  zoom: 13,
- substationsCount: 8,
- feedersCount: 8,
- dtCount: 7,
- consumersCount: 125000,
  description: 'Main Territory & Primary Load Center (Marapalam, Villianur, Lawspet)',
  },
  'reg-kkl': {
@@ -55,10 +47,6 @@ export const APP_CONFIG = {
  code: 'KKL',
  center: [10.9254, 79.8380],
  zoom: 13,
- substationsCount: 4,
- feedersCount: 4,
- dtCount: 4,
- consumersCount: 42000,
  description: 'Port & Delta Agriculture Enclave (130 km South of Puducherry)',
  },
  'reg-mhe': {
@@ -67,10 +55,6 @@ export const APP_CONFIG = {
  code: 'MHE',
  center: [11.7002, 75.5340],
  zoom: 14,
- substationsCount: 2,
- feedersCount: 2,
- dtCount: 2,
- consumersCount: 16000,
  description: 'Arabian Sea Coastal Enclave (600 km West, enclosed by Kerala)',
  },
  'reg-ynm': {
@@ -79,10 +63,6 @@ export const APP_CONFIG = {
  code: 'YNM',
  center: [16.7330, 82.2170],
  zoom: 14,
- substationsCount: 2,
- feedersCount: 2,
- dtCount: 2,
- consumersCount: 18500,
  description: 'Godavari Delta Enclave (850 km North-East, enclosed by AP)',
  },
  } as Record<string, RegionalEnclave>,

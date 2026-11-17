@@ -5,7 +5,7 @@
 // ============================================================================
 
 import { assetService } from './assetService';
-import { initialUsers, initialRegions, initialDivisions, initialSubdivisions, initialSections } from './mockData';
+import { initialUsers, initialRegions, initialDivisions, initialSubdivisions, initialSections } from '../data/simulatorData';
 import { Transformer, Feeder, Pole, Substation, Consumer } from '../types/assets';
 
 export interface ImportResult {

@@ -4,7 +4,7 @@
 // ============================================================================
 
 import { Fault, FaultStatus } from '../types/operations';
-import { initialFaults, initialSections } from './mockData';
+import { initialFaults, initialSections } from '../data/simulatorData';
 import { assetService } from './assetService';
 import { calculateHaversineDistance, calculateDistanceAlongFeeder } from '../lib/geoUtils';
 import { authService } from './authService';

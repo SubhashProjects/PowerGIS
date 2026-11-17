@@ -5,7 +5,7 @@
 // ============================================================================
 
 import {
- Map, Zap, Gauge, ShieldCheck, AlertTriangle, CheckSquare,
+ Map, Zap, Gauge, ShieldCheck, AlertTriangle, CheckSquare, Bell,
  Smartphone, FileCheck, Cpu, Power, GitFork, Calendar,
  BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound, LayoutDashboard, Building2
 } from 'lucide-react';
@@ -34,7 +34,9 @@ export type NavTabId =
  | 'backup_restore'
  | 'admin_panel'
  | 'common'
- | 'styles';
+ | 'styles'
+ | 'data_quality'
+ | 'notifications';
 
 export type NavCategory =
  | 'Core Operations'
@@ -99,6 +101,8 @@ export const NAVIGATION_ITEMS: NavItemConfig[] = [
  // 5. Governance & Security
  { id: 'admin_panel', label: LABELS.navigation.adminPanel, icon: Settings, color: 'text-neutral-600', roles: ['super_admin'], category: 'Governance & Security', description: 'Staff user accounts, RBAC entitlements, system configuration, and audit logs' },
  { id: 'backup_restore', label: LABELS.navigation.backupRestore, icon: Database, color: 'text-neutral-500', roles: ['super_admin', 'gis_admin', 'auditor'], category: 'Governance & Security', description: 'Database snapshots, GeoJSON/Shapefile export, and audit archive logs' },
+ { id: 'notifications', label: 'Notifications', icon: Bell, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'contractor', 'auditor', 'gis_admin'], category: 'Core Operations', description: 'Persistent operational notifications, assignments, approvals, alerts, and synchronization events' },
+ { id: 'data_quality', label: 'Data Quality', icon: AlertTriangle, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'], category: 'Governance & Security', description: 'Operational data validation, integrity exceptions, and remediation queue' },
  { id: 'common', label: 'Common', icon: KeyRound, color: 'text-neutral-600', roles: ['super_admin'], category: 'Governance & Security', description: 'Shared labels, text, values, validators, and domain conventions' },
  { id: 'styles', label: 'Styles', icon: Settings, color: 'text-neutral-600', roles: ['super_admin'], category: 'Governance & Security', description: 'Application design system, typography, neutral tokens, UI components, and mobile rules' },
 ];

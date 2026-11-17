@@ -779,7 +779,7 @@ class NotificationService {
  jurisdictionScope: 'Read-Only Regulatory Compliance Inspection • All Territories',
  metrics: [
  { label: 'Regulatory Compliance', value: '100%', subtext: 'JERC Grid Standards', trend: 'Certified' },
- { label: 'Audit Trail Records', value: '1,420', subtext: 'Full PostGIS mutation log', trend: 'Immutable' },
+ { label: 'Audit Trail Records', value: 'Live', subtext: 'Server audit log', trend: 'Immutable' },
  { label: 'System Reliability', value: 'IEEE 1366', subtext: 'SAIFI / SAIDI verified', trend: 'Audited' },
  { label: 'Asset Write Access', value: 'Zero', subtext: 'Read-Only enforcement', trend: 'Enforced' },
  ],

@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = fileURLToPath(new URL('..', import.meta.url));
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const assert=(c,m)=>{if(!c)throw new Error(m)};
+assert(fs.existsSync(path.join(root,'src/repositories/domain/AssetRepository.ts')),'asset repository missing');
+assert(fs.existsSync(path.join(root,'src/repositories/domain/AuditRepository.ts')),'audit repository missing');
+assert(read('src/services/workOrderService.ts').includes('workOrderRepository'),'work orders not routed through repository');
+assert(read('src/services/storesService.ts').includes('storesRepository'),'stores reads not routed through repository');
+assert(read('src/components/dashboard/RoleBasedDashboard.tsx').includes('OperationalSummary'),'dashboard live operational summary missing');
+assert(read('src/components/common/RecordPage.tsx').includes('auditRepository'),'record audit integration missing');
+assert(!read('src/index.css').includes('filter: grayscale(100%)'),'global monochrome filter must not exist');
+console.log('PowerGIS 3.7 architecture static tests passed');

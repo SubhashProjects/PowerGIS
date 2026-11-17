@@ -12,6 +12,7 @@ import { NavTabId } from '../layout/Sidebar';
 import { NAVIGATION_ITEMS } from '../../config/navigationConfig';
 import { LABELS } from '../../config/labelsConfig';
 import { DashboardAnalyticsCharts } from './DashboardAnalyticsCharts';
+import { OperationalSummary } from './OperationalSummary';
 import {
  Shield,
  CheckCircle2,
@@ -153,6 +154,8 @@ export const RoleBasedDashboard: React.FC<RoleBasedDashboardProps> = ({ onNaviga
  </span>
  </div>
  </div>
+
+ <OperationalSummary onNavigateTab={onNavigateTab} />
 
  {/* 2. Compact Metric KPI Grid (Flat, Hairline Borders, Strict Typography) */}
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
