@@ -104,22 +104,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (identifier: string, password: string): Promise<LoginResult> => {
     if (!isSupabaseConfigured) {
-      if (!isSimulatorRuntimeAllowed()) return { success: false, error: 'Production authentication is unavailable. Configure Supabase; demo authentication is development-only.' };
-      const normalized = identifier.trim().toLowerCase();
-      const demoUser = initialUsers.find(
-        u => u.email.toLowerCase() === normalized || u.username.toLowerCase() === normalized
-      );
-      if (demoUser) {
-        assetService.setSimulatorMode(true);
-        authService.setCurrentUser(demoUser);
-        setUser(demoUser);
-        setIsAuthenticated(true);
-        setUsers(initialUsers);
-        return { success: true, user: demoUser };
-      }
       return {
         success: false,
-        error: 'Authentication service is not configured. The deployment administrator must configure the Supabase backend; demo authentication is development-only.',
+        error: isSimulatorRuntimeAllowed()
+          ? 'Password sign-in is unavailable in simulator mode. Open Demo Roles and choose a test persona.'
+          : 'Authentication service is not configured. The deployment administrator must configure Supabase Auth.',
       };
     }
     const res = await authService.loginWithSupabase(identifier, password);

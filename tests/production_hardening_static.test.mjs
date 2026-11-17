@@ -35,6 +35,13 @@ assert(!auth.includes('PowerGIS@2026') && !auth.includes('Admin@PowerGIS2026') &
 assert(auth.includes('signInWithPassword'), 'Supabase password authentication is not present');
 assert(auth.includes('resetPasswordForEmail'), 'Supabase password recovery is not present');
 
+const authContext = read('src/context/AuthContext.tsx');
+assert(authContext.includes('Password sign-in is unavailable in simulator mode'), 'Simulator mode must not authenticate by email/username without password verification');
+assert(authContext.includes('loginAsPersona'), 'Development persona login must remain an explicit separate flow');
+const simulatorUsers = read('src/simulator/mockData.ts');
+assert(simulatorUsers.includes("id: 'user-demo-viewer'") && simulatorUsers.includes("email: 'demo.viewer@example.test'") && simulatorUsers.includes("role: 'auditor'"), 'Read-only demo test persona is missing');
+assert(authContext.includes('!isDev || isSupabaseConfigured'), 'Demo persona login must remain blocked outside development or when Supabase is configured');
+
 const faultPage = read('src/components/faults/FaultList.tsx');
 assert(!faultPage.includes('11.9265') && !faultPage.includes('79.8225'), 'Fault page still contains fixed default Puducherry coordinates');
 assert(faultPage.includes('No default location is used'), 'Fault page does not explicitly reject fabricated/default location');

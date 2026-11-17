@@ -384,7 +384,7 @@ export const LoginPage: React.FC = () => {
           {/* Search Toolbar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-md border border-[#E4E4E4]">
             <div className="text-xs text-neutral-600 font-medium">
-              Select an engineering role to sign in:
+              Select a simulated role or the read-only Demo User to explore the application. No password is used; this sandbox is development-only.
             </div>
             <div className="relative w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-1/2 -tranneutral-y-1/2 pointer-events-none" />

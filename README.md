@@ -51,7 +51,7 @@ $$\text{Superintending Engineer (SE)} \longrightarrow \text{Executive Engineer (
 | **Safety Management (Permit to Work - PTW)**| Line clear requests, mandatory 5-step safety isolation verification, temporary earthing confirmation, digital PTW issue. |
 | **ISO 55000 Asset Risk Scoring** | Multi-factor risk engine: Composite Risk = $0.30 \times \text{Condition} + 0.25 \times \text{Age} + 0.20 \times \text{Loading} + 0.15 \times \text{Faults} + 0.10 \times \text{Criticality}$. |
 | **System Administration & Backup** | Automated PostgreSQL dump simulation, geo-redundant snapshots, audit log viewer, role emulator. |
-| **Dedicated Enterprise Login** | Staff authentication with username/email and password, failed attempt counter with account lockout protection, and 1-click test persona switcher. |
+| **Dedicated Enterprise Login** | Staff authentication with username/email and password, failed attempt counter with account lockout protection, and development-only 1-click test persona switcher, including a read-only Demo User. |
 
 ---
 
@@ -205,7 +205,8 @@ To deploy the database on Supabase Cloud or PostgreSQL 16 + PostGIS:
 2. Apply every timestamped file in `supabase/migrations/` in lexical order using the Supabase CLI or an approved migration runner. Do not apply only the early baseline migrations.
 3. The generated `supabase/SUPABASE_ALL_IN_ONE_MASTER.sql` contains migrations only and is intended for a fresh, isolated database after review. It excludes demo seed data.
 4. `supabase/seed.sql` contains illustrative demo personas and operational fixtures. Use it only in an isolated development/staging project; never execute it in production.
-5. Configure `POWERGIS_ALLOWED_ORIGINS` and any gateway-only tokens as Supabase Edge Function secrets. Browser build variables must contain only the Supabase URL and public anon/publishable key.
+5. The login screen provides a **Demo User** persona (`demo.viewer@example.test`, username `demo_viewer`) through **Demo Roles**. It is a simulated, read-only Auditor profile and is available only in a Vite development build without Supabase configured. Select **Sign in** on its persona card; there is no demo password. Password-based login is deliberately rejected when Supabase Auth is not configured.
+6. Configure `POWERGIS_ALLOWED_ORIGINS` and any gateway-only tokens as Supabase Edge Function secrets. Browser build variables must contain only the Supabase URL and public anon/publishable key.
 
 ---
 

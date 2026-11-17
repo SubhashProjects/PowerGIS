@@ -149,6 +149,17 @@ export const initialUsers: UserProfile[] = [
  contractorCompany: 'Larsen Power Infrastructure Ltd',
  isActive: true,
  },
+ {
+ id: 'user-demo-viewer',
+ username: 'demo_viewer',
+ email: 'demo.viewer@example.test',
+ fullName: 'PowerGIS Demo User',
+ role: 'auditor',
+ designation: 'Read-only Demo & Application Tester',
+ phone: '',
+ regionId: 'reg-pdy',
+ isActive: true,
+ },
 ];
 
 // ----------------------------------------------------------------------------
