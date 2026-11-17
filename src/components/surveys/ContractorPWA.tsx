@@ -165,7 +165,7 @@ export const ContractorPWA: React.FC = () => {
  <div className="flex items-center justify-between">
  <div className="flex items-center space-x-3">
  <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <Smartphone className="w-5 h-5 text-emerald-400" />
+ <Smartphone className="w-5 h-5 text-neutral-400" />
  </div>
  <div>
  <h2 className="font-bold text-sm text-neutral-950">Contractor GPS Field Survey (PWA)</h2>
@@ -177,8 +177,8 @@ export const ContractorPWA: React.FC = () => {
 
  <div className="flex items-center space-x-2">
  {isOnline ? (
- <span className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-xs border border-emerald-200 font-bold shadow-2xs">
- <Wifi className="w-3.5 h-3.5 text-emerald-600" />
+ <span className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-neutral-50 text-neutral-800 text-xs border border-neutral-200 font-bold shadow-2xs">
+ <Wifi className="w-3.5 h-3.5 text-neutral-600" />
  <span>ONLINE</span>
  </span>
  ) : (
@@ -249,8 +249,8 @@ export const ContractorPWA: React.FC = () => {
  </div>
 
  {submitMessage && (
- <div className="p-3 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2 animate-fadeIn ">
- <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-300 text-neutral-900 text-xs flex items-center space-x-2 animate-fadeIn ">
+ <CheckCircle2 className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span className="font-bold">{submitMessage}</span>
  </div>
  )}
@@ -381,7 +381,7 @@ export const ContractorPWA: React.FC = () => {
  <button
  onClick={handleSubmitBatchForApproval}
  disabled={isSubmitting}
- className="w-full py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
+ className="w-full py-2.5 rounded-md bg-neutral-600 hover:bg-neutral-700 text-white text-xs font-extrabold shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
  >
  <UploadCloud className="w-4 h-4" />
  <span>Submit Survey to Junior Engineer (JE) for Official Review</span>

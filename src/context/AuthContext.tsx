@@ -6,7 +6,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, RolePermission } from '../types/auth';
 import { authService, LoginResult } from '../services/authService';
-import { initialUsers } from '../services/mockData';
+import { initialUsers } from '../simulator/mockData';
 import { adminService } from '../services/adminService';
 import { assetService } from '../services/assetService';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';

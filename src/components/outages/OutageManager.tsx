@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { reliabilityService } from '../../services/reliabilityService';
 import { assetService } from '../../services/assetService';
-import { initialSections } from '../../services/mockData';
+import { initialSections } from '../../simulator/mockData';
 import { supabase } from '../../lib/supabase';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -118,14 +118,14 @@ export const OutageManager: React.FC = () => {
  <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
  <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <Power className="w-5 h-5 text-rose-400" />
+ <Power className="w-5 h-5 text-neutral-400" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
  <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
  {COMMONS.labels.outages.title}
  </h1>
- <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+ <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-neutral-50 text-neutral-800 border border-neutral-200">
  IEEE 1366 STANDARD
  </span>
  </div>
@@ -138,7 +138,7 @@ export const OutageManager: React.FC = () => {
  <div className="flex items-center space-x-2 text-xs self-start sm:self-auto">
  <button
  onClick={() => setShowAddModal(true)}
- className="px-3 py-1.5 rounded-md bg-[#09090B] text-white hover:bg-zinc-800 font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs"
+ className="px-3 py-1.5 rounded-md bg-[#090909] text-white hover:bg-neutral-800 font-bold flex items-center space-x-1.5 cursor-pointer shadow-xs"
  >
  <Plus className="w-3.5 h-3.5" />
  <span>Log Outage Event</span>
@@ -147,28 +147,28 @@ export const OutageManager: React.FC = () => {
  <span
  className={`px-3 py-1.5 rounded-md border font-bold flex items-center space-x-1 ${
  calculated.jercCompliance.status === 'COMPLIANT'
- ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
- : 'bg-rose-50 text-rose-800 border-rose-200'
+ ? 'bg-neutral-50 text-neutral-800 border-neutral-200'
+ : 'bg-neutral-50 text-neutral-800 border-neutral-200'
  }`}
  >
  {calculated.jercCompliance.status === 'COMPLIANT' ? (
- <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+ <CheckCircle2 className="w-3.5 h-3.5 text-neutral-600" />
  ) : (
- <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+ <AlertTriangle className="w-3.5 h-3.5 text-neutral-600" />
  )}
  <span>JERC Status: {calculated.jercCompliance.status}</span>
  </span>
  </div>
  </div>
 
- {errorMsg && <div className="p-3 rounded-md bg-rose-50 border border-rose-300 text-rose-900 text-xs ">{errorMsg}</div>}
+ {errorMsg && <div className="p-3 rounded-md bg-neutral-50 border border-neutral-300 text-neutral-900 text-xs ">{errorMsg}</div>}
 
  {/* IEEE 1366 KPI CARDS */}
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
  <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
  <div className="flex items-center justify-between">
  <span className="text-[11px] text-neutral-500 font-medium ">SAIFI (Avg Frequency)</span>
- <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${calculated.jercCompliance.saifiCompliant ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
+ <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${calculated.jercCompliance.saifiCompliant ? 'bg-neutral-50 text-neutral-700 border-neutral-200' : 'bg-neutral-50 text-neutral-700 border-neutral-200'}`}>
  Target: &lt; 2.0
  </span>
  </div>
@@ -181,11 +181,11 @@ export const OutageManager: React.FC = () => {
  <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
  <div className="flex items-center justify-between">
  <span className="text-[11px] text-neutral-500 font-medium ">SAIDI (Avg Duration)</span>
- <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${calculated.jercCompliance.saidiCompliant ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
+ <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${calculated.jercCompliance.saidiCompliant ? 'bg-neutral-50 text-neutral-700 border-neutral-200' : 'bg-neutral-50 text-neutral-700 border-neutral-200'}`}>
  Target: &lt; 180m
  </span>
  </div>
- <div className="text-2xl sm:text-3xl font-extrabold text-sky-600 mt-1 tracking-tight">
+ <div className="text-2xl sm:text-3xl font-extrabold text-neutral-600 mt-1 tracking-tight">
  {calculated.saidi} min
  </div>
  <div className="text-[10px] text-neutral-400 mt-0.5">Outage duration / consumer</div>
@@ -193,7 +193,7 @@ export const OutageManager: React.FC = () => {
 
  <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
  <div className="text-[11px] text-neutral-500 font-medium ">CAIDI (Customer Avg)</div>
- <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-1 tracking-tight">
+ <div className="text-2xl sm:text-3xl font-extrabold text-neutral-600 mt-1 tracking-tight">
  {calculated.caidi} min
  </div>
  <div className="text-[10px] text-neutral-400 mt-0.5">Restoration time / interruption</div>
@@ -201,7 +201,7 @@ export const OutageManager: React.FC = () => {
 
  <div className="p-4 sm:p-5 rounded-md bg-white border border-neutral-200 shadow-xs">
  <div className="text-[11px] text-neutral-500 font-medium ">Energy Not Served (ENS)</div>
- <div className="text-2xl sm:text-3xl font-extrabold text-rose-600 mt-1 tracking-tight">
+ <div className="text-2xl sm:text-3xl font-extrabold text-neutral-600 mt-1 tracking-tight">
  {calculated.ensMWh} MWh
  </div>
  <div className="text-[10px] text-neutral-400 mt-0.5">Total unserved energy volume</div>
@@ -285,7 +285,7 @@ export const OutageManager: React.FC = () => {
  <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
  <div className="flex items-center justify-between">
  <h3 className="font-bold text-xs text-neutral-900 flex items-center space-x-2">
- <AlertOctagon className="w-4 h-4 text-rose-600" />
+ <AlertOctagon className="w-4 h-4 text-neutral-600" />
  <span>Interruption & Outage Register ({filteredOutages.length} Records)</span>
  </h3>
  <span className="text-[10px] text-neutral-500 ">Filtered view matching current criteria</span>
@@ -329,13 +329,13 @@ export const OutageManager: React.FC = () => {
 
  {filteredOutages.length === 0 && (
  <tr>
- <td colSpan={7} className="p-8 text-center text-slate-500 font-sans">
+ <td colSpan={7} className="p-8 text-center text-neutral-500 font-sans">
  <div className="flex flex-col items-center justify-center space-y-2">
- <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
- <Power className="w-5 h-5 text-slate-400" />
+ <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400">
+ <Power className="w-5 h-5 text-neutral-400" />
  </div>
- <p className="font-semibold text-sm text-slate-700">No active outage incidents in view</p>
- <p className="text-xs text-slate-400 max-w-md">
+ <p className="font-semibold text-sm text-neutral-700">No active outage incidents in view</p>
+ <p className="text-xs text-neutral-400 max-w-md">
  Operating in clean operational mode (0 simulated outages). Turn ON the Simulator in the header to view simulated outage records and reliability metrics.
  </p>
  </div>
@@ -350,11 +350,11 @@ export const OutageManager: React.FC = () => {
 
  {/* Log Outage Modal */}
  {showAddModal && (
- <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 animate-fadeIn">
+ <div className="fixed inset-0 bg-neutral-900/60 flex items-center justify-center p-4 z-50 animate-fadeIn">
  <div className="bg-white rounded-md max-w-lg w-full p-6 shadow-2xl border border-neutral-200 space-y-4">
  <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <h3 className="font-bold text-sm text-neutral-950 flex items-center space-x-2">
- <Power className="w-4 h-4 text-rose-600" />
+ <Power className="w-4 h-4 text-neutral-600" />
  <span>Log Interruption / Outage Record</span>
  </h3>
  <button onClick={() => setShowAddModal(false)} className="text-neutral-400 hover:text-neutral-600">
@@ -443,7 +443,7 @@ export const OutageManager: React.FC = () => {
  </button>
  <button
  type="submit"
- className="px-4 py-2 rounded-md bg-slate-900 text-white hover:bg-slate-800 font-bold cursor-pointer shadow-xs"
+ className="px-4 py-2 rounded-md bg-neutral-900 text-white hover:bg-neutral-800 font-bold cursor-pointer shadow-xs"
  >
  Commit Outage Record
  </button>

@@ -33,7 +33,7 @@ export const WarrantyRegister: React.FC = () => {
  <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
  <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <ShieldCheck className="w-5 h-5 text-emerald-400" />
+ <ShieldCheck className="w-5 h-5 text-neutral-400" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
@@ -129,12 +129,12 @@ export const WarrantyRegister: React.FC = () => {
  <td className="p-3 text-neutral-500">{w.commencementDate}</td>
  <td className="p-3 text-neutral-900 font-semibold">{w.expiryDate}</td>
  <td className="p-3 font-bold">
- <span className={isUrgent ? 'text-rose-700 font-extrabold' : 'text-neutral-900'}>
+ <span className={isUrgent ? 'text-neutral-700 font-extrabold' : 'text-neutral-900'}>
  {w.daysToExpiry} days
  </span>
  </td>
  <td className="p-3">
- <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+ <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-neutral-50 text-neutral-800 border border-neutral-300">
  {w.claimStatus}
  </span>
  </td>
@@ -191,7 +191,7 @@ export const WarrantyRegister: React.FC = () => {
  <td className="p-3">
  <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
  l.replacementPriority === 'High' || l.replacementPriority === 'Critical'
- ? 'bg-rose-50 text-rose-800 border-rose-300'
+ ? 'bg-neutral-50 text-neutral-800 border-neutral-300'
  : 'bg-neutral-100 text-neutral-700 border-neutral-200'
  }`}>
  {l.replacementPriority}

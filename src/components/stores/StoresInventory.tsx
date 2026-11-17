@@ -5,7 +5,7 @@
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
-import { initialStores } from '../../services/mockData';
+import { initialStores } from '../../simulator/mockData';
 import { assetService } from '../../services/assetService';
 import { storesService } from '../../services/storesService';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -77,7 +77,7 @@ export const StoresInventory: React.FC = () => {
  <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
  <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <Package className="w-5 h-5 text-teal-400" />
+ <Package className="w-5 h-5 text-neutral-400" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
@@ -100,14 +100,14 @@ export const StoresInventory: React.FC = () => {
  </div>
 
  {successMsg && (
- <div className="p-3 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2 shadow-xs animate-fadeIn ">
- <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-300 text-neutral-900 text-xs flex items-center space-x-2 shadow-xs animate-fadeIn ">
+ <CheckCircle2 className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span className="font-bold">{successMsg}</span>
  </div>
  )}
 
  {errorMsg && (
- <div className="p-3 rounded-md bg-rose-50 border border-rose-300 text-rose-900 text-xs ">{errorMsg}</div>
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-300 text-neutral-900 text-xs ">{errorMsg}</div>
  )}
 
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -150,7 +150,7 @@ export const StoresInventory: React.FC = () => {
  <td className="p-3 text-neutral-500 font-sans">{item.category}</td>
  <td className="p-3 font-bold">
  <span className={`px-2 py-0.5 rounded border text-[10px] ${
- isLow ? 'bg-rose-50 text-rose-700 border-rose-300' : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+ isLow ? 'bg-neutral-50 text-neutral-700 border-neutral-300' : 'bg-neutral-50 text-neutral-800 border-neutral-300'
  }`}>
  {item.currentStock} {item.unitOfMeasure}
  </span>
@@ -170,14 +170,14 @@ export const StoresInventory: React.FC = () => {
  {selectedItem && (
  <div className="lg:col-span-1 bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs space-y-4">
  <div className="border-b border-neutral-100 pb-2.5">
- <span className="text-[10px] font-bold text-teal-700 ">Issue Material to Work Order</span>
+ <span className="text-[10px] font-bold text-neutral-700 ">Issue Material to Work Order</span>
  <h3 className="font-bold text-sm text-neutral-950 mt-0.5">{selectedItem.name}</h3>
  <div className="text-xs text-neutral-500 ">{selectedItem.itemCode}</div>
  </div>
 
  <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 flex justify-between items-center text-xs ">
  <span className="text-neutral-500">Available Stock:</span>
- <span className="font-bold text-emerald-700">
+ <span className="font-bold text-neutral-700">
  {selectedItem.currentStock} {selectedItem.unitOfMeasure}
  </span>
  </div>

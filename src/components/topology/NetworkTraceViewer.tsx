@@ -31,19 +31,19 @@ export const NetworkTraceViewer: React.FC = () => {
 
  if (feeders.length === 0 || !currentFeeder) {
  return (
- <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#09090B] select-none">
+ <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#090909] select-none">
  {/* Top Banner */}
- <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+ <div className="bg-white border border-[#E4E4E4] rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
- <div className="w-10 h-10 rounded-md bg-[#09090B] text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <GitFork className="w-5 h-5 text-zinc-100" />
+ <div className="w-10 h-10 rounded-md bg-[#090909] text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+ <GitFork className="w-5 h-5 text-neutral-100" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
- <h1 className="text-base sm:text-lg font-bold text-zinc-950 tracking-tight">
+ <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
  Network Topology & Supply Graph Tracing
  </h1>
- <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
+ <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
  POSTGIS PGROUTING
  </span>
  </div>
@@ -53,17 +53,17 @@ export const NetworkTraceViewer: React.FC = () => {
  </div>
  </div>
 
- <span className="px-3 py-1.5 rounded-md bg-zinc-100 text-zinc-800 text-xs border border-zinc-200 self-start sm:self-auto font-semibold">
+ <span className="px-3 py-1.5 rounded-md bg-neutral-100 text-neutral-800 text-xs border border-neutral-200 self-start sm:self-auto font-semibold">
  Clean Standby Mode Active
  </span>
  </div>
 
  {/* Empty State Card */}
- <div className="p-10 rounded-md bg-white border border-[#E4E4E7] text-center space-y-3 shadow-xs">
- <div className="w-12 h-12 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center mx-auto text-zinc-400">
+ <div className="p-10 rounded-md bg-white border border-[#E4E4E4] text-center space-y-3 shadow-xs">
+ <div className="w-12 h-12 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center mx-auto text-neutral-400">
  <GitFork className="w-6 h-6 " />
  </div>
- <h3 className="font-bold text-base text-zinc-900">No Distribution Feeders in Clean Mode</h3>
+ <h3 className="font-bold text-base text-neutral-900">No Distribution Feeders in Clean Mode</h3>
  <p className="text-xs max-w-md mx-auto">
  Upload your distribution network layers (KML, GeoJSON, CSV) with feeder LineStrings and Substation points, or turn ON the SCADA / System Simulator to trace upstream/downstream power flow graphs.
  </p>
@@ -71,7 +71,7 @@ export const NetworkTraceViewer: React.FC = () => {
  <button
  type="button"
  onClick={() => assetService.toggleSimulatorMode()}
- className="px-4 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-semibold text-xs shadow-xs cursor-pointer inline-flex items-center space-x-1.5"
+ className="px-4 py-2 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-semibold text-xs shadow-xs cursor-pointer inline-flex items-center space-x-1.5"
  >
  <Zap className="w-3.5 h-3.5" />
  <span>Turn ON Simulator</span>
@@ -88,19 +88,19 @@ export const NetworkTraceViewer: React.FC = () => {
  const connectedConsumers = assetService.getConsumers().filter(c => c.feederId === currentFeeder.id);
 
  return (
- <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#09090B] select-none">
+ <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#090909] select-none">
  {/* Top Banner */}
- <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+ <div className="bg-white border border-[#E4E4E4] rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
- <div className="w-10 h-10 rounded-md bg-[#09090B] text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <GitFork className="w-5 h-5 text-zinc-100" />
+ <div className="w-10 h-10 rounded-md bg-[#090909] text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
+ <GitFork className="w-5 h-5 text-neutral-100" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
- <h1 className="text-base sm:text-lg font-bold text-zinc-950 tracking-tight">
+ <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
  Network Topology & Supply Graph Tracing
  </h1>
- <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
+ <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
  POSTGIS PGROUTING
  </span>
  </div>
@@ -115,8 +115,8 @@ export const NetworkTraceViewer: React.FC = () => {
  onClick={() => setTraceDirection('upstream')}
  className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer ${
  traceDirection === 'upstream'
- ? 'bg-[#09090B] text-white font-bold'
- : 'bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200'
+ ? 'bg-[#090909] text-white font-bold'
+ : 'bg-neutral-100 text-neutral-700 hover:text-neutral-950 border border-neutral-200'
  }`}
  >
  <ArrowUp className="w-3.5 h-3.5" />
@@ -126,8 +126,8 @@ export const NetworkTraceViewer: React.FC = () => {
  onClick={() => setTraceDirection('downstream')}
  className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer ${
  traceDirection === 'downstream'
- ? 'bg-[#09090B] text-white font-bold'
- : 'bg-zinc-100 text-zinc-700 hover:text-zinc-950 border border-zinc-200'
+ ? 'bg-[#090909] text-white font-bold'
+ : 'bg-neutral-100 text-neutral-700 hover:text-neutral-950 border border-neutral-200'
  }`}
  >
  <ArrowDown className="w-3.5 h-3.5" />
@@ -137,13 +137,13 @@ export const NetworkTraceViewer: React.FC = () => {
  </div>
 
  {/* Feeder Selector & Metrics Strip */}
- <div className="bg-white border border-[#E4E4E7] rounded-md p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+ <div className="bg-white border border-[#E4E4E4] rounded-md p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
- <span className="text-xs text-zinc-600 font-medium ">Select Active Feeder:</span>
+ <span className="text-xs text-neutral-600 font-medium ">Select Active Feeder:</span>
  <select
  value={selectedFeederId}
  onChange={e => setSelectedFeederId(e.target.value)}
- className="bg-zinc-50 border border-zinc-300 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="bg-neutral-50 border border-neutral-300 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  >
  {feeders.map(f => (
  <option key={f.id} value={f.id}>
@@ -154,16 +154,16 @@ export const NetworkTraceViewer: React.FC = () => {
  </div>
 
  <div className="flex items-center space-x-4 text-xs ">
- <span className="text-zinc-600">Length: <b className="text-zinc-900">{currentFeeder.lengthKm} km</b></span>
- <span className="text-zinc-600">Peak Load: <b className="text-amber-700">{currentFeeder.peakLoadAmps} A</b></span>
- <span className="text-zinc-600">Conductor: <b className="text-zinc-900">{currentFeeder.conductorType}</b></span>
+ <span className="text-neutral-600">Length: <b className="text-neutral-900">{currentFeeder.lengthKm} km</b></span>
+ <span className="text-neutral-600">Peak Load: <b className="text-neutral-700">{currentFeeder.peakLoadAmps} A</b></span>
+ <span className="text-neutral-600">Conductor: <b className="text-neutral-900">{currentFeeder.conductorType}</b></span>
  </div>
  </div>
 
  {/* GRAPH TOPOLOGY HIERARCHY TREE */}
- <div className="bg-white border border-[#E4E4E7] rounded-md p-5 sm:p-6 shadow-xs space-y-5">
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-zinc-100 pb-3">
- <h3 className="font-bold text-xs text-zinc-900 flex items-center space-x-2 ">
+ <div className="bg-white border border-[#E4E4E4] rounded-md p-5 sm:p-6 shadow-xs space-y-5">
+ <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-neutral-100 pb-3">
+ <h3 className="font-bold text-xs text-neutral-900 flex items-center space-x-2 ">
  <span>Electrical Supply Graph Topology</span>
  </h3>
  <span className="text-[11px] ">
@@ -174,83 +174,83 @@ export const NetworkTraceViewer: React.FC = () => {
  </div>
 
  {/* Level 1: Substation */}
- <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 flex items-center justify-between">
+ <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 flex items-center justify-between">
  <div className="flex items-center space-x-3">
- <div className="p-2.5 rounded-md bg-zinc-200 text-zinc-900 border border-zinc-300">
+ <div className="p-2.5 rounded-md bg-neutral-200 text-neutral-900 border border-neutral-300">
  <Cpu className="w-5 h-5" />
  </div>
  <div>
- <div className="text-[10px] font-bold text-zinc-600 ">Level 1: Source Grid Substation</div>
- <div className="font-bold text-sm text-zinc-950">{sourceSubstation?.name || 'Marapalam 110kV Primary'}</div>
+ <div className="text-[10px] font-bold text-neutral-600 ">Level 1: Source Grid Substation</div>
+ <div className="font-bold text-sm text-neutral-950">{sourceSubstation?.name || 'Marapalam 110kV Primary'}</div>
  <div className="text-xs mt-0.5">{sourceSubstation?.code} • {sourceSubstation?.voltageClass}</div>
  </div>
  </div>
- <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 ">
+ <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-neutral-50 text-neutral-800 border border-neutral-200 ">
  OPERATIONAL (ENERGIZED)
  </span>
  </div>
 
  {/* Level 2: Feeder Backbone */}
- <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-zinc-400 space-y-4">
- <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 flex items-center justify-between">
+ <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-neutral-400 space-y-4">
+ <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 flex items-center justify-between">
  <div className="flex items-center space-x-3">
- <div className="p-2.5 rounded-md bg-zinc-200 text-zinc-900 border border-zinc-300">
+ <div className="p-2.5 rounded-md bg-neutral-200 text-neutral-900 border border-neutral-300">
  <Zap className="w-5 h-5" />
  </div>
  <div>
- <div className="text-[10px] font-bold text-zinc-600 ">Level 2: 11kV Feeder Trunk</div>
- <div className="font-bold text-sm text-zinc-950">{currentFeeder.name}</div>
+ <div className="text-[10px] font-bold text-neutral-600 ">Level 2: 11kV Feeder Trunk</div>
+ <div className="font-bold text-sm text-neutral-950">{currentFeeder.name}</div>
  <div className="text-xs mt-0.5">{currentFeeder.conductorType} • {currentFeeder.lengthKm} km</div>
  </div>
  </div>
- <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-zinc-100 text-zinc-800 border border-zinc-300 ">
+ <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-neutral-100 text-neutral-800 border border-neutral-300 ">
  ENERGIZED ({currentFeeder.peakLoadAmps}A)
  </span>
  </div>
 
  {/* Level 3: Connected DT Service Areas */}
- <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-zinc-400 space-y-3">
- <div className="text-xs font-bold text-zinc-800 ">
+ <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-neutral-400 space-y-3">
+ <div className="text-xs font-bold text-neutral-800 ">
  Level 3: Stepped Down Transformers ({connectedDTs.length} DT Service Areas):
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  {connectedDTs.map(dt => (
- <div key={dt.id} className="p-3.5 rounded-md bg-white border border-zinc-200 shadow-2xs space-y-2">
+ <div key={dt.id} className="p-3.5 rounded-md bg-white border border-neutral-200 shadow-2xs space-y-2">
  <div className="flex items-center justify-between">
- <span className="font-bold text-xs text-zinc-950">{dt.name}</span>
- <span className="text-[10px] font-bold text-zinc-700 px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-200">
+ <span className="font-bold text-xs text-neutral-950">{dt.name}</span>
+ <span className="text-[10px] font-bold text-neutral-700 px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200">
  {dt.capacityKVA} kVA
  </span>
  </div>
- <div className="text-[11px] flex items-center justify-between pt-1 border-t border-zinc-100">
- <span>Loading: <b className="text-zinc-900">{dt.loadPercentage}%</b></span>
- <span>Oil Level: <b className="text-zinc-900">{dt.oilLevelPct}%</b></span>
- <span>Imbalance: <b className="text-amber-700">{dt.phaseImbalancePct}%</b></span>
+ <div className="text-[11px] flex items-center justify-between pt-1 border-t border-neutral-100">
+ <span>Loading: <b className="text-neutral-900">{dt.loadPercentage}%</b></span>
+ <span>Oil Level: <b className="text-neutral-900">{dt.oilLevelPct}%</b></span>
+ <span>Imbalance: <b className="text-neutral-700">{dt.phaseImbalancePct}%</b></span>
  </div>
  </div>
  ))}
  </div>
 
  {/* Level 4: Connected Consumers */}
- <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-zinc-400 space-y-2.5">
- <div className="text-xs font-bold text-zinc-800 flex items-center space-x-1.5">
- <Users className="w-3.5 h-3.5 text-zinc-600" />
+ <div className="ml-4 sm:ml-6 pl-4 sm:pl-6 border-l-2 border-neutral-400 space-y-2.5">
+ <div className="text-xs font-bold text-neutral-800 flex items-center space-x-1.5">
+ <Users className="w-3.5 h-3.5 text-neutral-600" />
  <span>Level 4: Connected Downstream Consumer Services ({connectedConsumers.length} Verified Premises):</span>
  </div>
 
  <div className="space-y-1.5">
  {connectedConsumers.map(c => (
- <div key={c.id} className="p-3 rounded-md bg-white border border-zinc-200 text-xs flex items-center justify-between shadow-2xs">
+ <div key={c.id} className="p-3 rounded-md bg-white border border-neutral-200 text-xs flex items-center justify-between shadow-2xs">
  <div>
- <span className="font-bold text-zinc-950">{c.name}</span>
+ <span className="font-bold text-neutral-950">{c.name}</span>
  <span className="text-[11px] ml-2">({c.consumerNumber})</span>
- <div className="text-[10px] text-zinc-400 mt-0.5">{c.address}</div>
+ <div className="text-[10px] text-neutral-400 mt-0.5">{c.address}</div>
  </div>
  <span className={`px-2 py-0.5 rounded text-[10px] border font-semibold ${
  c.isSmartMeter
- ? 'bg-zinc-100 text-zinc-900 border-zinc-300'
- : 'bg-zinc-100 text-zinc-700 border-zinc-200'
+ ? 'bg-neutral-100 text-neutral-900 border-neutral-300'
+ : 'bg-neutral-100 text-neutral-700 border-neutral-200'
  }`}>
  {c.isSmartMeter ? 'Smart Prepaid' : 'Conventional'}
  </span>

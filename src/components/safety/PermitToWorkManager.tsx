@@ -5,7 +5,7 @@
 // ============================================================================
 
 import React, { useState, useEffect } from 'react';
-import { initialPTWs, initialFeeders } from '../../services/mockData';
+import { initialPTWs, initialFeeders } from '../../simulator/mockData';
 import { assetService } from '../../services/assetService';
 import { useAuth } from '../../context/AuthContext';
 import { SafetyPermit } from '../../types/operations';
@@ -134,14 +134,14 @@ export const PermitToWorkManager: React.FC = () => {
  <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <div className="flex items-center space-x-3">
  <div className="w-10 h-10 rounded-md bg-neutral-900 text-white font-extrabold flex items-center justify-center text-lg shadow-xs flex-shrink-0">
- <HardHat className="w-5 h-5 text-amber-400" />
+ <HardHat className="w-5 h-5 text-neutral-400" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
  <h1 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
  Electrical Safety & Permit to Work (PTW) Gateway
  </h1>
- <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+ <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-neutral-50 text-neutral-800 border border-neutral-200">
  CEA SAFETY REGS
  </span>
  </div>
@@ -187,8 +187,8 @@ export const PermitToWorkManager: React.FC = () => {
  <span className="text-xs font-bold text-neutral-950">{p.ptwNumber}</span>
  <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
  p.status === 'isolation_verified'
- ? 'bg-amber-50 text-amber-800 border-amber-300'
- : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+ ? 'bg-neutral-50 text-neutral-800 border-neutral-300'
+ : 'bg-neutral-50 text-neutral-800 border-neutral-300'
  }`}>
  {p.status}
  </span>
@@ -211,9 +211,9 @@ export const PermitToWorkManager: React.FC = () => {
  <span className="font-extrabold text-base text-neutral-950">{selectedPermit.ptwNumber}</span>
  <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
  selectedPermit.status === 'isolation_verified'
- ? 'bg-amber-50 text-amber-800 border-amber-300'
+ ? 'bg-neutral-50 text-neutral-800 border-neutral-300'
  : selectedPermit.status === 'restored'
- ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+ ? 'bg-neutral-50 text-neutral-800 border-neutral-300'
  : 'bg-neutral-100 text-neutral-700 border-neutral-300'
  }`}>
  {selectedPermit.status}
@@ -223,7 +223,7 @@ export const PermitToWorkManager: React.FC = () => {
  </div>
 
  {selectedPermit.status === 'isolation_verified' && (
- <div className="max-w-xs text-[11px] text-amber-900 bg-amber-50 border border-amber-300 rounded-md p-2">
+ <div className="max-w-xs text-[11px] text-neutral-900 bg-neutral-50 border border-neutral-300 rounded-md p-2">
  Restoration is disabled in this build. It requires an independently authorized, audited field-clearance and restoration workflow.
  </div>
  )}
@@ -239,25 +239,25 @@ export const PermitToWorkManager: React.FC = () => {
  {/* Statutory Safety Checklist */}
  <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 space-y-2.5">
  <h4 className="font-bold text-xs text-neutral-900 flex items-center space-x-1.5 ">
- <Lock className="w-4 h-4 text-amber-600" />
+ <Lock className="w-4 h-4 text-neutral-600" />
  <span>Mandatory Statutory Safety Verifications (CEA Safety Regs)</span>
  </h4>
 
  <div className="space-y-2 text-xs text-neutral-700 font-sans">
  <div className="flex items-center space-x-2">
- <CheckSquare className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <CheckSquare className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span>Isolation Points Locked Out: <b>{selectedPermit.isolationPoints}</b></span>
  </div>
  <div className="flex items-center space-x-2">
- <CheckSquare className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <CheckSquare className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span>Portable Earths Applied on Both Sides of Work Section: <b>{selectedPermit.earthingConfirmed ? 'RECORDED — VERIFY PHYSICALLY' : 'NOT VERIFIED'}</b></span>
  </div>
  <div className="flex items-center space-x-2">
- <CheckSquare className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <CheckSquare className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span>'MEN AT WORK - DO NOT CLOSE' Caution Boards Posted: <b>{selectedPermit.dangerNoticesPosted ? 'RECORDED — VERIFY PHYSICALLY' : 'NOT VERIFIED'}</b></span>
  </div>
  <div className="flex items-center space-x-2">
- <CheckSquare className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <CheckSquare className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span>Gas Discharge & Induction Voltage Tested Zero: <b>{selectedPermit.gasDischargeTested ? 'RECORDED — VERIFY PHYSICALLY' : 'NOT VERIFIED'}</b></span>
  </div>
  </div>
@@ -280,10 +280,10 @@ export const PermitToWorkManager: React.FC = () => {
  </div>
 
  {selectedPermit && isSupabaseConfigured && nextStage && (
- <div className="bg-white border border-amber-300 rounded-md p-4 space-y-3">
+ <div className="bg-white border border-neutral-300 rounded-md p-4 space-y-3">
  <div className="flex items-center justify-between gap-3">
  <div>
- <div className="text-[10px] font-bold text-amber-800">Next authorized backend transition</div>
+ <div className="text-[10px] font-bold text-neutral-800">Next authorized backend transition</div>
  <div className="text-sm font-bold text-neutral-950">{nextStage.replace(/_/g, ' ')}</div>
  </div>
  <span className="text-[10px] text-neutral-500">Physical action must occur in the field.</span>
@@ -292,7 +292,7 @@ export const PermitToWorkManager: React.FC = () => {
  <label className="block text-xs font-semibold">Evidence attachment {['absence_of_voltage_verified','earthing_confirmed','danger_notices_confirmed','additional_checks_verified','personnel_cleared','earths_removed'].includes(nextStage) ? '(required)' : '(optional)'}</label>
  <input type="file" onChange={e => setStageEvidence(e.target.files?.[0] ?? null)} className="text-xs" />
  <button disabled={isLoading} onClick={handleAdvanceStage} className="px-4 py-2 rounded-md bg-neutral-900 text-white text-xs font-bold disabled:opacity-50">Record backend transition</button>
- <p className="text-[11px] text-amber-900">This records an authorized workflow transition and evidence. It does not prove that physical isolation, testing, earthing, or switching has occurred.</p>
+ <p className="text-[11px] text-neutral-900">This records an authorized workflow transition and evidence. It does not prove that physical isolation, testing, earthing, or switching has occurred.</p>
  </div>
  )}
 
@@ -302,7 +302,7 @@ export const PermitToWorkManager: React.FC = () => {
  <form onSubmit={handleCreatePTW} className="bg-white border border-neutral-300 rounded-md p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4">
  <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <h3 className="font-bold text-sm text-neutral-950 flex items-center space-x-2">
- <HardHat className="w-4 h-4 text-amber-600" />
+ <HardHat className="w-4 h-4 text-neutral-600" />
  <span>Submit Permit to Work Request</span>
  </h3>
  <button
@@ -314,7 +314,7 @@ export const PermitToWorkManager: React.FC = () => {
  </button>
  </div>
 
- <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950">
+ <div className="rounded-md border border-neutral-300 bg-neutral-50 p-3 text-xs text-neutral-950">
  This form creates a request only. It does not perform or verify electrical isolation, absence-of-voltage testing, earthing, danger notices, or authorization to work. Those physical steps must be completed and independently verified under approved utility procedures.
  </div>
  <div>

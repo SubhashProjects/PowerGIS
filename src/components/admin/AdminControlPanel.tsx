@@ -12,7 +12,7 @@ import { ROLES_REGISTRY } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { UserProfile, OfficialRole } from '../../types/auth';
-import { initialRegions, initialDivisions, initialSections } from '../../services/mockData';
+import { initialRegions, initialDivisions, initialSections } from '../../simulator/mockData';
 import {
  Settings, Database, Download, Upload, CheckCircle2, AlertTriangle,
  RotateCcw, Shield, HardDrive, FileUp, FileCode, FileSpreadsheet, Map, X, Check,
@@ -273,19 +273,19 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  };
 
  return (
- <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#09090B]">
+ <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6 text-[#090909]">
  {/* 1. Header Card */}
- <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+ <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
  <div className="flex items-center space-x-3.5 min-w-0">
- <div className="w-8 h-8 rounded-md bg-[#09090B] text-white font-bold flex items-center justify-center text-sm border border-zinc-800 flex-shrink-0">
+ <div className="w-8 h-8 rounded-md bg-[#090909] text-white font-bold flex items-center justify-center text-sm border border-neutral-800 flex-shrink-0">
  <Zap className="w-4 h-4 text-white" />
  </div>
  <div className="min-w-0">
  <div className="flex items-center space-x-2 flex-wrap">
- <h1 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
+ <h1 className="text-base sm:text-lg font-bold text-[#090909] tracking-tight">
  {LABELS.admin.consoleTitle}
  </h1>
- <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
+ <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
  {LABELS.admin.rootAuthorityBadge}
  </span>
  </div>
@@ -296,39 +296,39 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  <div className="flex items-center space-x-2 self-start sm:self-auto flex-shrink-0">
- <span className="px-3 py-1 rounded-md bg-zinc-100 border border-zinc-200 text-xs text-zinc-800 font-medium">
+ <span className="px-3 py-1 rounded-md bg-neutral-100 border border-neutral-200 text-xs text-neutral-800 font-medium">
  {LABELS.admin.activeSessionPrefix} {user.fullName.split(',')[0]} ({user.role.toUpperCase()})
  </span>
  </div>
  </div>
 
  {!(import.meta as any).env?.DEV && (
- <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950">
+ <div className="rounded-md border border-neutral-300 bg-neutral-50 p-3 text-xs text-neutral-950">
  Secure Supabase user provisioning is not connected in this build. User create, edit, delete, reset, and impersonation actions are disabled in production; the visible registry must not be treated as the authoritative identity store.
  </div>
  )}
 
  {/* Global Status Notice */}
  {actionNotice && (
- <div className="p-3.5 rounded-md bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs flex items-center justify-between animate-in fade-in duration-150">
+ <div className="p-3.5 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-900 text-xs flex items-center justify-between animate-in fade-in duration-150">
  <div className="flex items-center space-x-2.5">
- <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <CheckCircle2 className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span className="font-medium">{actionNotice}</span>
  </div>
- <button onClick={() => setActionNotice(null)} className="hover:text-zinc-900 cursor-pointer">
+ <button onClick={() => setActionNotice(null)} className="hover:text-neutral-900 cursor-pointer">
  <X className="w-4 h-4" />
  </button>
  </div>
  )}
 
  {/* 2. Admin Sub-Navigation Tabs */}
- <div className="flex items-center space-x-2 border-b border-zinc-200 pb-2">
+ <div className="flex items-center space-x-2 border-b border-neutral-200 pb-2">
  <button
  onClick={() => setActiveTab('users')}
  className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
  activeTab === 'users'
- ? 'bg-[#09090B] text-white'
- : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200'
+ ? 'bg-[#090909] text-white'
+ : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200'
  }`}
  >
  <Users className="w-3.5 h-3.5 flex-shrink-0" />
@@ -339,8 +339,8 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  onClick={() => setActiveTab('migration')}
  className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
  activeTab === 'migration'
- ? 'bg-[#09090B] text-white'
- : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200'
+ ? 'bg-[#090909] text-white'
+ : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200'
  }`}
  >
  <FileUp className="w-3.5 h-3.5 flex-shrink-0" />
@@ -351,8 +351,8 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  onClick={() => setActiveTab('features')}
  className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
  activeTab === 'features'
- ? 'bg-[#09090B] text-white'
- : 'bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200'
+ ? 'bg-[#090909] text-white'
+ : 'bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200'
  }`}
  >
  <Shield className="w-3.5 h-3.5 flex-shrink-0" />
@@ -367,13 +367,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <div className="space-y-4">
  {/* Simulation Mode Indicator for Staff Personas */}
  {!isSimulatorActive && (
- <div className="p-3.5 rounded-md bg-zinc-50 border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+ <div className="p-3.5 rounded-md bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-600 flex-shrink-0">
- <Zap className="w-4 h-4 text-zinc-600" />
+ <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-600 flex-shrink-0">
+ <Zap className="w-4 h-4 text-neutral-600" />
  </div>
  <div>
- <div className="font-semibold text-[#09090B]">Pre-seeded Test Personas Isolated (Clean Operational Mode)</div>
+ <div className="font-semibold text-[#090909]">Pre-seeded Test Personas Isolated (Clean Operational Mode)</div>
  <p className="text-[11px] ">
  Showing <b>{users.length}</b> registered utility user(s). The 10 pre-seeded dummy engineering personas (SE, EE, AEE, AE, JE, Contractor, Auditor, GIS Admin) are isolated and will only appear when Simulator is ON.
  </p>
@@ -382,7 +382,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <button
  type="button"
  onClick={handleToggleSimulator}
- className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium text-xs border border-zinc-900 transition-colors flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+ className="px-3.5 py-1.5 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-medium text-xs border border-neutral-900 transition-colors flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
  >
  <Zap className="w-3.5 h-3.5" />
  <span>Load Simulated Personas</span>
@@ -391,17 +391,17 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  )}
 
  {/* Controls Bar: Search, Role Filter, Add User, Reset */}
- <div className="bg-white border border-zinc-200 rounded-md p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
  <div className="flex items-center space-x-2.5 flex-1 min-w-0">
  {/* Search */}
  <div className="relative flex-1 max-w-sm">
- <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5 pointer-events-none" />
+ <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-2.5 pointer-events-none" />
  <input
  type="text"
  value={userSearchQuery}
  onChange={e => setUserSearchQuery(e.target.value)}
  placeholder={LABELS.admin.searchPlaceholder}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md pl-9 pr-3 py-1.5 text-xs text-zinc-900 placeholder-zinc-400 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md pl-9 pr-3 py-1.5 text-xs text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
 
@@ -410,7 +410,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <select
  value={roleFilter}
  onChange={e => setRoleFilter(e.target.value)}
- className="bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-700 focus:bg-white focus:outline-none focus:border-zinc-900 font-medium"
+ className="bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-700 focus:bg-white focus:outline-none focus:border-neutral-900 font-medium"
  >
  <option value="all">{LABELS.admin.allRolesOption} ({users.length})</option>
  <option value="super_admin">Super Administrator</option>
@@ -432,7 +432,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  onClick={openAddUserModal}
  disabled={!isSupabaseConfigured && !(import.meta as any).env?.DEV}
  title={isSupabaseConfigured ? 'Provision through Supabase Auth administration' : (!(import.meta as any).env?.DEV ? 'Supabase is required for production user provisioning' : undefined)}
- className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium text-xs flex items-center space-x-1.5 border border-zinc-900 cursor-pointer transition-colors"
+ className="px-3.5 py-1.5 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-medium text-xs flex items-center space-x-1.5 border border-neutral-900 cursor-pointer transition-colors"
  >
  <UserPlus className="w-3.5 h-3.5" />
  <span>{LABELS.admin.addUserButton}</span>
@@ -448,7 +448,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  }
  }}
  title={LABELS.admin.resetDefaultTooltip}
- className="p-1.5 rounded-md bg-zinc-50 hover:bg-zinc-100 text-zinc-600 border border-zinc-200 transition-colors cursor-pointer"
+ className="p-1.5 rounded-md bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border border-neutral-200 transition-colors cursor-pointer"
  >
  <RotateCcw className="w-3.5 h-3.5" />
  </button>
@@ -457,34 +457,34 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  {/* Quick Stats Summary */}
  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
- <div className="p-3 rounded-md bg-white border border-zinc-200">
+ <div className="p-3 rounded-md bg-white border border-neutral-200">
  <div className="text-[10px] font-medium ">{LABELS.admin.statTotalStaff}</div>
- <div className="text-xl font-bold text-[#09090B] mt-1">{users.length}</div>
+ <div className="text-xl font-bold text-[#090909] mt-1">{users.length}</div>
  </div>
- <div className="p-3 rounded-md bg-white border border-zinc-200">
+ <div className="p-3 rounded-md bg-white border border-neutral-200">
  <div className="text-[10px] font-medium ">{LABELS.admin.statActiveStaff}</div>
- <div className="text-xl font-bold text-emerald-700 mt-1">{users.filter(u => u.isActive).length}</div>
+ <div className="text-xl font-bold text-neutral-700 mt-1">{users.filter(u => u.isActive).length}</div>
  </div>
- <div className="p-3 rounded-md bg-white border border-zinc-200">
+ <div className="p-3 rounded-md bg-white border border-neutral-200">
  <div className="text-[10px] font-medium ">{LABELS.admin.statFieldRoles}</div>
- <div className="text-xl font-bold text-[#09090B] mt-1">
+ <div className="text-xl font-bold text-[#090909] mt-1">
  {users.filter(u => ['se', 'ee', 'aee', 'ae', 'je'].includes(u.role)).length}
  </div>
  </div>
- <div className="p-3 rounded-md bg-white border border-zinc-200">
+ <div className="p-3 rounded-md bg-white border border-neutral-200">
  <div className="text-[10px] font-medium ">{LABELS.admin.statContractors}</div>
- <div className="text-xl font-bold text-zinc-700 mt-1">
+ <div className="text-xl font-bold text-neutral-700 mt-1">
  {users.filter(u => u.role === 'contractor').length}
  </div>
  </div>
  </div>
 
  {/* Comprehensive Users Table */}
- <div className="bg-white border border-zinc-200 rounded-md overflow-hidden">
+ <div className="bg-white border border-neutral-200 rounded-md overflow-hidden">
  <div className="pg-table-scroll overflow-x-auto">
  <table className="pg-data-table w-full text-left text-xs">
  <thead>
- <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-semibold text-zinc-600">
+ <tr className="bg-neutral-50 border-b border-neutral-200 text-[10px] font-semibold text-neutral-600">
  <th className="py-2.5 px-3">{LABELS.admin.thStaffMember}</th>
  <th className="py-2.5 px-3">{LABELS.admin.thRoleDesignation}</th>
  <th className="py-2.5 px-3 hidden md:table-cell">{LABELS.admin.thJurisdiction}</th>
@@ -493,22 +493,22 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <th className="py-2.5 px-3 text-right">{LABELS.admin.thActions}</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-zinc-100">
+ <tbody className="divide-y divide-neutral-100">
  {filteredUsers.map(u => {
  const isCurrent = user.id === u.id;
  return (
- <tr key={u.id} className={`hover:bg-zinc-50 transition-colors ${isCurrent ? 'bg-zinc-50/60' : ''}`}>
+ <tr key={u.id} className={`hover:bg-neutral-50 transition-colors ${isCurrent ? 'bg-neutral-50/60' : ''}`}>
  {/* Member Name & Avatar */}
  <td className="py-2.5 px-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-7 h-7 rounded-md bg-[#09090B] text-white font-medium flex items-center justify-center text-xs flex-shrink-0 border border-zinc-800">
+ <div className="w-7 h-7 rounded-md bg-[#090909] text-white font-medium flex items-center justify-center text-xs flex-shrink-0 border border-neutral-800">
  {u.fullName.substring(0, 2).toUpperCase()}
  </div>
  <div className="min-w-0">
- <div className="font-semibold text-zinc-900 truncate flex items-center space-x-1.5">
+ <div className="font-semibold text-neutral-900 truncate flex items-center space-x-1.5">
  <span>{u.fullName}</span>
  {isCurrent && (
- <span className="text-[9px] bg-zinc-100 text-zinc-800 px-1.5 py-0.2 rounded font-semibold border border-zinc-200">
+ <span className="text-[9px] bg-neutral-100 text-neutral-800 px-1.5 py-0.2 rounded font-semibold border border-neutral-200">
  {LABELS.common.youBadge}
  </span>
  )}
@@ -521,10 +521,10 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {/* Role & Designation */}
  <td className="py-2.5 px-3">
  <div>
- <span className="inline-block px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 text-[10px] font-semibold border border-zinc-200">
+ <span className="inline-block px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-800 text-[10px] font-semibold border border-neutral-200">
  {u.role}
  </span>
- <div className="text-[11px] text-zinc-600 mt-0.5 font-normal truncate max-w-[200px]">
+ <div className="text-[11px] text-neutral-600 mt-0.5 font-normal truncate max-w-[200px]">
  {u.designation}
  </div>
  </div>
@@ -532,9 +532,9 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  {/* Jurisdiction */}
  <td className="py-2.5 px-3 hidden md:table-cell">
- <div className="text-zinc-700 text-[11px]">
+ <div className="text-neutral-700 text-[11px]">
  {u.contractorCompany ? (
- <span className="text-zinc-900 font-semibold">{u.contractorCompany}</span>
+ <span className="text-neutral-900 font-semibold">{u.contractorCompany}</span>
  ) : (
  <span>
  {initialSections.find(s => s.id === u.sectionId)?.name ||
@@ -548,22 +548,22 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  {/* Contact */}
  <td className="py-2.5 px-3 hidden lg:table-cell">
- <div className="space-y-0.5 text-[11px] text-zinc-600">
+ <div className="space-y-0.5 text-[11px] text-neutral-600">
  <div className="truncate max-w-[180px]">{u.email}</div>
- <div className="text-zinc-400 text-[10px]">{u.phone}</div>
+ <div className="text-neutral-400 text-[10px]">{u.phone}</div>
  </div>
  </td>
 
  {/* Status */}
  <td className="py-2.5 px-3">
  {u.isActive ? (
- <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-medium">
- <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+ <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-50 text-neutral-800 border border-neutral-200 text-[10px] font-medium">
+ <span className="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
  <span>{LABELS.common.active}</span>
  </span>
  ) : (
- <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-[10px] font-medium">
- <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
+ <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-[10px] font-medium">
+ <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
  <span>{LABELS.common.inactive}</span>
  </span>
  )}
@@ -579,8 +579,8 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  title={`Test live portal as ${u.fullName}`}
  className={`p-1.5 rounded-md border text-xs font-medium transition-colors flex items-center space-x-1 ${
  isCurrent
- ? 'bg-zinc-100 text-zinc-400 border-zinc-200 cursor-not-allowed'
- : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-200 cursor-pointer'
+ ? 'bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed'
+ : 'bg-white hover:bg-neutral-100 text-neutral-800 border-neutral-200 cursor-pointer'
  }`}
  >
  <UserCheck className="w-3.5 h-3.5" />
@@ -591,7 +591,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <button
  onClick={() => openEditUserModal(u)}
  title={LABELS.admin.btnEdit}
- className="p-1.5 rounded-md bg-white hover:bg-zinc-100 text-zinc-700 border border-zinc-200 transition-colors cursor-pointer"
+ className="p-1.5 rounded-md bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200 transition-colors cursor-pointer"
  >
  <Pencil className="w-3.5 h-3.5" />
  </button>
@@ -603,8 +603,8 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  title={isCurrent ? 'Cannot delete your active session' : LABELS.admin.btnDelete}
  className={`p-1.5 rounded-md border transition-colors ${
  isCurrent
- ? 'bg-zinc-100 text-zinc-300 border-zinc-200 cursor-not-allowed'
- : 'bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-200 text-zinc-600 border-zinc-200 cursor-pointer'
+ ? 'bg-neutral-100 text-neutral-300 border-neutral-200 cursor-not-allowed'
+ : 'bg-white hover:bg-neutral-50 hover:text-neutral-700 hover:border-neutral-200 text-neutral-600 border-neutral-200 cursor-pointer'
  }`}
  >
  <Trash2 className="w-3.5 h-3.5" />
@@ -617,7 +617,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  {filteredUsers.length === 0 && (
  <tr>
- <td colSpan={6} className="py-8 text-center text-zinc-400 text-xs">
+ <td colSpan={6} className="py-8 text-center text-neutral-400 text-xs">
  {LABELS.admin.emptyTable}
  </td>
  </tr>
@@ -636,42 +636,42 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <div className="space-y-4">
  {/* Import Result Notification Modal */}
  {importStatus && (
- <div className="p-3.5 rounded-md bg-white border border-zinc-200 text-[#09090B] text-xs space-y-2 animate-in fade-in duration-150">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+ <div className="p-3.5 rounded-md bg-white border border-neutral-200 text-[#090909] text-xs space-y-2 animate-in fade-in duration-150">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
  <div className="flex items-center space-x-2 font-semibold text-xs">
  {importStatus.success ? (
- <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+ <CheckCircle2 className="w-4 h-4 text-neutral-600" />
  ) : (
- <AlertTriangle className="w-4 h-4 text-amber-600" />
+ <AlertTriangle className="w-4 h-4 text-neutral-600" />
  )}
  <span>{importStatus.success ? 'Spatial Data Import Completed' : 'Import Warning'}</span>
  </div>
  <button
  onClick={() => setImportStatus(null)}
- className="p-1 rounded hover:text-zinc-900 cursor-pointer"
+ className="p-1 rounded hover:text-neutral-900 cursor-pointer"
  >
  <X className="w-4 h-4" />
  </button>
  </div>
 
- <p className="text-zinc-600 text-[11px]">{importStatus.message}</p>
+ <p className="text-neutral-600 text-[11px]">{importStatus.message}</p>
 
  <div className="flex items-center space-x-3 text-[11px] pt-1">
- <span className="px-2 py-0.5 rounded bg-[#09090B] text-white font-medium">
+ <span className="px-2 py-0.5 rounded bg-[#090909] text-white font-medium">
  Imported: {importStatus.importedCount}
  </span>
- <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200">
+ <span className="px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200">
  Duplicates: {importStatus.duplicateCount}
  </span>
  {importStatus.errorCount > 0 && (
- <span className="px-2 py-0.5 rounded bg-red-50 text-red-700 border border-red-200 font-medium">
+ <span className="px-2 py-0.5 rounded bg-neutral-50 text-neutral-700 border border-neutral-200 font-medium">
  Errors: {importStatus.errorCount}
  </span>
  )}
  </div>
 
  {importStatus.details.length > 0 && (
- <div className="max-h-28 overflow-y-auto bg-zinc-50 p-2 rounded-md border border-zinc-200 text-[10px] space-y-1 text-zinc-600">
+ <div className="max-h-28 overflow-y-auto bg-neutral-50 p-2 rounded-md border border-neutral-200 text-[10px] space-y-1 text-neutral-600">
  {importStatus.details.map((d, i) => (
  <div key={i}>• {d}</div>
  ))}
@@ -681,14 +681,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  )}
 
  {/* Import / Export Grid */}
- <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 space-y-4">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700">
+ <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700">
  <FileUp className="w-4 h-4" />
  </div>
  <div>
- <h2 className="text-sm font-bold text-[#09090B]">Geospatial Data Migration & Exchange (Import / Export)</h2>
+ <h2 className="text-sm font-bold text-[#090909]">Geospatial Data Migration & Exchange (Import / Export)</h2>
  <p className="text-xs ">Standardized OpenGIS Formats • Automated Coordinate Verification</p>
  </div>
  </div>
@@ -696,14 +696,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  {/* A. Import Dataset Card */}
- <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 space-y-3 flex flex-col justify-between">
+ <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 space-y-3 flex flex-col justify-between">
  <div className="space-y-1.5">
- <div className="flex items-center space-x-2 text-[#09090B] font-semibold text-xs ">
- <Upload className="w-3.5 h-3.5 text-zinc-700" />
+ <div className="flex items-center space-x-2 text-[#090909] font-semibold text-xs ">
+ <Upload className="w-3.5 h-3.5 text-neutral-700" />
  <span>Import Spatial Dataset</span>
  </div>
- <p className="text-zinc-600 text-xs leading-relaxed">
- Upload KML (<code className="text-zinc-900 font-semibold">.kml</code>), GeoJSON (<code className="text-zinc-900 font-semibold">.geojson</code>), CSV / Excel (<code className="text-zinc-900 font-semibold">.csv</code>), or System Snapshot (<code className="text-zinc-900 font-semibold">.json</code>). Feeders (lines), DTs, and poles are parsed and immediately rendered onto the live GIS Master Map.
+ <p className="text-neutral-600 text-xs leading-relaxed">
+ Upload KML (<code className="text-neutral-900 font-semibold">.kml</code>), GeoJSON (<code className="text-neutral-900 font-semibold">.geojson</code>), CSV / Excel (<code className="text-neutral-900 font-semibold">.csv</code>), or System Snapshot (<code className="text-neutral-900 font-semibold">.json</code>). Feeders (lines), DTs, and poles are parsed and immediately rendered onto the live GIS Master Map.
  </p>
  </div>
 
@@ -713,7 +713,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  type="file"
  accept=".kml,.geojson,.json,.csv"
  onChange={handleFileUpload}
- className="block w-full text-xs text-zinc-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[#09090B] file:text-white hover:file:bg-zinc-800 cursor-pointer transition-colors"
+ className="block w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[#090909] file:text-white hover:file:bg-neutral-800 cursor-pointer transition-colors"
  />
  <span className="text-[10px] mt-1 block">
  Automatic duplicate avoidance & coordinate validation enabled.
@@ -722,13 +722,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  {/* B. Export Layers Card */}
- <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 space-y-3 flex flex-col justify-between">
+ <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 space-y-3 flex flex-col justify-between">
  <div className="space-y-1.5">
- <div className="flex items-center space-x-2 text-[#09090B] font-semibold text-xs ">
- <Download className="w-3.5 h-3.5 text-zinc-700" />
+ <div className="flex items-center space-x-2 text-[#090909] font-semibold text-xs ">
+ <Download className="w-3.5 h-3.5 text-neutral-700" />
  <span>Export Master GIS Network</span>
  </div>
- <p className="text-zinc-600 text-xs leading-relaxed">
+ <p className="text-neutral-600 text-xs leading-relaxed">
  Download verified distribution network layers in standard spatial data formats for statutory filings, offline CAD, and regional audits.
  </p>
  </div>
@@ -736,7 +736,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  <div className="grid grid-cols-3 gap-2 pt-2">
  <button
  onClick={() => dataExchangeService.exportGeoJSON()}
- className="py-1.5 px-2 rounded-md bg-[#09090B] text-white hover:bg-zinc-800 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+ className="py-1.5 px-2 rounded-md bg-[#090909] text-white hover:bg-neutral-800 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
  title="Download complete RFC 7946 GeoJSON FeatureCollection"
  >
  <FileCode className="w-3.5 h-3.5" />
@@ -745,7 +745,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  <button
  onClick={() => dataExchangeService.exportCSV('transformers')}
- className="py-1.5 px-2 rounded-md bg-white text-zinc-800 hover:bg-zinc-100 border border-zinc-200 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+ className="py-1.5 px-2 rounded-md bg-white text-neutral-800 hover:bg-neutral-100 border border-neutral-200 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
  title="Download CSV Asset Register"
  >
  <FileSpreadsheet className="w-3.5 h-3.5" />
@@ -754,7 +754,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  <button
  onClick={() => dataExchangeService.exportKML()}
- className="py-1.5 px-2 rounded-md bg-white text-zinc-800 hover:bg-zinc-100 border border-zinc-200 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+ className="py-1.5 px-2 rounded-md bg-white text-neutral-800 hover:bg-neutral-100 border border-neutral-200 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
  title="Download KML for Google Earth"
  >
  <Map className="w-3.5 h-3.5" />
@@ -766,14 +766,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  {/* Database Backups Card */}
- <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 space-y-4">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700">
+ <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-700">
  <Database className="w-4 h-4" />
  </div>
  <div>
- <h3 className="font-semibold text-xs text-[#09090B] ">
+ <h3 className="font-semibold text-xs text-[#090909] ">
  PostgreSQL Database Backups & Point-in-Time Snapshots
  </h3>
  <p className="text-[11px] ">Automated Point-in-Time Recovery and Disaster Resilience</p>
@@ -782,7 +782,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  <button
  onClick={handleRunManualBackup}
- className="px-3 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-medium border border-zinc-900 transition-colors flex items-center space-x-1.5 cursor-pointer"
+ className="px-3 py-1.5 rounded-md bg-[#090909] hover:bg-neutral-800 text-white text-xs font-medium border border-neutral-900 transition-colors flex items-center space-x-1.5 cursor-pointer"
  >
  <HardDrive className="w-3.5 h-3.5" />
  <span>Run Manual Backup</span>
@@ -790,9 +790,9 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  {backupHistory.length === 0 ? (
- <div className="py-8 px-4 text-center rounded-md bg-zinc-50 border border-dashed border-zinc-200 space-y-2">
- <Database className="w-7 h-7 text-zinc-400 mx-auto" />
- <div className="text-xs font-semibold text-[#09090B]">No Database Snapshots Recorded</div>
+ <div className="py-8 px-4 text-center rounded-md bg-neutral-50 border border-dashed border-neutral-200 space-y-2">
+ <Database className="w-7 h-7 text-neutral-400 mx-auto" />
+ <div className="text-xs font-semibold text-[#090909]">No Database Snapshots Recorded</div>
  <p className="text-[11px] max-w-md mx-auto">
  Operational database is running in clean production mode with 0 pre-seeded archives. Click "Run Manual Backup" above to export a point-in-time PostgreSQL PostGIS snapshot, or turn ON the Simulator to load historical simulated archives.
  </p>
@@ -802,17 +802,17 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {backupHistory.map(bk => (
  <div
  key={bk.id}
- className="p-3 rounded-md bg-zinc-50 border border-zinc-200 hover:border-zinc-300 transition-colors text-xs space-y-1.5"
+ className="p-3 rounded-md bg-neutral-50 border border-neutral-200 hover:border-neutral-300 transition-colors text-xs space-y-1.5"
  >
  <div className="flex items-center justify-between">
- <span className="font-semibold text-[#09090B]">{bk.type} ({bk.size})</span>
+ <span className="font-semibold text-[#090909]">{bk.type} ({bk.size})</span>
  <div className="flex items-center space-x-2">
- <span className="px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800 text-[10px] border border-zinc-200 font-medium">
+ <span className="px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-800 text-[10px] border border-neutral-200 font-medium">
  VERIFIED
  </span>
  <button
  onClick={() => handleRestore(bk.id)}
- className="px-2 py-0.5 rounded bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200 text-[10px] transition-colors font-medium cursor-pointer"
+ className="px-2 py-0.5 rounded bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 text-[10px] transition-colors font-medium cursor-pointer"
  title="Restore point-in-time snapshot"
  >
  Restore
@@ -821,7 +821,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  <div className="text-[10px] truncate">{bk.checksum}</div>
- <div className="text-[10px] text-zinc-400 ">{bk.date}</div>
+ <div className="text-[10px] text-neutral-400 ">{bk.date}</div>
  </div>
  ))}
  </div>
@@ -836,20 +836,20 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {activeTab === 'features' && (
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
  {/* Modular Feature Toggles */}
- <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 space-y-4">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-800">
+ <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-800">
  <Shield className="w-4 h-4" />
  </div>
  <div>
- <h3 className="font-semibold text-xs text-[#09090B] ">
+ <h3 className="font-semibold text-xs text-[#090909] ">
  Modular System Feature Toggles
  </h3>
  <p className="text-[11px] ">Zero-Restart Dynamic Activation</p>
  </div>
  </div>
- <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200 font-medium">
+ <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200 font-medium">
  {modules.filter(m => m.enabled).length}/{modules.length} Active
  </span>
  </div>
@@ -858,19 +858,19 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {modules.map(mod => (
  <div
  key={mod.id}
- className="flex items-center justify-between p-3 rounded-md bg-zinc-50 border border-zinc-200 hover:border-zinc-300 transition-colors text-xs"
+ className="flex items-center justify-between p-3 rounded-md bg-neutral-50 border border-neutral-200 hover:border-neutral-300 transition-colors text-xs"
  >
- <span className="font-medium text-zinc-800">{mod.name}</span>
+ <span className="font-medium text-neutral-800">{mod.name}</span>
  <button
  onClick={() => toggleModule(mod.id)}
  className="flex items-center space-x-1 transition-colors cursor-pointer"
  >
  {mod.enabled ? (
- <span className="px-2 py-0.5 rounded bg-[#09090B] text-white text-[10px] font-medium">
+ <span className="px-2 py-0.5 rounded bg-[#090909] text-white text-[10px] font-medium">
  ENABLED
  </span>
  ) : (
- <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 text-[10px] border border-zinc-200">
+ <span className="px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 text-[10px] border border-neutral-200">
  DISABLED
  </span>
  )}
@@ -881,41 +881,41 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  {/* Zero-Trust RLS Policies Summary */}
- <div className="bg-white border border-zinc-200 rounded-md p-4 sm:p-5 space-y-4">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-4 sm:p-5 space-y-4">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-800">
+ <div className="w-8 h-8 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center text-neutral-800">
  <Key className="w-4 h-4" />
  </div>
  <div>
- <h3 className="font-semibold text-xs text-[#09090B] ">
+ <h3 className="font-semibold text-xs text-[#090909] ">
  Zero-Trust Jurisdiction Policies
  </h3>
  <p className="text-[11px] ">Row-Level Security (RLS) Enforcements</p>
  </div>
  </div>
- <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200 font-medium ">
+ <span className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200 font-medium ">
  100% ENFORCED
  </span>
  </div>
 
- <div className="space-y-2 text-xs text-zinc-600 leading-relaxed ">
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 space-y-1">
- <div className="font-semibold text-zinc-900">1. Junior Engineer Isolation (JE)</div>
+ <div className="space-y-2 text-xs text-neutral-600 leading-relaxed ">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 space-y-1">
+ <div className="font-semibold text-neutral-900">1. Junior Engineer Isolation (JE)</div>
  <p className="text-[11px] ">
  JE accounts are cryptographically locked to their assigned Ward Boundary (e.g., JE-JUR-MARA-01). Queries outside ward boundaries are filtered by PostGIS RLS.
  </p>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 space-y-1">
- <div className="font-semibold text-zinc-900">2. External Contractor Staging Sandbox</div>
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 space-y-1">
+ <div className="font-semibold text-neutral-900">2. External Contractor Staging Sandbox</div>
  <p className="text-[11px] ">
  Contractors only view assets they have captured in unapproved survey status. Live electrical distribution network write access is strictly prohibited.
  </p>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 space-y-1">
- <div className="font-semibold text-zinc-900">3. Multi-Tier Operational Hierarchy</div>
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 space-y-1">
+ <div className="font-semibold text-neutral-900">3. Multi-Tier Operational Hierarchy</div>
  <p className="text-[11px] ">
  AEs and AEEs exercise statutory clearance for line switching and PTW issuance within their operational sections.
  </p>
@@ -924,25 +924,25 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  {/* Master Grid & SCADA Simulator Mode Card ("Where to ON it") */}
- <div className="lg:col-span-2 bg-white border border-zinc-200 rounded-md p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+ <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-md p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
  <div className="flex items-start sm:items-center space-x-3.5">
- <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center font-bold border border-zinc-800 flex-shrink-0">
+ <div className="w-8 h-8 rounded-md bg-[#090909] text-white flex items-center justify-center font-bold border border-neutral-800 flex-shrink-0">
  <Zap className="w-4 h-4 text-white" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
- <h3 className="text-sm font-bold text-[#09090B]">
+ <h3 className="text-sm font-bold text-[#090909]">
  Master Grid & SCADA Simulator Engine
  </h3>
  <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
  isSimulatorActive
- ? 'bg-zinc-900 text-white border-zinc-900'
- : 'bg-zinc-100 text-zinc-600 border-zinc-200'
+ ? 'bg-neutral-900 text-white border-neutral-900'
+ : 'bg-neutral-100 text-neutral-600 border-neutral-200'
  }`}>
  {isSimulatorActive ? 'ACTIVE (ON)' : 'INACTIVE (OFF)'}
  </span>
  </div>
- <p className="text-xs text-zinc-600 mt-1 max-w-2xl leading-relaxed">
+ <p className="text-xs text-neutral-600 mt-1 max-w-2xl leading-relaxed">
  Controls whether pre-seeded test electrical grid assets (Substations, 11kV/22kV Feeders, DTs, Poles) and SCADA dynamic telemetry appear on the GIS Map and Dashboards.
  When <b>OFF</b>, PowerGIS operates in clean operational mode showing <b>only</b> user-uploaded/imported assets.
  </p>
@@ -954,8 +954,8 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  onClick={handleToggleSimulator}
  className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center space-x-2 flex-shrink-0 border cursor-pointer ${
  isSimulatorActive
- ? 'bg-white hover:bg-zinc-50 text-zinc-800 border-zinc-300'
- : 'bg-[#09090B] hover:bg-zinc-800 text-white border-zinc-900'
+ ? 'bg-white hover:bg-neutral-50 text-neutral-800 border-neutral-300'
+ : 'bg-[#090909] hover:bg-neutral-800 text-white border-neutral-900'
  }`}
  >
  <Zap className="w-3.5 h-3.5" />
@@ -970,27 +970,27 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {/* ==================================================================== */}
  {showAddModal && (
  <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
- <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center border border-zinc-800">
+ <div className="w-8 h-8 rounded-md bg-[#090909] text-white flex items-center justify-center border border-neutral-800">
  <UserPlus className="w-4 h-4" />
  </div>
  <div>
- <h3 className="font-bold text-sm text-[#09090B]">{LABELS.admin.modalAddTitle}</h3>
+ <h3 className="font-bold text-sm text-[#090909]">{LABELS.admin.modalAddTitle}</h3>
  <p className="text-[11px] ">{LABELS.admin.modalAddSubtitle}</p>
  </div>
  </div>
  <button
  onClick={() => setShowAddModal(false)}
- className="p-1 rounded text-zinc-400 hover:text-zinc-900 cursor-pointer"
+ className="p-1 rounded text-neutral-400 hover:text-neutral-900 cursor-pointer"
  >
  <X className="w-4 h-4" />
  </button>
  </div>
 
  {formError && (
- <div className="p-2.5 rounded-md bg-red-50 border border-red-200 text-red-800 text-xs flex items-center space-x-2">
+ <div className="p-2.5 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-800 text-xs flex items-center space-x-2">
  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
  <span>{formError}</span>
  </div>
@@ -998,7 +998,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  <form onSubmit={handleSaveAddUser} className="space-y-3 text-xs">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.fullNameLabel}
  </label>
  <input
@@ -1007,13 +1007,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="e.g. Er. K. Venkatesan, AE"
  value={formData.fullName}
  onChange={e => setFormData({ ...formData, fullName: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  />
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.usernameLabel}
  </label>
  <input
@@ -1022,12 +1022,12 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="e.g. ae_venkatesan"
  value={formData.username}
  onChange={e => setFormData({ ...formData, username: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.emailLabel}
  </label>
  <input
@@ -1036,20 +1036,20 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="e.g. ae.venkat@powergis.internal"
  value={formData.email}
  onChange={e => setFormData({ ...formData, email: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.roleLabel}
  </label>
  <select
  value={formData.role}
  onChange={e => setFormData({ ...formData, role: e.target.value as OfficialRole })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-medium"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 font-medium"
  >
  <option value="super_admin">Super Administrator</option>
  <option value="se">Superintending Engineer (SE)</option>
@@ -1064,7 +1064,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.designationLabel}
  </label>
  <input
@@ -1072,14 +1072,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="e.g. Assistant Engineer (O&M)"
  value={formData.designation}
  onChange={e => setFormData({ ...formData, designation: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  />
  </div>
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.phoneLabel}
  </label>
  <input
@@ -1087,12 +1087,12 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="+91 94430 00000"
  value={formData.phone}
  onChange={e => setFormData({ ...formData, phone: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.passwordLabel}
  </label>
  <input
@@ -1100,14 +1100,14 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="Set through secure account provisioning"
  value={formData.password}
  onChange={e => setFormData({ ...formData, password: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
  </div>
 
  {formData.role === 'contractor' ? (
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.contractorFirmName} *
  </label>
  <input
@@ -1115,19 +1115,19 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  placeholder="e.g. Larsen Power Grid EPC Pvt Ltd"
  value={formData.contractorCompany}
  onChange={e => setFormData({ ...formData, contractorCompany: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  />
  </div>
  ) : (
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.regionCircle}
  </label>
  <select
  value={formData.regionId}
  onChange={e => setFormData({ ...formData, regionId: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white "
  >
  {initialRegions.map(r => (
  <option key={r.id} value={r.id}>{r.name}</option>
@@ -1136,13 +1136,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.sectionJurisdiction}
  </label>
  <select
  value={formData.sectionId}
  onChange={e => setFormData({ ...formData, sectionId: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white "
  >
  {initialSections.map(s => (
  <option key={s.id} value={s.id}>{s.name}</option>
@@ -1158,24 +1158,24 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  id="addUserActive"
  checked={formData.isActive}
  onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
- className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 w-4 h-4 cursor-pointer"
+ className="rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 w-4 h-4 cursor-pointer"
  />
- <label htmlFor="addUserActive" className="text-xs text-zinc-800 font-medium cursor-pointer">
+ <label htmlFor="addUserActive" className="text-xs text-neutral-800 font-medium cursor-pointer">
  {LABELS.admin.accountActiveLabel}
  </label>
  </div>
 
- <div className="flex items-center justify-end space-x-2 pt-3 border-t border-zinc-100">
+ <div className="flex items-center justify-end space-x-2 pt-3 border-t border-neutral-100">
  <button
  type="button"
  onClick={() => setShowAddModal(false)}
- className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium cursor-pointer"
+ className="px-3.5 py-1.5 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-medium cursor-pointer"
  >
  {LABELS.common.cancel}
  </button>
  <button
  type="submit"
- className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium border border-zinc-900 cursor-pointer transition-colors"
+ className="px-3.5 py-1.5 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-medium border border-neutral-900 cursor-pointer transition-colors"
  >
  {LABELS.admin.btnCreateAccount}
  </button>
@@ -1190,27 +1190,27 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {/* ==================================================================== */}
  {editingUser && (
  <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
- <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
- <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+ <div className="bg-white border border-neutral-200 rounded-md p-5 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <div className="flex items-center space-x-2.5">
- <div className="w-8 h-8 rounded-md bg-[#09090B] text-white flex items-center justify-center border border-zinc-800">
+ <div className="w-8 h-8 rounded-md bg-[#090909] text-white flex items-center justify-center border border-neutral-800">
  <Pencil className="w-4 h-4" />
  </div>
  <div>
- <h3 className="font-bold text-sm text-[#09090B]">{LABELS.admin.modalEditTitle}</h3>
+ <h3 className="font-bold text-sm text-[#090909]">{LABELS.admin.modalEditTitle}</h3>
  <p className="text-[11px] ">Modifying @{editingUser.username}</p>
  </div>
  </div>
  <button
  onClick={() => setEditingUser(null)}
- className="p-1 rounded text-zinc-400 hover:text-zinc-900 cursor-pointer"
+ className="p-1 rounded text-neutral-400 hover:text-neutral-900 cursor-pointer"
  >
  <X className="w-4 h-4" />
  </button>
  </div>
 
  {formError && (
- <div className="p-2.5 rounded-md bg-red-50 border border-red-200 text-red-800 text-xs flex items-center space-x-2">
+ <div className="p-2.5 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-800 text-xs flex items-center space-x-2">
  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
  <span>{formError}</span>
  </div>
@@ -1218,7 +1218,7 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
 
  <form onSubmit={handleSaveEditUser} className="space-y-3 text-xs">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.fullNameLabel}
  </label>
  <input
@@ -1226,13 +1226,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  required
  value={formData.fullName}
  onChange={e => setFormData({ ...formData, fullName: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  />
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.usernameLabel}
  </label>
  <input
@@ -1240,12 +1240,12 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  required
  value={formData.username}
  onChange={e => setFormData({ ...formData, username: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.emailLabel}
  </label>
  <input
@@ -1253,20 +1253,20 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  required
  value={formData.email}
  onChange={e => setFormData({ ...formData, email: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.roleLabel}
  </label>
  <select
  value={formData.role}
  onChange={e => setFormData({ ...formData, role: e.target.value as OfficialRole })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 font-medium"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 font-medium"
  >
  <option value="super_admin">Super Administrator</option>
  <option value="se">Superintending Engineer (SE)</option>
@@ -1281,66 +1281,66 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.designationLabel}
  </label>
  <input
  type="text"
  value={formData.designation}
  onChange={e => setFormData({ ...formData, designation: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  />
  </div>
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.phoneLabel}
  </label>
  <input
  type="text"
  value={formData.phone}
  onChange={e => setFormData({ ...formData, phone: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.passwordLabel}
  </label>
  <input
  type="text"
  value={formData.password}
  onChange={e => setFormData({ ...formData, password: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900 "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900 "
  />
  </div>
  </div>
 
  {formData.role === 'contractor' ? (
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.contractorFirmName}
  </label>
  <input
  type="text"
  value={formData.contractorCompany}
  onChange={e => setFormData({ ...formData, contractorCompany: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white focus:outline-none focus:border-zinc-900"
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white focus:outline-none focus:border-neutral-900"
  />
  </div>
  ) : (
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.regionCircle}
  </label>
  <select
  value={formData.regionId}
  onChange={e => setFormData({ ...formData, regionId: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white "
  >
  {initialRegions.map(r => (
  <option key={r.id} value={r.id}>{r.name}</option>
@@ -1349,13 +1349,13 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  </div>
 
  <div>
- <label className="block text-[11px] font-medium text-zinc-700 mb-1">
+ <label className="block text-[11px] font-medium text-neutral-700 mb-1">
  {LABELS.admin.sectionJurisdiction}
  </label>
  <select
  value={formData.sectionId}
  onChange={e => setFormData({ ...formData, sectionId: e.target.value })}
- className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs text-zinc-900 focus:bg-white "
+ className="w-full bg-neutral-50 border border-neutral-200 rounded-md px-3 py-1.5 text-xs text-neutral-900 focus:bg-white "
  >
  {initialSections.map(s => (
  <option key={s.id} value={s.id}>{s.name}</option>
@@ -1371,24 +1371,24 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  id="editUserActive"
  checked={formData.isActive}
  onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
- className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 w-4 h-4 cursor-pointer"
+ className="rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 w-4 h-4 cursor-pointer"
  />
- <label htmlFor="editUserActive" className="text-xs text-zinc-800 font-medium cursor-pointer">
+ <label htmlFor="editUserActive" className="text-xs text-neutral-800 font-medium cursor-pointer">
  {LABELS.admin.accountActiveLabel}
  </label>
  </div>
 
- <div className="flex items-center justify-end space-x-2 pt-3 border-t border-zinc-100">
+ <div className="flex items-center justify-end space-x-2 pt-3 border-t border-neutral-100">
  <button
  type="button"
  onClick={() => setEditingUser(null)}
- className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium cursor-pointer"
+ className="px-3.5 py-1.5 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-medium cursor-pointer"
  >
  {LABELS.common.cancel}
  </button>
  <button
  type="submit"
- className="px-3.5 py-1.5 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium border border-zinc-900 cursor-pointer transition-colors"
+ className="px-3.5 py-1.5 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-medium border border-neutral-900 cursor-pointer transition-colors"
  >
  {LABELS.common.save}
  </button>
@@ -1403,34 +1403,34 @@ export const AdminControlPanel: React.FC<AdminControlPanelProps> = ({ initialTab
  {/* ==================================================================== */}
  {userToDelete && (
  <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
- <div className="bg-white border border-zinc-200 rounded-md p-5 max-w-md w-full space-y-4">
+ <div className="bg-white border border-neutral-200 rounded-md p-5 max-w-md w-full space-y-4">
  <div className="flex items-center space-x-3">
- <div className="w-8 h-8 rounded-md bg-red-50 text-red-600 border border-red-200 flex items-center justify-center flex-shrink-0">
+ <div className="w-8 h-8 rounded-md bg-neutral-50 text-neutral-600 border border-neutral-200 flex items-center justify-center flex-shrink-0">
  <Trash2 className="w-4 h-4" />
  </div>
  <div>
- <h3 className="font-bold text-sm text-[#09090B]">{LABELS.admin.modalDeleteTitle}</h3>
+ <h3 className="font-bold text-sm text-[#090909]">{LABELS.admin.modalDeleteTitle}</h3>
  <p className="text-xs ">{LABELS.admin.modalDeleteSubtitle}</p>
  </div>
  </div>
 
- <p className="text-xs text-zinc-600 leading-relaxed">
+ <p className="text-xs text-neutral-600 leading-relaxed">
  {LABELS.admin.modalDeleteConfirmText}{' '}
- <span className="font-semibold text-zinc-900">{userToDelete.fullName}</span> (
+ <span className="font-semibold text-neutral-900">{userToDelete.fullName}</span> (
  <span className="">{userToDelete.email}</span>)?{' '}
  {LABELS.admin.modalDeleteConfirmRevoke}
  </p>
 
- <div className="flex items-center justify-end space-x-2 pt-2 border-t border-zinc-100">
+ <div className="flex items-center justify-end space-x-2 pt-2 border-t border-neutral-100">
  <button
  onClick={() => setUserToDelete(null)}
- className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium text-xs cursor-pointer"
+ className="px-3.5 py-1.5 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-medium text-xs cursor-pointer"
  >
  {LABELS.common.cancel}
  </button>
  <button
  onClick={confirmDeleteUser}
- className="px-3.5 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium text-xs cursor-pointer transition-colors"
+ className="px-3.5 py-1.5 rounded-md bg-neutral-600 hover:bg-neutral-700 text-white font-medium text-xs cursor-pointer transition-colors"
  >
  {LABELS.admin.btnDeleteAccount}
  </button>

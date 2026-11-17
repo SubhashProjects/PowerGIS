@@ -101,13 +101,13 @@ export const SurveyApprovalQueue: React.FC = () => {
  const getStatusBadge = (status: string) => {
  switch (status) {
  case 'submitted':
- return <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 font-bold text-[10px] border border-amber-200">Pending JE Review</span>;
+ return <span className="px-2 py-0.5 rounded-full bg-neutral-50 text-neutral-800 font-bold text-[10px] border border-neutral-200">Pending JE Review</span>;
  case 'je_verified':
- return <span className="px-2 py-0.5 rounded-full bg-sky-50 text-sky-800 font-bold text-[10px] border border-sky-200">JE Verified (Pending AE)</span>;
+ return <span className="px-2 py-0.5 rounded-full bg-neutral-50 text-neutral-800 font-bold text-[10px] border border-neutral-200">JE Verified (Pending AE)</span>;
  case 'ae_approved':
- return <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-extrabold text-[10px] border border-emerald-200">AE Approved (Live GIS)</span>;
+ return <span className="px-2 py-0.5 rounded-full bg-neutral-50 text-neutral-800 font-extrabold text-[10px] border border-neutral-200">AE Approved (Live GIS)</span>;
  case 'rejected':
- return <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-800 text-[10px] border border-rose-200">Rejected</span>;
+ return <span className="px-2 py-0.5 rounded-full bg-neutral-50 text-neutral-800 text-[10px] border border-neutral-200">Rejected</span>;
  default:
  return <span className="px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600 text-[10px]">{status}</span>;
  }
@@ -121,23 +121,23 @@ export const SurveyApprovalQueue: React.FC = () => {
  {/* Workflow Diagram Banner */}
  <div className="p-4 bg-white border border-neutral-200 rounded-md shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs text-neutral-700">
  <div className="flex items-center space-x-2.5 font-bold text-neutral-950 ">
- <ShieldCheck className="w-5 h-5 text-emerald-600" />
+ <ShieldCheck className="w-5 h-5 text-neutral-600" />
  <span>Statutory Multi-Tier Approval Chain:</span>
  </div>
  <div className="flex flex-wrap items-center gap-1.5 text-[11px] ">
  <span className="px-2.5 py-1 rounded-md bg-neutral-50 text-neutral-600 border border-neutral-200">1. Contractor Draft</span>
  <ArrowRight className="w-3.5 h-3.5 text-neutral-400" />
- <span className="px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200 font-bold">2. JE Field Verify</span>
+ <span className="px-2.5 py-1 rounded-md bg-neutral-50 text-neutral-900 border border-neutral-200 font-bold">2. JE Field Verify</span>
  <ArrowRight className="w-3.5 h-3.5 text-neutral-400" />
- <span className="px-2.5 py-1 rounded-md bg-sky-50 text-sky-900 border border-sky-200 font-bold">3. AE Sanction</span>
+ <span className="px-2.5 py-1 rounded-md bg-neutral-50 text-neutral-900 border border-neutral-200 font-bold">3. AE Sanction</span>
  <ArrowRight className="w-3.5 h-3.5 text-neutral-400" />
- <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-900 border border-emerald-300 font-extrabold shadow-2xs">4. Live Production GIS</span>
+ <span className="px-2.5 py-1 rounded-md bg-neutral-50 text-neutral-900 border border-neutral-300 font-extrabold shadow-2xs">4. Live Production GIS</span>
  </div>
  </div>
 
  {feedbackMsg && (
- <div className="p-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center space-x-2.5 shadow-xs animate-fadeIn ">
- <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+ <div className="p-3.5 rounded-md bg-neutral-50 border border-neutral-300 text-neutral-900 text-xs flex items-center space-x-2.5 shadow-xs animate-fadeIn ">
+ <CheckCircle2 className="w-4 h-4 text-neutral-600 flex-shrink-0" />
  <span className="font-bold">{feedbackMsg}</span>
  </div>
  )}
@@ -204,7 +204,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  disabled={isBusy}
  className="px-3.5 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer"
  >
- <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+ <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
  <span>Verify as JE</span>
  </button>
  )}
@@ -214,7 +214,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  <button
  onClick={handleAEApprove}
  disabled={isBusy}
- className="px-3.5 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+ className="px-3.5 py-2 rounded-md bg-neutral-600 hover:bg-neutral-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer"
  >
  <CheckCircle2 className="w-3.5 h-3.5" />
  <span>Sanction & Publish (AE)</span>
@@ -227,7 +227,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  onClick={() => setShowRejectModal(true)}
  className="px-3 py-2 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-800 border border-neutral-300 text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer"
  >
- <XCircle className="w-3.5 h-3.5 text-rose-600" />
+ <XCircle className="w-3.5 h-3.5 text-neutral-600" />
  <span>Reject</span>
  </button>
  )}
@@ -252,9 +252,9 @@ export const SurveyApprovalQueue: React.FC = () => {
 
  {/* Rejection Reason display if rejected */}
  {selectedSub.status === 'rejected' && selectedSub.rejectionReason && (
- <div className="p-3.5 rounded-md bg-rose-50 border border-rose-200 text-rose-950 text-xs ">
+ <div className="p-3.5 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-950 text-xs ">
  <span className="font-bold">Mandatory Rectification Reason: </span>
- <span className="text-rose-800">{selectedSub.rejectionReason}</span>
+ <span className="text-neutral-800">{selectedSub.rejectionReason}</span>
  </div>
  )}
 
@@ -283,7 +283,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  <td className="p-3 text-neutral-900 font-bold">±{asset.gpsAccuracyM}m</td>
  <td className="p-3 text-neutral-500">{asset.coordinates[0].toFixed(5)}, {asset.coordinates[1].toFixed(5)}</td>
  <td className="p-3">
- <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[10px] border border-emerald-200 font-bold">
+ <span className="px-2 py-0.5 rounded bg-neutral-50 text-neutral-800 text-[10px] border border-neutral-200 font-bold">
  {asset.validationStatus}
  </span>
  </td>
@@ -329,7 +329,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  <div className="bg-white border border-neutral-300 rounded-md p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4">
  <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
  <h3 className="font-bold text-sm text-neutral-950 flex items-center space-x-2">
- <AlertTriangle className="w-4 h-4 text-rose-600" />
+ <AlertTriangle className="w-4 h-4 text-neutral-600" />
  <span>Reject Field Survey Submission</span>
  </h3>
  <button onClick={() => setShowRejectModal(false)} className="p-1 rounded text-neutral-400 hover:text-neutral-900 cursor-pointer">
@@ -358,7 +358,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  <button
  onClick={handleConfirmReject}
  disabled={isBusy}
- className="px-4 py-2 rounded-md bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs cursor-pointer"
+ className="px-4 py-2 rounded-md bg-neutral-600 hover:bg-neutral-700 text-white text-xs font-bold shadow-xs cursor-pointer"
  >
  Confirm Rejection
  </button>

@@ -142,25 +142,25 @@ export const ScadaSimulatorControl: React.FC = () => {
  };
 
  return (
- <div className="bg-white border border-[#E4E4E7] rounded-md p-4 sm:p-6 shadow-sm space-y-6 text-[#09090B] select-none">
+ <div className="bg-white border border-[#E4E4E4] rounded-md p-4 sm:p-6 shadow-sm space-y-6 text-[#090909] select-none">
  {/* 1. Header & Primary Controls */}
- <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-zinc-100">
+ <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-neutral-100">
  <div className="flex items-center space-x-3.5">
- <div className="w-10 h-10 rounded-md bg-[#09090B] text-white font-extrabold flex items-center justify-center text-lg border border-zinc-800 flex-shrink-0">
- <Cpu className="w-5 h-5 text-zinc-100" />
+ <div className="w-10 h-10 rounded-md bg-[#090909] text-white font-extrabold flex items-center justify-center text-lg border border-neutral-800 flex-shrink-0">
+ <Cpu className="w-5 h-5 text-neutral-100" />
  </div>
  <div>
  <div className="flex items-center space-x-2">
- <h2 className="text-base sm:text-lg font-bold text-[#09090B] tracking-tight">
+ <h2 className="text-base sm:text-lg font-bold text-[#090909] tracking-tight">
  SCADA Dynamic Telemetry Simulator
  </h2>
- <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-200">
+ <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200">
  10 MODES • DATA ISOLATION
  </span>
  </div>
  <p className="text-xs mt-0.5">
- Session: <span className="font-bold text-zinc-800">{config.sessionId}</span> • Source:{' '}
- <span className="font-semibold text-zinc-900">source_type = SIMULATOR</span>
+ Session: <span className="font-bold text-neutral-800">{config.sessionId}</span> • Source:{' '}
+ <span className="font-semibold text-neutral-900">source_type = SIMULATOR</span>
  </p>
  </div>
  </div>
@@ -170,7 +170,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  {!config.isRunning ? (
  <button
  onClick={handleStart}
- className="px-3.5 py-2 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors"
+ className="px-3.5 py-2 rounded-md bg-neutral-700 hover:bg-neutral-800 text-white text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors"
  >
  <Play className="w-3.5 h-3.5 fill-current" />
  <span>Start Simulator</span>
@@ -178,7 +178,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  ) : config.isPaused ? (
  <button
  onClick={handleResume}
- className="px-3.5 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors"
+ className="px-3.5 py-2 rounded-md bg-[#090909] hover:bg-neutral-800 text-white text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors"
  >
  <Play className="w-3.5 h-3.5 fill-current" />
  <span>Resume</span>
@@ -186,7 +186,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  ) : (
  <button
  onClick={handlePause}
- className="px-3.5 py-2 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors"
+ className="px-3.5 py-2 rounded-md bg-neutral-600 hover:bg-neutral-700 text-white text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors"
  >
  <Pause className="w-3.5 h-3.5" />
  <span>Pause</span>
@@ -198,8 +198,8 @@ export const ScadaSimulatorControl: React.FC = () => {
  disabled={!config.isRunning}
  className={`px-3.5 py-2 rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer ${
  config.isRunning
- ? 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
- : 'bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed'
+ ? 'bg-neutral-50 text-neutral-700 border border-neutral-200 hover:bg-neutral-100'
+ : 'bg-neutral-100 text-neutral-400 border border-neutral-200 cursor-not-allowed'
  }`}
  >
  <Square className="w-3.5 h-3.5 fill-current" />
@@ -208,22 +208,22 @@ export const ScadaSimulatorControl: React.FC = () => {
 
  <button
  onClick={handleReset}
- className="px-3.5 py-2 rounded-md bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold border border-zinc-200 flex items-center space-x-1.5 transition-colors cursor-pointer"
+ className="px-3.5 py-2 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold border border-neutral-200 flex items-center space-x-1.5 transition-colors cursor-pointer"
  >
  <RotateCcw className="w-3.5 h-3.5" />
  <span>Reset</span>
  </button>
 
  {/* Speed Selectors */}
- <div className="flex items-center rounded-md bg-zinc-100 p-0.5 border border-zinc-200 text-xs ">
+ <div className="flex items-center rounded-md bg-neutral-100 p-0.5 border border-neutral-200 text-xs ">
  {([1, 2, 5, 10] as const).map(spd => (
  <button
  key={spd}
  onClick={() => handleSpeedChange(spd)}
  className={`px-2.5 py-1 rounded transition-colors font-bold cursor-pointer ${
  config.speed === spd
- ? 'bg-white text-zinc-950 shadow-xs'
- : 'text-zinc-600 hover:text-zinc-900'
+ ? 'bg-white text-neutral-950 shadow-xs'
+ : 'text-neutral-600 hover:text-neutral-900'
  }`}
  >
  {spd}x
@@ -242,7 +242,7 @@ export const ScadaSimulatorControl: React.FC = () => {
 
  <button
  onClick={() => fileInputRef.current?.click()}
- className="p-2 rounded-md bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
+ className="p-2 rounded-md bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
  title="Import Historical Telemetry CSV Playback"
  >
  <Upload className="w-3.5 h-3.5" />
@@ -251,7 +251,7 @@ export const ScadaSimulatorControl: React.FC = () => {
 
  <button
  onClick={handleExportCSV}
- className="p-2 rounded-md bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
+ className="p-2 rounded-md bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
  title="Export Telemetry Snapshot CSV"
  >
  <Download className="w-3.5 h-3.5" />
@@ -261,15 +261,15 @@ export const ScadaSimulatorControl: React.FC = () => {
  </div>
 
  {/* 2. Simulation Mode & Scenario Presets Toolbar */}
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 bg-zinc-50 p-3.5 rounded-md border border-zinc-200">
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 bg-neutral-50 p-3.5 rounded-md border border-neutral-200">
  <div>
- <label className="block text-[11px] font-bold text-zinc-700 mb-1">
+ <label className="block text-[11px] font-bold text-neutral-700 mb-1">
  Operating Mode (10 Modes):
  </label>
  <select
  value={config.mode}
  onChange={handleModeChange}
- className="w-full bg-white border border-zinc-300 rounded-md px-2.5 py-1.5 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900"
+ className="w-full bg-white border border-neutral-300 rounded-md px-2.5 py-1.5 text-xs text-neutral-900 focus:outline-none focus:border-neutral-900"
  >
  <option value="continuous">1. Continuous Dynamic Simulation</option>
  <option value="manual">2. Manual Telemetry Injection</option>
@@ -285,7 +285,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  </div>
 
  <div>
- <label className="block text-[11px] font-bold text-zinc-700 mb-1">
+ <label className="block text-[11px] font-bold text-neutral-700 mb-1">
  Interval & Step Frequency:
  </label>
  <div className="flex items-center space-x-2">
@@ -295,22 +295,22 @@ export const ScadaSimulatorControl: React.FC = () => {
  max={60}
  value={config.intervalSeconds}
  onChange={e => scadaSimulatorService.setIntervalSeconds(parseInt(e.target.value))}
- className="w-full accent-zinc-900 cursor-pointer"
+ className="w-full accent-neutral-900 cursor-pointer"
  />
- <span className="text-xs font-bold text-zinc-900 w-12 text-right">
+ <span className="text-xs font-bold text-neutral-900 w-12 text-right">
  {config.intervalSeconds}s
  </span>
  </div>
  </div>
 
  <div>
- <label className="block text-[11px] font-bold text-zinc-700 mb-1">
+ <label className="block text-[11px] font-bold text-neutral-700 mb-1">
  Target Asset / Telemetry Tag:
  </label>
  <select
  value={selectedTag}
  onChange={e => setSelectedTag(e.target.value)}
- className="w-full bg-white border border-zinc-300 rounded-md px-2.5 py-1.5 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900"
+ className="w-full bg-white border border-neutral-300 rounded-md px-2.5 py-1.5 text-xs text-neutral-900 focus:outline-none focus:border-neutral-900"
  >
  {points.map(p => (
  <option key={p.tag} value={p.tag}>
@@ -321,17 +321,17 @@ export const ScadaSimulatorControl: React.FC = () => {
  </div>
 
  <div>
- <label className="block text-[11px] font-bold text-zinc-700 mb-1">
+ <label className="block text-[11px] font-bold text-neutral-700 mb-1">
  Quick Scenario Preset:
  </label>
  <div className="flex items-center gap-1 overflow-x-auto">
  {(
  [
- ['NORMAL', 'Normal', 'bg-emerald-50 text-emerald-700 border-emerald-200'],
- ['PEAK_DEMAND', 'Peak', 'bg-amber-50 text-amber-800 border-amber-200'],
- ['OVERLOAD', 'Overload', 'bg-orange-50 text-orange-800 border-orange-200'],
- ['FAULT_EARTH', 'E-Fault', 'bg-rose-50 text-rose-700 border-rose-200'],
- ['RESTORATION', 'Restore', 'bg-blue-50 text-blue-700 border-blue-200'],
+ ['NORMAL', 'Normal', 'bg-neutral-50 text-neutral-700 border-neutral-200'],
+ ['PEAK_DEMAND', 'Peak', 'bg-neutral-50 text-neutral-800 border-neutral-200'],
+ ['OVERLOAD', 'Overload', 'bg-neutral-50 text-neutral-800 border-neutral-200'],
+ ['FAULT_EARTH', 'E-Fault', 'bg-neutral-50 text-neutral-700 border-neutral-200'],
+ ['RESTORATION', 'Restore', 'bg-neutral-50 text-neutral-700 border-neutral-200'],
  ] as const
  ).map(([preset, label, clr]) => (
  <button
@@ -339,7 +339,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  onClick={() => handleScenarioChange(preset as ScadaScenarioPreset)}
  className={`px-2 py-1 rounded-md text-[10px] font-bold border transition-all cursor-pointer whitespace-nowrap ${
  config.scenario === preset
- ? 'bg-[#09090B] text-white border-zinc-900 shadow-xs'
+ ? 'bg-[#090909] text-white border-neutral-900 shadow-xs'
  : `${clr} hover:opacity-80`
  }`}
  >
@@ -354,8 +354,8 @@ export const ScadaSimulatorControl: React.FC = () => {
  {isSimulatorModeActive && activePoint ? (
  <div className="space-y-3">
  <div className="flex items-center justify-between">
- <h3 className="text-xs font-bold text-[#09090B] flex items-center space-x-1.5">
- <Activity className="w-4 h-4 text-blue-600" />
+ <h3 className="text-xs font-bold text-[#090909] flex items-center space-x-1.5">
+ <Activity className="w-4 h-4 text-neutral-600" />
  <span>
  Physically Consistent 3-Phase Telemetry: {activePoint.description} ({activePoint.tag})
  </span>
@@ -363,8 +363,8 @@ export const ScadaSimulatorControl: React.FC = () => {
  <span
  className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
  activePoint.breakerStatus === 'CLOSED'
- ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
- : 'bg-rose-50 text-rose-800 border-rose-300'
+ ? 'bg-neutral-50 text-neutral-800 border-neutral-300'
+ : 'bg-neutral-50 text-neutral-800 border-neutral-300'
  }`}
  >
  Breaker: {activePoint.breakerStatus}
@@ -372,77 +372,77 @@ export const ScadaSimulatorControl: React.FC = () => {
  </div>
 
  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Line Voltage</span>
- <span className="text-base font-extrabold text-zinc-950 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-950 mt-0.5 block">
  {activePoint.voltageKV} kV
  </span>
- <span className="text-[9px] text-zinc-400 ">Tap: {activePoint.tapPosition || 0}</span>
+ <span className="text-[9px] text-neutral-400 ">Tap: {activePoint.tapPosition || 0}</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Phase Current</span>
- <span className="text-base font-extrabold text-zinc-950 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-950 mt-0.5 block">
  {activePoint.currentAmps} A
  </span>
- <span className="text-[9px] text-zinc-400 ">Balanced RMS</span>
+ <span className="text-[9px] text-neutral-400 ">Balanced RMS</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Active Power (P)</span>
- <span className="text-base font-extrabold text-emerald-700 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-700 mt-0.5 block">
  {activePoint.activePowerMW} MW
  </span>
- <span className="text-[9px] text-zinc-400 ">Cos(φ) {activePoint.powerFactor || 0.965}</span>
+ <span className="text-[9px] text-neutral-400 ">Cos(φ) {activePoint.powerFactor || 0.965}</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Reactive Power (Q)</span>
- <span className="text-base font-extrabold text-blue-700 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-700 mt-0.5 block">
  {activePoint.reactivePowerMVAR} MVAR
  </span>
- <span className="text-[9px] text-zinc-400 ">Sin(φ) Inductive</span>
+ <span className="text-[9px] text-neutral-400 ">Sin(φ) Inductive</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Grid Frequency</span>
- <span className="text-base font-extrabold text-zinc-950 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-950 mt-0.5 block">
  {activePoint.frequencyHz} Hz
  </span>
- <span className="text-[9px] text-zinc-400 ">IEGC Band ±0.05</span>
+ <span className="text-[9px] text-neutral-400 ">IEGC Band ±0.05</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Phase Angles</span>
- <span className="text-xs font-bold text-zinc-950 mt-1 block">
+ <span className="text-xs font-bold text-neutral-950 mt-1 block">
  0° / 120° / 240°
  </span>
- <span className="text-[9px] text-zinc-400 ">120° Symmetry</span>
+ <span className="text-[9px] text-neutral-400 ">120° Symmetry</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Neutral Current</span>
- <span className="text-base font-extrabold text-amber-700 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-700 mt-0.5 block">
  {activePoint.neutralCurrentAmps || 0} A
  </span>
- <span className="text-[9px] text-zinc-400 ">Zero Seq. Return</span>
+ <span className="text-[9px] text-neutral-400 ">Zero Seq. Return</span>
  </div>
 
- <div className="p-3 rounded-md bg-zinc-50 border border-zinc-200 text-center">
+ <div className="p-3 rounded-md bg-neutral-50 border border-neutral-200 text-center">
  <span className="text-[10px] block">Thermal Oil / Wdg</span>
- <span className="text-base font-extrabold text-zinc-950 mt-0.5 block">
+ <span className="text-base font-extrabold text-neutral-950 mt-0.5 block">
  {activePoint.oilTempC || 48}°C
  </span>
- <span className="text-[9px] text-zinc-400 ">
+ <span className="text-[9px] text-neutral-400 ">
  Winding: {activePoint.windingTempC || 58}°C
  </span>
  </div>
  </div>
  </div>
  ) : (
- <div className="p-4 rounded-md bg-zinc-50 border border-zinc-200 text-center space-y-1">
- <Activity className="w-5 h-5 text-zinc-400 mx-auto mb-1" />
- <h4 className="text-xs font-semibold text-[#09090B]">3-Phase Telemetry Inactive (Clean Standby Mode)</h4>
+ <div className="p-4 rounded-md bg-neutral-50 border border-neutral-200 text-center space-y-1">
+ <Activity className="w-5 h-5 text-neutral-400 mx-auto mb-1" />
+ <h4 className="text-xs font-semibold text-[#090909]">3-Phase Telemetry Inactive (Clean Standby Mode)</h4>
  <p className="text-[11px] ">
  Operating in clean mode (0 active telemetry feeds). Click &apos;Start Simulator&apos; to stream physically consistent 3-phase measurements.
  </p>
@@ -450,11 +450,11 @@ export const ScadaSimulatorControl: React.FC = () => {
  )}
 
  {/* 4. Real-time Telemetry Historical Trend Graph (Recharts) */}
- <div className="bg-zinc-50 border border-zinc-200 rounded-md p-4 space-y-2">
- <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
+ <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4 space-y-2">
+ <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
  <div className="flex items-center space-x-2">
- <Gauge className="w-4 h-4 text-zinc-700" />
- <h4 className="text-xs font-bold text-zinc-900 ">
+ <Gauge className="w-4 h-4 text-neutral-700" />
+ <h4 className="text-xs font-bold text-neutral-900 ">
  Dynamic Telemetry Trend Waveform: {selectedTag} (Rolling 60 Samples)
  </h4>
  </div>
@@ -465,20 +465,20 @@ export const ScadaSimulatorControl: React.FC = () => {
  <div className="h-48 w-full">
  <ResponsiveContainer width="100%" height="100%">
  <LineChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
- <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
- <XAxis dataKey="timestamp" tick={{ fontSize: 9 }} stroke="#64748b" />
- <YAxis yAxisId="amp" tick={{ fontSize: 9 }} stroke="#2563eb" domain={['auto', 'auto']} />
+ <CartesianGrid strokeDasharray="3 3" stroke="#E7E7E7" />
+ <XAxis dataKey="timestamp" tick={{ fontSize: 9 }} stroke="#727272" />
+ <YAxis yAxisId="amp" tick={{ fontSize: 9 }} stroke="#606060" domain={['auto', 'auto']} />
  <YAxis
  yAxisId="pwr"
  orientation="right"
  tick={{ fontSize: 9 }}
- stroke="#16a34a"
+ stroke="#6F6F6F"
  domain={['auto', 'auto']}
  />
  <Tooltip
  contentStyle={{
  backgroundColor: '#ffffff',
- borderColor: '#cbd5e1',
+ borderColor: '#D3D3D3',
  fontSize: '11px',
  borderRadius: '6px',
  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
@@ -490,7 +490,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  type="monotone"
  dataKey="currentAmps"
  name="Current (A)"
- stroke="#2563eb"
+ stroke="#606060"
  strokeWidth={2}
  dot={false}
  />
@@ -499,7 +499,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  type="monotone"
  dataKey="activePowerMW"
  name="Power (MW)"
- stroke="#16a34a"
+ stroke="#6F6F6F"
  strokeWidth={2}
  dot={false}
  />
@@ -508,7 +508,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  type="monotone"
  dataKey="windingTempC"
  name="Winding Temp (°C)"
- stroke="#f59e0b"
+ stroke="#A7A7A7"
  strokeWidth={1.5}
  strokeDasharray="4 4"
  dot={false}
@@ -517,9 +517,9 @@ export const ScadaSimulatorControl: React.FC = () => {
  </ResponsiveContainer>
  </div>
  ) : (
- <div className="h-36 w-full flex flex-col items-center justify-center p-4 text-center rounded-md bg-white border border-zinc-200">
- <Gauge className="w-6 h-6 text-zinc-400 mb-1.5" />
- <span className="text-xs font-semibold text-[#09090B]">No Dynamic Telemetry Trends in Clean Standby</span>
+ <div className="h-36 w-full flex flex-col items-center justify-center p-4 text-center rounded-md bg-white border border-neutral-200">
+ <Gauge className="w-6 h-6 text-neutral-400 mb-1.5" />
+ <span className="text-xs font-semibold text-[#090909]">No Dynamic Telemetry Trends in Clean Standby</span>
  <p className="text-[11px] max-w-sm mt-0.5 ">
  Simulator is currently turned OFF. Click &apos;Start Simulator&apos; to begin streaming dynamic 3-phase waveforms.
  </p>
@@ -530,17 +530,17 @@ export const ScadaSimulatorControl: React.FC = () => {
  {/* 5. Manual Telemetry Injection Panel */}
  <form
  onSubmit={handleManualInject}
- className="bg-white border border-zinc-200 rounded-md p-4 space-y-3"
+ className="bg-white border border-neutral-200 rounded-md p-4 space-y-3"
  >
- <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+ <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
  <div className="flex items-center space-x-2">
- <Sliders className="w-4 h-4 text-zinc-700" />
- <h4 className="text-xs font-bold text-zinc-900 ">
+ <Sliders className="w-4 h-4 text-neutral-700" />
+ <h4 className="text-xs font-bold text-neutral-900 ">
  Manual Telemetry Injection Form: {selectedTag}
  </h4>
  </div>
  {manualStatusMsg && (
- <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
+ <span className="text-[11px] text-neutral-700 bg-neutral-50 px-2 py-0.5 rounded border border-neutral-200 font-bold">
  {manualStatusMsg}
  </span>
  )}
@@ -554,7 +554,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  step="0.05"
  value={manualVolt}
  onChange={e => setManualVolt(parseFloat(e.target.value))}
- className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-1.5 text-xs "
+ className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-1.5 text-xs "
  />
  </div>
 
@@ -565,7 +565,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  step="1.0"
  value={manualAmp}
  onChange={e => setManualAmp(parseFloat(e.target.value))}
- className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-1.5 text-xs "
+ className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-1.5 text-xs "
  />
  </div>
 
@@ -578,7 +578,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  max="1.0"
  value={manualPf}
  onChange={e => setManualPf(parseFloat(e.target.value))}
- className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-1.5 text-xs "
+ className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-1.5 text-xs "
  />
  </div>
 
@@ -591,7 +591,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  max="8"
  value={manualTap}
  onChange={e => setManualTap(parseInt(e.target.value))}
- className="w-full bg-zinc-50 border border-zinc-300 rounded-md px-3 py-1.5 text-xs "
+ className="w-full bg-neutral-50 border border-neutral-300 rounded-md px-3 py-1.5 text-xs "
  />
  </div>
  </div>
@@ -599,7 +599,7 @@ export const ScadaSimulatorControl: React.FC = () => {
  <div className="flex justify-end pt-1">
  <button
  type="submit"
- className="px-4 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white text-xs font-bold cursor-pointer transition-colors"
+ className="px-4 py-2 rounded-md bg-[#090909] hover:bg-neutral-800 text-white text-xs font-bold cursor-pointer transition-colors"
  >
  Apply Manual Telemetry Injection
  </button>
@@ -609,17 +609,17 @@ export const ScadaSimulatorControl: React.FC = () => {
  {/* 6. Simulation Event Logs Table */}
  <div className="space-y-2">
  <div className="flex items-center justify-between">
- <h4 className="text-xs font-bold text-zinc-900 flex items-center space-x-1.5">
- <Clock className="w-4 h-4 text-zinc-600" />
+ <h4 className="text-xs font-bold text-neutral-900 flex items-center space-x-1.5">
+ <Clock className="w-4 h-4 text-neutral-600" />
  <span>Simulation Event History & Ingestion Log ({isSimulatorModeActive ? logs.length : 0})</span>
  </h4>
  <span className="text-[10px] ">Immutable Sandbox Audit</span>
  </div>
 
  {isSimulatorModeActive && logs.length > 0 ? (
- <div className="pg-table-scroll pg-table-scroll-compact border border-zinc-200 rounded-md overflow-hidden max-h-48 overflow-y-auto">
+ <div className="pg-table-scroll pg-table-scroll-compact border border-neutral-200 rounded-md overflow-hidden max-h-48 overflow-y-auto">
  <table className="pg-data-table w-full text-xs text-left">
- <thead className="bg-zinc-50 text-zinc-600 text-[10px] border-b border-zinc-200">
+ <thead className="bg-neutral-50 text-neutral-600 text-[10px] border-b border-neutral-200">
  <tr>
  <th className="p-2.5">Time</th>
  <th className="p-2.5">Scenario</th>
@@ -628,36 +628,36 @@ export const ScadaSimulatorControl: React.FC = () => {
  <th className="p-2.5">Message</th>
  </tr>
  </thead>
- <tbody className="divide-y divide-zinc-100 text-[11px]">
+ <tbody className="divide-y divide-neutral-100 text-[11px]">
  {logs.slice(0, 15).map(log => (
- <tr key={log.id} className="hover:bg-zinc-50">
+ <tr key={log.id} className="hover:bg-neutral-50">
  <td className="p-2 whitespace-nowrap">{log.timestamp}</td>
- <td className="p-2 font-semibold text-zinc-700">{log.scenario}</td>
+ <td className="p-2 font-semibold text-neutral-700">{log.scenario}</td>
  <td className="p-2">
  <span
  className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
  log.eventType === 'FAULT' || log.eventType === 'BREAKER_TRIP'
- ? 'bg-rose-100 text-rose-800'
+ ? 'bg-neutral-100 text-neutral-800'
  : log.eventType === 'OVERLOAD'
- ? 'bg-amber-100 text-amber-800'
- : 'bg-zinc-100 text-zinc-800'
+ ? 'bg-neutral-100 text-neutral-800'
+ : 'bg-neutral-100 text-neutral-800'
  }`}
  >
  {log.eventType}
  </span>
  </td>
- <td className="p-2 text-zinc-800 font-semibold">{log.tag}</td>
- <td className="p-2 text-zinc-600 font-sans">{log.message}</td>
+ <td className="p-2 text-neutral-800 font-semibold">{log.tag}</td>
+ <td className="p-2 text-neutral-600 font-sans">{log.message}</td>
  </tr>
  ))}
  </tbody>
  </table>
  </div>
  ) : (
- <div className="p-6 text-center text-xs border border-zinc-200 rounded-md bg-zinc-50 space-y-1">
- <Clock className="w-5 h-5 text-zinc-400 mx-auto mb-1" />
- <p className="font-semibold text-zinc-700">No simulation events logged in clean operational mode</p>
- <p className="text-[11px] text-zinc-400">Click &apos;Start Simulator&apos; to initialize simulation ingestion events.</p>
+ <div className="p-6 text-center text-xs border border-neutral-200 rounded-md bg-neutral-50 space-y-1">
+ <Clock className="w-5 h-5 text-neutral-400 mx-auto mb-1" />
+ <p className="font-semibold text-neutral-700">No simulation events logged in clean operational mode</p>
+ <p className="text-[11px] text-neutral-400">Click &apos;Start Simulator&apos; to initialize simulation ingestion events.</p>
  </div>
  )}
  </div>

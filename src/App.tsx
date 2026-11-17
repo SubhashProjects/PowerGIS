@@ -31,6 +31,8 @@ import { AssetRiskMatrix } from './components/risk/AssetRiskMatrix';
 import { AdminControlPanel } from './components/admin/AdminControlPanel';
 import { LoginPage } from './components/auth/LoginPage';
 import { RoleBasedDashboard } from './components/dashboard/RoleBasedDashboard';
+import { CommonPage } from './components/common/CommonPage';
+import { StylesPage } from './components/styles/StylesPage';
 import { notificationService } from './services/notificationService';
 import { assetService } from './services/assetService';
 import { isSupabaseConfigured } from './lib/supabase';
@@ -52,7 +54,7 @@ const MainLayout: React.FC = () => {
  const isAuthorized = !currentNav?.roles || currentNav.roles.includes(user.role);
 
  return (
- <div className={`pg-app-shell flex flex-col h-screen w-screen overflow-hidden font-sans ${activeTab !== 'gis_map' ? 'pg-monochrome' : ''}`}> 
+ <div className="pg-app-shell flex flex-col h-screen w-screen overflow-hidden font-sans"> 
  {/* 1. Global Header with Mobile Drawer Trigger */}
  <Header
  onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}
@@ -87,22 +89,22 @@ const MainLayout: React.FC = () => {
  >
  {/* Strict Zero-Trust Role Jurisdiction Access Gate */}
  {!isAuthorized ? (
- <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none bg-white border border-zinc-200 rounded-md m-4 min-h-[460px]">
- <div className="w-12 h-12 rounded-md bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mb-3">
+ <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none bg-white border border-neutral-200 rounded-md m-4 min-h-[460px]">
+ <div className="w-12 h-12 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-700 flex items-center justify-center mb-3">
  <ShieldAlert className="w-6 h-6" />
  </div>
- <span className="text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mb-2">
+ <span className="text-[10px] font-bold text-neutral-900 bg-neutral-50 px-2 py-0.5 rounded border border-neutral-200 mb-2">
  {LABELS.zeroTrustGate.policyBadge}
  </span>
- <h2 className="text-base font-bold text-zinc-950 mb-1 tracking-tight">
+ <h2 className="text-base font-bold text-neutral-950 mb-1 tracking-tight">
  {LABELS.zeroTrustGate.heading}
  </h2>
- <p className="text-xs text-zinc-600 max-w-md mb-5 leading-relaxed">
- {LABELS.zeroTrustGate.messagePrefix}<span className="font-bold text-zinc-950">{user.role.toUpperCase()}</span> — {user.designation}{LABELS.zeroTrustGate.messageMiddle}<span className="font-bold text-zinc-950">{currentNav?.label || activeTab}</span>{LABELS.zeroTrustGate.messageSuffix}
+ <p className="text-xs text-neutral-600 max-w-md mb-5 leading-relaxed">
+ {LABELS.zeroTrustGate.messagePrefix}<span className="font-bold text-neutral-950">{user.role.toUpperCase()}</span> — {user.designation}{LABELS.zeroTrustGate.messageMiddle}<span className="font-bold text-neutral-950">{currentNav?.label || activeTab}</span>{LABELS.zeroTrustGate.messageSuffix}
  </p>
  <button
  onClick={() => setActiveTab('dashboard')}
- className="px-3.5 py-2 rounded-md bg-[#09090B] hover:bg-zinc-800 text-white font-medium text-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+ className="px-3.5 py-2 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-medium text-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
  >
  <ArrowLeft className="w-3.5 h-3.5" />
  <span>{LABELS.zeroTrustGate.returnButton}</span>
@@ -131,19 +133,21 @@ const MainLayout: React.FC = () => {
  {activeTab === 'asset_risk' && <AssetRiskMatrix />}
  {activeTab === 'backup_restore' && <AdminControlPanel initialTab="migration" />}
  {activeTab === 'admin_panel' && <AdminControlPanel initialTab="users" />}
+ {activeTab === 'common' && <CommonPage />}
+ {activeTab === 'styles' && <StylesPage />}
  </>
  )}
 
  {/* Asset Detail Flyout Drawer (When selected on map or via search) */}
  {selectedAsset && (
- <div className="absolute bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-sm w-auto sm:w-full bg-white border border-[#E4E4E7] rounded-md p-4 shadow-md z-40 space-y-3">
- <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
+ <div className="absolute bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-sm w-auto sm:w-full bg-white border border-[#E4E4E4] rounded-md p-4 shadow-md z-40 space-y-3">
+ <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
  <div className="flex items-center space-x-2 truncate">
- <div className="p-1.5 rounded-md bg-[#09090B] text-white flex-shrink-0">
+ <div className="p-1.5 rounded-md bg-[#090909] text-white flex-shrink-0">
  <Zap className="w-4 h-4" />
  </div>
  <div className="truncate">
- <h4 className="font-bold text-xs text-zinc-950 truncate">
+ <h4 className="font-bold text-xs text-neutral-950 truncate">
  {selectedAsset.name || selectedAsset.code || selectedAsset.poleNumber}
  </h4>
  <span className="text-[10px] truncate block">
@@ -154,41 +158,41 @@ const MainLayout: React.FC = () => {
 
  <button
  onClick={() => setSelectedAsset(null)}
- className="p-1 rounded-md text-zinc-400 hover:text-zinc-950 hover:bg-zinc-100 transition-colors flex-shrink-0"
+ className="p-1 rounded-md text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors flex-shrink-0"
  >
  <X className="w-4 h-4" />
  </button>
  </div>
 
- <div className="space-y-1.5 text-xs text-zinc-700 ">
+ <div className="space-y-1.5 text-xs text-neutral-700 ">
  {selectedAsset.voltageClass && (
  <div className="flex justify-between">
  <span className="font-sans">Voltage:</span>
- <span className="text-zinc-950 font-bold">{selectedAsset.voltageClass}</span>
+ <span className="text-neutral-950 font-bold">{selectedAsset.voltageClass}</span>
  </div>
  )}
  {selectedAsset.capacityMVA && (
  <div className="flex justify-between">
  <span className="font-sans">Capacity:</span>
- <span className="text-zinc-950 font-bold">{selectedAsset.capacityMVA} MVA</span>
+ <span className="text-neutral-950 font-bold">{selectedAsset.capacityMVA} MVA</span>
  </div>
  )}
  {selectedAsset.capacityKVA && (
  <div className="flex justify-between">
  <span className="font-sans">Rating:</span>
- <span className="text-zinc-950 font-bold">{selectedAsset.capacityKVA} kVA</span>
+ <span className="text-neutral-950 font-bold">{selectedAsset.capacityKVA} kVA</span>
  </div>
  )}
  {selectedAsset.loadPercentage !== undefined && (
  <div className="flex justify-between">
  <span className="font-sans">Current Load:</span>
- <span className="text-zinc-950 font-bold">{selectedAsset.loadPercentage}%</span>
+ <span className="text-neutral-950 font-bold">{selectedAsset.loadPercentage}%</span>
  </div>
  )}
  {selectedAsset.coordinates && (
  <div className="flex justify-between text-[11px]">
  <span className="font-sans">GPS Coords:</span>
- <span className="text-zinc-800">
+ <span className="text-neutral-800">
  {Array.isArray(selectedAsset.coordinates[0])
  ? `${selectedAsset.coordinates[0][0].toFixed(4)}, ${selectedAsset.coordinates[0][1].toFixed(4)}`
  : `${selectedAsset.coordinates[0].toFixed(4)}, ${selectedAsset.coordinates[1].toFixed(4)}`}
@@ -224,7 +228,7 @@ const AppContent: React.FC = () => {
  }, [isAuthenticated, passwordRecovery]);
 
  if (!isAuthenticated || passwordRecovery) {
- return <div className="pg-monochrome"><LoginPage /></div>;
+ return <LoginPage />;
  }
 
  return (

@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-primary: Arial, Helvetica, sans-serif;
+  --pg-bg: #FAFAFA;
+  --pg-surface: #FFFFFF;
+  --pg-surface-soft: #F4F4F4;
+  --pg-border: #E4E4E4;
+  --pg-border-strong: #A2A2A2;
+  --pg-text: #090909;
+  --pg-text-secondary: #535353;
+  --pg-text-muted: #727272;
+  --pg-control: #272727;
+  --pg-focus: rgba(0,0,0,.12);
+  --pg-radius: .375rem;
+  --pg-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+html, body, #root {
+  min-height: 100%;
+  margin: 0;
+  font-family: var(--font-primary);
+  background: var(--pg-bg);
+  color: var(--pg-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+button, input, select, textarea { font: inherit; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--pg-control);
+  outline-offset: 2px;
+}
+
+button { min-height: 36px; border-radius: var(--pg-radius); }
+
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  border-color: var(--pg-border);
+  background: var(--pg-surface);
+  color: var(--pg-text);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--pg-control);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--pg-focus);
+}
+
+[class*="rounded-lg"], [class*="rounded-xl"], [class*="rounded-2xl"], [class*="rounded-3xl"] {
+  border-radius: var(--pg-radius) !important;
+}
+
+[class*="bg-gradient-"] { background-image: none !important; }
+[class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+.pg-app-shell, .pg-main { background: var(--pg-bg); }
+.pg-header { min-height: 64px; background: var(--pg-surface); border-color: var(--pg-border); box-shadow: 0 1px 0 rgba(0,0,0,.03); }
+.pg-header > div { min-height: 64px; }
+.pg-sidebar { width: 248px; background: var(--pg-surface); border-color: var(--pg-border); }
+.pg-sidebar.w-16 { width: 68px; }
+.pg-nav-item { min-height: 38px; border: 1px solid transparent; color: var(--pg-text); background: transparent; }
+.pg-nav-item:hover { background: var(--pg-surface-soft); border-color: var(--pg-border); }
+.pg-nav-active { background: var(--pg-surface-soft); border-color: #D4D4D4; color: var(--pg-text); box-shadow: inset 3px 0 0 var(--pg-control); }
+.pg-nav-active svg { color: var(--pg-control); }
+.pg-scope-banner { min-height: 36px; background: var(--pg-surface-soft); border-color: var(--pg-border); }
+.pg-page-header { position: sticky; top: 0; z-index: 10; }
+.pg-mobile-nav { background: rgba(255,255,255,.98); border-color: var(--pg-border); box-shadow: 0 -6px 20px rgba(0,0,0,.07); }
+.pg-mobile-nav button { min-height: 56px; }
+.pg-mobile-drawer { box-shadow: 10px 0 30px rgba(0,0,0,.10); }
+.pg-search-input { border-color: var(--pg-border); background: var(--pg-surface); }
+.pg-search-input:focus { border-color: var(--pg-control); box-shadow: 0 0 0 3px var(--pg-focus); }
+
+.pg-tab-strip {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.pg-tab-strip > button { flex: 0 0 auto; min-height: 36px; }
+
+.pg-table-scroll {
+  width: 100%;
+  min-height: 360px;
+  max-height: min(62vh, 620px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+  -webkit-overflow-scrolling: touch;
+}
+.pg-data-table {
+  width: 100%;
+  min-width: 760px;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.pg-data-table th, .pg-data-table td {
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.pg-data-table th { height: 44px; }
+.pg-data-table td { height: 46px; }
+.pg-data-table th:first-child, .pg-data-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--pg-surface);
+  box-shadow: 1px 0 0 var(--pg-border);
+}
+.pg-data-table thead th:first-child { z-index: 3; background: var(--pg-surface-soft); }
+.pg-data-table tbody tr:hover td:first-child { background: var(--pg-surface-soft); }
+
+.pg-common-card {
+  border: 1px solid var(--pg-border);
+  background: var(--pg-surface);
+  border-radius: var(--pg-radius);
+  box-shadow: var(--pg-shadow);
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--pg-bg); }
+::-webkit-scrollbar-thumb { background: var(--pg-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--pg-border-strong); }
+
+/* GIS control chrome stays neutral; GIS map layers and operational symbology remain untouched. */
+.leaflet-popup-content-wrapper {
+  background: #FFFFFF !important;
+  color: #090909 !important;
+  border: 1px solid #E4E4E4 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.05) !important;
+}
+.leaflet-popup-tip { background: #FFFFFF !important; }
+.leaflet-control-zoom { margin-bottom: 72px !important; }
+@media (min-width: 768px) { .leaflet-control-zoom { margin-bottom: 16px !important; } }
+.leaflet-control-zoom a {
+  background: #FFFFFF !important;
+  color: #090909 !important;
+  border-color: #E4E4E4 !important;
+  border-radius: 4px !important;
+}
+.leaflet-control-zoom a:hover { background: #F4F4F4 !important; color: #000000 !important; }
+
+@media (max-width: 767px) {
+  .pg-header, .pg-header > div { min-height: 58px; }
+  .pg-main { padding-bottom: 4rem; }
+  .pg-page-header { position: relative; }
+  .pg-table-scroll { min-height: 300px; max-height: 58vh; }
+  .pg-data-table { min-width: 720px; }
+}
