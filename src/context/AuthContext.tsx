@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       return {
         success: false,
-        error: 'Authentication service is not configured. Connect your Supabase project using "Connect Supabase" or sign in with a demo staff persona.',
+        error: 'Authentication service is not configured. The deployment administrator must configure the Supabase backend; demo authentication is development-only.',
       };
     }
     const res = await authService.loginWithSupabase(identifier, password);

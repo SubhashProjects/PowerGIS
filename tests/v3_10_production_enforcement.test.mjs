@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root=fileURLToPath(new URL('..', import.meta.url));
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const assert=(c,m)=>{if(!c)throw new Error(m)};
 const files=fs.readdirSync(path.join(root,'src/components'),{recursive:true}).filter(f=>String(f).endsWith('.tsx'));
@@ -10,8 +11,8 @@ for(const f of files){
  assert(!/supabase\.from\(/.test(s),`direct Supabase table access in UI component: ${f}`);
  assert(!/supabase\.rpc\(/.test(s),`direct Supabase RPC access in UI component: ${f}`);
 }
-assert(read('package.json').includes('"version": "3.14.0"'),'package version mismatch');
-assert(read('src/config/appConfig.ts').includes("version: '3.14.0'"),'app version mismatch');
+const packageVersion=JSON.parse(read('package.json')).version;
+assert(read('src/config/appConfig.ts').includes(`version: '${packageVersion}'`),'app version mismatch');
 assert(fs.existsSync(path.join(root,'src/lib/workflowEngine.ts')),'workflow engine missing');
 assert(read('src/services/workOrderService.ts').includes('assertWorkflowTransition'),'work order workflow is not enforced client-side');
 assert(fs.existsSync(path.join(root,'src/repositories/domain/NotificationRepository.ts')),'notification repository missing');

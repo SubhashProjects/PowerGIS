@@ -83,6 +83,8 @@ export interface Pole {
  coordinates: [number, number];
 }
 
+export type NetworkPhase = 'R' | 'Y' | 'B' | 'N';
+
 export interface Conductor {
  id: string;
  code: string;
@@ -93,8 +95,28 @@ export interface Conductor {
  voltageClass: VoltageClass;
  lengthMeters: number;
  ratedCurrentAmps: number;
+ /** Optional surveyed phase membership. Missing means unknown, never inferred. */
+ phases?: NetworkPhase[];
+ /** Optional operational state from an authoritative source. */
+ isEnergized?: boolean;
  condition: AssetCondition;
  coordinates: [number, number][];
+}
+
+
+
+/** Explicit network switching device model. State must come from an authorized source. */
+export interface NetworkSwitch {
+ id: string;
+ code: string;
+ feederId: string;
+ fromPoleId: string;
+ toPoleId: string;
+ state: 'open' | 'closed' | 'unknown';
+ normallyOpen?: boolean;
+ phases?: NetworkPhase[];
+ source: 'survey' | 'scada' | 'manual';
+ observedAt?: string;
 }
 
 export interface Streetlight {

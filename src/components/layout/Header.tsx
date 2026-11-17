@@ -6,13 +6,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useGIS } from '../../context/GISContext';
-import { isSupabaseConfigured } from '../../lib/supabase';
 import { assetService } from '../../services/assetService';
 import { notificationService } from '../../services/notificationService';
 import { APP_CONFIG } from '../../config/appConfig';
 import { NavTabId } from '../../config/navigationConfig';
 import { ConnectionStatus } from '../common/ConnectionStatus';
 import { LABELS } from '../../config/labelsConfig';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import {
  Search, Bell, Globe, ChevronDown, LogOut, Menu, X, ShieldCheck, Settings, Zap
 } from 'lucide-react';

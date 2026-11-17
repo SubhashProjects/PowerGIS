@@ -1,40 +1,36 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.48.1';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+import { errorResponse, HttpError, json, originAllowed, preflight, readJsonObject } from '../_shared/http.ts';
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return preflight(req);
+  if (req.method !== 'POST') return json(req, 405, { error: 'METHOD_NOT_ALLOWED' });
+  if (!originAllowed(req)) return json(req, 403, { error: 'ORIGIN_NOT_ALLOWED' });
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    if (!supabaseUrl || !anonKey || !serviceRoleKey) throw new Error('Required Supabase Edge Function secrets are not configured.');
+    if (!supabaseUrl || !anonKey || !serviceRoleKey) throw new HttpError(503, 'FUNCTION_NOT_CONFIGURED');
 
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return json({ error: 'Authentication required.' }, 401);
+    if (!authHeader) return json(req, 401, { error: 'AUTHENTICATION_REQUIRED' });
     const caller = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
     const { data: { user: authUser }, error: userError } = await caller.auth.getUser();
-    if (userError || !authUser) return json({ error: 'Authenticated caller not found.' }, 401);
+    if (userError || !authUser) return json(req, 401, { error: 'AUTHENTICATED_CALLER_NOT_FOUND' });
 
     const admin = createClient(supabaseUrl, serviceRoleKey);
     const { data: callerProfile, error: callerError } = await admin.from('user_profiles').select('id, role, is_active').eq('auth_user_id', authUser.id).maybeSingle();
     if (callerError) throw callerError;
-    if (!callerProfile?.is_active || callerProfile.role !== 'super_admin') throw new Error('Super Administrator authorization required.');
+    if (!callerProfile?.is_active || callerProfile.role !== 'super_admin') throw new HttpError(403, 'SUPER_ADMIN_REQUIRED');
 
-    const body = await req.json();
+    const body = await readJsonObject(req);
     const userId = String(body.userId || '');
     const action = String(body.action || 'update');
-    if (!userId) throw new Error('userId is required.');
+    if (!userId) throw new HttpError(400, 'USER_ID_REQUIRED');
 
     const { data: targetProfile, error: targetError } = await admin.from('user_profiles').select('*').eq('id', userId).maybeSingle();
     if (targetError) throw targetError;
-    if (!targetProfile) throw new Error('User profile not found.');
-    if (targetProfile.id === callerProfile.id && action === 'deactivate') throw new Error('Cannot deactivate the current administrator session.');
+    if (!targetProfile) throw new HttpError(404, 'USER_NOT_FOUND');
+    if (targetProfile.id === callerProfile.id && action === 'deactivate') throw new HttpError(409, 'CANNOT_DEACTIVATE_CURRENT_ADMIN');
 
     if (action === 'deactivate') {
       const { error: authError } = await admin.auth.admin.updateUserById(targetProfile.auth_user_id, { ban_duration: '876000h' });
@@ -45,7 +41,7 @@ Deno.serve(async (req) => {
         throw profileError;
       }
       await admin.from('audit_logs').insert({ actor_id: authUser.id, user_id: callerProfile.id, actor_role: callerProfile.role, action: 'user.deactivate', module: 'admin', resource_id: userId });
-      return json({ success: true });
+      return json(req, 200, { success: true });
     }
 
     const profileUpdates: Record<string, unknown> = {
@@ -66,8 +62,8 @@ Deno.serve(async (req) => {
     };
 
     const nextEmail = String(profileUpdates.email || '').trim().toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail)) throw new Error('Invalid email address.');
-    if (body.password !== undefined && String(body.password).length < 12) throw new Error('Password must be at least 12 characters.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail)) throw new HttpError(400, 'INVALID_EMAIL');
+    if (body.password !== undefined && String(body.password).length < 12) throw new HttpError(400, 'PASSWORD_POLICY_FAILED');
 
     const authUpdates: Record<string, unknown> = { email: nextEmail, email_confirm: true, user_metadata: { full_name: profileUpdates.full_name, username: profileUpdates.username } };
     if (body.password) authUpdates.password = String(body.password);
@@ -82,8 +78,8 @@ Deno.serve(async (req) => {
     }
 
     await admin.from('audit_logs').insert({ actor_id: authUser.id, user_id: callerProfile.id, actor_role: callerProfile.role, action: 'user.update', module: 'admin', resource_id: userId, details: { email: updatedProfile.email, role: updatedProfile.role, is_active: updatedProfile.is_active } });
-    return json({ profile: updatedProfile });
+    return json(req, 200, { profile: updatedProfile });
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : 'User administration failed.' }, 400);
+    return errorResponse(req, error);
   }
 });

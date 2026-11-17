@@ -17,6 +17,10 @@ export class OfflineQueueManager {
  private dependencyResolver?: (record: OfflineSurveyRecord) => boolean;
  private readyPromise: Promise<void>;
 
+ public setDependencyResolver(resolver?: (record: OfflineSurveyRecord) => boolean): void {
+  this.dependencyResolver = resolver;
+ }
+
  private constructor() {
  this.readyPromise = this.load();
  if (typeof window !== 'undefined') {
@@ -112,10 +116,6 @@ export class OfflineQueueManager {
  public registerSyncHandler(handler: SyncHandler): () => void {
  this.syncHandler = handler;
  return () => { if (this.syncHandler === handler) this.syncHandler = undefined; };
- }
-
- public setDependencyResolver(resolver?: (record: OfflineSurveyRecord) => boolean): void {
- this.dependencyResolver = resolver;
  }
 
  public async attemptAutoSync(): Promise<{ synced: number; failed: number }> {

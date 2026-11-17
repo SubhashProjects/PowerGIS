@@ -71,6 +71,6 @@ assert(sql3.includes('sync_offline_survey_asset'), 'Offline survey idempotent sy
 const contractor = read('src/components/surveys/ContractorPWA.tsx');
 assert(contractor.includes('registerSyncHandler') && contractor.includes('survey-evidence'), 'Contractor PWA is not connected to server-confirmed offline sync/evidence storage');
 const adminService = read('src/services/adminService.ts');
-assert(adminService.includes('admin-update-user'), 'Admin profile updates do not use the server-side Auth administration workflow');
+assert(read('src/repositories/domain/AdminRepository.ts').includes('admin-update-user'), 'Admin profile updates do not use the server-side Auth administration workflow');
 
 console.log(`PASS: ${pages.length} primary page components inspected for presence plus P0/P1 static security invariants.`);

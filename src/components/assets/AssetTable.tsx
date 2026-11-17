@@ -6,6 +6,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { assetService } from '../../services/assetService';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { dataExchangeService, ImportResult } from '../../services/dataExchangeService';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -22,7 +23,7 @@ export const AssetTable: React.FC = () => {
 
  // Subscribe to AssetService updates (e.g. uploads or simulator mode toggles)
  useEffect(() => {
- if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
+ if (isSupabaseConfigured) {
  assetService.loadFromSupabase().catch(error => setImportResult({ success: false, message: error?.message || 'Unable to load assets from Supabase.', importedCount: 0, duplicateCount: 0, errorCount: 1, details: [error?.message || 'Unable to load assets from Supabase.'] }));
  }
  const unsub = assetService.subscribe(() => {

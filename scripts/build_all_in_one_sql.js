@@ -11,24 +11,18 @@ const migrations = fs.readdirSync(migrationDir)
     return a.localeCompare(b);
   })
   .map(name => path.join(migrationDir, name));
-const files = [...migrations, 'supabase/seed.sql'];
+// Keep demo fixtures out of the production installation bundle.
+const files = migrations;
 
 let output = `-- ============================================================================
 -- POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS & ASSET MANAGEMENT PLATFORM
 -- ALL-IN-ONE MASTER DATABASE INSTALLATION & SEED SCRIPT
 -- ============================================================================
--- Instructions:
--- 1. Open your Supabase Dashboard: https://supabase.com/dashboard/project/_/sql
--- 2. Click "New Query"
--- 3. Paste the ENTIRE contents of this file and click "Run" (or Ctrl + Enter)
--- 
--- NOTE FOR EXISTING DATABASES:
--- If your database has old, corrupted or conflicting test tables from
--- earlier projects, run this single command first to reset cleanly:
---
---   DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO postgres, anon, authenticated, service_role;
---
--- Then paste and run this script.
+-- Deployment safety:
+-- Apply timestamped migrations with the Supabase CLI to existing environments.
+-- This consolidated script is intended only for a fresh, isolated database after
+-- reviewing every migration. It is NOT a reset/repair script. Never DROP SCHEMA
+-- public CASCADE on a production database; use a tested backup/restore procedure.
 -- ============================================================================
 
 `;

@@ -3,7 +3,7 @@
 // ROOT APPLICATION CONTAINER & VIEW ROUTER - MOBILE ADAPTIVE & B&W THEME
 // ============================================================================
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GISProvider, useGIS } from './context/GISContext';
 import { Header } from './components/layout/Header';
@@ -11,7 +11,11 @@ import { ScopeBanner } from './components/layout/ScopeBanner';
 import { Sidebar, NavTabId } from './components/layout/Sidebar';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { MasterMap } from './components/gis/MasterMap';
+import { OfflineGISWorkspace } from './components/gis/OfflineGISWorkspace';
 import { AssetTable } from './components/assets/AssetTable';
+import { AssetLifecycleManagement } from './components/assets/AssetLifecycleManagement';
+import { EnterprisePlanningCenter } from './components/assets/EnterprisePlanningCenter';
+import { PlatformEvolutionCenter } from './components/platform/PlatformEvolutionCenter';
 import { CapitalProjectsRDSS } from './components/projects/CapitalProjectsRDSS';
 import { SmartMeterDashboard } from './components/smartMeters/SmartMeterDashboard';
 import { WarrantyRegister } from './components/warranties/WarrantyRegister';
@@ -57,6 +61,15 @@ const MainLayout: React.FC = () => {
  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+
+ useEffect(() => {
+  const handler = (event: Event) => {
+   const tab = (event as CustomEvent<{ tab?: NavTabId }>).detail?.tab;
+   if (tab && NAVIGATION_ITEMS.some(item => item.id === tab)) setActiveTab(tab);
+  };
+  window.addEventListener('powergis:navigate', handler);
+  return () => window.removeEventListener('powergis:navigate', handler);
+ }, []);
 
  const roleData = notificationService.getDashboardData(user);
  const unreadCount = roleData.notifications.filter(n => !n.read).length;
@@ -134,7 +147,11 @@ const MainLayout: React.FC = () => {
  <>
  {activeTab === 'dashboard' && <RoleBasedDashboard onNavigateTab={tab => setActiveTab(tab)} />}
  {activeTab === 'gis_map' && <MasterMap />}
+ {activeTab === 'offline_gis' && <OfflineGISWorkspace />}
  {activeTab === 'assets' && <AssetTable />}
+ {activeTab === 'asset_lifecycle' && <AssetLifecycleManagement />}
+ {activeTab === 'enterprise_planning' && <EnterprisePlanningCenter />}
+ {activeTab === 'platform_evolution' && <PlatformEvolutionCenter />}
  {activeTab === 'capital_projects' && <CapitalProjectsRDSS />}
  {activeTab === 'smart_meters' && <SmartMeterDashboard />}
  {activeTab === 'warranties' && <WarrantyRegister />}

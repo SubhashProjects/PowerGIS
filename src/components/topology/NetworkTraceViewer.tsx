@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Activity, ArrowDown, ArrowUp, CheckCircle2, GitFork, Network, Search, ShieldAlert, Zap } from 'lucide-react';
 import { assetService } from '../../services/assetService';
 import { analyzeNetwork, type NetworkFindingSeverity } from '../../services/networkIntelligenceService';
+import { summarizePhaseCoverage, traceNetwork } from '../../services/networkModelService';
+import type { NetworkPhase } from '../../types/assets';
 
 const severityRank: Record<NetworkFindingSeverity, number> = { critical: 0, warning: 1, info: 2 };
 
@@ -11,6 +13,8 @@ export const NetworkTraceViewer: React.FC = () => {
   const [direction, setDirection] = useState<'downstream' | 'upstream'>('downstream');
   const [findingFilter, setFindingFilter] = useState<'all' | NetworkFindingSeverity>('all');
   const [search, setSearch] = useState('');
+  const [selectedPoleId, setSelectedPoleId] = useState('');
+  const [selectedPhase, setSelectedPhase] = useState<NetworkPhase | 'all'>('all');
 
   useEffect(() => {
     void assetService.loadFromSupabase().catch(() => undefined);
@@ -38,6 +42,9 @@ export const NetworkTraceViewer: React.FC = () => {
   const criticalCount = analysis.findings.filter(item => item.severity === 'critical').length;
   const warningCount = analysis.findings.filter(item => item.severity === 'warning').length;
   const allActiveConsumers = current?.consumers.filter(item => item.status === 'active') || [];
+  const traceStartPole = current?.poles.find(pole => pole.id === selectedPoleId) || current?.poles[0];
+  const networkTrace = current && traceStartPole ? traceNetwork({ startPoleId: traceStartPole.id, poles: current.poles, conductors: current.conductors, phase: selectedPhase === 'all' ? undefined : selectedPhase }) : undefined;
+  const phaseCoverage = summarizePhaseCoverage(current?.conductors || []);
 
   const badge = (severity: NetworkFindingSeverity) => severity === 'critical' ? 'Critical' : severity === 'warning' ? 'Warning' : 'Info';
   const badgeClass = (severity: NetworkFindingSeverity) => severity === 'critical'
@@ -90,6 +97,26 @@ export const NetworkTraceViewer: React.FC = () => {
         <Metric label="Affected consumers" value={current.affectedConsumerCount} detail="Active linked premises" />
       </div>}
     </section>
+
+    {current && <section className="rounded-md border border-neutral-200 bg-white p-4 sm:p-5">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+        <div><h2 className="font-bold">Phase-aware network trace</h2><p className="mt-1 text-xs text-neutral-600">Connected component from a selected pole using recorded conductor phase membership</p></div>
+        <div className="grid grid-cols-2 gap-2 sm:min-w-[22rem]">
+          <label className="text-xs font-semibold">Start pole<select value={traceStartPole?.id || ''} onChange={event => setSelectedPoleId(event.target.value)} className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-2 py-2 text-sm font-normal">{current.poles.map(pole => <option key={pole.id} value={pole.id}>{pole.code}</option>)}</select></label>
+          <label className="text-xs font-semibold">Phase<select value={selectedPhase} onChange={event => setSelectedPhase(event.target.value as NetworkPhase | 'all')} className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-2 py-2 text-sm font-normal"><option value="all">All recorded</option><option value="R">R phase</option><option value="Y">Y phase</option><option value="B">B phase</option><option value="N">Neutral</option></select></label>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <Metric label="Reachable poles" value={networkTrace?.visitedPoleIds.length || 0} detail="Within recorded component" />
+        <Metric label="Traversed conductors" value={networkTrace?.traversedConductorIds.length || 0} detail="Energized flag not false" />
+        <Metric label="Phase data gaps" value={networkTrace?.missingPhaseDataConductorIds.length || 0} detail="Conductor phase unknown" />
+        <Metric label="Disconnected candidates" value={Math.max(0, current.poles.length - (networkTrace?.visitedPoleIds.length || 0))} detail="Not reached from start pole" />
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-4">{phaseCoverage.map(item => <div key={item.phase} className="rounded-md border border-neutral-200 p-3"><div className="flex items-center justify-between"><span className="text-sm font-bold">{item.phase} phase</span><span className="text-[10px] font-semibold uppercase text-neutral-600">{item.status.replace('_', ' ')}</span></div><p className="mt-1 text-xs text-neutral-600">{item.knownConductorCount} known conductors · {item.poleCount} poles</p><p className="text-[11px] text-neutral-500">{item.unknownConductorCount} conductors without phase data</p></div>)}</div>
+      {!!networkTrace?.blockedSwitchIds.length && <p className="mt-3 text-xs text-neutral-700">Open switch edges block traversal: {networkTrace.blockedSwitchIds.join(', ')}</p>}
+      {!!networkTrace?.unknownSwitchIds.length && <p className="mt-1 text-xs text-neutral-700">Unknown switch state — traversal withheld: {networkTrace.unknownSwitchIds.join(', ')}</p>}
+      <p className="mt-3 text-[11px] text-neutral-500">Phase analysis uses only explicitly recorded phase attributes. Missing phase membership is unknown, not inferred. Switch edges are supported by the network model but must be supplied from an authorized, current source before use.</p>
+    </section>}
 
     {current && <section className="rounded-md border border-neutral-200 bg-white p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between gap-3"><div><h2 className="font-bold">{direction === 'upstream' ? 'Upstream supply path' : 'Downstream supply impact'}</h2><p className="mt-1 text-xs text-neutral-600">{direction === 'upstream' ? 'Consumer / distribution network → feeder → source substation' : 'Source substation → feeder → transformers → poles → consumers'}</p></div><Activity className="h-5 w-5" /></div>

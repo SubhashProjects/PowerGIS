@@ -208,3 +208,64 @@ git push origin master:master
 - Reworked Network Topology into a responsive intelligence workspace with feeder selection, trace direction, severity/search filters, finding list, transformer loading and active consumer impact list.
 - Analysis is advisory and based on loaded records; it does not claim live power-flow calculation, switching safety, fault isolation authorization or persistence of computed findings.
 - Added focused network-intelligence tests in `tests/network_intelligence.test.ts`.
+
+## PowerGIS 3.15.0 — Offline GIS & Field Evidence
+
+- New workspace: `src/components/gis/OfflineGISWorkspace.tsx` (navigation tab `offline_gis`).
+- Local storage service: `src/services/offlineGISService.ts` with IndexedDB stores for GeoJSON packages, reviewable edits, evidence metadata and evidence chunks.
+- GeoJSON import/export, local edit review, evidence chunk persistence and SHA-256 restore verification.
+- No third-party basemap tile caching and no direct server mutation; backend conflict reconciliation and resumable server upload remain follow-on work.
+- Static architecture check: `tests/v3_15_offline_gis.test.mjs`.
+
+## PowerGIS 3.16.0 — Electrical Network Intelligence
+
+- Added optional phase membership and energized metadata to conductor records and introduced a typed network switch record.
+- Added graph-based phase-aware connected-component tracing; only explicitly closed switch edges are traversed.
+- Added phase coverage summaries and a stable-ID snapshot comparison utility for network change impact review.
+- Integrated a phase-aware trace panel into the existing Network Intelligence page.
+- Unknown phase/switch values remain unknown; no direction, live state, engineering result or switching instruction is inferred.
+- Verification: targeted strict TypeScript check for network model/domain types passed; runtime tests passed for phase filtering, reachability, phase gaps, open/unknown switch handling, coverage and snapshot diffs; new 3.16 architecture test passed.
+- Full app build, live Supabase/SCADA integration and electrical engineering study validation were not performed.
+
+## PowerGIS 3.17.0 — Asset Lifecycle Management
+- Added dedicated Asset Lifecycle workspace over the canonical asset registry and existing `equipment_lifecycle` table.
+- Supports lifecycle registration for existing substations, feeders, transformers and poles; condition assessment; replacement priority; expected-life ageing; and assessment history.
+- Added RLS-protected `equipment_lifecycle_events` table and atomic SECURITY INVOKER assessment RPC migration: `supabase/migrations/20261117_asset_lifecycle_management.sql`.
+- QR/barcode scanner, physical label printing, commissioning/decommissioning, financial depreciation and live deployment verification remain out of scope/not implemented.
+
+## PowerGIS 3.25.0 — Enterprise Operations & Intelligence
+- Bumped application/package version to 3.25.0 and added Enterprise Planning navigation/page.
+- Added pure planning functions for straight-line depreciation estimates, reorder quantity, work-order due-state, deterministic operational recommendations and canonical asset label payloads.
+- Integrated lifecycle, warranty, inventory and work-order data through existing services; recommendations navigate to existing modules and do not mutate operational records.
+- Added printable human-readable asset labels; QR/barcode image generation and scanning are explicitly not included.
+- Added an explainable rules-based recommendation workspace; this is not predictive AI, autonomous control or engineering decision-making.
+- Added release documentation and a focused static architecture test. Historical version assertions were made semver-compatible so regression tests continue to test their architecture rather than fail on the release number.
+- Verification: all static `.mjs` tests passed; TypeScript/TSX syntax transpilation passed for 150 files; relative imports resolved. Strict type check for the pure planning service passed. Full app build and live backend/device integration were not run; prebuilt bundles need regeneration before deployment.
+
+## PowerGIS 3.26.0–3.32.0 — Platform Engineering & Field Operations
+- Added a Platform Engineering & Operations Centre with seven release workspaces: static route/configuration audit, utility protocol catalogue, electrical screening calculator, consumer service application intake, canonical network snapshot, deployment readiness checks and mobile field workflow integration.
+- Added pure calculation utilities for balanced three-phase voltage drop, transformer loading, phase-current imbalance and three-phase bolted-fault current using supplied source impedance; invalid/non-finite inputs are rejected. Added `consumerService.ts` to keep consumer-request repository access out of UI components.
+- Added jurisdiction-scoped `consumer_service_requests` and secret-free `integration_endpoint_registry` schema with RLS in `supabase/migrations/20261127_platform_evolution_326_332.sql`; consolidated master SQL includes the migration.
+- Added PWA manifest, app-shell service worker and secure-context registration. Added a read-only telemetry-ingest Edge Function with a dedicated gateway token, enabled gateway registry allowlist, optional tag namespace validation, bounded payloads, measurement/timestamp validation and source-event duplicate protection. The worker does not cache Supabase REST/auth/storage/functions requests.
+- Mobile field centre reuses existing Contractor PWA, Offline GIS and registered idempotent offline mutation queue; no unsupported sync handler is fabricated.
+- Digital twin view is only an application snapshot; utility protocols are catalogued but not connected; engineering calculations are screening estimates; consumer applications do not create energized connections.
+- Historical test version assertions now compare package/app versions instead of pinning 3.25.0.
+- Added `scripts/platform_audit.mjs`, a static regression runner, `npm run audit`, `npm run test:static` and `npm run test:platform-runtime`; GitHub Actions now runs these gates before deploy.
+- Verification: 20/20 static `.mjs` tests and runtime tests of new pure services passed; 154 app TS/TSX files plus the Edge Function transpile with zero syntax errors; relative imports resolve; ZIP integrity passed. No npm install, full Vite build, live Supabase migration/RLS test, Edge Function deployment, RTU/PLC/AMI device commissioning or Android certification was performed.
+
+## PowerGIS 3.42.0 — Completion & Stabilization Edition
+- No new product features, modules, dashboards, integrations, or workflows were added.
+- Release metadata and PWA cache identity aligned to 3.42.0.
+- All-in-one SQL regenerated from timestamp-ordered migrations.
+- Added `scripts/release_readiness_audit.mjs` to verify release metadata, PWA icon assets, migration/master SQL parity, backend-secret hygiene in client-delivered source, and release boundary documentation.
+- Added `docs/POWERGIS_V3.33_TO_V3.42_COMPLETION_STABILIZATION.md` documenting scope, validation, and external deployment requirements.
+- Source/static checks do not claim live Supabase/RLS, physical gateway, device, production load, disaster-recovery, or production security certification.
+
+
+## Production hardening follow-up (2026-11-17)
+- Supabase browser configuration is now build-time only; browser localStorage cannot redirect authentication/session traffic to an arbitrary backend. The login page no longer exposes backend URL/key editing or hardcoded demo credentials. Demo personas are shown only in development builds.
+- Privileged admin Edge Functions share exact-origin CORS allowlisting (`POWERGIS_ALLOWED_ORIGINS`), POST-only handling, bounded JSON object parsing, and non-disclosing error responses.
+- Legacy `SECURITY DEFINER` identity helper functions now have fixed search paths and explicit authenticated/service-role grants in `supabase/migrations/20261128_security_definer_search_path.sql`.
+- The all-in-one SQL generator no longer recommends a destructive public-schema drop and excludes illustrative `seed.sql` data/personas from the production bundle.
+- Vite upgraded to 6.4.6 and dev server bound to loopback only to mitigate GHSA-p4f5-76q4-ffq7. The lockfile package integrity field could not be regenerated in this offline environment; regenerate/verify lock metadata from the npm registry before release.
+- Validation: platform audit 0 failures; release-readiness audit 0 failures; static regression 21/21; focused security baseline 5/5. Dependency install, npm audit, full TypeScript/Vite build, and live Supabase verification remain outstanding because npm registry access was unavailable.

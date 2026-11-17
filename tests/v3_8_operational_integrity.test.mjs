@@ -1,6 +1,10 @@
-import fs from 'node:fs'; import path from 'node:path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root=fileURLToPath(new URL('..', import.meta.url)); const read=p=>fs.readFileSync(path.join(root,p),'utf8'); const assert=(c,m)=>{if(!c)throw new Error(m)};
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = p => fs.readFileSync(path.join(root, p), 'utf8');
+const assert = (c, m) => { if (!c) throw new Error(m); };
 assert(/"version": "3\.\d+\.\d+"/.test(read('package.json')),'package version mismatch');
 assert(/version: '3\.\d+\.\d+'/.test(read('src/config/appConfig.ts')),'app version mismatch');
 assert(fs.existsSync(path.join(root,'src/repositories/domain/PtwRepository.ts')),'PTW repository missing');

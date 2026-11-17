@@ -88,8 +88,8 @@ flowchart TD
 ## 4. Getting Started Locally
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
+- Node.js 22 or higher
+- npm 10.9.2 or compatible npm 10+
 
 ### Installation & Run
 
@@ -98,10 +98,13 @@ flowchart TD
 git clone https://github.com/SubhashProjects/PowerGIS.git
 cd PowerGIS
 
-# Install dependencies
-npm install
+# Install the exact dependency graph
+npm ci
 
-# Start development server
+# Copy .env.example to .env.local and set VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+# (public browser values only; never use service-role or gateway secrets here)
+
+# Start development server (loopback only)
 npm run dev
 ```
 
@@ -172,7 +175,7 @@ Output:
 --- TEST GROUP 7: Authentication & Test Credentials ---
   ✓ PASS: Valid official credentials login succeeds
   ✓ PASS: Session state reflects authenticated
-  ✓ PASS: Universal test password PowerGIS@2026 succeeds
+  ✓ PASS: Development-only simulator credential fixture succeeds (never used by production authentication)
   ✓ PASS: Invalid credentials strictly rejected
   ✓ PASS: 1-Click persona login authenticates contractor
   ✓ PASS: Password reset token dispatched successfully
@@ -197,15 +200,12 @@ Production assets will be output to the `dist/` folder, ready for deployment to 
 
 ## 7. Database Migrations & Supabase Setup
 
-To execute the database schema on Supabase Cloud or an In-House PostgreSQL 16 + PostGIS server:
-1. Open the Supabase SQL Editor.
-2. Run `supabase/migrations/20261108_puducherry_master_schema.sql` (Creates all tables, spatial indexes, PostGIS geometry types).
-3. Run `supabase/migrations/20261108_rls_jurisdiction_policies.sql` (Enforces zero-trust RLS jurisdiction security).
-4. Run `supabase/migrations/20261108_approval_workflow_rpc.sql` (Installs atomic staging-to-production promotion stored procedures).
-5. Run `supabase/migrations/20261108_spatial_metrics_rpc.sql` (Installs nearest pole, nearest DT, and feeder route distance calculators).
-6. Run `supabase/migrations/20261108_reliability_metrics_rpc.sql` (Installs IEEE 1366 SAIFI/SAIDI/CAIDI calculation functions).
-7. Run `supabase/migrations/20261108_asset_risk_matrix.sql` (Installs ISO 55000 asset risk matrix engine).
-8. Run `supabase/seed.sql` (Seeds all 4 regions, official user personas, substations, feeders, DTs, poles, consumers, SCADA, PTW, and stores data).
+To deploy the database on Supabase Cloud or PostgreSQL 16 + PostGIS:
+1. Back up the target database and validate the target project/environment.
+2. Apply every timestamped file in `supabase/migrations/` in lexical order using the Supabase CLI or an approved migration runner. Do not apply only the early baseline migrations.
+3. The generated `supabase/SUPABASE_ALL_IN_ONE_MASTER.sql` contains migrations only and is intended for a fresh, isolated database after review. It excludes demo seed data.
+4. `supabase/seed.sql` contains illustrative demo personas and operational fixtures. Use it only in an isolated development/staging project; never execute it in production.
+5. Configure `POWERGIS_ALLOWED_ORIGINS` and any gateway-only tokens as Supabase Edge Function secrets. Browser build variables must contain only the Supabase URL and public anon/publishable key.
 
 ---
 
@@ -230,7 +230,7 @@ Full production verification still requires installing dependencies and running 
 
 ## Latest release
 
-PowerGIS 3.12.0 – Production Architecture & Operational Reliability. See `docs/POWERGIS_V3.12.0_PRODUCTION_ARCHITECTURE.md` for implementation details, migration order, and deployment limitations.
+PowerGIS 3.15.0 — Offline GIS & Field Evidence. See `docs/POWERGIS_V3.15.0_OFFLINE_GIS_FIELD_EVIDENCE.md` for implementation details, operational boundaries, and verification instructions.
 
 
 ## PowerGIS 3.13.0 – Complete Offline-First Operations
@@ -246,3 +246,33 @@ Run the focused analysis tests with `npx tsx tests/network_intelligence.test.ts`
 ## PowerGIS 3.14.0 – GIS Network Intelligence & Topology Validation
 
 PowerGIS 3.14.0 adds feeder relationship tracing, network integrity diagnostics, disconnected conductor-graph candidates, feeder/transformer capacity screening and active consumer impact summaries. See `docs/POWERGIS_V3.14.0_NETWORK_INTELLIGENCE.md` for scope, safety boundaries and verification details.
+
+## PowerGIS 3.15.0 — Offline GIS & Field Evidence
+
+PowerGIS 3.15.0 adds a device-local Offline GIS workspace for GeoJSON work areas, explicit local edit review, and 1 MiB chunked evidence persistence with SHA-256 verification. It does not claim basemap tile caching or automatic authoritative server synchronization; see `docs/POWERGIS_V3.15.0_OFFLINE_GIS_FIELD_EVIDENCE.md` for safety boundaries and verification instructions.
+
+## PowerGIS 3.16.0 — Electrical Network Intelligence
+
+PowerGIS 3.16.0 extends the existing topology workspace with a phase-aware connected-component trace, explicit switch-state handling, phase coverage summaries, optional conductor phase/energization metadata, and stable-ID network snapshot comparison. Missing phase or switch information remains unknown; the trace is not a live electrical state estimator, directed upstream/downstream proof, protection study, or switching instruction. See `docs/POWERGIS_V3.16.0_ELECTRICAL_NETWORK_INTELLIGENCE.md` for scope and data-safety boundaries.
+
+## PowerGIS 3.17.0 — Asset Lifecycle Management
+
+The Asset Lifecycle workspace extends the canonical asset registry with backend-backed lifecycle registration, condition assessments, replacement prioritisation, expected-life tracking and append-only assessment history. Apply `supabase/migrations/20261117_asset_lifecycle_management.sql` before using lifecycle writes. See `docs/POWERGIS_V3.17.0_ASSET_LIFECYCLE_MANAGEMENT.md` for scope and deployment boundaries.
+
+## PowerGIS 3.25.0 — Enterprise Operations & Intelligence
+
+The cumulative 3.25.0 source carries forward the 3.18–3.24 operational capabilities and adds an integrated Enterprise Planning workspace. It consolidates explainable replacement, warranty, inventory and work-order exception recommendations; a straight-line depreciation estimator; and printable human-readable asset identity labels based on canonical asset IDs. Recommendations navigate to existing modules and do not mutate operational records. Financial values are estimates only; no accounting ledger posting is performed. The label is not a QR/barcode generator or scanner. See `docs/POWERGIS_V3.25.0_ENTERPRISE_OPERATIONS_INTELLIGENCE.md` for the release matrix and boundaries.
+
+The 3.25.0 verification performed for this source archive includes all static `.mjs` tests, syntax transpilation of 150 TypeScript/TSX files, relative import resolution, and ZIP integrity. A full Vite production build and live Supabase/RLS/SCADA/AMI integration tests were not run. Existing prebuilt bundles must be regenerated by running `npm ci` and `npm run build` in a deployment environment before publishing.
+
+## PowerGIS 3.32.0 — Platform Engineering & Field Operations
+
+The cumulative 3.26–3.32 release adds a Platform Engineering & Operations Centre with static navigation audit, utility integration catalogue, validated-input electrical screening calculations, jurisdiction-bound consumer connection application intake, canonical network snapshot, deployment readiness checks and a mobile field entry point to the existing Contractor PWA/Offline GIS/offline mutation queue. It also adds a read-only telemetry-ingest Edge Function for bounded, validated, duplicate-safe frames from explicitly enabled/commissioned gateway registry entries, plus an app-shell PWA manifest and service worker that excludes API/auth/storage/function requests from caching. Consumer service applications are not live consumer connections; the network snapshot is not a live digital twin; engineering results are not approved studies; and external protocol gateways remain uncommissioned. Apply `supabase/migrations/20261127_platform_evolution_326_332.sql` before enabling consumer request persistence. Run `npm run audit` for the source/navigation/import architecture audit and `npm run test:static` for the full static regression suite. See `docs/POWERGIS_V3.26_TO_V3.32_PLATFORM_EVOLUTION.md` for deployment and verification boundaries.
+
+The source-level checks include all static `.mjs` tests and runtime checks of the new pure calculation/validation services. A full dependency install, Vite production build, live Supabase/RLS validation, SCADA/AMI commissioning and Android device certification were not performed. Run `npm ci && npm run build` and deploy to a staging Supabase project before production use.
+
+## PowerGIS 3.42.0 — Completion & Stabilization Edition
+
+This is a consolidation release, not a feature expansion. It aligns release metadata and PWA cache identity, regenerates the all-in-one SQL from the ordered migration set, and adds a release-readiness audit for migration/master-SQL parity, PWA assets, version consistency, and accidental backend-secret exposure in browser-delivered source. No new product modules or user-facing workflows are introduced. See `docs/POWERGIS_V3.33_TO_V3.42_COMPLETION_STABILIZATION.md` for the scope and the explicit boundary between source-level checks and validation that still requires a live Supabase/staging environment.
+
+Run `npm run test:static` to execute the platform audit, static regression suite, and release-readiness gate. Full dependency-backed build validation requires `npm ci` followed by `npm run test:platform-runtime`, `npm test`, and `npm run build`.

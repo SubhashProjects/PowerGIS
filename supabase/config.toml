@@ -1,0 +1,4 @@
+[functions.telemetry-ingest]
+# Authentication is enforced by a dedicated gateway token stored as an Edge Function secret.
+# The service-role key remains server-side and is never returned to clients.
+verify_jwt = false

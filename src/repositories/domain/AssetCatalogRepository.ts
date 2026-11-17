@@ -27,4 +27,26 @@ export const assetCatalogRepository = {
       warranties: warranties.data ?? [], lifecycles: lifecycles.data ?? [],
     };
   },
+  async saveLifecycleAssessment(input: { lifecycle_id: string; asset_id: string; condition_score: number; replacement_priority: string; is_expired: boolean; current_age_years: number; notes: string }) {
+    if (!isSupabaseConfigured) throw new Error('BACKEND_NOT_CONFIGURED: lifecycle updates require Supabase.');
+    const { data, error } = await supabase.rpc('record_equipment_lifecycle_assessment', {
+      p_lifecycle_id: input.lifecycle_id, p_asset_id: input.asset_id, p_condition_score: input.condition_score,
+      p_replacement_priority: input.replacement_priority, p_is_expired: input.is_expired,
+      p_current_age_years: input.current_age_years, p_notes: input.notes,
+    });
+    if (error) throw error;
+    return data;
+  },
+  async createLifecycle(record: { asset_type: string; asset_id: string; asset_code: string; installation_date: string; expected_life_years: number; current_age_years: number; condition_score: number; replacement_priority: string; is_expired: boolean; section_id: string | null }) {
+    if (!isSupabaseConfigured) throw new Error('BACKEND_NOT_CONFIGURED: lifecycle records require Supabase.');
+    const { data, error } = await supabase.from('equipment_lifecycle').insert(record).select('*').single();
+    if (error) throw error;
+    return data;
+  },
+  async listLifecycleEvents(lifecycleId: string) {
+    if (!isSupabaseConfigured) throw new Error('BACKEND_NOT_CONFIGURED: lifecycle history requires Supabase.');
+    const { data, error } = await supabase.from('equipment_lifecycle_events').select('*').eq('lifecycle_id', lifecycleId).order('created_at', { ascending: false }).limit(50);
+    if (error) throw error;
+    return data ?? [];
+  },
 };

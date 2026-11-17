@@ -85,3 +85,25 @@ export function validateStrictPassword(password: string): string | null {
  const result = checkPasswordCriteria(password);
  return result.error;
 }
+
+/** Validates the shared 0–100 equipment condition index. */
+export function validateAssetConditionScore(score: number): string | null {
+ return Number.isInteger(score) && score >= 0 && score <= 100
+ ? null
+ : 'Condition score must be an integer from 0 to 100.';
+}
+
+/** Validates the expected design life used by lifecycle and replacement planning. */
+export function validateExpectedAssetLife(years: number): string | null {
+ return Number.isInteger(years) && years >= 1 && years <= 100
+ ? null
+ : 'Expected asset life must be a whole number from 1 to 100 years.';
+}
+
+/** Validates an installation date and prevents future-dated lifecycle records. */
+export function validateAssetInstallationDate(value: string, now = new Date()): string | null {
+ const date = new Date(value);
+ if (!value || Number.isNaN(date.getTime())) return 'A valid installation date is required.';
+ if (date.getTime() > now.getTime()) return 'Installation date cannot be in the future.';
+ return null;
+}

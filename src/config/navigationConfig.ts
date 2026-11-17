@@ -5,16 +5,19 @@
 // ============================================================================
 
 import {
- Map, Zap, Gauge, ShieldCheck, AlertTriangle, CheckSquare, Bell,
+ Map, Zap, Activity, Gauge, ShieldCheck, AlertTriangle, CheckSquare, Bell, HardDrive,
  Smartphone, FileCheck, Cpu, Power, GitFork, Calendar,
- BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound, LayoutDashboard, Building2
+ BarChart2, Package, CloudRain, HardHat, Target, Database, Settings, KeyRound, LayoutDashboard, Building2, Layers
 } from 'lucide-react';
 import { LABELS } from './labelsConfig';
 
 export type NavTabId =
  | 'dashboard'
  | 'gis_map'
+ | 'offline_gis'
  | 'assets'
+ | 'asset_lifecycle'
+ | 'enterprise_planning'
  | 'capital_projects'
  | 'smart_meters'
  | 'warranties'
@@ -36,7 +39,8 @@ export type NavTabId =
  | 'common'
  | 'styles'
  | 'data_quality'
- | 'notifications';
+ | 'notifications'
+ | 'platform_evolution';
 
 export type NavCategory =
  | 'Core Operations'
@@ -74,11 +78,14 @@ export const NAVIGATION_ITEMS: NavItemConfig[] = [
  // 1. Core Operations
  { id: 'dashboard', label: LABELS.navigation.dashboard, icon: LayoutDashboard, color: 'text-neutral-600', category: 'Core Operations', description: 'Personalized command center, statutory permissions, and pending assignments' },
  { id: 'gis_map', label: LABELS.navigation.gisMap, icon: Map, color: 'text-neutral-600', category: 'Core Operations', description: 'Interactive multi-basemap territorial network visualizer with 360° rotation' },
+ { id: 'offline_gis', label: 'Offline GIS', icon: HardDrive, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'contractor', 'gis_admin'], category: 'Core Operations', description: 'Offline GeoJSON work areas, reviewable field edits, and checksummed evidence storage' },
  { id: 'topology', label: LABELS.navigation.topology, icon: GitFork, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'gis_admin'], category: 'Core Operations', description: 'Upstream/downstream circuit tracing and isolation point analysis' },
  { id: 'scada', label: LABELS.navigation.scada, icon: Cpu, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'gis_admin'], category: 'Core Operations', description: 'IEC-104 live telemetry, interactive single-line diagram, and SBO breaker control' },
 
  // 2. Network & Assets
  { id: 'assets', label: LABELS.navigation.assets, icon: Zap, color: 'text-neutral-500', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'], category: 'Network & Assets', description: 'Comprehensive registry of substations, DTRs, poles, conductors, and meters' },
+ { id: 'enterprise_planning', label: 'Enterprise Planning', icon: Activity, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor'], category: 'Network & Assets', description: 'Integrated asset replacement planning, maintenance, inventory exceptions, financial estimates, and explainable recommendations' },
+ { id: 'asset_lifecycle', label: 'Asset Lifecycle', icon: Activity, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'], category: 'Network & Assets', description: 'Lifecycle registration, condition assessments, replacement priorities, and assessment history' },
  { id: 'dt_loading', label: LABELS.navigation.dtLoading, icon: BarChart2, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'gis_admin'], category: 'Network & Assets', description: 'Distribution transformer thermal loading, phase imbalance, and loss analysis' },
  { id: 'smart_meters', label: LABELS.navigation.smartMeters, icon: Gauge, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'], category: 'Network & Assets', description: 'AMI telecommunications, power quality analytics, and tamper alerts' },
  { id: 'warranties', label: LABELS.navigation.warranties, icon: ShieldCheck, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'auditor'], category: 'Network & Assets', description: 'Asset warranty tracking, vendor claims, and replacement alerts' },
@@ -105,4 +112,5 @@ export const NAVIGATION_ITEMS: NavItemConfig[] = [
  { id: 'data_quality', label: 'Data Quality', icon: AlertTriangle, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'], category: 'Governance & Security', description: 'Operational data validation, integrity exceptions, and remediation queue' },
  { id: 'common', label: 'Common', icon: KeyRound, color: 'text-neutral-600', roles: ['super_admin'], category: 'Governance & Security', description: 'Shared labels, text, values, validators, and domain conventions' },
  { id: 'styles', label: 'Styles', icon: Settings, color: 'text-neutral-600', roles: ['super_admin'], category: 'Governance & Security', description: 'Application design system, typography, neutral tokens, UI components, and mobile rules' },
+ { id: 'platform_evolution', label: 'Platform Engineering', icon: Layers, color: 'text-neutral-600', roles: ['super_admin', 'se', 'ee', 'aee', 'ae', 'je', 'auditor', 'gis_admin'], category: 'Governance & Security', description: 'Architecture audit, integration catalogue, engineering calculations, consumer service requests, network snapshot, deployment checks and field operations' },
 ];

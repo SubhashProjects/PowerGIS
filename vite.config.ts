@@ -13,6 +13,9 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: true,
+    // The Vite dev server must never be exposed to untrusted networks.
+    host: '127.0.0.1',
+    strictPort: true,
+    fs: { strict: true },
   },
 });

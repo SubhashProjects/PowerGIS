@@ -107,6 +107,8 @@ export class ScadaService {
  const isSimulated = tag.startsWith('SIM_') || tag.includes('SIM');
  const point = this.getPoints('ALL', true).find(p => p.tag === tag);
  if (!point) return false;
+ // Unknown or non-GOOD telemetry is never a valid basis for even simulator toggle logic.
+ if (point.breakerStatus === 'UNKNOWN' || point.quality !== 'GOOD') return false;
 
  // CRITICAL SAFETY AIR GAP: Disallow operational physical breaker operations via web interface
  if (!isSimulated) {

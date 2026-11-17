@@ -16,6 +16,7 @@ import { scadaSimulatorService } from './scadaSimulatorService';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { isSimulatorRuntimeAllowed } from '../repositories/repositoryFactory';
 import { assetCatalogRepository } from '../repositories/domain/AssetCatalogRepository';
+import { validateAssetConditionScore, validateAssetInstallationDate, validateExpectedAssetLife } from '../commons/validators';
 
 export class AssetService {
  private static instance: AssetService;
@@ -279,6 +280,38 @@ export class AssetService {
  public getCriticalReplacementAssets(includeSimulated = false): EquipmentLifecycleRecord[] {
  return this.getLifecycles(includeSimulated).filter(l => l.replacementPriority === 'Critical' || l.isExpired);
  }
+
+ public async assessLifecycle(id: string, conditionScore: number, replacementPriority: EquipmentLifecycleRecord['replacementPriority'], notes: string): Promise<void> {
+ const scoreError = validateAssetConditionScore(conditionScore);
+ if (scoreError) throw new Error(scoreError);
+ if (!isSupabaseConfigured) throw new Error('Lifecycle assessments require a configured Supabase backend. No local-only operational update was made.');
+ const current = this.getLifecycles().find(item => item.id === id);
+ if (!current) throw new Error('Lifecycle record was not found in the current jurisdiction.');
+ const installation = new Date(current.installationDate);
+ const age = Number.isNaN(installation.getTime()) ? current.currentAgeYears : Math.max(0, (Date.now() - installation.getTime()) / (365.25 * 86400000));
+ const expired = age >= current.expectedLifeYears;
+ const saved = await assetCatalogRepository.saveLifecycleAssessment({ lifecycle_id: id, asset_id: current.assetId, condition_score: conditionScore, replacement_priority: replacementPriority, is_expired: expired, current_age_years: Number(age.toFixed(2)), notes: notes.trim() });
+ const row = Array.isArray(saved) ? saved[0] : saved;
+ this.lifecycles = this.lifecycles.map(item => item.id === id ? { ...item, conditionScore: Number(row.condition_score), replacementPriority: row.replacement_priority, isExpired: Boolean(row.is_expired), currentAgeYears: Number(row.current_age_years) } : item);
+ this.notifyListeners();
+ }
+
+ public async registerLifecycle(record: Omit<EquipmentLifecycleRecord, 'id' | 'currentAgeYears' | 'isExpired'>): Promise<void> {
+ if (!isSupabaseConfigured) throw new Error('Lifecycle registration requires a configured Supabase backend.');
+ const dateError = validateAssetInstallationDate(record.installationDate);
+ const lifeError = validateExpectedAssetLife(record.expectedLifeYears);
+ const scoreError = validateAssetConditionScore(record.conditionScore);
+ if (dateError || lifeError || scoreError) throw new Error([dateError, lifeError, scoreError].filter(Boolean).join(' '));
+ if (this.getLifecycles().some(item => item.assetId === record.assetId)) throw new Error('This asset already has a lifecycle record.');
+ const installed = new Date(record.installationDate);
+ const age = Math.max(0, (Date.now() - installed.getTime()) / (365.25 * 86400000));
+ const expired = age >= record.expectedLifeYears;
+ const saved = await assetCatalogRepository.createLifecycle({ asset_type: record.assetType, asset_id: record.assetId, asset_code: record.assetCode, installation_date: record.installationDate, expected_life_years: record.expectedLifeYears, current_age_years: Number(age.toFixed(2)), condition_score: record.conditionScore, replacement_priority: record.replacementPriority, is_expired: expired, section_id: record.sectionId || null });
+ this.lifecycles = [...this.lifecycles, { id: saved.id, assetType: saved.asset_type, assetId: saved.asset_id, assetCode: saved.asset_code, installationDate: saved.installation_date, expectedLifeYears: Number(saved.expected_life_years), currentAgeYears: Number(saved.current_age_years ?? 0), conditionScore: Number(saved.condition_score ?? 0), replacementPriority: saved.replacement_priority, isExpired: Boolean(saved.is_expired), sectionId: saved.section_id ?? '' }];
+ this.notifyListeners();
+ }
+
+ public getLifecycleHistory(id: string) { return assetCatalogRepository.listLifecycleEvents(id); }
 
  // --- Global Asset Search ---
  public searchAssets(query: string): Array<{ id: string; code: string; name: string; type: string; coordinates?: [number, number] }> {

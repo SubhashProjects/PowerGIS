@@ -142,7 +142,7 @@ export interface ScadaTelemetryPoint {
  windingTempC?: number;
  oilTempC?: number;
  tapPosition?: number;
- breakerStatus: 'CLOSED' | 'OPEN' | 'TRIPPED';
+ breakerStatus: 'CLOSED' | 'OPEN' | 'TRIPPED' | 'UNKNOWN';
  quality: ScadaTelemetryQuality;
  lastUpdated: string;
  eventTimestamp?: string;

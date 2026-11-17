@@ -14,7 +14,8 @@ import { assetService } from '../../services/assetService';
 import { authService } from '../../services/authService';
 import { UserProfile } from '../../types/auth';
 import { LABELS, validateEmail } from '../../commons';
-import { isSupabaseConfigured, saveSupabaseConfig, clearSupabaseConfig } from '../../lib/supabase';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { isSimulatorRuntimeAllowed } from '../../repositories/repositoryFactory';
 import {
   Zap,
   KeyRound,
@@ -27,7 +28,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Search,
-  Settings,
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -59,12 +59,6 @@ export const LoginPage: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
   const [passwordUpdateMsg, setPasswordUpdateMsg] = useState<string | null>(null);
-
-  // Supabase Backend configuration modal state
-  const [showConfigModal, setShowConfigModal] = useState(false);
-  const [supabaseUrlInput, setSupabaseUrlInput] = useState('');
-  const [supabaseAnonKeyInput, setSupabaseAnonKeyInput] = useState('');
-  const [configError, setConfigError] = useState<string | null>(null);
 
   // --------------------------------------------------------------------------
   // EVENT HANDLERS
@@ -108,15 +102,15 @@ export const LoginPage: React.FC = () => {
       if (!res.success) {
         setError(res.error || 'Authentication failed. Please verify statutory credentials.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsLoading(false);
-      setError(err?.message || 'Authentication error occurred during statutory verification.');
+      setError(err instanceof Error ? err.message : 'Authentication error occurred during statutory verification.');
     }
   };
 
   // 1-Click Login from Demo Sandbox: sets simulator mode ON and logs in immediately
   const handleOneClickLogin = (u: UserProfile) => {
-    if (!(import.meta as any).env?.DEV && isSupabaseConfigured) return;
+    if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) return;
     setIsLoading(true);
     assetService.setSimulatorMode(true);
     setTimeout(() => {
@@ -165,8 +159,8 @@ export const LoginPage: React.FC = () => {
         return;
       }
       setForgotFeedback(result.message);
-    } catch (resetError: any) {
-      setForgotError(resetError?.message || 'Unable to request password reset.');
+    } catch (resetError: unknown) {
+      setForgotError(resetError instanceof Error ? resetError.message : 'Unable to request password reset.');
       setForgotFeedback(null);
     }
   };
@@ -223,7 +217,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             {/* Quick Demo Sandbox Action */}
-            {((import.meta as any).env?.DEV || !isSupabaseConfigured) && (
+            {isSimulatorRuntimeAllowed() && !isSupabaseConfigured && (
               <button
                 type="button"
                 onClick={() => setCurrentView('demo')}
@@ -236,39 +230,14 @@ export const LoginPage: React.FC = () => {
             )}
           </div>
 
-          {/* Supabase Connection Status Banner */}
-          {!isSupabaseConfigured ? (
-            <div className="mb-4 p-2.5 rounded-md bg-neutral-50/80 border border-neutral-200 text-neutral-900 text-xs">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-bold flex items-center gap-1.5 text-neutral-900">
-                  <span className="w-2 h-2 rounded-full bg-neutral-500 animate-pulse flex-shrink-0" />
-                  Standalone Simulator Mode
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setShowConfigModal(true)}
-                  className="font-mono text-[10px] font-semibold text-neutral-800 bg-white px-2 py-0.5 rounded border border-neutral-300 hover:bg-neutral-50 transition-colors cursor-pointer"
-                >
-                  Connect Supabase
-                </button>
-              </div>
-              <p className="text-[11px] text-neutral-600 leading-snug">
-                Backend auth is not configured. Click <button type="button" onClick={() => setCurrentView('demo')} className="font-semibold text-neutral-900 underline hover:text-black">Demo Roles</button> for 1-click login, or sign in with test credentials (<span className="font-mono">superadmin@powergis.internal</span> / <span className="font-mono">PowerGIS@2026</span>).
+          {/* Backend configuration is deployment-managed; browser users cannot change trust roots. */}
+          {!isSupabaseConfigured && (
+            <div className="mb-4 p-2.5 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-800 text-xs">
+              <span className="font-bold">Backend not configured</span>
+              <p className="mt-1 text-[11px] text-neutral-600 leading-snug">
+                A deployment administrator must configure the public Supabase URL and publishable key through the deployment environment, then rebuild the application.
+                {isSimulatorRuntimeAllowed() ? ' Development simulator mode is available in this build.' : ' Authentication is unavailable until the production backend is configured.'}
               </p>
-            </div>
-          ) : (
-            <div className="mb-4 p-2 rounded-md bg-neutral-50 border border-neutral-200 text-neutral-800 text-[11px] flex items-center justify-between">
-              <span className="flex items-center gap-1.5 font-medium">
-                <span className="w-2 h-2 rounded-full bg-neutral-500" />
-                Supabase Backend Connected
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowConfigModal(true)}
-                className="font-mono text-[10px] text-neutral-800 hover:underline cursor-pointer"
-              >
-                Change
-              </button>
             </div>
           )}
 
@@ -565,105 +534,7 @@ export const LoginPage: React.FC = () => {
         </div>
       )}
 
-      {/* Supabase Backend Configuration Modal */}
-      {showConfigModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-[#E4E4E4] rounded-md p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E4E4E4]">
-              <div className="flex items-center space-x-2">
-                <Settings className="w-4 h-4 text-neutral-700" />
-                <h2 className="text-sm font-bold text-neutral-950">Supabase Backend Configuration</h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowConfigModal(false)}
-                className="text-neutral-400 hover:text-neutral-700 text-xs cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
 
-            <p className="text-xs text-neutral-600 leading-relaxed">
-              Connect this PowerGIS deployment to your Supabase project. Enter your Project URL and public Anon Key from your Supabase Dashboard: <strong>Project Settings &rarr; API</strong>.
-            </p>
-
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-neutral-800 mb-1">
-                  Supabase Project URL
-                </label>
-                <input
-                  type="text"
-                  value={supabaseUrlInput}
-                  onChange={e => setSupabaseUrlInput(e.target.value)}
-                  placeholder="https://xyzcompany.supabase.co"
-                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-xs font-mono text-neutral-950 focus:outline-none focus:border-neutral-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-neutral-800 mb-1">
-                  Supabase Anon Key
-                </label>
-                <textarea
-                  rows={3}
-                  value={supabaseAnonKeyInput}
-                  onChange={e => setSupabaseAnonKeyInput(e.target.value)}
-                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-xs font-mono text-neutral-950 focus:outline-none focus:border-neutral-900"
-                />
-              </div>
-
-              {configError && (
-                <div className="p-2 text-xs text-neutral-600 bg-neutral-50 border border-neutral-200 rounded">
-                  {configError}
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between pt-3 border-t border-[#E4E4E4]">
-              {isSupabaseConfigured ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    clearSupabaseConfig();
-                  }}
-                  className="px-3 py-1.5 rounded-md text-xs text-neutral-600 hover:bg-neutral-50 border border-neutral-200 transition-colors cursor-pointer"
-                >
-                  Disconnect
-                </button>
-              ) : <div />}
-
-              <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setShowConfigModal(false)}
-                  className="px-3 py-1.5 rounded-md text-xs text-neutral-600 hover:bg-neutral-100 border border-neutral-300 transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!supabaseUrlInput.trim() || !supabaseAnonKeyInput.trim()) {
-                      setConfigError('Please enter both Supabase Project URL and Anon Key.');
-                      return;
-                    }
-                    if (!supabaseUrlInput.startsWith('https://') && !supabaseUrlInput.startsWith('http://')) {
-                      setConfigError('Supabase URL must start with https://');
-                      return;
-                    }
-                    saveSupabaseConfig(supabaseUrlInput.trim(), supabaseAnonKeyInput.trim());
-                  }}
-                  className="px-3.5 py-1.5 rounded-md text-xs font-bold text-white bg-[#090909] hover:bg-neutral-800 transition-colors cursor-pointer"
-                >
-                  Save & Connect
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

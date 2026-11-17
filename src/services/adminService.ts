@@ -35,7 +35,6 @@ export class AdminService {
 
  async updateUser(id: string, updates: Partial<UserProfile> & { password?: string }): Promise<UserProfile> {
  if (!isSupabaseConfigured) throw new Error('Supabase is not configured.');
- // Invokes server-side Auth administration workflow via adminRepository (admin-update-user)
  const { password, ...profileUpdates } = updates;
  const data = await adminRepository.updateUser({
  action: 'update', userId: id, password,

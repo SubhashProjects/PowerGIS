@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = p => fs.readFileSync(path.join(root, p), 'utf8');
+const pkg = JSON.parse(read('package.json'));
+assert.match(pkg.version, /^3\.\d+\.\d+$/);
+assert.equal(JSON.parse(read('package-lock.json')).version, pkg.version);
+assert.match(read('src/config/appConfig.ts'), /version:\s*'3\.\d+\.\d+'/);
+const service = read('src/services/offlineGISService.ts');
+for (const token of ['indexedDB.open', 'FeatureCollection', 'queueFeatureEdit', 'markConflict', 'CHUNK_SIZE = 1024 * 1024', 'SHA-256', 'restoreEvidence', 'resumeEvidence']) assert.ok(service.includes(token), `Missing offline GIS capability: ${token}`);
+const ui = read('src/components/gis/OfflineGISWorkspace.tsx');
+for (const token of ['Import GeoJSON', 'Export', 'Field evidence vault', 'Verify & restore', 'Offline edit review', 'server record was changed']) assert.ok(ui.includes(token), `Missing UI behavior: ${token}`);
+assert.match(read('src/config/navigationConfig.ts'), /'offline_gis'/);
+assert.match(read('src/App.tsx'), /activeTab === 'offline_gis'/);
+console.log('PowerGIS 3.15.0 offline GIS architecture checks passed.');

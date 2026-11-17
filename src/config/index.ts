@@ -11,3 +11,4 @@ export * from './rbacConfig';
 export * from './workflowConfig';
 export * from './navigationConfig';
 export * from './labelsConfig';
+export * from './runtimeConfig';

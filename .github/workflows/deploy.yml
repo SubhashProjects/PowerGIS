@@ -28,11 +28,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Audit dependency vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Run platform architecture audit and static regression suite
+        run: npm run test:static
+
+      - name: Run engineering calculation runtime tests
+        run: npm run test:platform-runtime
 
       - name: Run automated test suite
         run: npm test

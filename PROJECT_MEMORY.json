@@ -1,14 +1,15 @@
 {
   "project": {
     "name": "PowerGIS Enterprise GIS Platform",
-    "version": "2.0.0-PROD",
+    "version": "3.42.0",
     "architecture": "Modular Pure White & Vibrant Color Utility Architecture (SSOT)",
     "mission": "Mission-critical electrical distribution GIS, SCADA integration, 8-stage breakdown ticketing, and RDSS capital works for Puducherry Union Territory",
     "gitHubPages": "https://subhashprojects.github.io/PowerGIS/",
     "remotes": {
       "subhash": "https://github.com/SubhashProjects/PowerGIS.git",
       "origin": "https://github.com/sv007git/PowerGIS.git"
-    }
+    },
+    "edition": "Completion & Stabilization Edition"
   },
   "changeRoutingTable": {
     "ColorsAndTheme": "src/config/themeConfig.ts",
@@ -20,119 +21,219 @@
     "MockDataInitialSeed": "src/services/mockData.ts",
     "SpatialCalculationMath": "src/lib/geoUtils.ts",
     "UserAccountsAndRBACCRUD": "src/services/authService.ts",
-    "UITextLabelsAndLocalization": "src/config/labelsConfig.ts"
+    "UITextLabelsAndLocalization": "src/config/labelsConfig.ts",
+    "PlatformEvolutionAndFieldOperations": "src/components/platform/PlatformEvolutionCenter.tsx",
+    "EngineeringCalculations": "src/services/platformEvolutionService.ts"
   },
   "moduleRegistry": {
     "config": {
       "src/config/labelsConfig.ts": {
         "purpose": "Single Source of Truth for all user-facing text labels across the entire application (common, header, scopeHUD, zeroTrustGate, navigation, dashboard, admin, gisMap, assets, faults, workOrders, surveys, scada, outages, dataExchange).",
-        "exports": ["LABELS", "LabelsConfig"]
+        "exports": [
+          "LABELS",
+          "LabelsConfig"
+        ]
       },
       "src/config/appConfig.ts": {
         "purpose": "Application identity, regional enclaves (Puducherry, Karaikal, Mahe, Yanam), default coordinates, zoom levels, telemetry intervals, and security passwords.",
-        "exports": ["RegionalEnclave", "APP_CONFIG"]
+        "exports": [
+          "RegionalEnclave",
+          "APP_CONFIG"
+        ]
       },
       "src/config/themeConfig.ts": {
         "purpose": "Design tokens, primary/accent/success/warning gradients, hex colors, role badges, getPriorityStyle(), and getStatusStyle() helper functions.",
-        "exports": ["THEME_CONFIG"]
+        "exports": [
+          "THEME_CONFIG"
+        ]
       },
       "src/config/basemapConfig.ts": {
         "purpose": "8 Vibrant Color Basemaps (Google, OSM, Esri), default basemap ID (google_roadmap), URL templates, attributions, and category color badges.",
-        "exports": ["DEFAULT_BASEMAP_ID", "BASEMAP_PROVIDERS", "getBasemapCategoryBadge"]
+        "exports": [
+          "DEFAULT_BASEMAP_ID",
+          "BASEMAP_PROVIDERS",
+          "getBasemapCategoryBadge"
+        ]
       },
       "src/config/rbacConfig.ts": {
         "purpose": "16 utility roles registry, hierarchy tiers, default jurisdictions, privilege tags, and granular permission flags.",
-        "exports": ["RoleDefinition", "ROLES_REGISTRY", "getRoleDefinition"]
+        "exports": [
+          "RoleDefinition",
+          "ROLES_REGISTRY",
+          "getRoleDefinition"
+        ]
       },
       "src/config/workflowConfig.ts": {
         "purpose": "8-stage fault progression lifecycle, IEEE/JERC SLA allowed hours (4h, 8h, 24h, 72h), and 5-column work order Kanban board definitions.",
-        "exports": ["SLA_HOURS", "StageDefinition", "FAULT_LIFECYCLE_STAGES", "getStageIndex", "KanbanColumnDef", "WORK_ORDER_COLUMNS"]
+        "exports": [
+          "SLA_HOURS",
+          "StageDefinition",
+          "FAULT_LIFECYCLE_STAGES",
+          "getStageIndex",
+          "KanbanColumnDef",
+          "WORK_ORDER_COLUMNS"
+        ]
       },
       "src/config/navigationConfig.ts": {
         "purpose": "Central routing table for 22 navigation tabs, icon components, role access arrays, color accents, and descriptions.",
-        "exports": ["NavTabId", "NavItemConfig", "NAVIGATION_ITEMS"]
+        "exports": [
+          "NavTabId",
+          "NavItemConfig",
+          "NAVIGATION_ITEMS"
+        ]
       },
       "src/config/index.ts": {
         "purpose": "Barrel export for all configuration files.",
-        "exports": ["* from appConfig, themeConfig, basemapConfig, rbacConfig, workflowConfig, navigationConfig, labelsConfig"]
+        "exports": [
+          "* from appConfig, themeConfig, basemapConfig, rbacConfig, workflowConfig, navigationConfig, labelsConfig"
+        ]
       }
     },
     "context": {
       "src/context/AuthContext.tsx": {
         "purpose": "Zero-trust session state, active user profile, login, fast persona switcher, and role state management.",
-        "exports": ["AuthProvider", "useAuth"]
+        "exports": [
+          "AuthProvider",
+          "useAuth"
+        ]
       },
       "src/context/GISContext.tsx": {
-        "purpose": "Map state provider: current basemap, active layers, measurement tool (distance/area), region flyTo, selected asset, map bearing (0-360°), and rotation.",
-        "exports": ["GISProvider", "useGIS"]
+        "purpose": "Map state provider: current basemap, active layers, measurement tool (distance/area), region flyTo, selected asset, map bearing (0-360\u00b0), and rotation.",
+        "exports": [
+          "GISProvider",
+          "useGIS"
+        ]
       }
     },
     "services": {
       "src/services/gisService.ts": {
         "purpose": "GIS service bridge importing availableBasemaps and region coordinates from src/config.",
-        "exports": ["availableBasemaps", "defaultBasemapId", "initialGISLayers", "regionCoordinates"]
+        "exports": [
+          "availableBasemaps",
+          "defaultBasemapId",
+          "initialGISLayers",
+          "regionCoordinates"
+        ]
       },
       "src/services/authService.ts": {
         "purpose": "Authentication, user credential validation, role permissions calculation, and jurisdiction lookup.",
-        "exports": ["authService"]
+        "exports": [
+          "authService"
+        ]
       },
       "src/services/faultService.ts": {
         "purpose": "8-stage fault ticket CRUD, status progression, crew assignment, and distance calculation trigger.",
-        "exports": ["faultService"]
+        "exports": [
+          "faultService"
+        ]
       },
       "src/services/scadaService.ts": {
         "purpose": "IEC 60870-5-104 & Modbus telemetry simulator, Select-Before-Operate (SBO) breaker command dispatch, and alarm feed.",
-        "exports": ["scadaService"]
+        "exports": [
+          "scadaService"
+        ]
       },
       "src/services/surveyService.ts": {
         "purpose": "Contractor staging sandbox, multi-tier survey verification (JE check -> AE approval), and live GIS asset promotion.",
-        "exports": ["surveyService"]
+        "exports": [
+          "surveyService"
+        ]
       },
       "src/services/assetService.ts": {
         "purpose": "Electrical asset inventory search, filtering by region/voltage, and GIS spatial coordinate linking.",
-        "exports": ["assetService"]
+        "exports": [
+          "assetService"
+        ]
       },
       "src/services/notificationService.ts": {
         "purpose": "Role-based dashboard metrics, pending assignments, notifications feed, and read/unread state tracking.",
-        "exports": ["notificationService"]
+        "exports": [
+          "notificationService"
+        ]
       },
       "src/services/dataExchangeService.ts": {
         "purpose": "GeoJSON, CSV, and Shapefile import/export engine with schema validation and duplicate detection.",
-        "exports": ["dataExchangeService"]
+        "exports": [
+          "dataExchangeService"
+        ]
       },
       "src/services/reliabilityService.ts": {
         "purpose": "IEEE 1366 reliability indices calculation (SAIFI, SAIDI, CAIDI, and Energy Not Served).",
-        "exports": ["reliabilityService"]
+        "exports": [
+          "reliabilityService"
+        ]
       },
       "src/services/riskService.ts": {
-        "purpose": "ISO 55000 asset risk scoring (Probability of Failure × Consequence of Failure) and action planning.",
-        "exports": ["riskService"]
+        "purpose": "ISO 55000 asset risk scoring (Probability of Failure \u00d7 Consequence of Failure) and action planning.",
+        "exports": [
+          "riskService"
+        ]
       },
       "src/services/mockData.ts": {
         "purpose": "Real-world Puducherry grid seed dataset: substations, 22kV/11kV feeders, DTRs, poles, smart meters, faults, work orders.",
-        "exports": ["initialUsers", "initialSubstations", "initialFeeders", "initialTransformers", "initialPoles", "initialConsumers", "initialFaults", "initialWorkOrders"]
+        "exports": [
+          "initialUsers",
+          "initialSubstations",
+          "initialFeeders",
+          "initialTransformers",
+          "initialPoles",
+          "initialConsumers",
+          "initialFaults",
+          "initialWorkOrders"
+        ]
+      },
+      "src/services/platformEvolutionService.ts": {
+        "purpose": "Static navigation audit, engineering screening calculations, integration catalogue, consumer service request validation, and canonical network snapshot summarization.",
+        "exports": [
+          "auditNavigationConfiguration",
+          "calculateVoltageDrop",
+          "calculateTransformerLoading",
+          "calculatePhaseImbalance",
+          "calculateThreePhaseShortCircuit",
+          "INTEGRATION_CATALOG",
+          "validateConsumerServiceRequest",
+          "summarizeNetworkSnapshot"
+        ]
+      },
+      "src/services/consumerService.ts": {
+        "purpose": "Jurisdiction-scoped consumer service request intake and listing through the repository layer.",
+        "exports": [
+          "listConsumerServiceRequests",
+          "submitConsumerServiceRequest",
+          "NewConsumerServiceRequest"
+        ]
       }
     },
     "lib": {
       "src/lib/geoUtils.ts": {
         "purpose": "Haversine geodesic distance, polygon area, nearest pole/DT computation, feeder line projection, and coordinate rotation translation.",
-        "exports": ["calculateHaversineDistance", "calculatePolygonArea", "findNearestPoint", "projectPointOnLineString", "rotatePoint"]
+        "exports": [
+          "calculateHaversineDistance",
+          "calculatePolygonArea",
+          "findNearestPoint",
+          "projectPointOnLineString",
+          "rotatePoint"
+        ]
       },
       "src/lib/offlineQueue.ts": {
         "purpose": "IndexedDB / localStorage offline survey queue for field crews with auto-sync when online.",
-        "exports": ["offlineQueue"]
+        "exports": [
+          "offlineQueue"
+        ]
       },
       "src/lib/supabase.ts": {
         "purpose": "Supabase PostgreSQL / PostGIS 3.4 client initialization and real-time subscription channels.",
-        "exports": ["supabase"]
+        "exports": [
+          "supabase"
+        ]
       }
     },
     "components": {
       "gis": {
-        "src/components/gis/MasterMap.tsx": "Full-screen Leaflet GIS map with 360° canvas rotation, SVG single-line overlay, and attribute synchronization.",
+        "src/components/gis/MasterMap.tsx": "Full-screen Leaflet GIS map with 360\u00b0 canvas rotation, SVG single-line overlay, and attribute synchronization.",
         "src/components/gis/BasemapSwitcher.tsx": "Multi-vendor colorful basemap launcher (Google Roadmap default, OSM, Esri).",
         "src/components/gis/LayerTree.tsx": "Floating overlay switcher (Substations, HT/LT Feeders, DTRs, Poles, Smart Meters).",
-        "src/components/gis/MapRotationControl.tsx": "Compass dial, angle slider (0-359°), cardinal presets, and North reset button.",
+        "src/components/gis/MapRotationControl.tsx": "Compass dial, angle slider (0-359\u00b0), cardinal presets, and North reset button.",
         "src/components/gis/MeasureTool.tsx": "Interactive point-to-point distance and polygon area measuring tool.",
         "src/components/gis/MapAttributeDrawer.tsx": "Bottom synchronized asset attribute drawer with real-time flyTo and specs."
       },
@@ -150,7 +251,7 @@
         "src/components/faults/FaultList.tsx": "8-stage breakdown ticket management, live IEEE SLA countdown timers, and geodesic proximity box.",
         "src/components/workOrders/WorkOrderKanban.tsx": "5-column maintenance task Kanban board consuming WORK_ORDER_COLUMNS from src/config.",
         "src/components/scada/ScadaTelemetryDashboard.tsx": "IEC-104 telemetry, interactive substation SLD with Select-Before-Operate (SBO) remote breaker control.",
-        "src/components/projects/CapitalProjectsRDSS.tsx": "RDSS capital works tracker with physical progress (%) vs financial expenditure (₹ Cr) milestones.",
+        "src/components/projects/CapitalProjectsRDSS.tsx": "RDSS capital works tracker with physical progress (%) vs financial expenditure (\u20b9 Cr) milestones.",
         "src/components/surveys/ContractorPWA.tsx": "Mobile field survey PWA interface with GPS capture and photo staging.",
         "src/components/surveys/SurveyApprovalQueue.tsx": "Multi-tier verification queue (JE check -> AE approval -> live GIS promotion).",
         "src/components/smartMeters/SmartMeterDashboard.tsx": "AMI smart metering telecommunications, load profiles, and tamper detection.",
@@ -165,7 +266,25 @@
         "src/components/disaster/DisasterResponseCell.tsx": "Cyclone and flood emergency response planning and restoration cell.",
         "src/components/admin/AdminControlPanel.tsx": "User management, role assignment, and zero-trust RLS security administration.",
         "src/components/auth/LoginPage.tsx": "Official staff login and 1-click persona switcher."
-      }
+      },
+      "src/components/platform/PlatformEvolutionCenter.tsx": "Platform Engineering & Operations Centre for releases 3.26\u20133.32: architecture audit, integration catalogue, engineering calculators, consumer service requests, network snapshot, deployment readiness and mobile field operations entry points."
+    },
+    "pwa": {
+      "src/pwa/registerServiceWorker.ts": "Secure-context production registration for the app-shell service worker; registration errors never block application startup."
+    },
+    "edgeFunctions": {
+      "supabase/functions/telemetry-ingest/index.ts": "Read-only secured gateway telemetry ingress with bounded JSON body, token check, enabled gateway allowlist, optional tag namespace, measurement/timestamp validation and idempotent historian writes."
+    },
+    "migrations": {
+      "supabase/migrations/20261127_platform_evolution_326_332.sql": "Consumer service request intake RLS, integration endpoint metadata registry, widened SCADA historian precision and source-event duplicate protection."
     }
-  }
+  },
+  "version": "3.42.0",
+  "release_history": [
+    {
+      "version": "3.42.0",
+      "edition": "Completion & Stabilization Edition",
+      "scope": "No new product features. Release consistency, static release gates, migration/master SQL parity, PWA cache version alignment and deployment-boundary documentation."
+    }
+  ]
 }

@@ -1,75 +1,37 @@
-// ============================================================================
-// POWERGIS ENTERPRISE ELECTRICITY DISTRIBUTION GIS PLATFORM
-// SUPABASE CLIENT & REACTIVE DATA STORE
-// ============================================================================
-
+/** Central Supabase client. Only build-time public configuration is trusted. */
 import { createClient } from '@supabase/supabase-js';
+import { RUNTIME_CONFIG } from '../config/runtimeConfig';
 
-// Safe resolution of environment variables across Vite, browser & Node.js test runners
-const getEnvVar = (key: string): string | undefined => {
-  try {
-    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
-      const val = (import.meta as any).env[key];
-      if (val && typeof val === 'string' && !val.includes('YOUR_PROJECT_REF')) {
-        return val;
-      }
-    }
-  } catch {}
-  try {
-    const g = typeof globalThis !== 'undefined' ? (globalThis as any) : undefined;
-    if (g && g.process && g.process.env) {
-      const val = g.process.env[key];
-      if (val && typeof val === 'string' && !val.includes('YOUR_PROJECT_REF')) {
-        return val;
-      }
-    }
-  } catch {}
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const val = window.localStorage.getItem(`powergis_${key.toLowerCase()}`) ||
-                  window.localStorage.getItem(key.toLowerCase()) ||
-                  window.localStorage.getItem(key);
-      if (val && typeof val === 'string' && !val.includes('YOUR_PROJECT_REF')) {
-        return val;
-      }
-    }
-  } catch {}
-  return undefined;
-};
+const configuredUrl = RUNTIME_CONFIG.supabaseUrl;
+const configuredAnonKey = RUNTIME_CONFIG.supabaseAnonKey;
 
-const SUPABASE_URL = getEnvVar('VITE_SUPABASE_URL');
-const SUPABASE_ANON_KEY = getEnvVar('VITE_SUPABASE_ANON_KEY');
+function isAllowedSupabaseUrl(value: string | undefined): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    const isHttps = url.protocol === 'https:';
+    const isLocalDevelopment = RUNTIME_CONFIG.isDevelopment &&
+      (url.hostname === 'localhost' || url.hostname === '127.0.0.1') &&
+      url.protocol === 'http:';
+    return (isHttps || isLocalDevelopment) && url.username === '' && url.password === '';
+  } catch {
+    return false;
+  }
+}
 
 export const isSupabaseConfigured = Boolean(
-  SUPABASE_URL && SUPABASE_ANON_KEY
+  isAllowedSupabaseUrl(configuredUrl) && configuredAnonKey &&
+  !configuredAnonKey.includes('YOUR_') && !configuredAnonKey.includes('PLACEHOLDER'),
 );
 
-// A loopback placeholder prevents accidental traffic to an unintended project.
-// All production operations must check isSupabaseConfigured before using this client.
-export const supabase = createClient(SUPABASE_URL || 'http://127.0.0.1:54321', SUPABASE_ANON_KEY || 'powergis-not-configured', {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
+// Keep imports stable in simulator builds without ever targeting a real service.
+// All repository/service entry points must check isSupabaseConfigured first.
+export const supabase = createClient(
+  isSupabaseConfigured ? configuredUrl! : 'https://powergis-not-configured.invalid',
+  isSupabaseConfigured ? configuredAnonKey! : 'configuration-required',
+  {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    realtime: { params: { eventsPerSecond: 10 } },
+    global: { headers: { 'X-Client-Info': 'powergis-web' } },
   },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
-});
-
-export const saveSupabaseConfig = (url: string, anonKey: string): void => {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    window.localStorage.setItem('powergis_vite_supabase_url', url.trim());
-    window.localStorage.setItem('powergis_vite_supabase_anon_key', anonKey.trim());
-    window.location.reload();
-  }
-};
-
-export const clearSupabaseConfig = (): void => {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    window.localStorage.removeItem('powergis_vite_supabase_url');
-    window.localStorage.removeItem('powergis_vite_supabase_anon_key');
-    window.location.reload();
-  }
-};
+);

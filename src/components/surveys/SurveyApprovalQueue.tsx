@@ -7,6 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { surveyService } from '../../services/surveyService';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { SurveySubmission } from '../../types/surveys';
 import {
  FileCheck, CheckCircle2, XCircle, AlertTriangle, ShieldCheck,
@@ -23,7 +24,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  const [isBusy, setIsBusy] = useState(false);
 
  useEffect(() => {
- if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
+ if (isSupabaseConfigured) {
  surveyService.loadFromSupabase().then(refresh).catch(error => setFeedbackMsg(error?.message || 'Unable to load survey approvals from Supabase.'));
  }
  }, []);
@@ -41,7 +42,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  if (!selectedSub) return;
  setIsBusy(true);
  try {
- if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
+ if (isSupabaseConfigured) {
  await surveyService.jeVerifyAsync(selectedSub.id, 'Inspected coordinates on site; approved at JE stage');
  } else {
  surveyService.jeVerify(selectedSub.id, 'Inspected coordinates on site; approved at JE stage');
@@ -60,7 +61,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  if (!selectedSub) return;
  setIsBusy(true);
  try {
- const published = import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
+ const published = isSupabaseConfigured
  ? await surveyService.aeApproveAndPublishAsync(selectedSub.id, 'Sanctioned by Assistant Engineer; live GIS published')
  : surveyService.aeApproveAndPublish(selectedSub.id, 'Sanctioned by Assistant Engineer; live GIS published');
  setFeedbackMsg(`Final sanction complete! ${published} assets have been successfully promoted from Staging to Live Production GIS.`);
@@ -81,7 +82,7 @@ export const SurveyApprovalQueue: React.FC = () => {
  }
  setIsBusy(true);
  try {
- if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
+ if (isSupabaseConfigured) {
  await surveyService.rejectSubmissionAsync(selectedSub.id, rejectionReason);
  } else {
  surveyService.rejectSubmission(selectedSub.id, rejectionReason);

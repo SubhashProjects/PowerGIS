@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root=fileURLToPath(new URL('..', import.meta.url));
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const assert=(c,m)=>{if(!c)throw new Error(m)};
 assert(fs.existsSync(path.join(root,'src/repositories/domain/AssetRepository.ts')),'asset repository missing');

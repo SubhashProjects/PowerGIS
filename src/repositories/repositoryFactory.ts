@@ -1,18 +1,14 @@
 import { isSupabaseConfigured } from '../lib/supabase';
+import { RUNTIME_CONFIG } from '../config/runtimeConfig';
 import { SupabaseTableRepository } from './supabase/SupabaseTableRepository';
 import { SimulatorRepository } from './simulator/SimulatorRepository';
 import type { EntityRepository, RepositoryQuery } from './interfaces/Repository';
-
-declare const process: any;
 
 export type RepositorySource = 'supabase' | 'simulator' | 'unavailable';
 
 /** Simulator data is a development aid only. A production build without a
  * configured backend must fail closed instead of silently presenting demo data. */
-export const isSimulatorRuntimeAllowed = (): boolean => Boolean(
-  (typeof import.meta !== 'undefined' && (import.meta as any).env && import.meta.env.DEV === true) ||
-  (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production')
-);
+export const isSimulatorRuntimeAllowed = (): boolean => RUNTIME_CONFIG.isDevelopment;
 
 export const repositorySource = (): RepositorySource => {
   if (isSupabaseConfigured) return 'supabase';
