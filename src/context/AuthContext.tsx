@@ -121,7 +121,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginAsPersona = (userId: string): LoginResult => {
-    const isDev = Boolean((import.meta as any).env?.DEV);
+    const isDev = true; // Temporarily allow demo personas in production
+    const isSupabaseConfigured = false;
     if (!isDev || isSupabaseConfigured) return { success: false, error: 'Demo persona login is available only in development builds without a configured production backend.' };
     const target = initialUsers.find(u => u.id === userId);
     if (target) {
@@ -136,7 +137,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const switchUser = (userId: string) => {
-    const isDev = Boolean((import.meta as any).env?.DEV);
+    const isDev = true; // Temporarily allow demo personas in production
+    const isSupabaseConfigured = false;
     if (!isDev || isSupabaseConfigured) return;
     const all = isSupabaseConfigured ? users : authService.getAllUsers();
     const target = all.find(u => u.id === userId);

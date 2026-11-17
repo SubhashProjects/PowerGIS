@@ -205,8 +205,7 @@ To deploy the database on Supabase Cloud or PostgreSQL 16 + PostGIS:
 2. Apply every timestamped file in `supabase/migrations/` in lexical order using the Supabase CLI or an approved migration runner. Do not apply only the early baseline migrations.
 3. The generated `supabase/SUPABASE_ALL_IN_ONE_MASTER.sql` contains migrations only and is intended for a fresh, isolated database after review. It excludes demo seed data.
 4. `supabase/seed.sql` contains illustrative demo personas and operational fixtures. Use it only in an isolated development/staging project; never execute it in production.
-5. The login screen provides a **Demo User** persona (`demo.viewer@example.test`, username `demo_viewer`) through **Demo Roles**. It is a simulated, read-only Auditor profile and is available only in a Vite development build without Supabase configured. Select **Sign in** on its persona card; there is no demo password. Password-based login is deliberately rejected when Supabase Auth is not configured.
-6. Configure `POWERGIS_ALLOWED_ORIGINS` and any gateway-only tokens as Supabase Edge Function secrets. Browser build variables must contain only the Supabase URL and public anon/publishable key.
+5. Configure `POWERGIS_ALLOWED_ORIGINS` and any gateway-only tokens as Supabase Edge Function secrets. Browser build variables must contain only the Supabase URL and public anon/publishable key.
 
 ---
 

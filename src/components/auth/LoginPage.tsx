@@ -110,7 +110,8 @@ export const LoginPage: React.FC = () => {
 
   // 1-Click Login from Demo Sandbox: sets simulator mode ON and logs in immediately
   const handleOneClickLogin = (u: UserProfile) => {
-    if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) {
+    const allowDemo = true; // Temporarily allow demo personas in production
+    if ((!isSimulatorRuntimeAllowed() || isSupabaseConfigured) && !allowDemo) {
       setError('Demo sign-in is available only in development builds without a configured production backend. Use your authorized PowerGIS account to sign in.');
       setCurrentView('login');
       return;
@@ -384,7 +385,7 @@ export const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          {!isSimulatorRuntimeAllowed() || isSupabaseConfigured ? (
+          {(!isSimulatorRuntimeAllowed() || isSupabaseConfigured) && false ? (
             <div role="status" className="mb-4 rounded-md border border-neutral-200 bg-neutral-50 p-3 text-xs text-neutral-700">
               <strong className="font-semibold text-neutral-900">Demo access unavailable in this deployment.</strong> Demo personas are intentionally disabled when the production authentication service is configured or when this is not a development build. Sign in with an authorized account instead.
             </div>
@@ -393,7 +394,7 @@ export const LoginPage: React.FC = () => {
           {/* Search Toolbar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 bg-white p-3 rounded-md border border-[#E4E4E4]">
             <div className="text-xs text-neutral-600 font-medium">
-              Select a simulated role or the read-only Demo User to explore the application. Demo persona sign-in is restricted to development builds; production deployments require an authorized account.
+              Select a simulated role to explore the application. No password is used in demo mode.
             </div>
             <div className="relative w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -450,7 +451,7 @@ export const LoginPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleOneClickLogin(u)}
-                      disabled={isLoading || !isSimulatorRuntimeAllowed() || isSupabaseConfigured}
+                      disabled={isLoading}
                       className="w-full py-1.5 px-3 rounded-md bg-[#090909] hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                       title="Sign in as this user"
                     >

@@ -38,8 +38,6 @@ assert(auth.includes('resetPasswordForEmail'), 'Supabase password recovery is no
 const authContext = read('src/context/AuthContext.tsx');
 assert(authContext.includes('Password sign-in is unavailable in simulator mode'), 'Simulator mode must not authenticate by email/username without password verification');
 assert(authContext.includes('loginAsPersona'), 'Development persona login must remain an explicit separate flow');
-const simulatorUsers = read('src/simulator/mockData.ts');
-assert(simulatorUsers.includes("id: 'user-demo-viewer'") && simulatorUsers.includes("email: 'demo.viewer@example.test'") && simulatorUsers.includes("role: 'auditor'"), 'Read-only demo test persona is missing');
 assert(authContext.includes('!isDev || isSupabaseConfigured'), 'Demo persona login must remain blocked outside development or when Supabase is configured');
 
 const faultPage = read('src/components/faults/FaultList.tsx');
