@@ -8,6 +8,8 @@ import { initialFaults, initialSections } from '../data/simulatorData';
 import { assetService } from './assetService';
 import { calculateHaversineDistance, calculateDistanceAlongFeeder } from '../lib/geoUtils';
 import { authService } from './authService';
+import { isSimulatorRuntimeAllowed } from '../repositories/repositoryFactory';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 export class FaultService {
  private static instance: FaultService;
@@ -24,6 +26,7 @@ export class FaultService {
  }
 
  public getFaults(includeSimulated = false): Fault[] {
+ if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) return [];
  const list = (assetService.isSimulatorMode() || includeSimulated)
  ? [...this.userFaults, ...this.simulatedFaults]
  : [...this.userFaults];
@@ -106,6 +109,7 @@ export class FaultService {
  }
 
  public registerFault(newFaultData: Omit<Fault, 'id' | 'faultCode' | 'reportedAt' | 'distanceFromPoleM' | 'distanceFromDtM' | 'distanceAlongFeederM' | 'distanceFromOfficeKm'>): Fault {
+ if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) throw new Error('BACKEND_NOT_CONFIGURED: fault creation requires the production fault repository.');
  const calc = this.calculateFaultDistances(
  newFaultData.coordinates,
  newFaultData.feederId,
@@ -129,6 +133,7 @@ export class FaultService {
  }
 
  public updateFaultStatus(id: string, status: FaultStatus, assignedTo?: string): void {
+ if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) throw new Error('BACKEND_NOT_CONFIGURED: fault transitions require the production fault repository.');
  const fault = this.getFaultById(id);
  if (fault) {
  fault.status = status;

@@ -10,6 +10,7 @@ import { initialUsers } from '../data/simulatorData';
 import { adminService } from '../services/adminService';
 import { assetService } from '../services/assetService';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSimulatorRuntimeAllowed } from '../repositories/repositoryFactory';
 
 interface AuthContextType {
   user: UserProfile;
@@ -33,8 +34,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile>(authService.getCurrentUser());
-  const [users, setUsers] = useState<UserProfile[]>(authService.getAllUsers());
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(authService.isAuthenticated());
+  const [users, setUsers] = useState<UserProfile[]>(isSupabaseConfigured || isSimulatorRuntimeAllowed() ? authService.getAllUsers() : []);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>((isSupabaseConfigured || isSimulatorRuntimeAllowed()) && authService.isAuthenticated());
   const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [permissions, setPermissions] = useState<RolePermission>(
     authService.getRolePermissions(user.role)
@@ -103,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (identifier: string, password: string): Promise<LoginResult> => {
     if (!isSupabaseConfigured) {
+      if (!isSimulatorRuntimeAllowed()) return { success: false, error: 'Production authentication is unavailable. Configure Supabase; demo authentication is development-only.' };
       const normalized = identifier.trim().toLowerCase();
       const demoUser = initialUsers.find(
         u => u.email.toLowerCase() === normalized || u.username.toLowerCase() === normalized
@@ -131,7 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginAsPersona = (userId: string): LoginResult => {
     const isDev = Boolean((import.meta as any).env?.DEV);
-    if (!isDev && isSupabaseConfigured) return { success: false, error: 'Demo login is disabled when Supabase is configured.' };
+    if (!isDev || isSupabaseConfigured) return { success: false, error: 'Demo persona login is available only in development builds without a configured production backend.' };
     const target = initialUsers.find(u => u.id === userId);
     if (target) {
       assetService.setSimulatorMode(true);
@@ -146,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const switchUser = (userId: string) => {
     const isDev = Boolean((import.meta as any).env?.DEV);
-    if (!isDev && isSupabaseConfigured) return;
+    if (!isDev || isSupabaseConfigured) return;
     const all = isSupabaseConfigured ? users : authService.getAllUsers();
     const target = all.find(u => u.id === userId);
     if (target) {
@@ -164,6 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUsers(await adminService.listUsers());
       return created;
     }
+    if (!isSimulatorRuntimeAllowed()) throw new Error('BACKEND_NOT_CONFIGURED: user provisioning requires the production administration service.');
     const created = authService.addUser(userData);
     setUsers(authService.getAllUsers());
     return created;
@@ -176,6 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUsers(await adminService.listUsers());
       return true;
     }
+    if (!isSimulatorRuntimeAllowed()) throw new Error('BACKEND_NOT_CONFIGURED: user updates require the production administration service.');
     const updated = authService.updateUser(id, updates);
     if (updated) { setUsers(authService.getAllUsers()); if (user.id === id) setUser(updated); return true; }
     return false;
@@ -186,11 +190,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try { await adminService.deactivateUser(id); setUsers(await adminService.listUsers()); return { success: true, message: 'User account deactivated successfully.' }; }
       catch (error: any) { return { success: false, message: error?.message || 'User deactivation failed.' }; }
     }
+    if (!isSimulatorRuntimeAllowed()) return { success: false, message: 'BACKEND_NOT_CONFIGURED: user deactivation requires the production administration service.' };
     const res = authService.deleteUser(id); if (res.success) setUsers(authService.getAllUsers()); return res;
   };
 
   const resetUsersToDefault = async () => {
-    if (isSupabaseConfigured) throw new Error('Production user reset is intentionally disabled; use individual backend deactivation/provisioning.');
+    if (!isSimulatorRuntimeAllowed()) throw new Error('Production user reset is disabled; configure Supabase and use individual backend administration.');
     const reset = authService.resetUsersToDefault(); setUsers(reset);
   };
 

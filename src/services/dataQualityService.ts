@@ -36,6 +36,22 @@ export async function getDataQualityIssues(): Promise<DataQualityIssue[]> {
   checkIds('substations', substations); checkIds('feeders', feeders); checkIds('transformers', transformers); checkIds('poles', poles);
   checkIds('consumers', consumers); checkIds('faults', faults); checkIds('work_orders', workOrders); checkIds('stores_inventory', stores);
   checkIds('outages', outages); checkIds('survey_submissions', surveys); checkIds('safety_permits', ptws);
+  const checkCodes = (entity: string, records: any[], fields = ['code', 'asset_code', 'consumer_number', 'ptwNumber', 'ptw_number']) => {
+    const seen = new Map<string, string>();
+    records.forEach(record => {
+      const field = fields.find(key => record[key] !== undefined && record[key] !== null && String(record[key]).trim() !== '');
+      if (!field) {
+        issues.push({ id: `${entity}-missing-code-${record.id}`, severity: 'medium', entity, recordId: String(record.id ?? ''), message: 'Record has no populated business code or reference number.' });
+        return;
+      }
+      const code = String(record[field]).trim().toLowerCase();
+      const previous = seen.get(code);
+      if (previous) issues.push({ id: `${entity}-duplicate-code-${record.id}`, severity: 'high', entity, recordId: String(record.id), message: `Duplicate business code detected: ${record[field]}.` });
+      else seen.set(code, String(record.id));
+    });
+  };
+  checkCodes('substations', substations); checkCodes('feeders', feeders); checkCodes('transformers', transformers);
+  checkCodes('poles', poles); checkCodes('consumers', consumers);
   transformers.forEach((t: any) => {
     const load = Number(t.load_percentage ?? t.loadPercentage ?? 0);
     if (load > 100) issues.push({ id:`transformer-load-${t.id}`, severity:'high', entity:'transformers', recordId:t.id, message:'Transformer load exceeds 100%.' });
@@ -43,6 +59,40 @@ export async function getDataQualityIssues(): Promise<DataQualityIssue[]> {
     if (!coords || !Number.isFinite(Number(coords[0])) || !Number.isFinite(Number(coords[1]))) issues.push({ id:`transformer-geometry-${t.id}`, severity:'medium', entity:'transformers', recordId:t.id, message:'Transformer has missing or invalid coordinates.' });
   });
   const feederIds = new Set(feeders.map((f:any) => String(f.id)));
+  const substationIds = new Set(substations.map((r:any) => String(r.id)));
+  const transformerIds = new Set(transformers.map((r:any) => String(r.id)));
+  const poleIds = new Set(poles.map((r:any) => String(r.id)));
+  const checkGeometry = (entity: string, records: any[]) => records.forEach((record: any) => {
+    const coords = record.coordinates ?? record.geom?.coordinates;
+    if (!coords) return;
+    const positions = Array.isArray(coords[0]) ? coords : [coords];
+    const invalid = positions.some((point: any) => !Array.isArray(point) || point.length < 2 || !Number.isFinite(Number(point[0])) || !Number.isFinite(Number(point[1])) || !(Math.abs(Number(point[0])) <= 90 && Math.abs(Number(point[1])) <= 180) && !(Math.abs(Number(point[0])) <= 180 && Math.abs(Number(point[1])) <= 90));
+    if (invalid) issues.push({ id: `${entity}-invalid-coordinate-${record.id}`, severity: 'high', entity, recordId: String(record.id), message: 'Geographic coordinates are outside valid latitude/longitude ranges.' });
+  });
+  checkGeometry('substations', substations); checkGeometry('feeders', feeders); checkGeometry('transformers', transformers);
+  checkGeometry('poles', poles); checkGeometry('consumers', consumers);
+  feeders.forEach((f:any) => {
+    const substation = f.substationId ?? f.substation_id;
+    if (substation && !substationIds.has(String(substation))) issues.push({ id: `feeder-orphan-substation-${f.id}`, severity: 'high', entity: 'feeders', recordId: String(f.id), message: 'Feeder references a substation that does not exist.' });
+  });
+  transformers.forEach((t:any) => {
+    const feeder = t.feederId ?? t.feeder_id;
+    if (feeder && !feederIds.has(String(feeder))) issues.push({ id: `transformer-orphan-feeder-${t.id}`, severity: 'high', entity: 'transformers', recordId: String(t.id), message: 'Transformer references a feeder that does not exist.' });
+    if (Number(t.capacityKVA ?? t.capacity_kva ?? 0) < 0) issues.push({ id: `transformer-negative-capacity-${t.id}`, severity: 'critical', entity: 'transformers', recordId: String(t.id), message: 'Transformer capacity cannot be negative.' });
+  });
+  poles.forEach((p:any) => {
+    const feeder = p.feederId ?? p.feeder_id;
+    const transformer = p.transformerId ?? p.transformer_id;
+    if (feeder && !feederIds.has(String(feeder))) issues.push({ id: `pole-orphan-feeder-${p.id}`, severity: 'high', entity: 'poles', recordId: String(p.id), message: 'Pole references a feeder that does not exist.' });
+    if (transformer && !transformerIds.has(String(transformer))) issues.push({ id: `pole-orphan-transformer-${p.id}`, severity: 'high', entity: 'poles', recordId: String(p.id), message: 'Pole references a transformer that does not exist.' });
+  });
+  consumers.forEach((c:any) => {
+    const feeder = c.feederId ?? c.feeder_id, transformer = c.transformerId ?? c.transformer_id, pole = c.poleId ?? c.pole_id;
+    if (feeder && !feederIds.has(String(feeder))) issues.push({ id: `consumer-orphan-feeder-${c.id}`, severity: 'high', entity: 'consumers', recordId: String(c.id), message: 'Consumer references a feeder that does not exist.' });
+    if (transformer && !transformerIds.has(String(transformer))) issues.push({ id: `consumer-orphan-transformer-${c.id}`, severity: 'high', entity: 'consumers', recordId: String(c.id), message: 'Consumer references a transformer that does not exist.' });
+    if (pole && !poleIds.has(String(pole))) issues.push({ id: `consumer-orphan-pole-${c.id}`, severity: 'high', entity: 'consumers', recordId: String(c.id), message: 'Consumer references a pole that does not exist.' });
+    if (Number(c.sanctionedLoadKW ?? c.sanctioned_load_kw ?? 0) < 0) issues.push({ id: `consumer-negative-load-${c.id}`, severity: 'medium', entity: 'consumers', recordId: String(c.id), message: 'Consumer sanctioned load cannot be negative.' });
+  });
   const sectionIds = new Set((await createRepositorySafe('om_sections')).map((r:any) => String(r.id)));
   faults.forEach((f:any) => {
     if (f.feeder_id && !feederIds.has(String(f.feeder_id))) issues.push({ id:`fault-orphan-feeder-${f.id}`, severity:'high', entity:'faults', recordId:String(f.id), message:'Fault references a feeder that does not exist.' });

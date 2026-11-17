@@ -175,3 +175,36 @@ git push subhash master:gh-pages --force
 git push origin master:web-platform
 git push origin master:master
 ```
+
+## PowerGIS 3.12.0 – Production Architecture & Operational Reliability
+
+- Production repository selection fails closed when Supabase is not configured; simulator repository mode is development-only.
+- Demo authentication/persona switching and local demo-user administration are blocked outside development builds.
+- Scope banner reports the active data source and no longer labels RLS as active merely from frontend state.
+- Asset catalogue, fault commands, admin profile/edge-function operations, specialized-module reads, SCADA persistence, and survey evidence storage use domain repository boundaries.
+- Added transactional idempotent wrappers for fault creation, fault transitions, and outage creation; fault transitions support an `updated_at` concurrency token.
+- Corrected idempotency ledger ownership to use the PowerGIS profile ID referenced by the ledger foreign key, and bound operation IDs to actor and operation type.
+- Added fault `updated_at` tracking and audit-log operation correlation for fault/outage commands.
+- Registered allowlisted offline replay handlers for idempotent work-order, fault, outage, PTW and inventory operations; overlapping processor runs are prevented.
+- Generic repository deletes now detect stale expected-version conflicts.
+- Validation: release static test passed; TypeScript/TSX syntax transpilation passed for 143 source files; relative import check passed for 143 files; ZIP integrity verified after packaging. Full `tsc` and live Supabase migration execution were not completed because project dependencies/backend were not installed/configured.
+
+
+## PowerGIS 3.13.0 – Complete Offline-First Operations
+
+- Replaced localStorage operational mutation queue with a durable IndexedDB store and a one-time non-destructive migration of the v2 localStorage queue.
+- Added connectivity-aware durable queueing to fault, outage, work-order, PTW and inventory idempotent commands.
+- Preserved the original operation ID for retry/replay and only queue transport/connectivity failures.
+- Added retry backoff, dependency-aware replay, cross-tab atomic replay lease, recovery of interrupted syncing items and conflict blocking.
+- Expanded Sync Center with detailed operation status, errors, retry/removal controls and online/offline state.
+- Survey attachments remain on their prior IndexedDB queue; resumable chunk uploads and a full offline read-model cache are not included.
+- Verification: `node tests/v3_13_offline_first.test.mjs` and `node tests/v3_12_production_architecture.test.mjs`; no npm install, full semantic build or live Supabase migration was run.
+
+## PowerGIS 3.14.0 – GIS Network Intelligence & Topology Validation
+
+- Added a pure network analysis service that builds feeder summaries from the currently loaded, jurisdiction-filtered asset catalogue.
+- Added upstream/downstream relationship summaries, active consumer impact counts, feeder utilization and transformer loading/phase-imbalance indicators.
+- Added topology/data-quality findings for duplicate feeder/transformer/pole/consumer identifiers, missing source substations, orphan transformer/pole/consumer references, missing conductor endpoints, disconnected conductor-graph poles, overloaded feeders and overloaded transformers.
+- Reworked Network Topology into a responsive intelligence workspace with feeder selection, trace direction, severity/search filters, finding list, transformer loading and active consumer impact list.
+- Analysis is advisory and based on loaded records; it does not claim live power-flow calculation, switching safety, fault isolation authorization or persistence of computed findings.
+- Added focused network-intelligence tests in `tests/network_intelligence.test.ts`.

@@ -43,7 +43,7 @@ export class StoresService {
  p_work_order_id: workOrderId, 
  p_recipient_name: input.recipientName ?? null,
  p_remarks: input.remarks ?? null,
- }));
+ }), { entityType: 'inventory', entityId: input.itemId, payload: { p_item_id:input.itemId, p_quantity:input.quantity, p_work_order_id:workOrderId, p_recipient_name:input.recipientName ?? null, p_remarks:input.remarks ?? null } });
  return { transactionId: result.transaction_id, newStock: Number(result.new_stock) };
  }
 
@@ -60,7 +60,7 @@ export class StoresService {
  p_work_order_id: input.workOrderId ?? null,
  p_recipient_name: input.recipientName ?? null,
  p_remarks: input.remarks ?? null,
- }));
+ }), { entityType: 'inventory', entityId: input.itemId, payload: { p_item_id:input.itemId, p_transaction_type:input.transactionType, p_quantity:input.quantity, p_work_order_id:input.workOrderId ?? null, p_recipient_name:input.recipientName ?? null, p_remarks:input.remarks ?? null } });
  return String(result);
  }
 }

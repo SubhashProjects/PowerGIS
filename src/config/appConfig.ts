@@ -17,8 +17,8 @@ export const APP_CONFIG = {
  // Identity
  name: 'PowerGIS Enterprise',
  shortName: 'PowerGIS',
- version: '3.10.0',
- edition: 'Enterprise Neutral UI + Operational Architecture Edition',
+ version: '3.14.0',
+ edition: 'Enterprise GIS Network Intelligence Edition',
  tagline: 'Utility Planning, Asset Management, SCADA & Field Operations',
  copyrightYear: 2026,
 

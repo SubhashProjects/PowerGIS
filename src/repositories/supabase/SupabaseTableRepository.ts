@@ -42,7 +42,8 @@ export class SupabaseTableRepository<T extends { id: string }> implements Entity
   async remove(id: string, expectedVersion?: string): Promise<void> {
     let query = supabase.from(this.table).delete().eq('id', id);
     if (expectedVersion) query = query.eq('updated_at', expectedVersion);
-    const { error } = await query;
+    const { data, error } = await query.select('id').maybeSingle();
     if (error) throw error;
+    if (expectedVersion && !data) throw new Error('CONCURRENCY_CONFLICT: record changed or was removed before deletion.');
   }
 }

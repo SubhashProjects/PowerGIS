@@ -8,8 +8,11 @@
 import { Outage, OutageReliabilityMetrics } from '../types/operations';
 import { initialReliabilityMetrics, initialOutages } from '../data/simulatorData';
 import { assetService } from './assetService';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { isSimulatorRuntimeAllowed } from '../repositories/repositoryFactory';
 import { backendService } from './backendService';
+import { createMutationCommand, runServerIdempotentMutation } from '../lib/mutationCommand';
+import { outageRepository } from '../repositories/domain/OutageRepository';
 
 export interface DynamicReliabilityFilter {
  sectionId?: string;
@@ -55,8 +58,7 @@ export class ReliabilityService {
 
  public async loadFromSupabase(): Promise<void> {
  if (!isSupabaseConfigured) return;
- const { data, error } = await supabase.from('outages').select('*').order('start_time', { ascending: false });
- if (error) throw error;
+ const data = await outageRepository.list({ orderBy: 'start_time', ascending: false });
  this.userOutages = (data ?? []).map((r:any) => ({
  id:r.id, outageCode:r.outage_code, feederId:r.feeder_id ?? undefined, transformerId:r.transformer_id ?? undefined,
  outageType:r.outage_type, reason:r.reason, startTime:r.start_time, expectedRestoration:r.expected_restoration ?? '', actualRestoration:r.actual_restoration ?? undefined,
@@ -67,11 +69,13 @@ export class ReliabilityService {
  public async registerOutageAsync(input: Omit<Outage,'id'|'outageCode'>): Promise<Outage> {
  if (!isSupabaseConfigured) throw new Error('Outage backend is not configured.');
  if (input.affectedConsumersCount < 0) throw new Error('Affected consumers cannot be negative.');
- const result = await backendService.rpc<any>('create_outage', {
+ const command = createMutationCommand('outage.create');
+ const result = await runServerIdempotentMutation(command, () => backendService.rpc<any>('create_outage_idempotent', {
+ p_operation_id: command.operationId,
  p_feeder_id: input.feederId ?? null, p_transformer_id: input.transformerId ?? null, p_outage_type: input.outageType,
  p_reason: input.reason.trim(), p_start_time: input.startTime, p_expected_restoration: input.expectedRestoration || null,
  p_affected_consumers_count: input.affectedConsumersCount, p_energy_not_served_kwh: input.energyNotServedKWh ?? 0, p_section_id: input.sectionId,
- });
+ }), { entityType: 'outage', payload: { p_outage_type:input.outageType, p_reason:input.reason.trim(), p_start_time:input.startTime, p_expected_restoration:input.expectedRestoration || null, p_affected_consumers_count:input.affectedConsumersCount, p_energy_not_served_kwh:input.energyNotServedKWh ?? 0, p_section_id:input.sectionId, p_feeder_id:input.feederId ?? null, p_transformer_id:input.transformerId ?? null } });
  await this.loadFromSupabase();
  return this.userOutages.find(o => o.id === result.id) ?? (result as Outage);
  }
@@ -82,6 +86,7 @@ export class ReliabilityService {
  }
 
  public getOutages(sectionId?: string, includeSimulated = false): Outage[] {
+ if (!isSupabaseConfigured && !isSimulatorRuntimeAllowed()) return [];
  const isSim = assetService.isSimulatorMode() || includeSimulated;
  const list = isSim
  ? [...this.userOutages, ...this.simulatedOutages]
@@ -94,6 +99,7 @@ export class ReliabilityService {
  }
 
  public registerOutage(outage: Outage): void {
+ if (!isSimulatorRuntimeAllowed() || isSupabaseConfigured) throw new Error('BACKEND_NOT_CONFIGURED: outage creation requires the production outage repository.');
  (outage as any).isUserUploaded = true;
  this.userOutages.unshift(outage);
  }

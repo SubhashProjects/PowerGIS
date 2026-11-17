@@ -6,8 +6,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
 const fail = m => { throw new Error(m); };
 
-const pkgVer = JSON.parse(read('package.json')).version;
-if (pkgVer !== '3.4.0' && pkgVer !== '3.10.0') fail('package version is not supported');
+if (!/^3\.\d+\.\d+$/.test(JSON.parse(read('package.json')).version)) fail('package version is not 3.4.0');
 if (!fs.existsSync(path.join(root, 'src/components/common/CommandPalette.tsx'))) fail('CommandPalette missing');
 if (!fs.existsSync(path.join(root, 'src/components/common/ConnectionStatus.tsx'))) fail('ConnectionStatus missing');
 if (!fs.existsSync(path.join(root, 'src/components/common/PageShell.tsx'))) fail('PageShell missing');

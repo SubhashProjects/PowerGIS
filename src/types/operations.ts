@@ -40,6 +40,7 @@ export interface Fault {
  restorationPhotoUrl?: string;
  reportedAt: string;
  resolvedAt?: string;
+ updatedAt?: string;
  coordinates: [number, number];
 }
 

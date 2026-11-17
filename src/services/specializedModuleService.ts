@@ -1,4 +1,5 @@
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { specializedModuleRepository } from '../repositories/domain/SpecializedModuleRepository';
 import { backendService } from './backendService';
 
 export interface ProjectPackage {
@@ -49,9 +50,8 @@ const configured = () => isSupabaseConfigured;
 export const specializedModuleService = {
   async listProjects(): Promise<ProjectPackage[]> {
     backendService.ensureConfigured();
-    const { data, error } = await supabase.from('capital_project_packages').select('*').eq('data_source','OPERATIONAL').order('scheme_code');
-    if (error) throw error;
-    return (data ?? []).map((r: any) => ({
+    const data = await specializedModuleRepository.listProjects();
+    return data.map((r: any) => ({
       id: r.id, schemeCode: r.scheme_code, title: r.title, category: r.category,
       scopeMetric: r.scope_metric, sanctionedBudgetCr: Number(r.sanctioned_budget_cr),
       expenditureCr: Number(r.expenditure_cr), physicalProgressPct: Number(r.physical_progress_pct),
@@ -80,9 +80,8 @@ export const specializedModuleService = {
 
   async listMaintenance(): Promise<MaintenanceTask[]> {
     backendService.ensureConfigured();
-    const { data, error } = await supabase.from('maintenance_tasks').select('*').eq('data_source','OPERATIONAL').order('scheduled_date');
-    if (error) throw error;
-    return (data ?? []).map((r: any) => ({
+    const data = await specializedModuleRepository.listMaintenance();
+    return data.map((r: any) => ({
       id: r.id, assetId: r.asset_id ?? undefined, assetCode: r.asset_code,
       assetName: r.asset_name, maintenanceType: r.maintenance_type,
       scheduledDate: r.scheduled_date, cycle: r.cycle, priority: r.priority,
@@ -107,9 +106,8 @@ export const specializedModuleService = {
 
   async listDisasters(): Promise<DisasterRecord[]> {
     backendService.ensureConfigured();
-    const { data, error } = await supabase.from('disaster_events').select('*').order('start_date', { ascending: false });
-    if (error) throw error;
-    return (data ?? []).map((r: any) => ({
+    const data = await specializedModuleRepository.listDisasters();
+    return data.map((r: any) => ({
       id: r.id, code: r.code, eventType: r.event_type, name: r.name,
       affectedRegions: r.affected_regions ?? [], startDate: r.start_date, status: r.status,
       damagedPolesCount: Number(r.damaged_poles_count ?? 0), damagedDTsCount: Number(r.damaged_dts_count ?? 0),

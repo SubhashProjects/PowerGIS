@@ -24,7 +24,7 @@ export class WorkOrderService {
  const result = await runServerIdempotentMutation(command, () => backendService.rpc<WorkOrder>('create_work_order_idempotent', { p_operation_id: command.operationId,
  p_title: input.title.trim(), p_category: input.category, p_instructions: input.instructions.trim(),
  p_assigned_crew: input.assignedCrew.trim(), p_section_id: input.sectionId, p_priority: input.priority, p_due_date: input.dueDate,
- }));
+ }), { entityType: 'work_order', payload: { p_title:input.title.trim(), p_category:input.category, p_instructions:input.instructions.trim(), p_assigned_crew:input.assignedCrew.trim(), p_section_id:input.sectionId, p_priority:input.priority, p_due_date:input.dueDate } });
  return result;
  }
  async advance(id: string, nextStatus: WorkOrderStatus, expectedVersion?: string): Promise<void> {
@@ -32,7 +32,7 @@ export class WorkOrderService {
  if (!current) throw new Error('Work order was not found.');
  assertWorkflowTransition('work_order', String((current as any).status), nextStatus);
  const command = createMutationCommand('work_order.transition', expectedVersion ?? (current as any).updated_at);
- await runServerIdempotentMutation(command, () => backendService.rpc('advance_work_order_status_idempotent', { p_operation_id: command.operationId, p_work_order_id: id, p_next_status: nextStatus, p_expected_version: expectedVersion ?? null }));
+ await runServerIdempotentMutation(command, () => backendService.rpc('advance_work_order_status_idempotent', { p_operation_id: command.operationId, p_work_order_id: id, p_next_status: nextStatus, p_expected_version: expectedVersion ?? (current as any).updated_at ?? null }), { entityType: 'work_order', entityId: id, payload: { p_work_order_id:id, p_next_status:nextStatus, p_expected_version:expectedVersion ?? (current as any).updated_at ?? null } });
  }
 }
 export const workOrderService = new WorkOrderService();

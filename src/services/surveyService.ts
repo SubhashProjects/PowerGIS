@@ -8,7 +8,8 @@ import { SurveySubmission, SurveyStagingAsset, ApprovalHistoryEntry, SurveyStatu
 import { initialSurveys, initialStagingAssets } from '../data/simulatorData';
 import { assetService } from './assetService';
 import { authService } from './authService';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { surveyEvidenceRepository } from '../repositories/domain/SurveyEvidenceRepository';
 import { surveyRepository } from '../repositories/domain/SurveyRepository';
 import { backendService } from './backendService';
 
@@ -172,8 +173,7 @@ export class SurveyService {
         const bytes = Uint8Array.from(atob(match[2]), c => c.charCodeAt(0));
         const blob = new Blob([bytes], { type: match[1] });
         const path = `${record.contractorId}/${operationId}.${match[1].split('/')[1] || 'jpg'}`;
-        const { error: uploadError } = await supabase.storage.from('survey-evidence').upload(path, blob, { upsert: false, contentType: match[1] });
-        if (uploadError && !/already exists/i.test(uploadError.message)) throw uploadError;
+        await surveyEvidenceRepository.upload(path, blob, match[1]);
         photoUrl = path;
       }
     }

@@ -50,7 +50,7 @@ export class PtwService {
  p_section_id: input.sectionId,
  p_work_description: input.workDescription.trim(),
  p_isolation_points: input.isolationPoints.trim(),
- }));
+ }), { entityType: 'permit_to_work', payload: { p_feeder_id:input.feederId, p_section_id:input.sectionId, p_work_description:input.workDescription.trim(), p_isolation_points:input.isolationPoints.trim() } });
  return id;
  }
 
@@ -69,7 +69,7 @@ export class PtwService {
  p_confirmation: input.confirmation ?? false,
  p_evidence_path: input.evidencePath ?? null,
  p_comments: input.comments ?? null,
- }));
+ }), { entityType: 'permit_to_work', entityId: input.permitId, payload: { p_permit_id:input.permitId, p_stage:input.stage, p_equipment:input.equipment ?? null, p_location_lat:input.location?.lat ?? null, p_location_lng:input.location?.lng ?? null, p_confirmation:input.confirmation ?? false, p_evidence_path:input.evidencePath ?? null, p_comments:input.comments ?? null } });
  }
 }
 

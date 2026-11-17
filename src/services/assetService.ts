@@ -13,7 +13,9 @@ import {
 } from '../data/simulatorData';
 import { authService } from './authService';
 import { scadaSimulatorService } from './scadaSimulatorService';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { isSimulatorRuntimeAllowed } from '../repositories/repositoryFactory';
+import { assetCatalogRepository } from '../repositories/domain/AssetCatalogRepository';
 
 export class AssetService {
  private static instance: AssetService;
@@ -46,7 +48,7 @@ export class AssetService {
  private constructor() {
  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
  const stored = localStorage.getItem('powergis_simulator_mode');
- if (!isSupabaseConfigured && stored === 'true') {
+ if (isSimulatorRuntimeAllowed() && !isSupabaseConfigured && stored === 'true') {
  this.isSimulatorActive = true;
  }
  }
@@ -80,25 +82,16 @@ export class AssetService {
  if (geom?.coordinates && Array.isArray(geom.coordinates)) return geom.coordinates.map((p: any) => [Number(p[1]), Number(p[0])] as [number, number]);
  return [];
  };
- const [ss, feeders, transformers, poles, conductors, consumers, warranties, lifecycles] = await Promise.all([
- supabase.from('substations').select('*').order('code'),
- supabase.from('feeders').select('*').order('code'),
- supabase.from('transformers').select('*').order('code'),
- supabase.from('poles').select('*').order('code'),
- supabase.from('conductors').select('*').order('code'),
- supabase.from('consumers').select('*').order('consumer_number'),
- supabase.from('warranties').select('*').order('expiry_date'),
- supabase.from('equipment_lifecycle').select('*').order('replacement_priority'),
- ]);
- for (const result of [ss, feeders, transformers, poles, conductors, consumers, warranties, lifecycles]) if (result.error) throw result.error;
- this.userSubstations = (ss.data ?? []).map((r: any) => ({ id:r.id, code:r.code, name:r.name, voltageClass:r.voltage_class, capacityMVA:Number(r.capacity_mva), numFeeders:Number(r.num_feeders ?? 0), regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? undefined, status:r.status, commissionDate:r.commission_date ?? '', coordinates:point(r.geom) }));
- this.userFeeders = (feeders.data ?? []).map((r: any) => ({ id:r.id, code:r.code, name:r.name, substationId:r.substation_id, voltageClass:r.voltage_class, conductorType:r.conductor_type ?? '', lengthKm:Number(r.length_km ?? 0), peakLoadAmps:Number(r.peak_load_amps ?? 0), ratedCapacityAmps:Number(r.rated_capacity_amps ?? 0), regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? undefined, isEnergized:Boolean(r.is_energized), status:r.status, coordinates:line(r.geom) }));
- this.userTransformers = (transformers.data ?? []).map((r: any) => ({ id:r.id, code:r.code, name:r.name, feederId:r.feeder_id, capacityKVA:Number(r.capacity_kva), voltageRatio:r.voltage_ratio ?? '', make:r.make ?? '', serialNumber:r.serial_number ?? '', installationDate:r.installation_date ?? '', loadPercentage:Number(r.load_percentage ?? 0), oilLevelPct:Number(r.oil_level_pct ?? 0), hasOilLeakage:Boolean(r.has_oil_leakage), phaseImbalancePct:Number(r.phase_imbalance_pct ?? 0), regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? '', jeJurisdictionId:r.je_jurisdiction_id ?? undefined, status:r.status, coordinates:point(r.geom) }));
- this.userPoles = (poles.data ?? []).map((r: any) => ({ id:r.id, code:r.code, poleNumber:r.pole_number, poleType:r.pole_type ?? '', material:r.material ?? '', heightMeters:Number(r.height_meters ?? 0), feederId:r.feeder_id, transformerId:r.transformer_id ?? undefined, numInsulators:Number(r.num_insulators ?? 0), condition:r.condition, hasStreetlight:Boolean(r.has_streetlight), installationDate:r.installation_date ?? '', regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? '', jeJurisdictionId:r.je_jurisdiction_id ?? undefined, status:r.status, coordinates:point(r.geom) }));
- this.userConductors = (conductors.data ?? []).map((r: any) => ({ id:r.id, code:r.code, feederId:r.feeder_id, startPoleId:r.start_pole_id, endPoleId:r.end_pole_id, conductorType:r.conductor_type ?? '', voltageClass:r.voltage_class, lengthMeters:Number(r.length_meters ?? 0), ratedCurrentAmps:Number(r.rated_current_amps ?? 0), condition:r.condition, coordinates:line(r.geom) }));
- this.userConsumers = (consumers.data ?? []).map((r: any) => ({ id:r.id, consumerNumber:r.consumer_number, accountNumber:r.account_number ?? '', name:r.name, address:r.address, category:r.category, sanctionedLoadKW:Number(r.sanctioned_load_kw ?? 0), poleId:r.pole_id ?? undefined, transformerId:r.transformer_id ?? undefined, feederId:r.feeder_id ?? undefined, meterNumber:r.meter_number, isSmartMeter:Boolean(r.is_smart_meter), meterMake:r.meter_make ?? '', meterInstallDate:r.meter_install_date ?? '', status:r.status, regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? '', jeJurisdictionId:r.je_jurisdiction_id ?? undefined, coordinates:point(r.geom) }));
- this.warranties = (warranties.data ?? []).map((r: any) => ({ id:r.id, batchNumber:r.batch_id ?? undefined, equipmentType:r.equipment_type, equipmentId:r.equipment_id, equipmentCode:r.equipment_code, manufacturer:r.manufacturer, commencementDate:r.commencement_date, expiryDate:r.expiry_date, daysToExpiry:Number(r.days_to_expiry ?? 0), claimStatus:r.claim_status }));
- this.lifecycles = (lifecycles.data ?? []).map((r: any) => ({ id:r.id, assetType:r.asset_type, assetId:r.asset_id, assetCode:r.asset_code, installationDate:r.installation_date, expectedLifeYears:Number(r.expected_life_years ?? 25), currentAgeYears:Number(r.current_age_years ?? 0), conditionScore:Number(r.condition_score ?? 0), replacementPriority:r.replacement_priority, isExpired:Boolean(r.is_expired), sectionId:r.section_id ?? '' }));
+ const catalog = await assetCatalogRepository.loadAll();
+ const { substations: ss, feeders, transformers, poles, conductors, consumers, warranties, lifecycles } = catalog;
+ this.userSubstations = (ss ?? []).map((r: any) => ({ id:r.id, code:r.code, name:r.name, voltageClass:r.voltage_class, capacityMVA:Number(r.capacity_mva), numFeeders:Number(r.num_feeders ?? 0), regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? undefined, status:r.status, commissionDate:r.commission_date ?? '', coordinates:point(r.geom) }));
+ this.userFeeders = (feeders ?? []).map((r: any) => ({ id:r.id, code:r.code, name:r.name, substationId:r.substation_id, voltageClass:r.voltage_class, conductorType:r.conductor_type ?? '', lengthKm:Number(r.length_km ?? 0), peakLoadAmps:Number(r.peak_load_amps ?? 0), ratedCapacityAmps:Number(r.rated_capacity_amps ?? 0), regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? undefined, isEnergized:Boolean(r.is_energized), status:r.status, coordinates:line(r.geom) }));
+ this.userTransformers = (transformers ?? []).map((r: any) => ({ id:r.id, code:r.code, name:r.name, feederId:r.feeder_id, capacityKVA:Number(r.capacity_kva), voltageRatio:r.voltage_ratio ?? '', make:r.make ?? '', serialNumber:r.serial_number ?? '', installationDate:r.installation_date ?? '', loadPercentage:Number(r.load_percentage ?? 0), oilLevelPct:Number(r.oil_level_pct ?? 0), hasOilLeakage:Boolean(r.has_oil_leakage), phaseImbalancePct:Number(r.phase_imbalance_pct ?? 0), regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? '', jeJurisdictionId:r.je_jurisdiction_id ?? undefined, status:r.status, coordinates:point(r.geom) }));
+ this.userPoles = (poles ?? []).map((r: any) => ({ id:r.id, code:r.code, poleNumber:r.pole_number, poleType:r.pole_type ?? '', material:r.material ?? '', heightMeters:Number(r.height_meters ?? 0), feederId:r.feeder_id, transformerId:r.transformer_id ?? undefined, numInsulators:Number(r.num_insulators ?? 0), condition:r.condition, hasStreetlight:Boolean(r.has_streetlight), installationDate:r.installation_date ?? '', regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? '', jeJurisdictionId:r.je_jurisdiction_id ?? undefined, status:r.status, coordinates:point(r.geom) }));
+ this.userConductors = (conductors ?? []).map((r: any) => ({ id:r.id, code:r.code, feederId:r.feeder_id, startPoleId:r.start_pole_id, endPoleId:r.end_pole_id, conductorType:r.conductor_type ?? '', voltageClass:r.voltage_class, lengthMeters:Number(r.length_meters ?? 0), ratedCurrentAmps:Number(r.rated_current_amps ?? 0), condition:r.condition, coordinates:line(r.geom) }));
+ this.userConsumers = (consumers ?? []).map((r: any) => ({ id:r.id, consumerNumber:r.consumer_number, accountNumber:r.account_number ?? '', name:r.name, address:r.address, category:r.category, sanctionedLoadKW:Number(r.sanctioned_load_kw ?? 0), poleId:r.pole_id ?? undefined, transformerId:r.transformer_id ?? undefined, feederId:r.feeder_id ?? undefined, meterNumber:r.meter_number, isSmartMeter:Boolean(r.is_smart_meter), meterMake:r.meter_make ?? '', meterInstallDate:r.meter_install_date ?? '', status:r.status, regionId:r.region_id, divisionId:r.division_id ?? undefined, sectionId:r.section_id ?? '', jeJurisdictionId:r.je_jurisdiction_id ?? undefined, coordinates:point(r.geom) }));
+ this.warranties = (warranties ?? []).map((r: any) => ({ id:r.id, batchNumber:r.batch_id ?? undefined, equipmentType:r.equipment_type, equipmentId:r.equipment_id, equipmentCode:r.equipment_code, manufacturer:r.manufacturer, commencementDate:r.commencement_date, expiryDate:r.expiry_date, daysToExpiry:Number(r.days_to_expiry ?? 0), claimStatus:r.claim_status }));
+ this.lifecycles = (lifecycles ?? []).map((r: any) => ({ id:r.id, assetType:r.asset_type, assetId:r.asset_id, assetCode:r.asset_code, installationDate:r.installation_date, expectedLifeYears:Number(r.expected_life_years ?? 25), currentAgeYears:Number(r.current_age_years ?? 0), conditionScore:Number(r.condition_score ?? 0), replacementPriority:r.replacement_priority, isExpired:Boolean(r.is_expired), sectionId:r.section_id ?? '' }));
  this.backendLoaded = true;
  this.notifyListeners();
  }
@@ -109,7 +102,7 @@ export class AssetService {
  }
 
  public setSimulatorMode(active: boolean): void {
- if (isSupabaseConfigured && active) {
+ if ((!isSimulatorRuntimeAllowed() || isSupabaseConfigured) && active) {
    this.isSimulatorActive = false;
    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') localStorage.removeItem('powergis_simulator_mode');
    return;

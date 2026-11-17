@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root = fileURLToPath(new URL('..', import.meta.url));
+const root=fileURLToPath(new URL('..', import.meta.url));
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const assert=(c,m)=>{if(!c)throw new Error(m)};
-assert(/"version": "3\.(9|10)\.0"/.test(read('package.json')),'package version mismatch');
-assert(/version: '3\.(9|10)\.0'/.test(read('src/config/appConfig.ts')),'app version mismatch');
+assert(read('package.json').includes('"version": "3.14.0"'),'package version mismatch');
+assert(read('src/config/appConfig.ts').includes("version: '3.14.0'"),'app version mismatch');
 assert(fs.existsSync(path.join(root,'src/lib/mutationCommand.ts')),'mutation command layer missing');
 assert(read('src/services/workOrderService.ts').includes('create_work_order_idempotent'),'work order create is not transactional');
 assert(read('src/services/workOrderService.ts').includes('advance_work_order_status_idempotent'),'work order transition is not transactional');

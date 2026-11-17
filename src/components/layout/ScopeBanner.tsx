@@ -11,7 +11,10 @@ import { useGIS } from '../../context/GISContext';
 import { APP_CONFIG } from '../../config/appConfig';
 import { getRoleDefinition } from '../../config/rbacConfig';
 import { LABELS } from '../../config/labelsConfig';
-import { ShieldAlert, ShieldCheck, Lock } from 'lucide-react';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { isSimulatorRuntimeAllowed } from '../../repositories/repositoryFactory';
+import { assetService } from '../../services/assetService';
+import { ShieldAlert, ShieldCheck } from 'lucide-react';
 
 export const ScopeBanner: React.FC = () => {
  const { user } = useAuth();
@@ -27,6 +30,7 @@ export const ScopeBanner: React.FC = () => {
  const privilegeTags = roleDef.privilegeTags;
 
  const isRestricted = user.role === 'je' || user.role === 'contractor';
+ const dataSourceLabel = isSupabaseConfigured ? 'Connected backend' : assetService.isSimulatorMode() && isSimulatorRuntimeAllowed() ? 'Simulator data' : isSimulatorRuntimeAllowed() ? 'Development · backend not configured' : 'Production · backend unavailable';
 
  return (
  <div
@@ -62,8 +66,10 @@ export const ScopeBanner: React.FC = () => {
  </div>
  </div>
 
- {/* Right: Privilege Tags & Zero-Trust RLS */}
- <div className="hidden lg:flex items-center space-x-1.5 text-[10px] ">
+ {/* Right: data source and privilege tags. Do not imply RLS verification from UI state. */}
+ <div className="flex items-center space-x-1.5 text-[10px]">
+ <span className="px-2 py-0.5 bg-white border border-neutral-200 rounded font-bold">{dataSourceLabel}</span>
+ <div className="hidden lg:flex items-center space-x-1.5">
  <span className="mr-0.5 font-sans">{LABELS.scopeHUD.privilegesPrefix}</span>
  {privilegeTags.map((tag, i) => {
  let badgeStyle = 'bg-white text-neutral-800 border-neutral-200';
@@ -89,10 +95,7 @@ export const ScopeBanner: React.FC = () => {
 
  <span className="text-neutral-300">•</span>
 
- <span className="flex items-center space-x-1 px-2 py-0.5 bg-[#090909] text-white rounded font-bold">
- <Lock className="w-2.5 h-2.5 text-neutral-400" />
- <span>{LABELS.scopeHUD.rlsActiveBadge}</span>
- </span>
+ </div>
  </div>
  </div>
  );

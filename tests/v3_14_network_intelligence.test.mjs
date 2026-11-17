@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+const pkg = JSON.parse(read('package.json'));
+assert.equal(pkg.version, '3.14.0');
+assert.equal(JSON.parse(read('package-lock.json')).version, pkg.version);
+assert.match(read('src/config/appConfig.ts'), /version: '3\.14\.0'/);
+const engine = read('src/services/networkIntelligenceService.ts');
+for (const code of ['MISSING_SUBSTATION','DUPLICATE_FEEDER_CODE','DUPLICATE_TRANSFORMER_CODE','ORPHAN_TRANSFORMER','ORPHAN_CONDUCTOR_ENDPOINT','DISCONNECTED_POLE','OVERLOADED_FEEDER','OVERLOADED_TRANSFORMER','HIGH_PHASE_IMBALANCE']) assert.ok(engine.includes(code), `Missing network check: ${code}`);
+const ui = read('src/components/topology/NetworkTraceViewer.tsx');
+for (const token of ['Trace upstream','Trace downstream','Topology integrity','Active consumer impact list','Computed from currently loaded assets']) assert.ok(ui.includes(token), `Missing network intelligence UI: ${token}`);
+assert.match(ui, /not a live electrical state estimator/);
+console.log('PowerGIS 3.14 network intelligence architecture checks passed.');

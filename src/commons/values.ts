@@ -70,7 +70,12 @@ export const VALUES = {
  assetAgeWeight: 0.20,
  },
 
- // 4. SCADA Protocol Standards & Telemetry Parameters
+ // 4. GIS Network Intelligence Screening Thresholds
+ network: {
+ phaseImbalanceWarningPercent: 10.0, // Screening threshold; align with approved utility engineering standard.
+ },
+
+ // 5. SCADA Protocol Standards & Telemetry Parameters
  scada: {
  // Protocol Port Standards
  iec104DefaultPort: 2404,
@@ -101,7 +106,7 @@ export const VALUES = {
  cotActivationConfirm: 7,
  },
 
- // 5. Statutory Security & Strict Password Policy (Zero-Trust Standard)
+ // 6. Statutory Security & Strict Password Policy (Zero-Trust Standard)
  security: {
  minPasswordLength: 8,
  requireUppercase: true,
@@ -114,7 +119,7 @@ export const VALUES = {
  sessionTimeoutHours: 12,
  },
 
- // 6. System, UI & Pagination Defaults
+ // 7. System, UI & Pagination Defaults
  system: {
  maxBorderRadiusPx: 6,
  headerHeightPx: 56,

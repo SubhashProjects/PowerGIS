@@ -227,3 +227,22 @@ This source archive includes targeted authentication, jurisdiction, PTW safety, 
 The repository includes the V3.2.1 follow-up hardening pass covering concurrency-safe identifiers, server-confirmed contractor offline synchronization, private PTW/survey evidence storage, server-side Auth administration, operational asset bootstrap, and additional RLS corrections. See `docs/POWERGIS_V3.2.1_PATCH_NOTES.md`.
 
 Full production verification still requires installing dependencies and running the application against a dedicated Supabase staging project; the source package intentionally does not claim successful live E2E, RLS-concurrency, or backup/restore validation when those environments are unavailable.
+
+## Latest release
+
+PowerGIS 3.12.0 – Production Architecture & Operational Reliability. See `docs/POWERGIS_V3.12.0_PRODUCTION_ARCHITECTURE.md` for implementation details, migration order, and deployment limitations.
+
+
+## PowerGIS 3.13.0 – Complete Offline-First Operations
+
+PowerGIS 3.13.0 adds a durable IndexedDB operational mutation queue, stable idempotent replay, connectivity-aware queueing for fault/outage/work-order/PTW/inventory commands, retry backoff, cross-tab replay leases, conflict blocking, and an expanded Sync Center. See `docs/POWERGIS_V3.13.0_OFFLINE_FIRST_OPERATIONS.md` for behavior and limitations.
+
+## PowerGIS 3.14.0 – GIS Network Intelligence
+
+The Network Topology workspace now includes feeder-level upstream/downstream relationship summaries, linked active-consumer impact counts, feeder utilization, transformer loading and phase-imbalance indicators. The integrity analyzer flags duplicate identifiers, missing substation references, orphan assets, missing conductor endpoints, disconnected conductor-graph nodes and capacity exceptions. Findings are computed from the currently loaded and jurisdiction-filtered asset records; they are advisory and are not a live power-flow solver or an approved switching/isolation instruction.
+
+Run the focused analysis tests with `npx tsx tests/network_intelligence.test.ts` when project dependencies are installed.
+
+## PowerGIS 3.14.0 – GIS Network Intelligence & Topology Validation
+
+PowerGIS 3.14.0 adds feeder relationship tracing, network integrity diagnostics, disconnected conductor-graph candidates, feeder/transformer capacity screening and active consumer impact summaries. See `docs/POWERGIS_V3.14.0_NETWORK_INTELLIGENCE.md` for scope, safety boundaries and verification details.

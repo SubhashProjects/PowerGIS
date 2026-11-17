@@ -11,7 +11,7 @@ const text = sourceFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n');
 
 const errors = [];
 const pkg = JSON.parse(read('package.json'));
-if (pkg.version !== '3.5.0' && pkg.version !== '3.10.0') errors.push(`package version is ${pkg.version}`);
+if (!/^3\.\d+\.\d+$/.test(pkg.version)) errors.push(`package version is ${pkg.version}`);
 if (!fs.existsSync(path.join(src, 'data', 'simulatorData.ts'))) errors.push('simulator adapter boundary missing');
 if (!fs.existsSync(path.join(src, 'services', 'globalSearchService.ts'))) errors.push('global search service missing');
 if (!text.includes('mobileCards')) errors.push('responsive DataTable cards missing');

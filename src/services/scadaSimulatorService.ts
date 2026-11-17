@@ -13,7 +13,8 @@ import {
  ScadaScenarioPreset,
 } from '../types/operations';
 import { initialFeeders, initialTransformers } from '../data/simulatorData';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { scadaPersistenceRepository } from '../repositories/domain/ScadaPersistenceRepository';
 
 export interface TelemetryTrendPoint {
  timestamp: string;
@@ -1163,8 +1164,7 @@ export class ScadaSimulatorService {
  private async persistSessionStart(): Promise<void> {
  if (!isSupabaseConfigured) return;
  try {
- await supabase.from('scada_simulation_sessions').insert([
- {
+ await scadaPersistenceRepository.createSimulationSession({
  id: this.config.sessionId,
  session_name: `Simulation ${this.config.sessionId}`,
  mode: this.config.mode,
@@ -1173,8 +1173,7 @@ export class ScadaSimulatorService {
  interval_seconds: this.config.intervalSeconds,
  operator_name: 'Console Operator',
  is_active: true,
- },
- ]);
+ });
  } catch (e) {
  // In-memory fallback
  }
@@ -1205,7 +1204,7 @@ export class ScadaSimulatorService {
  event_timestamp: p.eventTimestamp || new Date().toISOString(),
  }));
 
- await supabase.from('scada_telemetry').insert(payload);
+ await scadaPersistenceRepository.insertTelemetry(payload);
  } catch (e) {
  // In-memory fallback
  }
@@ -1214,14 +1213,7 @@ export class ScadaSimulatorService {
  private async persistAlarmAcknowledgement(alarmCode: string, operatorName: string): Promise<void> {
  if (!isSupabaseConfigured) return;
  try {
- await supabase
- .from('scada_alarms')
- .update({
- status: 'acknowledged',
- acknowledged_by: operatorName,
- acknowledged_at: new Date().toISOString(),
- })
- .eq('alarm_code', alarmCode);
+ await scadaPersistenceRepository.acknowledgeAlarm(alarmCode, operatorName, new Date().toISOString());
  } catch (e) {
  // In-memory fallback
  }

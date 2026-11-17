@@ -10,6 +10,7 @@ import { faultService } from '../../services/faultService';
 import { assetService } from '../../services/assetService';
 import { faultRepository } from '../../services/faultRepository';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { isSimulatorRuntimeAllowed } from '../../repositories/repositoryFactory';
 import { Fault, FaultStatus, FaultPriority } from '../../types/operations';
 import { FAULT_LIFECYCLE_STAGES as STAGES, SLA_HOURS, getStageIndex } from '../../config/workflowConfig';
 import {
@@ -81,6 +82,7 @@ export const FaultList: React.FC = () => {
  return;
  }
 
+ if (!isSimulatorRuntimeAllowed()) { setErrorMsg('Production backend is not configured. Fault creation is disabled until Supabase is connected.'); return; }
  const created = faultService.registerFault({
  category,
  description,
@@ -102,13 +104,15 @@ export const FaultList: React.FC = () => {
 
  const handleUpdateStatus = async (status: FaultStatus) => {
  if (!selectedFault) return;
- if (isSupabaseConfigured) { try { await faultRepository.transition(selectedFault.id, status); setFaults(await faultRepository.list()); } catch (error: any) { setErrorMsg(error?.message || 'Fault transition failed.'); } return; }
+ if (isSupabaseConfigured) { try { await faultRepository.transition(selectedFault.id, status, undefined, selectedFault.updatedAt); setFaults(await faultRepository.list()); } catch (error: any) { setErrorMsg(error?.message || 'Fault transition failed.'); } return; }
+ if (!isSimulatorRuntimeAllowed()) { setErrorMsg('Production backend is not configured. Fault transitions are disabled.'); return; }
  faultService.updateFaultStatus(selectedFault.id, status); refresh();
  };
 
  const handleAssign = async (assignedUserId: string) => {
  if (!selectedFault) return;
- if (isSupabaseConfigured) { try { await faultRepository.transition(selectedFault.id, 'assigned', assignedUserId); setFaults(await faultRepository.list()); } catch (error: any) { setErrorMsg(error?.message || 'Fault assignment failed.'); } return; }
+ if (isSupabaseConfigured) { try { await faultRepository.transition(selectedFault.id, 'assigned', assignedUserId, selectedFault.updatedAt); setFaults(await faultRepository.list()); } catch (error: any) { setErrorMsg(error?.message || 'Fault assignment failed.'); } return; }
+ if (!isSimulatorRuntimeAllowed()) { setErrorMsg('Production backend is not configured. Fault assignment is disabled.'); return; }
  faultService.updateFaultStatus(selectedFault.id, 'assigned', assignedUserId); refresh();
  };
 

@@ -38,10 +38,14 @@ import { Breadcrumbs } from './components/common/Breadcrumbs';
 import { SyncCenter } from './components/common/SyncCenter';
 import { DataQualityCenter } from './components/common/DataQualityCenter';
 import { NotificationCenter } from './components/common/NotificationCenter';
+import { OperationalRecordDrawer } from './components/common/OperationalRecordDrawer';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { notificationService } from './services/notificationService';
 import { assetService } from './services/assetService';
 import { isSupabaseConfigured } from './lib/supabase';
+import { registerOperationalOfflineHandlers } from './lib/offlineOperationalHandlers';
+
+registerOperationalOfflineHandlers();
 import { NAVIGATION_ITEMS } from './config/navigationConfig';
 import { COMMONS, LABELS } from './commons';
 import { X, Zap, ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
@@ -156,70 +160,9 @@ const MainLayout: React.FC = () => {
  </>
  )}
 
- {/* Asset Detail Flyout Drawer (When selected on map or via search) */}
- {selectedAsset && (
- <div className="absolute bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto max-w-sm w-auto sm:w-full bg-white border border-[#E4E4E4] rounded-md p-4 shadow-md z-40 space-y-3">
- <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
- <div className="flex items-center space-x-2 truncate">
- <div className="p-1.5 rounded-md bg-[#090909] text-white flex-shrink-0">
- <Zap className="w-4 h-4" />
- </div>
- <div className="truncate">
- <h4 className="font-bold text-xs text-neutral-950 truncate">
- {selectedAsset.name || selectedAsset.code || selectedAsset.poleNumber}
- </h4>
- <span className="text-[10px] truncate block">
- {selectedAsset.code || selectedAsset.consumerNumber || 'Asset Detail'}
- </span>
- </div>
- </div>
+ {/* Universal GIS-linked operational record drawer */}
+ {selectedAsset && <OperationalRecordDrawer asset={selectedAsset} onClose={() => setSelectedAsset(null)} onNavigate={tab => setActiveTab(tab)} />}
 
- <button
- onClick={() => setSelectedAsset(null)}
- className="p-1 rounded-md text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors flex-shrink-0"
- >
- <X className="w-4 h-4" />
- </button>
- </div>
-
- <div className="space-y-1.5 text-xs text-neutral-700 ">
- {selectedAsset.voltageClass && (
- <div className="flex justify-between">
- <span className="font-sans">Voltage:</span>
- <span className="text-neutral-950 font-bold">{selectedAsset.voltageClass}</span>
- </div>
- )}
- {selectedAsset.capacityMVA && (
- <div className="flex justify-between">
- <span className="font-sans">Capacity:</span>
- <span className="text-neutral-950 font-bold">{selectedAsset.capacityMVA} MVA</span>
- </div>
- )}
- {selectedAsset.capacityKVA && (
- <div className="flex justify-between">
- <span className="font-sans">Rating:</span>
- <span className="text-neutral-950 font-bold">{selectedAsset.capacityKVA} kVA</span>
- </div>
- )}
- {selectedAsset.loadPercentage !== undefined && (
- <div className="flex justify-between">
- <span className="font-sans">Current Load:</span>
- <span className="text-neutral-950 font-bold">{selectedAsset.loadPercentage}%</span>
- </div>
- )}
- {selectedAsset.coordinates && (
- <div className="flex justify-between text-[11px]">
- <span className="font-sans">GPS Coords:</span>
- <span className="text-neutral-800">
- {Array.isArray(selectedAsset.coordinates[0])
- ? `${selectedAsset.coordinates[0][0].toFixed(4)}, ${selectedAsset.coordinates[0][1].toFixed(4)}`
- : `${selectedAsset.coordinates[0].toFixed(4)}, ${selectedAsset.coordinates[1].toFixed(4)}`}
- </span>
- </div>
- )}
- </div>
- </div>
- )}
  </main>
  </div>
 
