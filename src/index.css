@@ -1,0 +1,405 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+ /* Master Typography Variables (SSOT linked to src/commons/fonts.ts) */
+ --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+ --font-letter-spacing: -0.011em;
+
+ /* Master Structural Variables (SSOT linked to src/commons/theme.ts) */
+ --radius: 0.375rem; /* 6px maximum per Anti-Slop Constraints */
+ --color-canvas: #FAFAFA;
+ --color-surface: #FFFFFF;
+ --color-text-primary: #09090B;
+ --color-text-secondary: #71717A;
+ --color-border: #E4E4E7;
+}
+
+/* ==========================================================================
+ GLOBAL ARCHITECTURAL CONSTRAINTS - "CHANGE ONCE REFLECT EVERYWHERE"
+ Swiss Neo-Grotesque Typography, Paper-Clean Surfaces & 6px Max Radius
+ ========================================================================== */
+
+/* Universal Clean Neo-Grotesque Sans-Serif Typography */
+html, body, #root, *, *::before, *::after,
+button, input, select, textarea,
+h1, h2, h3, h4, h5, h6, p, span, div, a, label,
+table, thead, tbody, tfoot, tr, th, td {
+ font-family: var(--font-primary) !important;
+ letter-spacing: var(--font-letter-spacing, -0.011em);
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tight letter-spacing and strict line-heights on headings */
+h1, h2, h3, h4, h5, h6 {
+ letter-spacing: -0.025em !important;
+ line-height: 1.25 !important;
+ font-weight: 600 !important;
+}
+
+/* High-contrast paper-clean background & primary text */
+body {
+ margin: 0;
+ padding: 0;
+ background-color: #FAFAFA !important;
+ color: #09090B !important;
+ overscroll-behavior-y: none;
+}
+
+/* ==========================================================================
+ BORDER RADIUS CONSTRAINT: 6px MAXIMUM ACROSS ENTIRE PLATFORM
+ Clamps rounded-lg, rounded-xl, rounded-2xl, rounded-3xl and button pills
+ ========================================================================== */
+[class*="rounded-lg"],
+[class*="rounded-xl"],
+[class*="rounded-2xl"],
+[class*="rounded-3xl"] {
+ border-radius: 0.375rem !important; /* 6px max */
+}
+
+/* Flatten rounded-full pills on buttons, badges, and modals while preserving small status dots */
+button[class*="rounded-full"],
+a[class*="rounded-full"],
+div[class*="rounded-full"]:not(.w-2):not(.h-2):not(.w-1\.5):not(.h-1\.5):not(.w-2\.5):not(.h-2\.5):not(.w-3):not(.h-3):not(.w-4):not(.h-4):not(.w-5):not(.h-5):not(.w-6):not(.h-6),
+span[class*="rounded-full"]:not(.w-2):not(.h-2):not(.w-1\.5):not(.h-1\.5):not(.w-2\.5):not(.h-2\.5):not(.w-3):not(.h-3):not(.w-4):not(.h-4) {
+ border-radius: 0.375rem !important; /* 6px max */
+}
+
+/* ==========================================================================
+ ZERO DECORATIVE BLOBS, AMBIENT GRADIENTS, OR GLASSMORPHISM
+ ========================================================================== */
+[class*="bg-gradient-"] {
+ background-image: none !important;
+}
+
+[class*="backdrop-blur"] {
+ backdrop-filter: none !important;
+ -webkit-backdrop-filter: none !important;
+}
+
+/* Clean 1px structural hairline borders (#E4E4E7) */
+.border-zinc-200,
+.border-slate-200,
+.border-neutral-200 {
+ border-color: #E4E4E7 !important;
+}
+
+/* Remove glow effects and aggressive shadows */
+[class*="shadow-glow"],
+[class*="shadow-2xl"],
+[class*="shadow-xl"] {
+ box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Custom Minimal Hairline Scrollbar */
+::-webkit-scrollbar {
+ width: 5px;
+ height: 5px;
+}
+::-webkit-scrollbar-track {
+ background: #FAFAFA;
+}
+::-webkit-scrollbar-thumb {
+ background: #E4E4E7;
+ border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+ background: #A1A1AA;
+}
+
+/* Leaflet Pure White Theme Customizations (Sharp 6px max radius) */
+.leaflet-popup-content-wrapper {
+ background: #FFFFFF !important;
+ color: #09090B !important;
+ border: 1px solid #E4E4E7 !important;
+ border-radius: 6px !important;
+ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.leaflet-popup-tip {
+ background: #FFFFFF !important;
+}
+
+.leaflet-control-zoom {
+ margin-bottom: 72px !important; /* Above mobile bottom bar */
+}
+@media (min-width: 768px) {
+ .leaflet-control-zoom {
+ margin-bottom: 16px !important;
+ }
+}
+
+.leaflet-control-zoom a {
+ background-color: #FFFFFF !important;
+ color: #09090B !important;
+ border-color: #E4E4E7 !important;
+ border-radius: 4px !important;
+ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+.leaflet-control-zoom a:hover {
+ background-color: #F4F4F5 !important;
+ color: #000000 !important;
+}
+
+/* ==========================================================================
+ Clean Utility Theme Direct Overrides (For Any Residual Dark Containers)
+ ========================================================================== */
+.bg-\[\#0a0a0a\],
+.bg-\[\#0b1320\],
+.bg-\[\#0d0d0d\],
+.bg-\[\#080808\] {
+ background-color: #ffffff !important;
+ border-color: #e2e8f0 !important;
+ color: #0f172a !important;
+}
+
+.bg-\[\#111111\],
+.bg-\[\#121b2d\],
+.bg-\[\#141414\] {
+ background-color: #ffffff !important;
+ border-color: #e2e8f0 !important;
+ color: #0f172a !important;
+}
+
+.border-neutral-800,
+.border-neutral-850,
+.border-neutral-700,
+.border-slate-800,
+.border-slate-700 {
+ border-color: #e2e8f0 !important;
+}
+
+
+
+/*
+ * Monochrome application mode.
+ * All non-GIS pages are rendered without color. The GIS Master Map page
+ * deliberately does not receive this class so its map symbology and
+ * basemap retain their operational colors.
+ */
+.pg-monochrome {
+ filter: grayscale(100%) !important;
+}
+
+/* POWERGIS PROFESSIONAL UI LAYER */
+:root {
+ --pg-bg: #f4f7fb;
+ --pg-surface: #ffffff;
+ --pg-surface-soft: #f8fafc;
+ --pg-border: #dbe3ec;
+ --pg-accent: #1d4ed8;
+ --pg-accent-soft: #eff6ff;
+ --pg-shadow: 0 1px 2px rgba(15,23,42,.05), 0 8px 24px rgba(15,23,42,.045);
+}
+html, body, #root { background: var(--pg-bg) !important; color: #000 !important; }
+#root *, #root *::before, #root *::after { font-style: normal !important; letter-spacing: normal !important; text-transform: none !important; text-shadow: none !important; }
+#root h1 { font-size: 1.25rem !important; line-height: 1.35 !important; font-weight: 700 !important; }
+#root h2 { font-size: 1rem !important; line-height: 1.4 !important; font-weight: 700 !important; }
+#root h3 { font-size: .875rem !important; line-height: 1.4 !important; font-weight: 700 !important; }
+#root h4, #root h5, #root h6 { font-weight: 700 !important; }
+.pg-app-shell, .pg-main { background: var(--pg-bg) !important; }
+.pg-header { min-height: 64px; background: #fff !important; border-color: var(--pg-border) !important; box-shadow: 0 1px 0 rgba(15,23,42,.03); }
+.pg-header > div { min-height: 64px; }
+.pg-header button { transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.pg-header button:hover { background: #f8fafc !important; }
+.pg-search-input { border-color: var(--pg-border) !important; background: #fff !important; }
+.pg-search-input:focus { border-color: var(--pg-accent) !important; box-shadow: 0 0 0 3px rgba(29,78,216,.10); }
+.pg-sidebar { width: 248px !important; background: #fff !important; border-color: var(--pg-border) !important; }
+.pg-sidebar.w-16 { width: 68px !important; }
+.pg-nav-item { min-height: 38px; border: 1px solid transparent !important; color: #000 !important; background: transparent !important; }
+.pg-nav-item:hover { background: #f1f5f9 !important; border-color: #e2e8f0 !important; }
+.pg-nav-active { background: var(--pg-accent-soft) !important; border-color: #bfdbfe !important; color: #000 !important; box-shadow: inset 3px 0 0 var(--pg-accent); }
+.pg-nav-active svg { color: var(--pg-accent) !important; }
+.pg-scope-banner { min-height: 36px; background: #f8fafc !important; border-color: var(--pg-border) !important; }
+.pg-dashboard { max-width: 1440px !important; }
+.pg-dashboard .bg-white { border-color: var(--pg-border) !important; box-shadow: var(--pg-shadow); }
+.pg-dashboard .bg-white:hover { box-shadow: 0 2px 4px rgba(15,23,42,.06), 0 12px 28px rgba(15,23,42,.055); }
+.pg-dashboard .text-2xl { font-size: 1.5rem !important; }
+#root input:not([type="checkbox"]):not([type="radio"]), #root select, #root textarea { border-color: var(--pg-border) !important; background: #fff !important; color: #000 !important; min-height: 38px; }
+#root input:not([type="checkbox"]):not([type="radio"]):focus, #root select:focus, #root textarea:focus { border-color: var(--pg-accent) !important; outline: none !important; box-shadow: 0 0 0 3px rgba(29,78,216,.10) !important; }
+#root button { min-height: 36px; border-radius: 6px !important; }
+#root button:focus-visible { outline: 2px solid rgba(29,78,216,.45) !important; outline-offset: 2px; }
+#root .bg-\[\#09090B\], #root .bg-black, #root .bg-neutral-950 { background: #e8eef7 !important; border: 1px solid #cbd8e8 !important; color: #000 !important; }
+#root .bg-\[\#09090B\]:hover, #root .bg-black:hover, #root .bg-neutral-950:hover { background: #dbe7f5 !important; }
+#root .bg-red-50 { background: #fef2f2 !important; }
+#root .bg-amber-50 { background: #fffbeb !important; }
+#root .bg-emerald-50 { background: #ecfdf5 !important; }
+#root .bg-sky-50, #root .bg-blue-50 { background: #eff6ff !important; }
+#root table { border-collapse: separate !important; border-spacing: 0 !important; }
+#root thead tr { background: #f8fafc !important; }
+#root tbody tr { transition: background-color .12s ease; }
+#root tbody tr:hover { background: #f8fafc !important; }
+.pg-mobile-nav { background: rgba(255,255,255,.98) !important; border-color: var(--pg-border) !important; box-shadow: 0 -6px 20px rgba(15,23,42,.07) !important; }
+.pg-mobile-nav button { min-height: 56px; }
+.pg-mobile-drawer { box-shadow: 10px 0 30px rgba(15,23,42,.10); }
+.pg-main > .absolute { box-shadow: var(--pg-shadow) !important; border-color: var(--pg-border) !important; }
+#root svg text, #root svg tspan { font-family: Arial, Helvetica, sans-serif !important; font-style: normal !important; letter-spacing: normal !important; text-transform: none !important; text-shadow: none !important; fill: #000 !important; }
+@media (max-width: 767px) { .pg-header, .pg-header > div { min-height: 58px; } .pg-dashboard { padding-bottom: 4.5rem !important; } .pg-dashboard > div { box-shadow: 0 1px 2px rgba(15,23,42,.04); } }
+
+/* ==========================================================================
+ STABLE DATA TABLES + RESPONSIVE WORKSPACE
+ Prevent tab changes from changing table width/height or shifting columns.
+ Dense utility data remains horizontally scrollable on small screens.
+ ========================================================================== */
+.pg-table-scroll {
+ width: 100%;
+ min-height: 420px;
+ max-height: min(62vh, 620px);
+ overflow: auto;
+ overscroll-behavior: contain;
+ scrollbar-gutter: stable both-edges;
+}
+.pg-data-table {
+ width: 100%;
+ min-width: 860px;
+ table-layout: fixed !important;
+ border-collapse: separate !important;
+ border-spacing: 0 !important;
+}
+.pg-data-table th,
+.pg-data-table td {
+ box-sizing: border-box;
+ min-width: 0;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ vertical-align: middle;
+}
+.pg-data-table th {
+ height: 44px;
+}
+.pg-data-table td {
+ height: 46px;
+}
+.pg-data-table th:first-child,
+.pg-data-table td:first-child {
+ position: sticky;
+ left: 0;
+ z-index: 2;
+ background: #fff;
+ box-shadow: 1px 0 0 #e4e4e7;
+}
+.pg-data-table thead th:first-child {
+ z-index: 3;
+ background: #f8fafc;
+}
+.pg-data-table tbody tr:hover td:first-child {
+ background: #f8fafc !important;
+}
+
+/* Keep tab strips visually stable while allowing touch scrolling. */
+.pg-tab-strip {
+ min-height: 44px;
+ display: flex;
+ align-items: center;
+ overflow-x: auto;
+ overflow-y: hidden;
+ scrollbar-width: thin;
+ -webkit-overflow-scrolling: touch;
+}
+.pg-tab-strip > button {
+ flex: 0 0 auto;
+ min-height: 36px;
+}
+
+/* Common page workspace rhythm. */
+.pg-main > * {
+ min-width: 0;
+}
+.pg-main .max-w-6xl,
+.pg-main .max-w-7xl,
+.pg-main .max-w-5xl,
+.pg-main .max-w-4xl {
+ width: 100%;
+}
+
+/* Better touch targets without making desktop controls oversized. */
+@media (max-width: 767px) {
+ .pg-main {
+ padding-bottom: 4rem;
+ }
+ .pg-main > div {
+ min-width: 0;
+ }
+ .pg-table-scroll {
+ min-height: 360px;
+ max-height: 58vh;
+ border-radius: 6px;
+ -webkit-overflow-scrolling: touch;
+ }
+ .pg-data-table {
+ min-width: 760px;
+ }
+ .pg-data-table th,
+ .pg-data-table td {
+ padding: 0.65rem 0.75rem !important;
+ }
+ .pg-data-table th {
+ height: 42px;
+ }
+ .pg-data-table td {
+ height: 44px;
+ }
+ .pg-data-table th:first-child,
+ .pg-data-table td:first-child {
+ position: sticky;
+ left: 0;
+ }
+ .pg-tab-strip {
+ margin-left: -0.25rem;
+ margin-right: -0.25rem;
+ padding-left: 0.25rem;
+ padding-right: 0.25rem;
+ }
+ #root input:not([type="checkbox"]):not([type="radio"]),
+ #root select,
+ #root textarea {
+ min-height: 42px;
+ }
+ #root button {
+ min-height: 40px;
+ }
+ .pg-mobile-nav button {
+ min-height: 56px !important;
+ }
+}
+
+/* Prevent long labels, codes and controls from forcing page overflow. */
+@media (max-width: 640px) {
+ .pg-main .p-6 { padding: 1rem !important; }
+ .pg-main .p-5 { padding: 1rem !important; }
+ .pg-main .p-4 { padding: 0.875rem !important; }
+ .pg-main .gap-6 { gap: 1rem !important; }
+ .pg-main .gap-5 { gap: 0.875rem !important; }
+ .pg-main .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem !important; }
+ .pg-main .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.875rem !important; }
+}
+.pg-table-scroll-compact {
+ min-height: 0;
+ max-height: 12rem;
+}
+
+/* Tables that intentionally live inside a compact log panel should not force
+ the panel to the standard operational-table height. */
+.pg-table-scroll-compact .pg-data-table {
+ min-width: 720px;
+}
+
+/* Mobile header: keep the header calm and usable instead of squeezing every
+ desktop control into a narrow viewport. Full controls remain available in
+ the navigation drawer/menu. */
+@media (max-width: 767px) {
+ .pg-header-simulator,
+ .pg-header-region,
+ .pg-header-profile {
+ display: none !important;
+ }
+ .pg-header > div {
+ gap: 0.5rem !important;
+ }
+ .pg-header .pg-header-brand {
+ min-width: 0;
+ }
+}
