@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+      - monochrome
+      - gh-pages
   workflow_dispatch:
 
 permissions:
